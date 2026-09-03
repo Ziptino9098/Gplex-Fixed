@@ -28,8 +28,8 @@
 // @license      MIT
 // @require      https://openuserjs.org/src/libs/sizzle/GM_config.js
 // @run-at document-body
-// @downloadURL https://github.com/Ziptino9098/Gplex-Fixed/blob/main/main.user.js
-// @updateURL https://github.com/Ziptino9098/Gplex-Fixed/blob/main/main.user.js
+// @downloadURL  https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
+// @updateURL    https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
 // ==/UserScript==
 function showMenu(){
     window.location = "https://www.google.com/gplex";
