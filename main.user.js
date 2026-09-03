@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex - Old Google Frontend
 // @namespace    http://tampermonkey.net/
-// @version      0.7.2.1
+// @version      0.7.2.4
 // @description  2011-2019 Google frontend (public beta release)
 // @author       lightbeam24
 // @match        *://www.google.com/search*
@@ -5505,8 +5505,12 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             started = true;
             if (location == "images") {
                 let newImagesExp = false;
+                let modernImages = false;
                 let tempImageList;
-                if (document.querySelector("body > c-wiz")) {
+                if (document.querySelector('#rso img[id^="dimg_"]')) {
+                    modernImages = true;
+                    tempImageList = document.querySelectorAll('#rso img[id^="dimg_"]');
+                } else if (document.querySelector("body > c-wiz")) {
                     newImagesExp = true;
                     tempImageList = document.querySelectorAll("a > div > img");
                 } else {
@@ -5528,6 +5532,55 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                         // pixel, ignore
                     } else {
                         let forIframe;
+                                                if (modernImages) {
+                            let tileRoot = itemRoot.closest('[id^="e-"]');
+                            let mdocid = tileRoot ? tileRoot.getAttribute("id").substring(2) : "";
+                            let wrap = tileRoot || itemRoot;
+                            while (wrap && !wrap.querySelector('a[href]')) {
+                                wrap = wrap.parentElement;
+                            }
+                            let capA = wrap ? wrap.querySelector('a[href]') : null;
+                            let mlink = capA ? capA.getAttribute("href") : "";
+                            let mdomain = "";
+                            if (mlink && mlink.indexOf("//") > -1) {
+                                mdomain = mlink.split("//")[1].split("/")[0];
+                                if (mdomain.indexOf("www.") === 0) {
+                                    mdomain = mdomain.substring(4);
+                                }
+                            }
+                            let mw = itemRoot.getAttribute("width");
+                            let mh = itemRoot.getAttribute("height");
+                            let arEl = tileRoot ? tileRoot.querySelector('[style*="aspect-ratio"]') : null;
+                            if (arEl) {
+                                let arM = arEl.getAttribute("style").match(/aspect-ratio:\s*(\d+)\s*\/\s*(\d+)/);
+                                if (arM) {
+                                    mw = arM[1];
+                                    mh = arM[2];
+                                }
+                            }
+                            if (!mw || parseInt(mw, 10) < 40) {
+                                check++;
+                                return;
+                            }
+                            forIframe = "https://www.google.com/imgres?q=" + searchValue + "&docid=" + mdocid + "&tbnid=" + (itemRoot.getAttribute("id") || "");
+                            linkList.push({imageResult: {
+                                itemNo: itemNo,
+                                type: "image",
+                                iframeUrl: forIframe,
+                                width: mw,
+                                height: mh,
+                                refdocid: mdocid,
+                                docid: mdocid,
+                                link: mlink,
+                                title: alt,
+                                domain: mdomain,
+                                src: itemRoot.getAttribute("src")
+                            }});
+                            createItem(linkList[itemNo], "imageResult");
+                            itemNo++;
+                            check++;
+                            return;
+                        }
                         if (newImagesExp) {
                             if (document.querySelector("#the-script")) {
                                 // setTimeout(function() {
