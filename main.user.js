@@ -28,8 +28,8 @@
 // @license      MIT
 // @require      https://openuserjs.org/src/libs/sizzle/GM_config.js
 // @run-at document-body
-// @downloadURL https://update.greasyfork.org/scripts/492193/Gplex%20-%20Old%20Google%20Frontend.user.js
-// @updateURL https://update.greasyfork.org/scripts/492193/Gplex%20-%20Old%20Google%20Frontend.meta.js
+// @downloadURL https://github.com/Ziptino9098/Gplex-Fixed/blob/main/main.user.js
+// @updateURL https://github.com/Ziptino9098/Gplex-Fixed/blob/main/main.user.js
 // ==/UserScript==
 function showMenu(){
     window.location = "https://www.google.com/gplex";
