@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Gplex - Old Google Frontend
+// @name         Gplex Fixed - A patched version of Gplex - Old Google Frontend that has (Hopefully) 0 bugs
 // @namespace    http://tampermonkey.net/
 // @version      0.7.3.0
 // @description  2011-2019 Google frontend (public beta release)
