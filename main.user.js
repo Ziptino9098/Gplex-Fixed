@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      0.7.5.1
-// @description  2009-2019 Old Google Frontend (Full public release) 
-// @author       Ziptino9098
+// @version      1.0.1
+// @description  2009-2019 Old Google Frontend (Full public release)
+// @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
 // @match        *://www.google.com/
 // @match        *://www.google.com/webhp*
@@ -2093,6 +2093,57 @@ html[noton-images][location="images"]:not([disabled]) body > div#main {
   border-radius: 0;
 }
 /* ============ end GPlex 2010-Early 2011 theme ============ */
+/* ---- 2009 / 2010 results-page search box (bordered input, button beside it) ---- */
+[gplex2009]:not([location$="home"]) #ugf-searchbar,
+[gplex2010]:not([location$="home"]) #ugf-searchbar {
+  border: none !important;
+  background: none !important;
+  box-shadow: none !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  display: inline-block !important;
+  position: relative;
+}
+[gplex2009]:not([location$="home"]) #ugf-search-value,
+[gplex2010]:not([location$="home"]) #ugf-search-value {
+  border: 1px solid #b9b9b9 !important;
+  background: #fff !important;
+  box-shadow: none !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+  width: 380px !important;
+  height: 26px !important;
+  padding: 2px 6px !important;
+  font: 15px arial, sans-serif !important;
+  vertical-align: middle !important;
+  margin: 0 !important;
+}
+[gplex2009]:not([location$="home"]) #ugf-search,
+[gplex2010]:not([location$="home"]) #ugf-search {
+  display: flex !important;
+  align-items: center !important;
+}
+[gplex2009]:not([location$="home"]) button.searchbtn-small,
+[gplex2010]:not([location$="home"]) button.searchbtn-small {
+  margin-top: 0 !important;
+  margin-left: 8px !important;
+  vertical-align: middle !important;
+}
+[gplex2009]:not([location$="home"]) #ugf-searchbar::after,
+[gplex2010]:not([location$="home"]) #ugf-searchbar::after {
+  font-size: 11px !important;
+  line-height: 13px !important;
+  left: calc(100% + 78px) !important;
+  right: auto !important;
+  top: 1px !important;
+}
+[gplex2009]:not([location$="home"]) #ugf-search-predictions-container,
+[gplex2010]:not([location$="home"]) #ugf-search-predictions-container {
+  width: 380px !important;
+  top: 28px !important;
+  margin-left: 0 !important;
+}
 [layout="2012"] #ugf-image-results,
 [layout="2013"] #ugf-image-results,
 [layout="2013L"] #ugf-image-results,
