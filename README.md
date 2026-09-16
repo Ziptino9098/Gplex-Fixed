@@ -1,6 +1,5 @@
 Install here: https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
 Finally a built in 2009 and 2010 layout in the script!
 I would rebrand to Gplex Extended but I don't want to break the update URLs.
-FINALLY A FULL RELEASE AND NOT BETA (I will still do a lot of updates though, planning 2008, 2007, 2006 layouts).
-2007-2008 layout coming soon.
-Planned for 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006 layouts too.
+I finally added a layout for every design style from 1997-2010, I have been working on this since the day I fixed the image page and after 2 weeks, it is HERE
+Full release of Gplex, nothing more to add, all future updates will be bugfixes as I will NEVER let this script die, EVER. So when google updates, expect me to fix it soon
