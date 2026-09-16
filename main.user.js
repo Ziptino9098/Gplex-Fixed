@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      2.0
+// @version      2.0.1
 // @description  2009-2019 Old Google Frontend (Full public release)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -9199,58 +9199,13 @@ li.tg2Kqf{
         }
     }
 
-    if (
-        url.includes("&start=10")
-    ) {
-        page = 2;
-    }
-    if (
-        url.includes("&start=20") ||
-        url.includes("&start=11")
-       ) {
-        page = 3;
-    }
-    if (
-        url.includes("&start=30") ||
-        url.includes("&start=21")
-       ) {
-        page = 4;
-    }
-    if (
-        url.includes("&start=40") ||
-        url.includes("&start=31")
-    ) {
-        page = 5;
-    }
-    if (
-        url.includes("&start=50") ||
-        url.includes("&start=41")
-    ) {
-        page = 6;
-    }
-    if (
-        url.includes("&start=60") ||
-        url.includes("&start=51")
-    ) {
-        page = 7;
-    }
-    if (
-        url.includes("&start=70") ||
-        url.includes("&start=61")
-    ) {
-        page = 8;
-    }
-    if (
-        url.includes("&start=80") ||
-        url.includes("&start=71")
-    ) {
-        page = 9;
-    }
-    if (
-        url.includes("&start=90") ||
-        url.includes("&start=81")
-    ) {
-        page = 10;
+    try {
+        const startParam = parseInt(new URLSearchParams(window.location.search).get("start") || "0", 10);
+        if (!isNaN(startParam) && startParam > 0) {
+            page = Math.floor(startParam / 10) + 1;
+        }
+    } catch (e) {
+        page = 1;
     }
     if (
         url.includes("do") &&
@@ -12280,17 +12235,39 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         });
         let newPrevHref;
         let newNextHref;
-        let prevNumb = page - 2;
-        let currNumb = page - 1;
-        document.querySelectorAll("#gp-page-numbers .gp-pagination")[currNumb].classList.add("active");
-        if (document.querySelectorAll("#gp-page-numbers .gp-pagination")[prevNumb]) {
-            newPrevHref = document.querySelectorAll("#gp-page-numbers .gp-pagination")[prevNumb].getAttribute("href");
+        let pageSuffix = "";
+        if (location == "images") {
+            pageSuffix = "&udm=2";
+        } else if (location == "videos") {
+            pageSuffix = "&udm=7";
         }
-        if (document.querySelectorAll("#gp-page-numbers .gp-pagination")[page]) {
-            newNextHref = document.querySelectorAll("#gp-page-numbers .gp-pagination")[page].getAttribute("href");
+        const pageBase = "https://www.google.com/search?q=" + searchValue + pageSuffix;
+        const pageLinks = document.querySelectorAll("#gp-page-numbers .gp-pagination");
+        const blockStart = Math.floor((page - 1) / 10) * 10 + 1;
+        pageLinks.forEach(function(link, i) {
+            const num = blockStart + i;
+            const startAt = (num - 1) * 10;
+            link.setAttribute("href", pageBase + (startAt ? "&start=" + startAt : ""));
+            const label = link.querySelector("span");
+            if (label) {
+                label.textContent = String(num);
+            }
+            link.classList.remove("active");
+            if (num === page) {
+                link.classList.add("active");
+            }
+        });
+        if (page > 1) {
+            const prevStart = (page - 2) * 10;
+            newPrevHref = pageBase + (prevStart ? "&start=" + prevStart : "");
         }
-        document.querySelector("#gp-pagination-prev").setAttribute("href",newPrevHref);
-        document.querySelector("#gp-pagination-next").setAttribute("href",newNextHref);
+        newNextHref = pageBase + "&start=" + (page * 10);
+        if (document.querySelector("#gp-pagination-prev") && newPrevHref) {
+            document.querySelector("#gp-pagination-prev").setAttribute("href",newPrevHref);
+        }
+        if (document.querySelector("#gp-pagination-next")) {
+            document.querySelector("#gp-pagination-next").setAttribute("href",newNextHref);
+        }
         if (page != 1) {
             document.querySelector("#gp-pagination-prev").classList.add("has-prev");
         }
