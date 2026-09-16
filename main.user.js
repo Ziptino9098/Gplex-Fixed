@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Gplex Fixed - A patched version of Gplex - Old Google Frontend that has (Hopefully) 0 bugs
+// @name         Gplex Fixed - Gplex old google script with issues where things do not display and development continued
 // @namespace    http://tampermonkey.net/
-// @version      0.7.3.0
-// @description  2011-2019 Google frontend (public beta release)
+// @version      0.7.5.1
+// @description  2009-2019 Google frontend (public beta release)
 // @author       Ziptino9098
 // @match        *://www.google.com/search*
 // @match        *://www.google.com/
@@ -1482,6 +1482,617 @@ html[noton-images][location="images"]:not([disabled]) body > div#main {
   position: absolute;
   z-index: 99;
 }
+/* ============ GPlex 2009 theme (ported from Clockiscool1234's userstyle) ============ */
+/* shared: gbar, topbar, searchbar annotation base */
+[gplex2009] #gp-gbar-inner {
+  background: none !important;
+  height: 24px !important;
+  border-bottom: 1px solid #c9d7f1;
+}
+[gplex2009] .gp-gbar-link.active {
+  color: black !important;
+  text-decoration: none !important;
+  border-top-color: transparent !important;
+}
+[gplex2009] #gp-gbar-inner .gp-gbar-link {
+  border-top: none !important;
+}
+[gplex2009] .gp-gbar-link,
+[gplex2009] .gp-gbar-link:hover:not(.active) {
+  color: #00c !important;
+  text-decoration: underline !important;
+  background: none !important;
+  height: 24px !important;
+  padding-bottom: 1px !important;
+}
+[gplex2009] .arrow {
+  border-top-color: #00c !important;
+}
+[gplex2009] #gp-gbar-settings-button {
+  display: none;
+}
+[gplex2009] #ugf-topbar {
+  min-width: 0;
+}
+[gplex2009] #ugf-searchbar::after {
+  white-space: pre;
+  text-decoration: underline;
+  color: #00c;
+  font-size: 10px;
+  top: 0;
+  position: absolute;
+}
+[gplex2009] #ugf-top #ugf-searchbar::after {
+  left: 375px;
+}
+/* homepage */
+[gplex2009][location$="home"] #ugf-hp-inner {
+  margin-top: 0px !important;
+}
+[gplex2009][location$="home"] #ugf-hp {
+  margin-top: -28px;
+}
+[gplex2009][location$="home"] #ugf-hp-search {
+  margin-top: 35px !important;
+}
+[gplex2009][location$="home"] #ugf-search #ugf-searchbar {
+  border: none !important;
+  width: 515px;
+  margin-left: 27px !important;
+  background: none !important;
+}
+[gplex2009][location$="home"] #ugf-search-value {
+  border: revert !important;
+  outline: revert !important;
+  background: revert !important;
+  width: 515px !important;
+  height: revert !important;
+  font: 17px arial, sans-serif !important;
+  vertical-align: bottom;
+}
+[gplex2009][location$="home"] #ugf-hp-logo-inner {
+  background-image: url(https://www.google.com/intl/en_ALL/images/logo.gif);
+  width: 276px !important;
+  height: 110px !important;
+}
+[gplex2009][location$="home"] #ugf-hp-logo #ugf-hp-logo-inner img {
+  visibility: hidden;
+}
+[gplex2009][location$="home"] #ugf-search-predictions-container {
+  width: 515px !important;
+  top: 25px !important;
+  margin-left: 27px !important;
+}
+[gplex2009][location$="home"] #ugf-searchbar::after {
+  content: "Advanced Search\\aLanguage Tools";
+  right: -97px;
+}
+[gplex2009][location$="home"] #ugf-hp-footer {
+  bottom: unset;
+  position: static;
+  background: none !important;
+  border: none !important;
+  width: max-content;
+  margin: 50px auto 0 auto;
+  flex-flow: row wrap;
+}
+[gplex2009][location$="home"] #ugf-structured-hp-footer-left,
+[gplex2009][location$="home"] #ugf-structured-hp-footer-right {
+  margin-left: 0;
+  margin-right: 0;
+  display: block;
+  flex-basis: 100%;
+  text-align: center;
+}
+[gplex2009][location$="home"] #ugf-hp-footer,
+[gplex2009][location$="home"] .ugf-structured-hp-footer-link {
+  line-height: 15px !important;
+  color: #00c !important;
+  padding-left: 0;
+  text-decoration: none !important;
+  border-bottom: #00c solid 1px;
+}
+[gplex2009][location$="home"] #ugf-structured-hp-footer-left .ugf-structured-hp-footer-link:not(:last-child):after {
+  content: "-";
+  position: absolute;
+  color: black;
+  margin-left: 5px;
+}
+[gplex2009][location$="home"] #ugf-structured-hp-footer-right .ugf-structured-hp-footer-link {
+  font-size: 10px !important;
+  line-height: 55px !important;
+}
+[gplex2009][location$="home"] #ugf-structured-hp-footer-right .ugf-structured-hp-footer-link:not(:first-child) {
+  display: none;
+}
+[gplex2009][location$="home"] #ugf-structured-hp-footer-right .ugf-structured-hp-footer-link:first-child {
+  margin-left: 28px;
+}
+[gplex2009][location$="home"] #ugf-structured-hp-footer-right .ugf-structured-hp-footer-link:first-child:before {
+  content: "©2009 - ";
+  position: absolute;
+  margin-left: -40px;
+  color: black;
+}
+[gplex2009][location$="home"] #ugf-structured-hp-footer-left .ugf-structured-hp-footer-link:not(:first-child) {
+  margin-left: 10px;
+}
+/* results pages */
+[gplex2009]:not([location$="home"]) #ugf-topbar {
+  background: none !important;
+  border: none !important;
+}
+[gplex2009]:not([location$="home"]) #ugf-search-value,
+[gplex2009]:not([location$="home"]) #ugf-searchbar {
+  width: 303px !important;
+  height: 16px !important;
+  font-size: 13px !important;
+}
+[gplex2009]:not([location$="home"]) #ugf-searchbar::after {
+  content: "Advanced Search\\aPreferences";
+  right: -180px;
+}
+[gplex2009]:not([location$="home"]) #ugf-search-results-header {
+  width: calc(100% - 13px);
+  left: 5px;
+  border-top: 1px solid #6b90da;
+  background: #f0f7f9;
+  height: 28px;
+  padding: 0;
+  top: 97px !important;
+}
+[gplex2009]:not([location$="home"]) #ugf-search-results-header span {
+  font-size: 13px;
+  margin-left: auto;
+}
+[gplex2009]:not([location$="home"]) #ugf-search-results-header:before {
+  content: "Web";
+  font-size: 13px;
+  font-weight: bold;
+  margin-left: 5px;
+}
+[gplex2009]:not([location$="home"]) #ugf-main-inner {
+  margin-top: 43px;
+}
+[gplex2009]:not([location$="home"]) #ugf-left {
+  display: none;
+}
+[gplex2009]:not([location$="home"]) #ugf-main,
+[gplex2009]:not([location$="home"]) #ugf-footer {
+  width: 100%;
+}
+[gplex2009]:not([location$="home"]) .gp-pagination .gp-image {
+  background-image: url("https://www.google.com/images/nav_logo3.png") !important;
+  width: 15px !important;
+  height: 26px !important;
+  background-position: -44px 0 !important;
+}
+[gplex2009]:not([location$="home"]) #gp-pagination-prev .gp-image {
+  width: 19px !important;
+  background-position: -25px 0 !important;
+}
+[gplex2009]:not([location$="home"]) #gp-pagination-prev.has-prev .gp-image {
+  width: 44px !important;
+  background-position: 0 0 !important;
+}
+[gplex2009]:not([location$="home"]) .gp-pagination.active .gp-image {
+  background-position: -60px 0 !important;
+}
+[gplex2009]:not([location$="home"]) #gp-pagination-next .gp-image {
+  width: 62px !important;
+  background-position: -76px 0px !important;
+}
+[gplex2009]:not([location$="home"]) #gp-pagination-next span {
+  margin-left: 35px !important;
+}
+[gplex2009]:not([location$="home"]) #ugf-logo-cont {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  background: url("https://www.google.com/images/nav_logo3.png");
+  background-position: 0px -26px;
+  width: 150px;
+  height: 49px;
+}
+[gplex2009]:not([location$="home"]) #ugf-logo-cont img {
+  visibility: hidden;
+}
+/* native buttons (from the companion script) */
+[gplex2009] button.searchbtn {
+  all: revert;
+  font-size: 15px;
+  height: 1.85em !important;
+  margin: .2em;
+}
+[gplex2009] button.searchbtn-small {
+  all: revert;
+  font-size: 13px;
+  margin-top: -5px;
+  margin-left: 11px;
+}
+[gplex2009] #ugf-hp-buttons-row {
+  margin-top: 0 !important;
+}
+[gplex2009] #ugf-hp-buttons {
+  height: 38px;
+}
+[gplex2009] #ugf-search-btn,
+[gplex2009] #ugf-search-btn-2,
+[gplex2009] #ugf-lucky-btn {
+  display: none !important;
+}
+/* --- 2009 image results page --- */
+[gplex2009][location="images"] #ugf-image-results {
+  background: #fff !important;
+}
+[gplex2009] .ugf-image-result {
+  width: 204px !important;
+  padding: 0 !important;
+  margin: 0 0 14px 0 !important;
+  display: block !important;
+}
+[gplex2009] .ugf-image-result img {
+  border: 1px solid #ccc;
+  padding: 1px;
+  max-width: 150px !important;
+  max-height: 150px !important;
+  margin: 0 !important;
+}
+[gplex2009] .ugf-image-result-inner {
+  text-decoration: none !important;
+  width: 100%;
+  display: block;
+}
+[gplex2009] .ugf-image-result-hoverstats {
+  opacity: 1 !important;
+  position: static !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  font-size: 13px !important;
+  line-height: 16px !important;
+  color: #000 !important;
+  background: none !important;
+  width: auto !important;
+  padding: 2px 0 0 0 !important;
+  max-width: 152px;
+}
+[gplex2009] .ugf-image-result-title {
+  display: block;
+  color: #00c;
+  text-decoration: underline;
+  white-space: normal;
+  word-wrap: break-word;
+  max-width: 152px;
+}
+[gplex2009] .ugf-image-result-domain {
+  color: #006621 !important;
+  display: block !important;
+  margin: 2px 0 0 !important;
+}
+[gplex2009] .ugf-image-result-size-first {
+  display: none !important;
+}
+[gplex2009] .ugf-image-result-size-second {
+  display: block !important;
+}
+/* hide Gplex's 2015-era navbar + buttons, which 2009 replaces with the top links */
+[gplex2009] #ugf-navbar,
+[gplex2009] #ugf-personal-buttons,
+[gplex2009] #ugf-settings-tab {
+  display: none !important;
+}
+[gplex2009]:not([location$="home"]) #ugf-main-inner {
+  margin-top: 8px;
+}
+[gplex2009] #ugf-image-results-container {
+  align-items: flex-start;
+}
+/* --- 2009 image viewer --- */
+[gplex2009] #ugf-image-viewer-inner {
+  background: #fff;
+  border: 1px solid #ccc;
+}
+[gplex2009] #ugf-image-viewer-title {
+  color: #00c;
+  text-decoration: underline;
+  font-size: 14px;
+}
+[gplex2009] #ugf-image-viewer-close {
+  color: #444;
+}
+[gplex2009] #ugf-image-viewer-domain {
+  color: #006621;
+}
+[gplex2009] #ugf-image-viewer-size {
+  color: #545454;
+}
+[gplex2009] .ugf-image-viewer-btn,
+[gplex2009] .ugf-image-viewer-btn-2 {
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  color: #444;
+  border-radius: 0;
+}
+/* ============ end GPlex 2009 theme ============ */
+/* ============ GPlex 2010-Early 2011 theme ============ */
+/* shared chrome: flat gbar with blue underlined links */
+[gplex2010] #gp-gbar-inner {
+  background: none !important;
+  height: 24px !important;
+  border-bottom: 1px solid #e5e5e5;
+}
+[gplex2010] .gp-gbar-link.active {
+  color: #000 !important;
+  font-weight: bold !important;
+  text-decoration: none !important;
+  border-top-color: transparent !important;
+}
+[gplex2010] #gp-gbar-inner .gp-gbar-link {
+  border-top: none !important;
+}
+[gplex2010] .gp-gbar-link,
+[gplex2010] .gp-gbar-link:hover:not(.active) {
+  color: #00c !important;
+  text-decoration: underline !important;
+  background: none !important;
+  height: 24px !important;
+  padding-bottom: 1px !important;
+}
+[gplex2010] .arrow {
+  border-top-color: #00c !important;
+}
+[gplex2010] #gp-gbar-settings-button {
+  display: none;
+}
+[gplex2010] #ugf-topbar {
+  min-width: 0;
+}
+[gplex2010] #ugf-navbar,
+[gplex2010] #ugf-personal-buttons,
+[gplex2010] #ugf-settings-tab {
+  display: none !important;
+}
+[gplex2010] #ugf-searchbar::after {
+  white-space: pre;
+  text-decoration: underline;
+  color: #00c;
+  font-size: 13px;
+  line-height: 17px;
+  top: 0;
+  position: absolute;
+}
+/* homepage */
+[gplex2010][location$="home"] #ugf-hp-inner {
+  margin-top: 0px !important;
+}
+[gplex2010][location$="home"] #ugf-hp {
+  margin-top: -28px;
+}
+[gplex2010][location$="home"] #ugf-hp-search {
+  margin-top: 35px !important;
+}
+[gplex2010][location$="home"] #ugf-hp-logo-inner {
+  background-image: url(https://www.google.com/images/srpr/logo1w.png);
+  background-repeat: no-repeat;
+  width: 275px !important;
+  height: 95px !important;
+}
+[gplex2010][location$="home"] #ugf-hp-logo #ugf-hp-logo-inner img {
+  visibility: hidden;
+}
+[gplex2010][location$="home"] #ugf-search #ugf-searchbar {
+  border: none !important;
+  width: 550px;
+  margin-left: 27px !important;
+  background: none !important;
+}
+[gplex2010][location$="home"] #ugf-search-value {
+  border: 1px solid #ccc !important;
+  outline: none !important;
+  background: #fff !important;
+  width: 550px !important;
+  height: 24px !important;
+  font: 16px arial, sans-serif !important;
+  padding: 2px 4px !important;
+  box-sizing: border-box;
+  vertical-align: bottom;
+}
+[gplex2010][location$="home"] #ugf-search-predictions-container {
+  width: 550px !important;
+  top: 30px !important;
+  margin-left: 27px !important;
+}
+[gplex2010][location$="home"] #ugf-searchbar::after {
+  content: "Advanced Search\\aLanguage Tools";
+  left: calc(100% + 30px);
+  right: auto;
+}
+[gplex2010][location$="home"] #ugf-hp-footer {
+  bottom: unset;
+  position: static;
+  background: none !important;
+  border: none !important;
+  width: max-content;
+  margin: 60px auto 0 auto;
+  flex-flow: row wrap;
+}
+[gplex2010][location$="home"] #ugf-structured-hp-footer-left,
+[gplex2010][location$="home"] #ugf-structured-hp-footer-right {
+  margin-left: 0;
+  margin-right: 0;
+  display: block;
+  flex-basis: 100%;
+  text-align: center;
+}
+[gplex2010][location$="home"] #ugf-hp-footer,
+[gplex2010][location$="home"] .ugf-structured-hp-footer-link {
+  line-height: 15px !important;
+  color: #00c !important;
+  padding-left: 0;
+  text-decoration: none !important;
+}
+[gplex2010][location$="home"] #ugf-structured-hp-footer-left .ugf-structured-hp-footer-link:not(:first-child) {
+  margin-left: 24px;
+}
+[gplex2010][location$="home"] #ugf-structured-hp-footer-right .ugf-structured-hp-footer-link {
+  font-size: 13px !important;
+  line-height: 40px !important;
+}
+[gplex2010][location$="home"] #ugf-structured-hp-footer-right .ugf-structured-hp-footer-link:not(:first-child) {
+  display: none;
+}
+[gplex2010][location$="home"] #ugf-structured-hp-footer-right .ugf-structured-hp-footer-link:first-child {
+  margin-left: 28px;
+  color: #00c !important;
+}
+[gplex2010][location$="home"] #ugf-structured-hp-footer-right .ugf-structured-hp-footer-link:first-child:before {
+  content: "© 2010 - ";
+  position: absolute;
+  margin-left: -56px;
+  color: #666;
+}
+/* results pages */
+[gplex2010]:not([location$="home"]) #ugf-topbar {
+  background: none !important;
+  border: none !important;
+}
+[gplex2010]:not([location$="home"]) #ugf-search-value,
+[gplex2010]:not([location$="home"]) #ugf-searchbar {
+  width: 400px !important;
+  height: 24px !important;
+  font-size: 15px !important;
+}
+[gplex2010]:not([location$="home"]) #ugf-searchbar::after {
+  content: "Advanced Search\\aPreferences";
+  left: calc(100% + 95px);
+  right: auto;
+}
+[gplex2010]:not([location$="home"]) #ugf-main-inner {
+  margin-top: 8px;
+}
+[gplex2010]:not([location$="home"]) #ugf-logo-cont {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  background-image: url(https://www.google.com/images/srpr/logo1w.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: 0 center;
+  width: 150px !important;
+  height: 52px !important;
+  display: block !important;
+  visibility: visible !important;
+}
+[gplex2010]:not([location$="home"]) #ugf-logo-cont img,
+[gplex2010]:not([location$="home"]) #ugf-logo-cont svg {
+  visibility: hidden;
+}
+/* native buttons */
+[gplex2010] button.searchbtn {
+  all: revert;
+  font-size: 15px;
+  height: 1.85em !important;
+  margin: .2em;
+}
+[gplex2010] button.searchbtn-small {
+  all: revert;
+  font-size: 13px;
+  margin-top: -5px;
+  margin-left: 11px;
+}
+[gplex2010] #ugf-hp-buttons-row {
+  margin-top: 0 !important;
+}
+[gplex2010] #ugf-hp-buttons {
+  height: 38px;
+}
+[gplex2010] #ugf-search-btn,
+[gplex2010] #ugf-search-btn-2,
+[gplex2010] #ugf-lucky-btn {
+  display: none !important;
+}
+/* 2010 image results: static captions like the era */
+[gplex2010][location="images"] #ugf-image-results {
+  background: #fff !important;
+}
+[gplex2010] .ugf-image-result {
+  width: 204px !important;
+  padding: 0 !important;
+  margin: 0 0 14px 0 !important;
+  display: block !important;
+}
+[gplex2010] .ugf-image-result img {
+  border: 1px solid #ccc;
+  padding: 1px;
+  max-width: 150px !important;
+  max-height: 150px !important;
+  margin: 0 !important;
+}
+[gplex2010] .ugf-image-result-inner {
+  text-decoration: none !important;
+  width: 100%;
+  display: block;
+}
+[gplex2010] .ugf-image-result-hoverstats {
+  opacity: 1 !important;
+  position: static !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  font-size: 13px !important;
+  line-height: 16px !important;
+  color: #000 !important;
+  background: none !important;
+  width: auto !important;
+  padding: 2px 0 0 0 !important;
+  max-width: 152px;
+}
+[gplex2010] .ugf-image-result-title {
+  display: block;
+  color: #00c;
+  text-decoration: underline;
+  white-space: normal;
+  word-wrap: break-word;
+  max-width: 152px;
+}
+[gplex2010] .ugf-image-result-domain {
+  color: #006621 !important;
+  display: block !important;
+  margin: 2px 0 0 !important;
+}
+[gplex2010] .ugf-image-result-size-first {
+  display: none !important;
+}
+[gplex2010] .ugf-image-result-size-second {
+  display: block !important;
+}
+[gplex2010] #ugf-image-results-container {
+  align-items: flex-start;
+}
+/* 2010 image viewer */
+[gplex2010] #ugf-image-viewer-inner {
+  background: #fff;
+  border: 1px solid #ccc;
+}
+[gplex2010] #ugf-image-viewer-title {
+  color: #00c;
+  text-decoration: underline;
+  font-size: 14px;
+}
+[gplex2010] #ugf-image-viewer-close {
+  color: #444;
+}
+[gplex2010] #ugf-image-viewer-domain {
+  color: #006621;
+}
+[gplex2010] #ugf-image-viewer-size {
+  color: #545454;
+}
+[gplex2010] .ugf-image-viewer-btn,
+[gplex2010] .ugf-image-viewer-btn-2 {
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  color: #444;
+  border-radius: 0;
+}
+/* ============ end GPlex 2010-Early 2011 theme ============ */
 [layout="2012"] #ugf-image-results,
 [layout="2013"] #ugf-image-results,
 [layout="2013L"] #ugf-image-results,
@@ -3643,6 +4254,8 @@ li.tg2Kqf{
         "l2013": "Late 2012-2013",
         "l2013L": "2013 (Legacy/old browser version)",
         "l2012": "Late 2011-Early 2012",
+        "l2009": "2009-Early 2010 (Buggy, not fully done yet)",
+        "l2010N": "2010-Early 2011 (Buggy, not fully done yet)",
         "notonOn": "On",
         "notonOff": "Off (compatible with the Google Images Restored extension)",
         "forceLoadMsgOn": "On",
@@ -3696,6 +4309,14 @@ li.tg2Kqf{
         }
     }
     switch (layout) {
+        case '2009':
+            document.querySelector("html").setAttribute("layout","2010");
+            document.querySelector("html").setAttribute("gplex2009","");
+            break;
+        case '2010N':
+            document.querySelector("html").setAttribute("layout","2011");
+            document.querySelector("html").setAttribute("gplex2010","");
+            break;
         case '2010':
             document.querySelector("html").setAttribute("layout","2010");
             break;
@@ -4117,6 +4738,12 @@ li.tg2Kqf{
                                                 </a>
                                                 <a id="UGF_SET_LAYOUT_2012" class="ugf-dropdown-item" value="2012">
                                                     <span>${UImessages.l2012}</span>
+                                                </a>
+                                                <a id="UGF_SET_LAYOUT_2010N" class="ugf-dropdown-item" value="2010N">
+                                                    <span>${UImessages.l2010N}</span>
+                                                </a>
+                                                <a id="UGF_SET_LAYOUT_2009" class="ugf-dropdown-item" value="2009">
+                                                    <span>${UImessages.l2009}</span>
                                                 </a>
                                             </div>
                                         </div>
@@ -6504,7 +7131,17 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 layoutBtns.forEach(itemRoot => {
                     itemRoot.addEventListener("click",function() {
                         let value = itemRoot.getAttribute("value");
-                        document.querySelector("html").setAttribute("layout",value);
+                        document.querySelector("html").removeAttribute("gplex2009");
+                        document.querySelector("html").removeAttribute("gplex2010");
+                        if (value === "2009") {
+                            document.querySelector("html").setAttribute("layout","2010");
+                            document.querySelector("html").setAttribute("gplex2009","");
+                        } else if (value === "2010N") {
+                            document.querySelector("html").setAttribute("layout","2011");
+                            document.querySelector("html").setAttribute("gplex2010","");
+                        } else {
+                            document.querySelector("html").setAttribute("layout",value);
+                        }
                         localStorage.setItem("UGF_LAYOUT",value);
                         layout = value;
                         doGplexDropdowns("layout");
@@ -6650,6 +7287,12 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     break;
                 case '2013L':
                     layoutBtnSpan.textContent = UImessages.l2013L;
+                    break;
+                case '2009':
+                    layoutBtnSpan.textContent = UImessages.l2009;
+                    break;
+                case '2010N':
+                    layoutBtnSpan.textContent = UImessages.l2010N;
                     break;
                 case '2014':
                     layoutBtnSpan.textContent = UImessages.l2014;
@@ -7343,6 +7986,9 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             document.querySelector("#ugf-search-value").value = searchValue;
             document.querySelector("#ugf-all-tab").href = "https://www.google.com/search?q=" + searchValue;
             document.querySelector("#ugf-images-tab").href = "https://www.google.com/search?q=" + searchValue + "&udm=2";
+            if (document.querySelector("#gp-gbar-images") && searchValue) {
+                document.querySelector("#gp-gbar-images").href = "https://www.google.com/search?q=" + searchValue + "&udm=2";
+            }
             document.querySelector("#ugf-videos-tab").href = "https://www.google.com/search?q=" + searchValue + "&udm=7";
             document.querySelector("#ugf-news-tab").href = "https://www.google.com/search?q=" + searchValue + "&tbm=nws";
             document.querySelector("#ugf-maps-tab").href = "https://maps.google.com/maps?q=" + searchValue;
@@ -7674,4 +8320,56 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             }
         }
     }
+    function ugf2009WaitFor(selector, callback) {
+        let tries = 0;
+        const interval = setInterval(function() {
+            const element = document.querySelector(selector);
+            if (element) {
+                clearInterval(interval);
+                callback(element);
+            } else if (++tries > 150) {
+                clearInterval(interval);
+            }
+        }, 100);
+    }
+    function ugf2009Buttons() {
+        if (!document.querySelector("html").hasAttribute("gplex2009") && !document.querySelector("html").hasAttribute("gplex2010")) {
+            return;
+        }
+        if (window.location.pathname === "/search") {
+            ugf2009WaitFor("#ugf-search", function(searchBar) {
+                if (searchBar.querySelector(".searchbtn-small")) {
+                    return;
+                }
+                const sBtn = document.createElement("button");
+                sBtn.classList.add("searchbtn-small");
+                sBtn.addEventListener("click", function() {
+                    document.querySelector("#ugf-search-btn").click();
+                });
+                sBtn.innerText = "Search";
+                searchBar.appendChild(sBtn);
+            });
+        } else {
+            ugf2009WaitFor("#ugf-hp-buttons", function(btnRow) {
+                if (btnRow.querySelector(".searchbtn")) {
+                    return;
+                }
+                const gsBtn = document.createElement("button");
+                gsBtn.classList.add("searchbtn");
+                gsBtn.addEventListener("click", function() {
+                    document.querySelector("#ugf-search-btn-2").click();
+                });
+                gsBtn.innerText = "Google Search";
+                const iflBtn = document.createElement("button");
+                iflBtn.classList.add("searchbtn");
+                iflBtn.addEventListener("click", function() {
+                    document.querySelector("#ugf-lucky-btn").click();
+                });
+                iflBtn.innerText = "I\'m Feeling Lucky";
+                btnRow.appendChild(gsBtn);
+                btnRow.appendChild(iflBtn);
+            });
+        }
+    }
+    ugf2009Buttons();
 })();
