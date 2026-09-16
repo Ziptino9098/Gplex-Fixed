@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Gplex Fixed - Gplex old google script with issues where things do not display and development continued
 // @namespace    http://tampermonkey.net/
-// @version      0.7.5.1
-// @description  2009-2019 Google frontend (public beta release)
+// @version      1.0
+// @description  2009-2019 Google frontend (FULL PUBLIC RELEASE!!!!)
 // @author       Ziptino9098
 // @match        *://www.google.com/search*
 // @match        *://www.google.com/
