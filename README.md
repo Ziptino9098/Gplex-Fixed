@@ -2,7 +2,7 @@ Install Gplex Extended:
 https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
 
 
-I considered rebranding it to Gplex Extended, but I don't want to break the existing update URLs.
+I considered rebranding the entire repo to Gplex Extended, but I don't want to break the existing update URLs.
 
 After working on this since the day I fixed the image page, and after 2 weeks of development, it's finally HERE: Layouts for every google design ever!
 
