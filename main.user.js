@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Gplex - Old Google Frontend
 // @namespace    http://tampermonkey.net/
-// @version      0.7.2.4
+// @version      0.7.2.9
 // @description  2011-2019 Google frontend (public beta release)
-// @author       Ziptino9098, lightbeam24
+// @author       lightbeam24
 // @match        *://www.google.com/search*
 // @match        *://www.google.com/
 // @match        *://www.google.com/webhp*
@@ -28,8 +28,8 @@
 // @license      MIT
 // @require      https://openuserjs.org/src/libs/sizzle/GM_config.js
 // @run-at document-body
-// @downloadURL  https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
-// @updateURL    https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
+// @downloadURL https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
+// @updateURL https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
 // ==/UserScript==
 function showMenu(){
     window.location = "https://www.google.com/gplex";
@@ -1618,6 +1618,7 @@ html:not([layout="2012"]):not([layout="2013"]):not([layout="2013L"]):not([layout
   width: 100%;
   height: 100%;
   top: 0;
+  left: 0;
   display: flex;
   align-items: center;
   pointer-events: none;
@@ -1626,6 +1627,8 @@ html:not([layout="2012"]):not([layout="2013"]):not([layout="2013L"]):not([layout
   background: #222;
   height: 500px;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   pointer-events: all;
 }
 #ugf-image-iframe {
@@ -1644,6 +1647,176 @@ html:not([layout="2012"]):not([layout="2013"]):not([layout="2013L"]):not([layout
   height: 500px;
   border: none;
   pointer-events: all !important;
+}
+#ugf-image-viewer-top {
+  height: 30px;
+  position: relative;
+}
+#ugf-image-viewer-close {
+  position: absolute;
+  right: 14px;
+  top: 6px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 17px;
+  line-height: 1;
+  opacity: .7;
+}
+#ugf-image-viewer-close:hover {
+  opacity: 1;
+}
+#ugf-image-viewer-content {
+  height: 470px;
+}
+#ugf-image-viewer-left {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+#ugf-image-viewer-image img {
+  max-height: 440px;
+  max-width: 100%;
+}
+#ugf-image-viewer-right {
+  width: 320px;
+  flex: 0 0 320px;
+  padding: 18px 20px;
+  box-sizing: border-box;
+  color: #fff;
+  overflow-wrap: break-word;
+  overflow-y: auto;
+}
+#ugf-image-viewer-title {
+  color: #fff;
+  font-size: 16px;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+#ugf-image-viewer-title:hover span {
+  text-decoration: underline;
+}
+#ugf-image-viewer-domain {
+  color: #9aa0a6;
+  font-size: 13px;
+  margin-bottom: 3px;
+}
+#ugf-image-viewer-size {
+  color: #9aa0a6;
+  font-size: 13px;
+  margin-bottom: 18px;
+}
+.ugf-image-viewer-btn {
+  display: inline-block;
+  background: #4285f4;
+  color: #fff;
+  padding: 8px 15px;
+  border-radius: 0;
+  text-decoration: none;
+  font-size: 13px;
+  margin-right: 8px;
+}
+.ugf-image-viewer-btn-2 {
+  background: transparent;
+  border: 1px solid #5f6368;
+}
+/* --- image viewer per-layout theming --- */
+/* classic era: light panel, plain blue links, square edges */
+[layout="retro"] #ugf-image-viewer-inner,
+[layout="2010"] #ugf-image-viewer-inner,
+[layout="2011"] #ugf-image-viewer-inner {
+  background: #e9e9e9;
+  border: 1px solid #ccc;
+}
+[layout="retro"] #ugf-image-viewer-title,
+[layout="2010"] #ugf-image-viewer-title,
+[layout="2011"] #ugf-image-viewer-title {
+  color: #12c;
+  text-decoration: underline;
+  font-size: 14px;
+}
+[layout="retro"] #ugf-image-viewer-close,
+[layout="2010"] #ugf-image-viewer-close,
+[layout="2011"] #ugf-image-viewer-close {
+  color: #444;
+}
+[layout="retro"] #ugf-image-viewer-domain,
+[layout="2010"] #ugf-image-viewer-domain,
+[layout="2011"] #ugf-image-viewer-domain,
+[layout="retro"] #ugf-image-viewer-size,
+[layout="2010"] #ugf-image-viewer-size,
+[layout="2011"] #ugf-image-viewer-size {
+  color: #545454;
+}
+[layout="retro"] .ugf-image-viewer-btn,
+[layout="2010"] .ugf-image-viewer-btn,
+[layout="2011"] .ugf-image-viewer-btn {
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 0;
+  color: #444;
+}
+[layout="retro"] .ugf-image-viewer-btn-2,
+[layout="2010"] .ugf-image-viewer-btn-2,
+[layout="2011"] .ugf-image-viewer-btn-2 {
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  color: #444;
+}
+/* 2012-2013: darker panel, underlined links */
+[layout="2012"] #ugf-image-viewer-title,
+[layout="2013"] #ugf-image-viewer-title,
+[layout="2013L"] #ugf-image-viewer-title {
+  text-decoration: underline;
+  font-size: 15px;
+}
+[layout="2012"] .ugf-image-viewer-btn,
+[layout="2013"] .ugf-image-viewer-btn,
+[layout="2013L"] .ugf-image-viewer-btn {
+  background: #4d90fe;
+  border-radius: 0;
+}
+/* late Material era: light panel, rounded buttons */
+[layout="2017"] #ugf-image-viewer-inner,
+[layout="2018M"] #ugf-image-viewer-inner,
+[layout="2019"] #ugf-image-viewer-inner {
+  background: #fff;
+  box-shadow: 0 1px 6px rgba(32,33,36,.28);
+}
+[layout="2017"] #ugf-image-viewer-title,
+[layout="2018M"] #ugf-image-viewer-title,
+[layout="2019"] #ugf-image-viewer-title {
+  color: #202124;
+}
+[layout="2017"] #ugf-image-viewer-close,
+[layout="2018M"] #ugf-image-viewer-close,
+[layout="2019"] #ugf-image-viewer-close {
+  color: #5f6368;
+}
+[layout="2017"] #ugf-image-viewer-domain,
+[layout="2018M"] #ugf-image-viewer-domain,
+[layout="2019"] #ugf-image-viewer-domain,
+[layout="2017"] #ugf-image-viewer-size,
+[layout="2018M"] #ugf-image-viewer-size,
+[layout="2019"] #ugf-image-viewer-size {
+  color: #70757a;
+}
+[layout="2017"] .ugf-image-viewer-btn,
+[layout="2018M"] .ugf-image-viewer-btn,
+[layout="2019"] .ugf-image-viewer-btn {
+  background: #1a73e8;
+  border-radius: 4px;
+}
+[layout="2017"] .ugf-image-viewer-btn-2,
+[layout="2018M"] .ugf-image-viewer-btn-2,
+[layout="2019"] .ugf-image-viewer-btn-2 {
+  background: #fff;
+  color: #1a73e8;
+  border: 1px solid #dadce0;
 }
 
 .ugf-video-result:not([thumb-url="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="]) .ugf-video-result-thumbnail img {
@@ -5562,7 +5735,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                                 check++;
                                 return;
                             }
-                            forIframe = "https://www.google.com/imgres?q=" + searchValue + "&docid=" + mdocid + "&tbnid=" + (itemRoot.getAttribute("id") || "");
+                            forIframe = mlink;
                             linkList.push({imageResult: {
                                 itemNo: itemNo,
                                 type: "image",
@@ -7014,28 +7187,47 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             }
         });*/
     }
+    function ugfEsc(t) {
+        return String(t == null ? "" : t).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    }
     function doImageViewer(item) {
-        document.querySelector("#ugf-image-viewer").innerHTML = ``;
         let container = document.querySelector("#ugf-image-viewer");
+        container.innerHTML = ``;
+        let src = ugfEsc(item.getAttribute("img-src") || (item.querySelector("img") ? item.querySelector("img").getAttribute("src") : ""));
+        let link = ugfEsc(item.getAttribute("img-link") || item.getAttribute("iframe-url") || "");
+        let title = ugfEsc(item.getAttribute("img-title") || "");
+        let domain = ugfEsc(item.getAttribute("img-domain") || "");
+        let w = ugfEsc(item.getAttribute("img-w") || "");
+        let h = ugfEsc(item.getAttribute("img-h") || "");
         let newElem = document.createElement("div");
         newElem.id = "ugf-image-viewer-inner";
         newElem.innerHTML = `
                                                 <div id="ugf-image-viewer-top">
+                                                    <span id="ugf-image-viewer-close" title="Close">&#10005;</span>
                                                 </div>
                                                 <div id="ugf-image-viewer-content" class="flex">
                                                     <div id="ugf-image-viewer-left">
                                                         <div id="ugf-image-viewer-image">
-                                                            <img src="${item.querySelector('img').getAttribute('src')}"></img>
+                                                            <a href="${link}" target="_blank"><img src="${src}"></img></a>
                                                         </div>
                                                     </div>
                                                     <div id="ugf-image-viewer-right">
-                                                        <a id="ugf-image-viewer-title">
-                                                            <span></span>
+                                                        <a id="ugf-image-viewer-title" href="${link}" target="_blank">
+                                                            <span>${title}</span>
                                                         </a>
+                                                        <div id="ugf-image-viewer-domain">${domain}</div>
+                                                        <div id="ugf-image-viewer-size" title="Size of the preview image. Actual image may be larger.">${w} &#215; ${h}</div>
+                                                        <div id="ugf-image-viewer-buttons">
+                                                            <a class="ugf-image-viewer-btn" href="${link}" target="_blank">Visit page</a>
+                                                            <a class="ugf-image-viewer-btn ugf-image-viewer-btn-2" href="${src}" target="_blank">View image</a>
+                                                        </div>
                                                     </div>
                                                 </div>
         `;
         container.insertBefore(newElem, container.children[0]);
+        document.querySelector("#ugf-image-viewer-close").addEventListener("click", function() {
+            container.innerHTML = ``;
+        });
     }
     function createTop() {
         let container = document.querySelector("#ugf-top-container");
@@ -7384,6 +7576,12 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             newElem.classList.add("ugf-image-result");
             newElem.setAttribute("iframe-url",SRA.iframeUrl);
             newElem.setAttribute("href",SRA.iframeUrl);
+            newElem.setAttribute("img-src",SRA.src);
+            newElem.setAttribute("img-link",SRA.iframeUrl);
+            newElem.setAttribute("img-title",SRA.title);
+            newElem.setAttribute("img-domain",SRA.domain);
+            newElem.setAttribute("img-w",SRA.width);
+            newElem.setAttribute("img-h",SRA.height);
             newElem.innerHTML = `
 					<a class="ugf-image-result-inner" href="${SRA.iframeUrl}">
 						<img src="${SRA.src}" width="${SRA.width}" height="${SRA.height}"></img>
@@ -7407,10 +7605,9 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
 					</a>
 					`;
             container.insertBefore(newElem, container.children[SRA.itemNo]);
-            newElem.addEventListener("click", function() {
-                var iurl = newElem.getAttribute('iframe-url');
-                document.querySelector("#ugf-image-iframe iframe").setAttribute("src",iurl);
-                //doImageViewer(newElem);
+            newElem.addEventListener("click", function(e) {
+                e.preventDefault();
+                doImageViewer(newElem);
             });
             if (newElem.querySelector("img").getAttribute("src") == "null") {
                 newElem.remove();
