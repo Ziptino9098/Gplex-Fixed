@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      2.0.1
+// @version      2.1.1
 // @description  2009-2019 Old Google Frontend (Full public release)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -1814,283 +1814,388 @@ html[noton-images][location="images"]:not([disabled]) body > div#main {
 }
 /* ============ end GPlex 2009 theme ============ */
 /* ============ GPlex 2010-Early 2011 theme ============ */
-/* shared chrome: flat gbar with blue underlined links */
-[gplex2010] #gp-gbar-inner {
-  background: none !important;
-  height: 24px !important;
-  border-bottom: 1px solid #e5e5e5;
+/* ported from "2010 Google EVEN BETTER EDITION" by Xammand (Stylus userstyle) */
+/* -- homepage + gbar -- */
+[gplex2010] a:link {
+  color: #11c;
 }
-[gplex2010] .gp-gbar-link.active {
-  color: #000 !important;
-  font-weight: bold !important;
-  text-decoration: none !important;
-  border-top-color: transparent !important;
+[gplex2010] #ugf-hp {
+  max-width: 1181px; min-width: 817px; width: unset; text-align: center;
 }
-[gplex2010] #gp-gbar-inner .gp-gbar-link {
-  border-top: none !important;
+html[gplex2010]:not([layout="2013L"]):not([layout="2015L"]):not([layout="2016L"]) #ugf-hp-inner {
+  margin-top: 0; padding-left: 182px; padding-right: 254px; position: relative;
 }
-[gplex2010] .gp-gbar-link,
-[gplex2010] .gp-gbar-link:hover:not(.active) {
-  color: #00c !important;
-  text-decoration: underline !important;
-  background: none !important;
-  height: 24px !important;
-  padding-bottom: 1px !important;
+[gplex2010] #ugf-hp-logo {
+  width: unset; margin: 0; height: 171px; padding-top: 22px;
 }
-[gplex2010] .arrow {
-  border-top-color: #00c !important;
+[gplex2010][layout="2012"] #ugf-hp-logo img,
+[gplex2010][layout="2013"] #ugf-hp-logo img,
+[gplex2010][layout="2014"] #ugf-hp-logo img,
+[gplex2010][layout="2015"] #ugf-hp-logo img {
+  content: url(/images/logos/ps_logo2.png); width: unset; height: unset;
 }
-[gplex2010] #gp-gbar-settings-button {
+[gplex2010][layout="2012"] #ugf-hp-search,
+[gplex2010][layout="2013"] #ugf-hp-search,
+[gplex2010][layout="2014"] #ugf-hp-search,
+[gplex2010][layout="2015"] #ugf-hp-search {
+  margin-top: 0; margin-left: 0; max-width: unset; border-bottom: 1px solid #e7e7e7;
+}
+[gplex2010] #ugf-homepage #ugf-hp #ugf-search-outer {
+  padding-left: 0; width: 100%; border-top: 1px solid #ccc; border-right: 1px solid #ccc; border-bottom: 1px solid #999;
+}
+[gplex2010] #ugf-homepage #ugf-search {
+  margin-top: 0; max-width: unset !important; border: none;
+}
+html[gplex2010]:not([layout="2016C"]):not([layout="2017"]):not([layout="2018"]):not([layout="2019"]) #ugf-homepage #ugf-searchbar {
+  width: 100%; border: none !important;
+}
+[gplex2010] #ugf-homepage #ugf-search-value {
+  box-sizing: border-box; height: 32px; border-width: 0 0 0 1px;
+}
+[gplex2010] #ugf-hp-footer {
+  position: unset; background: none; border: none; margin: 0 auto; margin-top: 60px; max-width: 1181px; min-width: 817px; text-align: center; padding-left: 182px; padding-right: 254px;
+}
+[gplex2010] #ugf-structured-hp-footer-left {
+  margin-left: auto;
+}
+[gplex2010] #ugf-structured-hp-footer-right {
+  margin: 0; margin-right: auto;
+}
+[gplex2010] .ugf-structured-hp-footer-link {
+  padding: 0; margin: 0 12px; color: #11c !important; font-size: 10pt; line-height: normal;
+}
+[gplex2010] #ugf-personal-buttons .ugf-button,
+[gplex2010] #ugf-settings-button,
+[gplex2010][layout="2012"] #ugf-hp-buttons a,
+[gplex2010][layout="2013"] #ugf-hp-buttons a,
+[gplex2010][layout="2014"] #ugf-hp-buttons a,
+[gplex2010][layout="2015"] #ugf-hp-buttons a {
+  border: none !important; border-bottom: solid 1px #e7e7e7; border-right: solid 1px #e7e7e7; margin: 3px 0 4px; margin-left: 4px; background: none; color: inherit; padding: 0; border-radius: 0; font-size: inherit; height: 32px; width: unset; box-shadow: none !important;
+}
+[gplex2010] #ugf-hp-buttons a span {
+  background: #eee url(/images/nav_logo72.png) no-repeat; background-position: bottom; border: 1px solid #999; border-top-color: #ccc; border-left-color: #ccc; height: 30px; font: 15px arial,sans-serif; color: #000; line-height: 30px; cursor: pointer; padding-left: 5px; padding-right: 5px;
+}
+[gplex2010] #ugf-hp-buttons a span:active {
+  background: #eee;
+}
+[gplex2010][location="home"][layout="2012"] #ugf-search-predictions-container,
+[gplex2010][location="home"][layout="2013"] #ugf-search-predictions-container,
+[gplex2010][location="home"][layout="2014"] #ugf-search-predictions-container,
+[gplex2010][location="home"][layout="2015"] #ugf-search-predictions-container {
+  width: 745px;
+}
+html[gplex2010]:not([layout="2013L"]):not([layout="2015L"]):not([layout="2016L"]) #ugf-hp-search-links,
+[gplex2010][layout="2012"] #ugf-homepage-links,
+[gplex2010][layout="2013"] #ugf-homepage-links,
+[gplex2010][layout="2013L"] #ugf-homepage-links,
+[gplex2010][layout="2015L"] #ugf-homepage-links,
+[gplex2010][layout="2016L"] #ugf-homepage-links,
+html[gplex2010]:not([location="home"]) #ugf-homepage-links {
+  display: block; padding-top: 5px; padding-left: 12px; position: absolute; right: 155px;
+}
+[gplex2010] .ugf-hp-search-link {
+  margin: 0; width: unset; text-align: left;
+}
+[gplex2010] .gb_Dd {
+  display: none !important;
+}
+[gplex2010] #ugf-hp-footer {
+  position: relative; padding-bottom: 40px;
+}
+[gplex2010] #ugf-structured-hp-footer-left {
+  margin-right: auto;
+}
+[gplex2010] #ugf-structured-hp-footer-right {
+  position: absolute; bottom: 0; left: 0; right: 0; text-align: center; display: block; color: #767676; font-size: 8pt; padding-left: 182px; padding-right: 254px;
+}
+[gplex2010] #ugf-structured-hp-footer-right:before {
+  content: "© 2010 - "; cursor: text;
+}
+[gplex2010] .ugf-structured-hp-footer-link[href="https://www.google.com/intl/en/policies/privacy/"] {
+  font-size: 8pt; margin: 0;
+}
+[gplex2010] .ugf-structured-hp-footer-link[href="https://www.google.com/intl/en/policies/terms/"],
+[gplex2010] .ugf-structured-hp-footer-link[href="https://www.google.com/preferences"] {
   display: none;
+}
+[gplex2010] #ugf-hp-footer a[href="https://www.google.com/intl/en/ads/"]:after {
+  content: " Programs";
+}
+[gplex2010] #ugf-hp-footer a[href="https://www.google.com/services/"]:after {
+  content: " Solutions";
+}
+[gplex2010] #ugf-hp-footer a[href="https://www.about.google/"]:after {
+  content: " Google";
+}
+[gplex2010] #gp-gbar-search span {
+  font-size: 0;
+}
+[gplex2010] #gp-gbar-search span:before {
+  content: "Web"; font-size: 13px;
+}
+[gplex2010] #gp-gbar-more .gp-gbar-link-inner span {
+  text-transform: lowercase;
+}
+[gplex2010] a.gbar-dd-section-link[href="https://www.google.com/intl/en/options"] span {
+  text-transform: lowercase;
+}
+[gplex2010] a.gbar-dd-section-link[href="https://www.google.com/intl/en/options"] span:after {
+  content: " »";
+}
+[gplex2010] .gp-gbar-link {
+  font-weight: normal;
+}
+[gplex2010] .gp-gbar-link-inner {
+  padding: 0 5px;
+}
+[gplex2010] #gp-gbar-inner {
+  padding-left: 4px;
+}
+[gplex2010] #gp-gbar-inner,
+[gplex2010][layout="2011"] #gp-gbar-inner,
+[gplex2010][layout="2012"] #gp-gbar-inner,
+[gplex2010][layout="2013L"] #gp-gbar-inner,
+[gplex2010][layout="2015L"] #gp-gbar-inner,
+[gplex2010][layout="2016L"] #gp-gbar-inner {
+  background-color: #fff; background-image: url(//ssl.gstatic.com/gb/images/b_8d5afc09.png); background-position: 0 -138px; background-repeat: repeat-x; border-bottom: 1px solid #f5f5f5; font-size: 24px; height: 29px;
+}
+[gplex2010] .gp-gbar-link {
+  color: #36c !important; border-top: 2px solid transparent; padding-bottom: 1px; height: 26px;
+}
+[gplex2010] .gp-gbar-link.active,
+[gplex2010][layout="2011"] .gp-gbar-link.active,
+[gplex2010][layout="2012"] .gp-gbar-link.active,
+[gplex2010][layout="2013L"] .gp-gbar-link.active,
+[gplex2010][layout="2015L"] .gp-gbar-link.active,
+[gplex2010][layout="2016L"] .gp-gbar-link.active {
+  border-top-color: #1a54e1 !important; color: #363636 !important; font-weight: bold;
+}
+[gplex2010] .gp-gbar-link:hover,
+[gplex2010][layout="2011"] .gp-gbar-link:hover,
+[gplex2010][layout="2012"] .gp-gbar-link:not(.active):hover,
+[gplex2010][layout="2013L"] .gp-gbar-link:not(.active):hover,
+[gplex2010][layout="2015L"] .gp-gbar-link:not(.active):hover,
+[gplex2010][layout="2016L"] .gp-gbar-link:not(.active):hover {
+  background-color: transparent; background-image: url(//ssl.gstatic.com/gb/images/b_8d5afc09.png); background-position: 0 -102px; background-repeat: repeat-x; color: #36c !important;
+}
+[gplex2010] .gp-gbar-link.active:hover {
+  background-color: transparent; background-image: url(//ssl.gstatic.com/gb/images/b_8d5afc09.png); background-position: 0 -102px; background-repeat: repeat-x;
+}
+[gplex2010] #gp-gbar-settings-icon {
+  background-position: -6px -22px;
+}
+[gplex2010][gbar-dd-open] #gp-gbar-more {
+  box-shadow: 0 1px 5px #ccc;
+}
+[gplex2010] #gp-gbar-more .gp-gbar-link-inner {
+  padding-right: 9px; border-left: 1px solid transparent; border-right: 1px solid transparent;
+}
+[gplex2010][gbar-dd-open] #gp-gbar-more .gp-gbar-link-inner {
+  color: #36c; padding-bottom: 1px; padding-top: 2px; border-top: 0;
+}
+[gplex2010] #gp-gbar-dd {
+  box-shadow: 0 1px 5px #ccc;
+}
+[gplex2010] .gbar-dd-section {
+  padding: 0;
+}
+[gplex2010] .gbar-dd-section-link {
+  padding-left: 6px; padding-right: 12px; line-height: 27px; padding-top: 0; padding-bottom: 0;
+}
+[gplex2010] .gbar-dd-section-link:hover {
+  background: #eff3fb;
+}
+[gplex2010] .gbar-dd-section-link {
+  color: #36c !important; font-weight: inherit;
+}
+[gplex2010] .gbar-dd-section:last-of-type {
+  border-color: #e5e5e5;
+}
+[gplex2010] #gp-gbar-more .arrow {
+  border-top-color: #aaa !important;
+}
+[gplex2010][gbar-dd-open] #gp-gbar-more .arrow {
+  top: 1px;
+}
+[gplex2010] #gp-gbar-plusyou {
+  display: none;
+}
+/* -- results pages -- */
+[gplex2010] #ugf-top {
+  margin-top: 12px;
 }
 [gplex2010] #ugf-topbar {
-  min-width: 0;
+  padding: 0 !important; background: none; border: none; height: unset !important;
 }
-[gplex2010] #ugf-navbar,
-[gplex2010] #ugf-personal-buttons,
-[gplex2010] #ugf-settings-tab {
-  display: none !important;
+[gplex2010] #ugf-topbar-inner {
+  align-items: start;
 }
-[gplex2010] #ugf-searchbar::after {
-  white-space: pre;
-  text-decoration: underline;
-  color: #00c;
-  font-size: 13px;
-  line-height: 17px;
-  top: 0;
-  position: absolute;
+[gplex2010][layout="2012"] #ugf-logo-cont {
+  padding: 0; height: 82px; width: 157px;
 }
-/* homepage */
-[gplex2010][location$="home"] #ugf-hp-inner {
-  margin-top: 0px !important;
+[gplex2010][layout="2012"] #ugf-logo {
+  height: 49px; margin-top: 12px; margin-left: 12px; width: 137px;
 }
-[gplex2010][location$="home"] #ugf-hp {
-  margin-top: -28px;
+[gplex2010][layout="2012"] #ugf-logo img {
+  content: url(https://www.google.com/images/nav_logo_hp2.png);
 }
-[gplex2010][location$="home"] #ugf-hp-search {
-  margin-top: 35px !important;
+[gplex2010] #ugf-search-outer {
+  padding-left: 9px;
 }
-[gplex2010][location$="home"] #ugf-hp-logo-inner {
-  background-image: url(https://www.google.com/images/srpr/logo1w.png);
-  background-repeat: no-repeat;
-  width: 275px !important;
-  height: 95px !important;
+[gplex2010] #ugf-search {
+  border-bottom: 1px solid #e7e7e7; margin-top: 18px;
 }
-[gplex2010][location$="home"] #ugf-hp-logo #ugf-hp-logo-inner img {
-  visibility: hidden;
+html[gplex2010]:not([layout="2016C"]):not([layout="2017"]):not([layout="2018"]):not([layout="2019"]) #ugf-searchbar {
+  border: none !important; font-size: inherit; width: 493px; margin: 0; transition: none; height: unset !important; border-bottom: 1px solid #999 !important;
 }
-[gplex2010][location$="home"] #ugf-search #ugf-searchbar {
-  border: none !important;
-  width: 550px;
-  margin-left: 27px !important;
-  background: none !important;
+[gplex2010][layout="2012"] #ugf-search-value {
+  background: #fff; border: 1px solid #ccc; border-bottom: none; color: #000; font: 18px arial,sans-serif; float: left; height: 26px; margin: 0; padding: 4px 0 0; padding-left: 6px; padding-right: 10px; vertical-align: top; width: 100%; word-break: break-all;
 }
-[gplex2010][location$="home"] #ugf-search-value {
-  border: 1px solid #ccc !important;
-  outline: none !important;
-  background: #fff !important;
-  width: 550px !important;
-  height: 24px !important;
-  font: 16px arial, sans-serif !important;
-  padding: 2px 4px !important;
-  box-sizing: border-box;
-  vertical-align: bottom;
+[gplex2010][layout="retro"] #ugf-program #ugf-search #ugf-search-btn,
+[gplex2010][layout="2012"] #ugf-program #ugf-search #ugf-search-btn,
+[gplex2010][layout="2013"] #ugf-program #ugf-search #ugf-search-btn,
+[gplex2010][layout="2013L"] #ugf-program #ugf-search #ugf-search-btn,
+[gplex2010][layout="2015L"] #ugf-program #ugf-search #ugf-search-btn,
+[gplex2010][layout="2016L"] #ugf-program #ugf-search #ugf-search-btn {
+  margin: 0 !important; border: none !important; border-right: 1px solid #e7e7e7 !important; background: unset !important; width: unset !important; border-radius: 0; height: 32px !important; text-decoration: none; box-shadow: none !important;
 }
-[gplex2010][location$="home"] #ugf-search-predictions-container {
-  width: 550px !important;
-  top: 30px !important;
-  margin-left: 27px !important;
+[gplex2010] #ugf-search-btn-inner {
+  background: #eee; border: 1px solid #999; border-top-color: #ccc; border-left-color: #ccc; height: 30px;
 }
-[gplex2010][location$="home"] #ugf-searchbar::after {
-  content: "Advanced Search\\aLanguage Tools";
-  left: calc(100% + 30px);
-  right: auto;
+[gplex2010] #ugf-search-btn-inner span:active {
+  background: #ccc;
 }
-[gplex2010][location$="home"] #ugf-hp-footer {
-  bottom: unset;
-  position: static;
-  background: none !important;
-  border: none !important;
-  width: max-content;
-  margin: 60px auto 0 auto;
-  flex-flow: row wrap;
-}
-[gplex2010][location$="home"] #ugf-structured-hp-footer-left,
-[gplex2010][location$="home"] #ugf-structured-hp-footer-right {
-  margin-left: 0;
-  margin-right: 0;
-  display: block;
-  flex-basis: 100%;
-  text-align: center;
-}
-[gplex2010][location$="home"] #ugf-hp-footer,
-[gplex2010][location$="home"] .ugf-structured-hp-footer-link {
-  line-height: 15px !important;
-  color: #00c !important;
-  padding-left: 0;
-  text-decoration: none !important;
-}
-[gplex2010][location$="home"] #ugf-structured-hp-footer-left .ugf-structured-hp-footer-link:not(:first-child) {
-  margin-left: 24px;
-}
-[gplex2010][location$="home"] #ugf-structured-hp-footer-right .ugf-structured-hp-footer-link {
-  font-size: 13px !important;
-  line-height: 40px !important;
-}
-[gplex2010][location$="home"] #ugf-structured-hp-footer-right .ugf-structured-hp-footer-link:not(:first-child) {
+[gplex2010] #ugf-search-btn-inner svg {
   display: none;
 }
-[gplex2010][location$="home"] #ugf-structured-hp-footer-right .ugf-structured-hp-footer-link:first-child {
-  margin-left: 28px;
-  color: #00c !important;
+[gplex2010] #ugf-search-btn-inner span {
+  background: url(/images/nav_logo_hp2.png) no-repeat; background-position: bottom; font: 15px arial,sans-serif; color: #000; display: block; height: 30px; padding-left: 8px; padding-right: 8px; line-height: 30px;
 }
-[gplex2010][location$="home"] #ugf-structured-hp-footer-right .ugf-structured-hp-footer-link:first-child:before {
-  content: "© 2010 - ";
-  position: absolute;
-  margin-left: -56px;
-  color: #666;
+[gplex2010] #ugf-search-btn-inner span:before {
+  content: "Search";
 }
-/* results pages */
-[gplex2010]:not([location$="home"]) #ugf-topbar {
-  background: none !important;
-  border: none !important;
+[gplex2010] #ugf-search-results-header nobr {
+  display: none;
 }
-[gplex2010]:not([location$="home"]) #ugf-search-value,
-[gplex2010]:not([location$="home"]) #ugf-searchbar {
-  width: 400px !important;
-  height: 24px !important;
-  font-size: 15px !important;
+[gplex2010][layout="2012"] #ugf-left {
+  width: 149px !important; min-width: unset !important; padding: 4px; margin: 0;
 }
-[gplex2010]:not([location$="home"]) #ugf-searchbar::after {
-  content: "Advanced Search\\aPreferences";
-  left: calc(100% + 95px);
-  right: auto;
+[gplex2010][layout="2012"] #ugf-sidebar,
+[gplex2010][layout="2013L"] #ugf-sidebar {
+  padding-top: 0;
 }
-[gplex2010]:not([location$="home"]) #ugf-main-inner {
-  margin-top: 8px;
+[gplex2010] .ugf-sidebar-tab {
+  font-size: 15px; line-height: 24px; margin-bottom: 2px; padding-left: 8px; padding-top: 0; padding-bottom: 0; color: #11c !important;
 }
-[gplex2010]:not([location$="home"]) #ugf-logo-cont {
-  padding-right: 0 !important;
-  padding-left: 0 !important;
-  background-image: url(https://www.google.com/images/srpr/logo1w.png);
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: 0 center;
-  width: 150px !important;
-  height: 52px !important;
-  display: block !important;
-  visibility: visible !important;
+[gplex2010] .ugf-sidebar-tab:not(.active):hover,
+[gplex2010] .ugf-sidebar-tab.active:hover {
+  background: none;
 }
-[gplex2010]:not([location$="home"]) #ugf-logo-cont img,
-[gplex2010]:not([location$="home"]) #ugf-logo-cont svg {
-  visibility: hidden;
-}
-/* native buttons */
-[gplex2010] button.searchbtn {
-  all: revert;
-  font-size: 15px;
-  height: 1.85em !important;
-  margin: .2em;
-}
-[gplex2010] button.searchbtn-small {
-  all: revert;
-  font-size: 13px;
-  margin-top: -5px;
-  margin-left: 11px;
-}
-[gplex2010] #ugf-hp-buttons-row {
-  margin-top: 0 !important;
-}
-[gplex2010] #ugf-hp-buttons {
-  height: 38px;
-}
-[gplex2010] #ugf-search-btn,
-[gplex2010] #ugf-search-btn-2,
-[gplex2010] #ugf-lucky-btn {
-  display: none !important;
-}
-/* 2010 image results: static captions like the era */
-[gplex2010][location="images"] #ugf-image-results {
-  background: #fff !important;
-}
-[gplex2010] .ugf-image-result {
-  width: 204px !important;
-  padding: 0 !important;
-  margin: 0 0 14px 0 !important;
-  display: block !important;
-}
-[gplex2010] .ugf-image-result img {
-  border: 1px solid #ccc;
-  padding: 1px;
-  max-width: 150px !important;
-  max-height: 150px !important;
-  margin: 0 !important;
-}
-[gplex2010] .ugf-image-result-inner {
-  text-decoration: none !important;
-  width: 100%;
-  display: block;
-}
-[gplex2010] .ugf-image-result-hoverstats {
-  opacity: 1 !important;
-  position: static !important;
-  white-space: normal !important;
-  overflow: visible !important;
-  font-size: 13px !important;
-  line-height: 16px !important;
-  color: #000 !important;
-  background: none !important;
-  width: auto !important;
-  padding: 2px 0 0 0 !important;
-  max-width: 152px;
-}
-[gplex2010] .ugf-image-result-title {
-  display: block;
-  color: #00c;
+[gplex2010] .ugf-sidebar-tab:not(.active):hover span {
   text-decoration: underline;
-  white-space: normal;
-  word-wrap: break-word;
-  max-width: 152px;
 }
-[gplex2010] .ugf-image-result-domain {
-  color: #006621 !important;
-  display: block !important;
-  margin: 2px 0 0 !important;
+[gplex2010] .ugf-sidebar-tab.active {
+  font-weight: bold; margin: -1px 0 0 0; border: solid #fff; border-width: 1px 0; color: inherit !important; cursor: default;
 }
-[gplex2010] .ugf-image-result-size-first {
-  display: none !important;
+[gplex2010] .ugf-sidebar-tab.active:not(#ugf-all-item) {
+  background: #36f; border-bottom: solid 1px #36f; border-top: solid 1px #36f; color: #fff !important;
 }
-[gplex2010] .ugf-image-result-size-second {
-  display: block !important;
+[gplex2010] .ugf-sidebar-tab .ugf-tab-icon {
+  background: url(/images/nav_logo_hp2.png) no-repeat; margin-right: 6px; width: 19px; height: 19px; margin-top: -3px;
 }
-[gplex2010] #ugf-image-results-container {
-  align-items: flex-start;
+[gplex2010][layout="2012"] .ugf-sidebar-tools {
+  font-size: 13px; margin-top: 5px; padding-top: 8px; padding-left: 8px; padding-right: 0; margin-bottom: 0;
 }
-/* 2010 image viewer */
-[gplex2010] #ugf-image-viewer-inner {
-  background: #fff;
-  border: 1px solid #ccc;
+[gplex2010][layout="2012"] .ugf-sidebar-tools:nth-child(2) {
+  border-top: 1px solid #c9d7f1;
 }
-[gplex2010] #ugf-image-viewer-title {
-  color: #00c;
+[gplex2010][layout="2012"] .ugf-sidebar-tool a {
+  color: #2200C1;
+}
+[gplex2010] .ugf-sidebar-tool.active a {
+  color: #000;
+}
+[gplex2010] #ugf-main {
+  border-left: 1px solid #d3e1f9; padding: 0 8px;
+}
+[gplex2010] #ugf-main-inner {
+  padding: 4px 8px 0;
+}
+[gplex2010] #ugf-search-results {
+  min-width: 535px;
+}
+[gplex2010][layout="2012"] #ugf-search-results-header {
+  top: 80px; margin-left: 0; padding-left: 0;
+}
+[gplex2010][layout="2012"] #ugf-search-results,
+[gplex2010][layout="2013L"] #ugf-search-results {
+  margin-top: 0;
+}
+[gplex2010] #ugf-search-results-container {
+  padding: 0;
+}
+[gplex2010][layout="2012"] .ugf-search-result-title,
+[gplex2010][layout="2013"] .ugf-search-result-title,
+[gplex2010][layout="2013L"] .ugf-search-result-title {
+  color: #11c; line-height: normal;
+}
+[gplex2010] .p4wth {
+  line-height: normal;
+}
+[gplex2010] .ugf-search-result-link {
+  order: 1; margin: 0;
+}
+[gplex2010][layout="2012"] .ugf-search-result-link,
+[gplex2010][layout="2013"] .ugf-search-result-link,
+[gplex2010][layout="2013L"] .ugf-search-result-link {
+  color: #0E774A !important;
+}
+[gplex2010] .ugf-search-result-desc,
+[gplex2010] .ugf-search-result-desc span,
+[gplex2010] .ugf-search-result-desc div,
+[gplex2010] .ugf-search-result-desc div > span:nth-of-type(2),
+[gplex2010] .ugf-search-result-desc em {
+  color: inherit !important;
+}
+[gplex2010][layout="2010"] .gp-pagination .gp-image,
+[gplex2010][layout="2011"] .gp-pagination .gp-image,
+[gplex2010][layout="2012"] .gp-pagination .gp-image,
+[gplex2010][layout="2013"] .gp-pagination .gp-image,
+[gplex2010][layout="2013L"] .gp-pagination .gp-image {
+  background: url(/images/nav_logo_hp2.png) no-repeat; background-position: -74px 0;
+}
+[gplex2010] .gp-pagination.active .gp-image {
+  background-position: -53px 0;
+}
+[gplex2010] #gp-pagination-next span,
+[gplex2010] #gp-pagination-prev span {
   text-decoration: underline;
-  font-size: 14px;
 }
-[gplex2010] #ugf-image-viewer-close {
-  color: #444;
+[gplex2010] .gp-pagination:not(.active,
+[gplex2010] #gp-pagination-next,
+[gplex2010] #gp-pagination-prev) {
+  color: #4272db;
 }
-[gplex2010] #ugf-image-viewer-domain {
-  color: #006621;
+[gplex2010] .gp-pagination.active {
+  text-decoration: none;
 }
-[gplex2010] #ugf-image-viewer-size {
-  color: #545454;
+[gplex2010] .gp-pagination.active span {
+  font-weight: bold; cursor: text;
 }
-[gplex2010] .ugf-image-viewer-btn,
-[gplex2010] .ugf-image-viewer-btn-2 {
-  background: #f5f5f5;
-  border: 1px solid #ccc;
-  color: #444;
-  border-radius: 0;
+[gplex2010] .ugf-footer-link {
+  color: #4272db !important;
+}
+[gplex2010] .ugf-footer-link:hover {
+  text-decoration: underline !important;
+}
+[gplex2010] .ugf-footer-link[href="https://www.google.com/tools/feedback/survey/html?productId=196"] {
+  font-size: 0; text-decoration: none !important;
+}
+[gplex2010] .ugf-footer-link[href="https://www.google.com/tools/feedback/survey/html?productId=196"]:before {
+  content: "Give us feedback"; font-size: 13px;
+}
+[gplex2010] .ugf-footer-link[href="https://www.google.com/tools/feedback/survey/html?productId=196"]:hover:before {
+  text-decoration: underline;
 }
 /* ============ end GPlex 2010-Early 2011 theme ============ */
 /* ============ GPlex 2007-2008 theme ============ */
@@ -5736,7 +5841,7 @@ html[noton-images][location="images"]:not([disabled]) body > div#main {
 }
 /* 1998 logo: hand-drawn "Google!" wordmark, inlined so nothing external can break */
 [gplex1998][location$="home"] #ugf-hp-logo-inner {
-  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 420 140%22 width=%22420%22 height=%22140%22%3E%3Cdefs%3E%3Cfilter id=%22s%22 x=%22-20%25%22 y=%22-20%25%22 width=%22150%25%22 height=%22150%25%22%3E%3CfeDropShadow dx=%224%22 dy=%224%22 stdDeviation=%222%22 flood-color=%22%238a8a8a%22 flood-opacity=%220.85%22/%3E%3C/filter%3E%3C/defs%3E%3Cg filter=%22url(%23s)%22 font-family=%22Georgia, 'Times New Roman', Times, serif%22 font-weight=%22bold%22 font-size=%22112%22%3E%3Ctext x=%228%22   y=%22108%22 fill=%22%233355cc%22%3EG%3C/text%3E%3Ctext x=%2296%22  y=%22108%22 fill=%22%23dd2222%22%3Eo%3C/text%3E%3Ctext x=%22160%22 y=%22108%22 fill=%22%23eebb00%22%3Eo%3C/text%3E%3Ctext x=%22224%22 y=%22108%22 fill=%22%233355cc%22%3Eg%3C/text%3E%3Ctext x=%22286%22 y=%22108%22 fill=%22%2322aa33%22%3El%3C/text%3E%3Ctext x=%22320%22 y=%22108%22 fill=%22%23dd2222%22%3Ee%3C/text%3E%3Ctext x=%22378%22 y=%22108%22 fill=%22%233355cc%22%3E!%3C/text%3E%3C/g%3E%3C/svg%3E") !important;
+  background-image: url("https://commons.wikimedia.org/wiki/Special:FilePath/Google%20logo%20(1998-1999).svg"), url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 420 140%22 width=%22420%22 height=%22140%22%3E%3Cdefs%3E%3Cfilter id=%22s%22 x=%22-20%25%22 y=%22-20%25%22 width=%22150%25%22 height=%22150%25%22%3E%3CfeDropShadow dx=%224%22 dy=%224%22 stdDeviation=%222%22 flood-color=%22%238a8a8a%22 flood-opacity=%220.85%22/%3E%3C/filter%3E%3C/defs%3E%3Cg filter=%22url(%23s)%22 font-family=%22Georgia, 'Times New Roman', Times, serif%22 font-weight=%22bold%22 font-size=%22112%22%3E%3Ctext x=%228%22   y=%22108%22 fill=%22%233355cc%22%3EG%3C/text%3E%3Ctext x=%2296%22  y=%22108%22 fill=%22%23dd2222%22%3Eo%3C/text%3E%3Ctext x=%22160%22 y=%22108%22 fill=%22%23eebb00%22%3Eo%3C/text%3E%3Ctext x=%22224%22 y=%22108%22 fill=%22%233355cc%22%3Eg%3C/text%3E%3Ctext x=%22286%22 y=%22108%22 fill=%22%2322aa33%22%3El%3C/text%3E%3Ctext x=%22320%22 y=%22108%22 fill=%22%23dd2222%22%3Ee%3C/text%3E%3Ctext x=%22378%22 y=%22108%22 fill=%22%233355cc%22%3E!%3C/text%3E%3C/g%3E%3C/svg%3E") !important;
   background-size: contain !important;
   background-repeat: no-repeat !important;
   background-position: center !important;
@@ -6518,7 +6623,7 @@ html[noton-images][location="images"]:not([disabled]) body > div#main {
   height: 58px !important;
 }
 [gplex1998]:not([location$="home"]) #ugf-logo-cont {
-  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 420 140%22 width=%22420%22 height=%22140%22%3E%3Cdefs%3E%3Cfilter id=%22s%22 x=%22-20%25%22 y=%22-20%25%22 width=%22150%25%22 height=%22150%25%22%3E%3CfeDropShadow dx=%224%22 dy=%224%22 stdDeviation=%222%22 flood-color=%22%238a8a8a%22 flood-opacity=%220.85%22/%3E%3C/filter%3E%3C/defs%3E%3Cg filter=%22url(%23s)%22 font-family=%22Georgia, 'Times New Roman', Times, serif%22 font-weight=%22bold%22 font-size=%22112%22%3E%3Ctext x=%228%22   y=%22108%22 fill=%22%233355cc%22%3EG%3C/text%3E%3Ctext x=%2296%22  y=%22108%22 fill=%22%23dd2222%22%3Eo%3C/text%3E%3Ctext x=%22160%22 y=%22108%22 fill=%22%23eebb00%22%3Eo%3C/text%3E%3Ctext x=%22224%22 y=%22108%22 fill=%22%233355cc%22%3Eg%3C/text%3E%3Ctext x=%22286%22 y=%22108%22 fill=%22%2322aa33%22%3El%3C/text%3E%3Ctext x=%22320%22 y=%22108%22 fill=%22%23dd2222%22%3Ee%3C/text%3E%3Ctext x=%22378%22 y=%22108%22 fill=%22%233355cc%22%3E!%3C/text%3E%3C/g%3E%3C/svg%3E") !important;
+  background-image: url("https://commons.wikimedia.org/wiki/Special:FilePath/Google%20logo%20(1998-1999).svg"), url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 420 140%22 width=%22420%22 height=%22140%22%3E%3Cdefs%3E%3Cfilter id=%22s%22 x=%22-20%25%22 y=%22-20%25%22 width=%22150%25%22 height=%22150%25%22%3E%3CfeDropShadow dx=%224%22 dy=%224%22 stdDeviation=%222%22 flood-color=%22%238a8a8a%22 flood-opacity=%220.85%22/%3E%3C/filter%3E%3C/defs%3E%3Cg filter=%22url(%23s)%22 font-family=%22Georgia, 'Times New Roman', Times, serif%22 font-weight=%22bold%22 font-size=%22112%22%3E%3Ctext x=%228%22   y=%22108%22 fill=%22%233355cc%22%3EG%3C/text%3E%3Ctext x=%2296%22  y=%22108%22 fill=%22%23dd2222%22%3Eo%3C/text%3E%3Ctext x=%22160%22 y=%22108%22 fill=%22%23eebb00%22%3Eo%3C/text%3E%3Ctext x=%22224%22 y=%22108%22 fill=%22%233355cc%22%3Eg%3C/text%3E%3Ctext x=%22286%22 y=%22108%22 fill=%22%2322aa33%22%3El%3C/text%3E%3Ctext x=%22320%22 y=%22108%22 fill=%22%23dd2222%22%3Ee%3C/text%3E%3Ctext x=%22378%22 y=%22108%22 fill=%22%233355cc%22%3E!%3C/text%3E%3C/g%3E%3C/svg%3E") !important;
   background-size: contain !important;
   background-repeat: no-repeat !important;
   background-position: 0 center !important;
@@ -6651,13 +6756,6 @@ html[noton-images][location="images"]:not([disabled]) body > div#main {
   font-size: 13px !important;
 }
 /* ---- 2010 results: single "Advanced search" link like the era ---- */
-[gplex2010]:not([location$="home"]) #ugf-searchbar::after {
-  content: "Advanced search" !important;
-  font-size: 13px !important;
-  line-height: 15px !important;
-  left: calc(100% + 78px) !important;
-  top: 5px !important;
-}
 /* ---- 2009 / 2010 results-page search box (bordered input, button beside it) ---- */
 [gplex2009]:not([location$="home"]) #ugf-searchbar,
 [gplex2010]:not([location$="home"]) #ugf-searchbar {
@@ -8943,7 +9041,7 @@ li.tg2Kqf{
             document.querySelector("html").setAttribute("legacy-footer","");
             break;
         case '2010N':
-            document.querySelector("html").setAttribute("layout","2011");
+            document.querySelector("html").setAttribute("layout","2012");
             document.querySelector("html").setAttribute("gplex2010","");
             document.querySelector("html").setAttribute("legacy-gbar","");
             document.querySelector("html").setAttribute("legacy-images","");
@@ -11837,7 +11935,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                             document.querySelector("html").setAttribute("legacy-images","");
                             document.querySelector("html").setAttribute("legacy-footer","");
                         } else if (value === "2010N") {
-                            document.querySelector("html").setAttribute("layout","2011");
+                            document.querySelector("html").setAttribute("layout","2012");
                             document.querySelector("html").setAttribute("gplex2010","");
                             document.querySelector("html").setAttribute("legacy-gbar","");
                             document.querySelector("html").setAttribute("legacy-images","");
@@ -13753,7 +13851,8 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         }, 100);
     }
     function ugf2009Buttons() {
-        if (!ugfRetroEra()) {
+        const btnEra = ugfRetroEra();
+        if (!btnEra || btnEra === "gplex2010") {
             return;
         }
         if (window.location.pathname === "/search") {
