@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      1.0.1
+// @version      2.0
 // @description  2009-2019 Old Google Frontend (Full public release)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -2093,6 +2093,4571 @@ html[noton-images][location="images"]:not([disabled]) body > div#main {
   border-radius: 0;
 }
 /* ============ end GPlex 2010-Early 2011 theme ============ */
+/* ============ GPlex 2007-2008 theme ============ */
+[gplex2007] #gp-gbar-inner {
+  background: none !important;
+  height: 24px !important;
+  border-bottom: 1px solid #e5e5e5;
+}
+[gplex2007] .gp-gbar-link.active {
+  color: #000 !important;
+  font-weight: bold !important;
+  text-decoration: none !important;
+  border-top-color: transparent !important;
+}
+[gplex2007] #gp-gbar-inner .gp-gbar-link {
+  border-top: none !important;
+}
+[gplex2007] .gp-gbar-link,
+[gplex2007] .gp-gbar-link:hover:not(.active) {
+  color: #00c !important;
+  text-decoration: underline !important;
+  background: none !important;
+  height: 24px !important;
+  padding-bottom: 1px !important;
+}
+[gplex2007] .arrow {
+  border-top-color: #00c !important;
+}
+[gplex2007] #gp-gbar-settings-button {
+  display: none;
+}
+[gplex2007] #ugf-topbar {
+  min-width: 0;
+}
+[gplex2007] #ugf-navbar,
+[gplex2007] #ugf-personal-buttons,
+[gplex2007] #ugf-settings-tab {
+  display: none !important;
+}
+[gplex2007] #ugf-searchbar::after {
+  white-space: pre;
+  text-decoration: underline;
+  color: #00c;
+  font-size: 13px;
+  line-height: 17px;
+  top: 0;
+  position: absolute;
+}
+/* homepage */
+[gplex2007][location$="home"] #ugf-hp-inner {
+  margin-top: 0px !important;
+}
+[gplex2007][location$="home"] #ugf-hp {
+  margin-top: -28px;
+}
+[gplex2007][location$="home"] #ugf-hp-search {
+  margin-top: 35px !important;
+}
+[gplex2007][location$="home"] #ugf-hp-logo-inner {
+  background-image: url(https://www.google.com/intl/en_ALL/images/logo.gif);
+  background-repeat: no-repeat;
+  width: 276px !important;
+  height: 110px !important;
+}
+[gplex2007][location$="home"] #ugf-hp-logo #ugf-hp-logo-inner img {
+  visibility: hidden;
+}
+[gplex2007][location$="home"] #ugf-search #ugf-searchbar {
+  border: none !important;
+  width: 570px;
+  margin-left: 27px !important;
+  background: none !important;
+}
+[gplex2007][location$="home"] #ugf-search-value {
+  border: revert !important;
+  outline: revert !important;
+  background: revert !important;
+  width: 570px !important;
+  height: revert !important;
+  font: 17px arial, sans-serif !important;
+  vertical-align: bottom;
+}
+[gplex2007][location$="home"] #ugf-search-predictions-container {
+  width: 570px !important;
+  top: 25px !important;
+  margin-left: 27px !important;
+}
+[gplex2007][location$="home"] #ugf-searchbar::after {
+  content: "Advanced Search\\aPreferences\\aLanguage Tools";
+  left: calc(100% + 30px);
+  right: auto;
+}
+[gplex2007][location$="home"] #ugf-hp-footer {
+  bottom: unset;
+  position: static;
+  background: none !important;
+  border: none !important;
+  width: max-content;
+  margin: 60px auto 0 auto;
+  flex-flow: row wrap;
+}
+[gplex2007][location$="home"] #ugf-structured-hp-footer-left,
+[gplex2007][location$="home"] #ugf-structured-hp-footer-right {
+  margin-left: 0;
+  margin-right: 0;
+  display: block;
+  flex-basis: 100%;
+  text-align: center;
+}
+[gplex2007][location$="home"] #ugf-hp-footer,
+[gplex2007][location$="home"] .ugf-structured-hp-footer-link {
+  line-height: 15px !important;
+  color: #00c !important;
+  padding-left: 0;
+  text-decoration: underline !important;
+}
+[gplex2007][location$="home"] #ugf-structured-hp-footer-left .ugf-structured-hp-footer-link:not(:last-child):after {
+  content: "-";
+  position: absolute;
+  color: #000;
+  margin-left: 6px;
+  text-decoration: none;
+}
+[gplex2007][location$="home"] #ugf-structured-hp-footer-left .ugf-structured-hp-footer-link:not(:first-child) {
+  margin-left: 18px;
+}
+[gplex2007][location$="home"] #ugf-structured-hp-footer-right .ugf-structured-hp-footer-link {
+  display: none !important;
+}
+/* results pages */
+[gplex2007]:not([location$="home"]) #ugf-topbar {
+  background: none !important;
+  border: none !important;
+}
+[gplex2007]:not([location$="home"]) #ugf-main-inner {
+  margin-top: 8px;
+}
+[gplex2007]:not([location$="home"]) #ugf-left {
+  display: none;
+}
+[gplex2007]:not([location$="home"]) #ugf-main,
+[gplex2007]:not([location$="home"]) #ugf-footer {
+  width: 100%;
+}
+[gplex2007]:not([location$="home"]) #ugf-logo-cont {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  background-image: url(https://www.google.com/intl/en_ALL/images/logo.gif);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: 0 center;
+  width: 150px !important;
+  height: 55px !important;
+  display: block !important;
+  visibility: visible !important;
+}
+[gplex2007]:not([location$="home"]) #ugf-logo-cont img,
+[gplex2007]:not([location$="home"]) #ugf-logo-cont svg {
+  visibility: hidden;
+}
+[gplex2007]:not([location$="home"]) #ugf-searchbar {
+  border: none !important;
+  background: none !important;
+  box-shadow: none !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  display: inline-block !important;
+  position: relative;
+}
+[gplex2007]:not([location$="home"]) #ugf-search-value {
+  border: 1px solid #b9b9b9 !important;
+  background: #fff !important;
+  box-shadow: none !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+  width: 380px !important;
+  height: 26px !important;
+  padding: 2px 6px !important;
+  font: 15px arial, sans-serif !important;
+  vertical-align: middle !important;
+  margin: 0 !important;
+}
+[gplex2007]:not([location$="home"]) #ugf-search {
+  display: flex !important;
+  align-items: center !important;
+}
+[gplex2007]:not([location$="home"]) button.searchbtn-small {
+  margin-top: 0 !important;
+  margin-left: 8px !important;
+}
+[gplex2007]:not([location$="home"]) #ugf-searchbar::after {
+  content: "Advanced Search\\aPreferences\\aLanguage Tools";
+  font-size: 11px !important;
+  line-height: 13px !important;
+  left: calc(100% + 78px) !important;
+  right: auto !important;
+  top: 1px !important;
+}
+[gplex2007]:not([location$="home"]) #ugf-search-predictions-container {
+  width: 380px !important;
+  top: 28px !important;
+  margin-left: 0 !important;
+}
+/* native buttons */
+[gplex2007] button.searchbtn {
+  all: revert;
+  font-size: 15px;
+  height: 1.85em !important;
+  margin: .2em;
+}
+[gplex2007] button.searchbtn-small {
+  all: revert;
+  font-size: 13px;
+}
+[gplex2007] #ugf-hp-buttons-row {
+  margin-top: 0 !important;
+}
+[gplex2007] #ugf-hp-buttons {
+  height: 38px;
+}
+[gplex2007] #ugf-search-btn,
+[gplex2007] #ugf-search-btn-2,
+[gplex2007] #ugf-lucky-btn {
+  display: none !important;
+}
+/* image results */
+[gplex2007][location="images"] #ugf-image-results {
+  background: #fff !important;
+}
+[gplex2007] .ugf-image-result {
+  width: 204px !important;
+  padding: 0 !important;
+  margin: 0 0 14px 0 !important;
+  display: block !important;
+}
+[gplex2007] .ugf-image-result img {
+  border: 1px solid #ccc;
+  padding: 1px;
+  max-width: 150px !important;
+  max-height: 150px !important;
+  margin: 0 !important;
+}
+[gplex2007] .ugf-image-result-inner {
+  text-decoration: none !important;
+  width: 100%;
+  display: block;
+}
+[gplex2007] .ugf-image-result-hoverstats {
+  opacity: 1 !important;
+  position: static !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  font-size: 13px !important;
+  line-height: 16px !important;
+  color: #000 !important;
+  background: none !important;
+  width: auto !important;
+  padding: 2px 0 0 0 !important;
+  max-width: 152px;
+}
+[gplex2007] .ugf-image-result-title {
+  display: block;
+  color: #00c;
+  text-decoration: underline;
+  white-space: normal;
+  word-wrap: break-word;
+  max-width: 152px;
+}
+[gplex2007] .ugf-image-result-domain {
+  color: #006621 !important;
+  display: block !important;
+  margin: 2px 0 0 !important;
+}
+[gplex2007] .ugf-image-result-size-first {
+  display: none !important;
+}
+[gplex2007] .ugf-image-result-size-second {
+  display: block !important;
+}
+[gplex2007] #ugf-image-results-container {
+  align-items: flex-start;
+}
+/* image viewer */
+[gplex2007] #ugf-image-viewer-inner {
+  background: #fff;
+  border: 1px solid #ccc;
+}
+[gplex2007] #ugf-image-viewer-title {
+  color: #00c;
+  text-decoration: underline;
+  font-size: 14px;
+}
+[gplex2007] #ugf-image-viewer-close {
+  color: #444;
+}
+[gplex2007] #ugf-image-viewer-domain {
+  color: #006621;
+}
+[gplex2007] #ugf-image-viewer-size {
+  color: #545454;
+}
+[gplex2007] .ugf-image-viewer-btn,
+[gplex2007] .ugf-image-viewer-btn-2 {
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  color: #444;
+  border-radius: 0;
+}
+/* 2007 pagination: shadowed-era Goooogle sprite, not the flat 2010 one */
+[gplex2007]:not([location$="home"]) .gp-pagination .gp-image {
+  background-image: url("https://www.google.com/images/nav_logo3.png") !important;
+  width: 15px !important;
+  height: 26px !important;
+  background-position: -44px 0 !important;
+}
+[gplex2007]:not([location$="home"]) #gp-pagination-prev .gp-image {
+  width: 19px !important;
+  background-position: -25px 0 !important;
+}
+[gplex2007]:not([location$="home"]) #gp-pagination-prev.has-prev .gp-image {
+  width: 44px !important;
+  background-position: 0 0 !important;
+}
+[gplex2007]:not([location$="home"]) .gp-pagination.active .gp-image {
+  background-position: -60px 0 !important;
+}
+[gplex2007]:not([location$="home"]) #gp-pagination-next .gp-image {
+  width: 62px !important;
+  background-position: -76px 0px !important;
+}
+[gplex2007]:not([location$="home"]) #gp-pagination-next span {
+  margin-left: 35px !important;
+}
+/* ============ end GPlex 2007-2008 theme ============ */
+/* ============ GPlex 2005-2006 theme ============ */
+[gplex2006] #gp-gbar-inner {
+  background: none !important;
+  border: none !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
+[gplex2006] #gp-gbar-right {
+  position: absolute;
+  right: 12px;
+  top: 4px;
+  align-items: center;
+}
+[gplex2006] #gp-gbar-right .gp-gbar-link span,
+[gplex2006] .ugf-retro-gbar-sep {
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  color: #00c !important;
+  text-decoration: underline !important;
+}
+[gplex2006] #gp-gbar-settings-button,
+[gplex2006] #ugf-navbar,
+[gplex2006] #ugf-personal-buttons,
+[gplex2006] #ugf-settings-tab {
+  display: none !important;
+}
+[gplex2006] .ugf-era-nav {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+  margin: 0 0 3px 0;
+  white-space: nowrap;
+}
+[gplex2006] .ugf-era-nav a {
+  color: #00c;
+  text-decoration: underline;
+  margin: 0 11px;
+}
+[gplex2006] .ugf-era-nav a.active {
+  color: #000;
+  font-weight: bold;
+  text-decoration: none;
+}
+[gplex2006] .ugf-era-nav a.more {
+  font-weight: bold;
+}
+[gplex2006][location$="home"] #ugf-hp {
+  margin-top: -20px;
+}
+[gplex2006][location$="home"] #ugf-hp-search {
+  margin-top: 30px !important;
+}
+[gplex2006][location$="home"] #ugf-hp-logo-inner {
+  background-image: url(https://www.google.com/intl/en_ALL/images/logo.gif);
+  background-repeat: no-repeat;
+  width: 276px !important;
+  height: 110px !important;
+}
+[gplex2006][location$="home"] #ugf-hp-logo #ugf-hp-logo-inner img {
+  visibility: hidden;
+}
+[gplex2006][location$="home"] #ugf-search #ugf-searchbar {
+  border: none !important;
+  width: 590px;
+  background: none !important;
+}
+[gplex2006][location$="home"] #ugf-search-value {
+  border: 1px solid #7e9db9 !important;
+  outline: none !important;
+  background: #fff !important;
+  width: 590px !important;
+  height: 24px !important;
+  font: 15px arial, sans-serif !important;
+  padding: 2px 4px !important;
+  box-sizing: border-box;
+}
+[gplex2006][location$="home"] #ugf-search-predictions-container {
+  width: 590px !important;
+  top: 28px !important;
+}
+[gplex2006] #ugf-searchbar::after {
+  white-space: pre;
+  text-decoration: underline;
+  color: #00c;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+  line-height: 17px;
+  top: 0;
+  position: absolute;
+}
+[gplex2006][location$="home"] #ugf-searchbar::after {
+  content: "Advanced Search\\aPreferences\\aLanguage Tools";
+  left: calc(100% + 20px);
+  right: auto;
+}
+[gplex2006][location$="home"] #ugf-hp-footer {
+  bottom: unset;
+  position: static;
+  background: none !important;
+  border: none !important;
+  width: max-content;
+  margin: 55px auto 0 auto;
+  flex-flow: row wrap;
+}
+[gplex2006][location$="home"] #ugf-structured-hp-footer-left,
+[gplex2006][location$="home"] #ugf-structured-hp-footer-right {
+  margin-left: 0;
+  margin-right: 0;
+  display: block;
+  flex-basis: 100%;
+  text-align: center;
+}
+[gplex2006][location$="home"] #ugf-hp-footer,
+[gplex2006][location$="home"] .ugf-structured-hp-footer-link {
+  line-height: 15px !important;
+  color: #00c !important;
+  padding-left: 0;
+  text-decoration: underline !important;
+}
+[gplex2006][location$="home"] #ugf-structured-hp-footer-left .ugf-structured-hp-footer-link:not(:last-child):after {
+  content: "-";
+  position: absolute;
+  color: #000;
+  margin-left: 6px;
+  text-decoration: none;
+}
+[gplex2006][location$="home"] #ugf-structured-hp-footer-left .ugf-structured-hp-footer-link:not(:first-child) {
+  margin-left: 18px;
+}
+[gplex2006][location$="home"] #ugf-structured-hp-footer-right .ugf-structured-hp-footer-link {
+  display: none !important;
+}
+/* results pages */
+[gplex2006]:not([location$="home"]) #ugf-topbar {
+  background: none !important;
+  border: none !important;
+}
+[gplex2006]:not([location$="home"]) #ugf-left {
+  display: none;
+}
+[gplex2006]:not([location$="home"]) #ugf-main,
+[gplex2006]:not([location$="home"]) #ugf-footer {
+  width: 100%;
+}
+[gplex2006]:not([location$="home"]) #ugf-main-inner {
+  margin-top: 8px;
+}
+[gplex2006]:not([location$="home"]) #ugf-logo-cont {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  background-image: url(https://www.google.com/intl/en_ALL/images/logo.gif);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: 0 center;
+  width: 150px !important;
+  height: 55px !important;
+  display: block !important;
+}
+[gplex2006]:not([location$="home"]) #ugf-logo-cont img,
+[gplex2006]:not([location$="home"]) #ugf-logo-cont svg {
+  visibility: hidden;
+}
+[gplex2006]:not([location$="home"]) #ugf-searchbar {
+  border: none !important;
+  background: none !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  display: inline-block !important;
+  position: relative;
+}
+[gplex2006]:not([location$="home"]) #ugf-search-value {
+  border: 1px solid #7e9db9 !important;
+  background: #fff !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+  width: 380px !important;
+  height: 26px !important;
+  padding: 2px 6px !important;
+  font: 15px arial, sans-serif !important;
+  margin: 0 !important;
+}
+[gplex2006]:not([location$="home"]) #ugf-search {
+  display: flex !important;
+  align-items: center !important;
+}
+[gplex2006]:not([location$="home"]) #ugf-searchbar::after {
+  content: "Advanced Search\\aPreferences" !important;
+  font-size: 11px !important;
+  line-height: 13px !important;
+  left: calc(100% + 78px) !important;
+  right: auto !important;
+  top: 1px !important;
+}
+[gplex2006]:not([location$="home"]) .gp-pagination .gp-image {
+  background-image: url("https://www.google.com/images/nav_logo3.png") !important;
+  width: 15px !important;
+  height: 26px !important;
+  background-position: -44px 0 !important;
+}
+[gplex2006]:not([location$="home"]) #gp-pagination-prev .gp-image {
+  width: 19px !important;
+  background-position: -25px 0 !important;
+}
+[gplex2006]:not([location$="home"]) #gp-pagination-prev.has-prev .gp-image {
+  width: 44px !important;
+  background-position: 0 0 !important;
+}
+[gplex2006]:not([location$="home"]) .gp-pagination.active .gp-image {
+  background-position: -60px 0 !important;
+}
+[gplex2006]:not([location$="home"]) #gp-pagination-next .gp-image {
+  width: 62px !important;
+  background-position: -76px 0px !important;
+}
+[gplex2006]:not([location$="home"]) #gp-pagination-next span {
+  margin-left: 35px !important;
+}
+/* native buttons */
+[gplex2006] button.searchbtn {
+  all: revert;
+  font-size: 15px;
+  height: 1.85em !important;
+  margin: .2em;
+}
+[gplex2006] button.searchbtn-small {
+  all: revert;
+  font-size: 13px;
+  margin-left: 8px;
+}
+[gplex2006] #ugf-hp-buttons-row {
+  margin-top: 0 !important;
+}
+[gplex2006] #ugf-hp-buttons {
+  height: 38px;
+}
+[gplex2006] #ugf-search-btn,
+[gplex2006] #ugf-search-btn-2,
+[gplex2006] #ugf-lucky-btn {
+  display: none !important;
+}
+/* results typography */
+[gplex2006] .ugf-search-result-title {
+  font-family: arial, sans-serif !important;
+  font-size: 16px !important;
+  line-height: 19px !important;
+  font-weight: normal !important;
+  text-decoration: underline !important;
+  color: #0000cc !important;
+}
+[gplex2006] .ugf-search-result-title:visited {
+  color: #551a8b !important;
+}
+[gplex2006] .ugf-search-result-link {
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  color: #006621 !important;
+  text-decoration: none !important;
+}
+[gplex2006] .ugf-search-result-desc {
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  line-height: 17px !important;
+  color: #222 !important;
+}
+/* image results + viewer */
+[gplex2006][location="images"] #ugf-image-results {
+  background: #fff !important;
+}
+[gplex2006] .ugf-image-result {
+  width: 204px !important;
+  padding: 0 !important;
+  margin: 0 0 14px 0 !important;
+  display: block !important;
+}
+[gplex2006] .ugf-image-result img {
+  border: 1px solid #ccc;
+  padding: 1px;
+  max-width: 150px !important;
+  max-height: 150px !important;
+  margin: 0 !important;
+}
+[gplex2006] .ugf-image-result-hoverstats {
+  opacity: 1 !important;
+  position: static !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  font-size: 13px !important;
+  line-height: 16px !important;
+  color: #000 !important;
+  background: none !important;
+  width: auto !important;
+  padding: 2px 0 0 0 !important;
+  max-width: 152px;
+}
+[gplex2006] .ugf-image-result-title {
+  display: block;
+  color: #00c;
+  text-decoration: underline;
+  white-space: normal;
+  word-wrap: break-word;
+  max-width: 152px;
+}
+[gplex2006] .ugf-image-result-domain {
+  color: #006621 !important;
+  display: block !important;
+  margin: 2px 0 0 !important;
+}
+[gplex2006] .ugf-image-result-size-first {
+  display: none !important;
+}
+[gplex2006] .ugf-image-result-size-second {
+  display: block !important;
+}
+[gplex2006] #ugf-image-results-container {
+  align-items: flex-start;
+}
+[gplex2006] #ugf-image-viewer-inner {
+  background: #fff;
+  border: 1px solid #ccc;
+}
+[gplex2006] #ugf-image-viewer-title {
+  color: #00c;
+  text-decoration: underline;
+  font-size: 14px;
+}
+[gplex2006] #ugf-image-viewer-close {
+  color: #444;
+}
+[gplex2006] #ugf-image-viewer-domain {
+  color: #006621;
+}
+[gplex2006] #ugf-image-viewer-size {
+  color: #545454;
+}
+[gplex2006] .ugf-image-viewer-btn,
+[gplex2006] .ugf-image-viewer-btn-2 {
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  color: #444;
+  border-radius: 0;
+}
+/* ============ end GPlex 2005-2006 theme ============ */
+/* ============ GPlex 2004-2005 theme ============ */
+[gplex2005] #gp-gbar-inner {
+  display: none !important;
+}
+[gplex2005] #ugf-navbar,
+[gplex2005] #ugf-personal-buttons,
+[gplex2005] #ugf-settings-tab,
+[gplex2005] #gp-gbar-settings-button {
+  display: none !important;
+}
+[gplex2005] .ugf-era-nav {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+  margin: 0 0 3px 0;
+  white-space: nowrap;
+}
+[gplex2005] .ugf-era-nav a {
+  color: #00c;
+  text-decoration: underline;
+  margin: 0 11px;
+}
+[gplex2005] .ugf-era-nav a.active {
+  color: #000;
+  font-weight: bold;
+  text-decoration: none;
+}
+[gplex2005] .ugf-era-nav a.more {
+  font-weight: bold;
+}
+[gplex2005][location$="home"] #ugf-hp {
+  margin-top: -20px;
+}
+[gplex2005][location$="home"] #ugf-hp-search {
+  margin-top: 30px !important;
+}
+[gplex2005][location$="home"] #ugf-hp-logo-inner {
+  background-image: url(https://www.google.com/intl/en_ALL/images/logo.gif);
+  background-repeat: no-repeat;
+  width: 276px !important;
+  height: 110px !important;
+}
+[gplex2005][location$="home"] #ugf-hp-logo #ugf-hp-logo-inner img {
+  visibility: hidden;
+}
+[gplex2005][location$="home"] #ugf-search #ugf-searchbar {
+  border: none !important;
+  width: 590px;
+  background: none !important;
+}
+[gplex2005][location$="home"] #ugf-search-value {
+  border: 1px solid #7e9db9 !important;
+  outline: none !important;
+  background: #fff !important;
+  width: 590px !important;
+  height: 24px !important;
+  font: 15px arial, sans-serif !important;
+  padding: 2px 4px !important;
+  box-sizing: border-box;
+}
+[gplex2005][location$="home"] #ugf-search-predictions-container {
+  width: 590px !important;
+  top: 28px !important;
+}
+[gplex2005] #ugf-searchbar::after {
+  white-space: pre;
+  text-decoration: underline;
+  color: #00c;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+  line-height: 17px;
+  top: 0;
+  position: absolute;
+}
+[gplex2005][location$="home"] #ugf-searchbar::after {
+  content: "Advanced Search\\aPreferences\\aLanguage Tools";
+  left: calc(100% + 20px);
+  right: auto;
+}
+[gplex2005][location$="home"] #ugf-hp-footer {
+  bottom: unset;
+  position: static;
+  background: none !important;
+  border: none !important;
+  width: max-content;
+  margin: 55px auto 0 auto;
+  flex-flow: row wrap;
+}
+[gplex2005][location$="home"] #ugf-structured-hp-footer-left,
+[gplex2005][location$="home"] #ugf-structured-hp-footer-right {
+  margin-left: 0;
+  margin-right: 0;
+  display: block;
+  flex-basis: 100%;
+  text-align: center;
+}
+[gplex2005][location$="home"] #ugf-hp-footer,
+[gplex2005][location$="home"] .ugf-structured-hp-footer-link {
+  line-height: 15px !important;
+  color: #00c !important;
+  padding-left: 0;
+  text-decoration: underline !important;
+}
+/* 2005 footer: Advertising Programs - About Google only */
+[gplex2005][location$="home"] #ugf-structured-hp-footer-left .ugf-structured-hp-footer-link:nth-child(2) {
+  display: none !important;
+}
+[gplex2005][location$="home"] #ugf-structured-hp-footer-left .ugf-structured-hp-footer-link:first-child:after {
+  content: "-";
+  position: absolute;
+  color: #000;
+  margin-left: 6px;
+  text-decoration: none;
+}
+[gplex2005][location$="home"] #ugf-structured-hp-footer-left .ugf-structured-hp-footer-link:last-child {
+  margin-left: 18px;
+}
+[gplex2005][location$="home"] #ugf-structured-hp-footer-right .ugf-structured-hp-footer-link {
+  display: none !important;
+}
+/* results pages */
+[gplex2005]:not([location$="home"]) #ugf-topbar {
+  background: none !important;
+  border: none !important;
+}
+[gplex2005]:not([location$="home"]) #ugf-left {
+  display: none;
+}
+[gplex2005]:not([location$="home"]) #ugf-main,
+[gplex2005]:not([location$="home"]) #ugf-footer {
+  width: 100%;
+}
+[gplex2005]:not([location$="home"]) #ugf-main-inner {
+  margin-top: 8px;
+}
+[gplex2005]:not([location$="home"]) #ugf-logo-cont {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  background-image: url(https://www.google.com/intl/en_ALL/images/logo.gif);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: 0 center;
+  width: 150px !important;
+  height: 55px !important;
+  display: block !important;
+}
+[gplex2005]:not([location$="home"]) #ugf-logo-cont img,
+[gplex2005]:not([location$="home"]) #ugf-logo-cont svg {
+  visibility: hidden;
+}
+[gplex2005]:not([location$="home"]) #ugf-searchbar {
+  border: none !important;
+  background: none !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  display: inline-block !important;
+  position: relative;
+}
+[gplex2005]:not([location$="home"]) #ugf-search-value {
+  border: 1px solid #7e9db9 !important;
+  background: #fff !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+  width: 380px !important;
+  height: 26px !important;
+  padding: 2px 6px !important;
+  font: 15px arial, sans-serif !important;
+  margin: 0 !important;
+}
+[gplex2005]:not([location$="home"]) #ugf-search {
+  display: flex !important;
+  align-items: center !important;
+}
+[gplex2005]:not([location$="home"]) #ugf-searchbar::after {
+  content: "Advanced Search\\aPreferences" !important;
+  font-size: 11px !important;
+  line-height: 13px !important;
+  left: calc(100% + 78px) !important;
+  right: auto !important;
+  top: 1px !important;
+}
+[gplex2005]:not([location$="home"]) .gp-pagination .gp-image {
+  background-image: url("https://www.google.com/images/nav_logo3.png") !important;
+  width: 15px !important;
+  height: 26px !important;
+  background-position: -44px 0 !important;
+}
+[gplex2005]:not([location$="home"]) #gp-pagination-prev .gp-image {
+  width: 19px !important;
+  background-position: -25px 0 !important;
+}
+[gplex2005]:not([location$="home"]) #gp-pagination-prev.has-prev .gp-image {
+  width: 44px !important;
+  background-position: 0 0 !important;
+}
+[gplex2005]:not([location$="home"]) .gp-pagination.active .gp-image {
+  background-position: -60px 0 !important;
+}
+[gplex2005]:not([location$="home"]) #gp-pagination-next .gp-image {
+  width: 62px !important;
+  background-position: -76px 0px !important;
+}
+[gplex2005]:not([location$="home"]) #gp-pagination-next span {
+  margin-left: 35px !important;
+}
+/* native buttons */
+[gplex2005] button.searchbtn {
+  all: revert;
+  font-size: 15px;
+  height: 1.85em !important;
+  margin: .2em;
+}
+[gplex2005] button.searchbtn-small {
+  all: revert;
+  font-size: 13px;
+  margin-left: 8px;
+}
+[gplex2005] #ugf-hp-buttons-row {
+  margin-top: 0 !important;
+}
+[gplex2005] #ugf-hp-buttons {
+  height: 38px;
+}
+[gplex2005] #ugf-search-btn,
+[gplex2005] #ugf-search-btn-2,
+[gplex2005] #ugf-lucky-btn {
+  display: none !important;
+}
+/* results typography */
+[gplex2005] .ugf-search-result-title {
+  font-family: arial, sans-serif !important;
+  font-size: 16px !important;
+  line-height: 19px !important;
+  font-weight: normal !important;
+  text-decoration: underline !important;
+  color: #0000cc !important;
+}
+[gplex2005] .ugf-search-result-title:visited {
+  color: #551a8b !important;
+}
+[gplex2005] .ugf-search-result-link {
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  color: #006621 !important;
+  text-decoration: none !important;
+}
+[gplex2005] .ugf-search-result-desc {
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  line-height: 17px !important;
+  color: #222 !important;
+}
+/* image results + viewer */
+[gplex2005][location="images"] #ugf-image-results {
+  background: #fff !important;
+}
+[gplex2005] .ugf-image-result {
+  width: 204px !important;
+  padding: 0 !important;
+  margin: 0 0 14px 0 !important;
+  display: block !important;
+}
+[gplex2005] .ugf-image-result img {
+  border: 1px solid #ccc;
+  padding: 1px;
+  max-width: 150px !important;
+  max-height: 150px !important;
+  margin: 0 !important;
+}
+[gplex2005] .ugf-image-result-hoverstats {
+  opacity: 1 !important;
+  position: static !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  font-size: 13px !important;
+  line-height: 16px !important;
+  color: #000 !important;
+  background: none !important;
+  width: auto !important;
+  padding: 2px 0 0 0 !important;
+  max-width: 152px;
+}
+[gplex2005] .ugf-image-result-title {
+  display: block;
+  color: #00c;
+  text-decoration: underline;
+  white-space: normal;
+  word-wrap: break-word;
+  max-width: 152px;
+}
+[gplex2005] .ugf-image-result-domain {
+  color: #006621 !important;
+  display: block !important;
+  margin: 2px 0 0 !important;
+}
+[gplex2005] .ugf-image-result-size-first {
+  display: none !important;
+}
+[gplex2005] .ugf-image-result-size-second {
+  display: block !important;
+}
+[gplex2005] #ugf-image-results-container {
+  align-items: flex-start;
+}
+[gplex2005] #ugf-image-viewer-inner {
+  background: #fff;
+  border: 1px solid #ccc;
+}
+[gplex2005] #ugf-image-viewer-title {
+  color: #00c;
+  text-decoration: underline;
+  font-size: 14px;
+}
+[gplex2005] #ugf-image-viewer-close {
+  color: #444;
+}
+[gplex2005] #ugf-image-viewer-domain {
+  color: #006621;
+}
+[gplex2005] #ugf-image-viewer-size {
+  color: #545454;
+}
+[gplex2005] .ugf-image-viewer-btn,
+[gplex2005] .ugf-image-viewer-btn-2 {
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  color: #444;
+  border-radius: 0;
+}
+/* ============ end GPlex 2004-2005 theme ============ */
+/* ============ GPlex 2003-Early 2004 theme ============ */
+[gplex2002] #gp-gbar-inner,
+[gplex2002] #ugf-navbar,
+[gplex2002] #ugf-personal-buttons,
+[gplex2002] #ugf-settings-tab,
+[gplex2002] #gp-gbar-settings-button,
+[gplex2003] #gp-gbar-inner,
+[gplex2003] #ugf-navbar,
+[gplex2003] #ugf-personal-buttons,
+[gplex2003] #ugf-settings-tab,
+[gplex2003] #gp-gbar-settings-button {
+  display: none !important;
+}
+/* tabbed nav */
+[gplex2003] .ugf-era-tabs {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  margin: 0 auto 0 auto;
+  border-bottom: 2px solid #3a5fcd;
+  width: max-content;
+  white-space: nowrap;
+  display: flex;
+  align-items: flex-end;
+}
+[gplex2003] .ugf-era-tabs a {
+  display: inline-block;
+  background: #efefef;
+  border: 1px solid #c9c9c9;
+  border-bottom: none;
+  color: #00c;
+  text-decoration: none;
+  padding: 3px 26px;
+  margin: 0 3px 0 0;
+  line-height: 20px;
+}
+[gplex2003] .ugf-era-tabs a.active {
+  background: #3a5fcd;
+  border-color: #3a5fcd;
+  color: #fff;
+  font-weight: bold;
+}
+/* era footer, rebuilt in JS */
+[gplex2003] .ugf-era-footer-link,
+[gplex2005] .ugf-era-footer-link,
+[gplex2006] .ugf-era-footer-link,
+[gplex2007] .ugf-era-footer-link {
+  color: #00c !important;
+  text-decoration: underline !important;
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  margin: 0 6px;
+}
+[gplex2003] .ugf-era-footer-dash,
+[gplex2005] .ugf-era-footer-dash,
+[gplex2006] .ugf-era-footer-dash,
+[gplex2007] .ugf-era-footer-dash {
+  color: #000;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+}
+[gplex2003] .ugf-era-copyright,
+[gplex2005] .ugf-era-copyright,
+[gplex2006] .ugf-era-copyright,
+[gplex2007] .ugf-era-copyright {
+  color: #000;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+  line-height: 40px;
+}
+/* homepage */
+[gplex2003][location$="home"] #ugf-hp {
+  margin-top: -20px;
+}
+[gplex2003][location$="home"] #ugf-hp-search {
+  margin-top: 30px !important;
+}
+[gplex2003][location$="home"] #ugf-hp-logo-inner {
+  background-image: url(https://www.google.com/intl/en_ALL/images/logo.gif);
+  background-repeat: no-repeat;
+  width: 276px !important;
+  height: 110px !important;
+}
+[gplex2003][location$="home"] #ugf-hp-logo #ugf-hp-logo-inner img {
+  visibility: hidden;
+}
+[gplex2003][location$="home"] #ugf-search #ugf-searchbar {
+  border: none !important;
+  width: 560px;
+  background: none !important;
+}
+[gplex2003][location$="home"] #ugf-search-value {
+  border: 2px solid #3a5fcd !important;
+  outline: none !important;
+  background: #fff !important;
+  width: 560px !important;
+  height: 26px !important;
+  font: 15px arial, sans-serif !important;
+  padding: 2px 4px !important;
+  box-sizing: border-box;
+}
+[gplex2003][location$="home"] #ugf-search-predictions-container {
+  width: 560px !important;
+  top: 30px !important;
+}
+[gplex2003] #ugf-searchbar::after {
+  white-space: pre;
+  text-decoration: underline;
+  color: #00c;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+  line-height: 17px;
+  top: 0;
+  position: absolute;
+}
+[gplex2003][location$="home"] #ugf-searchbar::after {
+  content: "\\2022 Advanced Search\\a\\2022 Preferences\\a\\2022 Language Tools";
+  left: calc(100% + 14px);
+  right: auto;
+  text-decoration: none;
+}
+[gplex2003][location$="home"] #ugf-hp-footer {
+  bottom: unset;
+  position: static;
+  background: none !important;
+  border: none !important;
+  width: max-content;
+  margin: 55px auto 0 auto;
+  flex-flow: row wrap;
+}
+[gplex2003][location$="home"] #ugf-structured-hp-footer-left,
+[gplex2003][location$="home"] #ugf-structured-hp-footer-right {
+  margin-left: 0;
+  margin-right: 0;
+  display: block;
+  flex-basis: 100%;
+  text-align: center;
+}
+/* results pages */
+[gplex2003]:not([location$="home"]) #ugf-topbar {
+  background: none !important;
+  border: none !important;
+}
+[gplex2003]:not([location$="home"]) #ugf-left {
+  display: none;
+}
+[gplex2003]:not([location$="home"]) #ugf-main,
+[gplex2003]:not([location$="home"]) #ugf-footer {
+  width: 100%;
+}
+[gplex2003]:not([location$="home"]) #ugf-main-inner {
+  margin-top: 8px;
+}
+[gplex2003]:not([location$="home"]) #ugf-logo-cont {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  background-image: url(https://www.google.com/intl/en_ALL/images/logo.gif);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: 0 center;
+  width: 150px !important;
+  height: 55px !important;
+  display: block !important;
+}
+[gplex2003]:not([location$="home"]) #ugf-logo-cont img,
+[gplex2003]:not([location$="home"]) #ugf-logo-cont svg {
+  visibility: hidden;
+}
+[gplex2003]:not([location$="home"]) #ugf-searchbar {
+  border: none !important;
+  background: none !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  display: inline-block !important;
+  position: relative;
+}
+[gplex2003]:not([location$="home"]) #ugf-search-value {
+  border: 2px solid #3a5fcd !important;
+  background: #fff !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+  width: 380px !important;
+  height: 26px !important;
+  padding: 2px 6px !important;
+  font: 15px arial, sans-serif !important;
+  margin: 0 !important;
+}
+[gplex2003]:not([location$="home"]) #ugf-search {
+  display: flex !important;
+  align-items: center !important;
+}
+[gplex2003]:not([location$="home"]) #ugf-searchbar::after {
+  content: "\\2022 Advanced Search\\a\\2022 Preferences" !important;
+  font-size: 11px !important;
+  line-height: 13px !important;
+  left: calc(100% + 78px) !important;
+  right: auto !important;
+  top: 1px !important;
+  text-decoration: none;
+}
+[gplex2003]:not([location$="home"]) .gp-pagination .gp-image {
+  background-image: url("https://www.google.com/images/nav_logo3.png") !important;
+  width: 15px !important;
+  height: 26px !important;
+  background-position: -44px 0 !important;
+}
+[gplex2003]:not([location$="home"]) #gp-pagination-prev .gp-image {
+  width: 19px !important;
+  background-position: -25px 0 !important;
+}
+[gplex2003]:not([location$="home"]) #gp-pagination-prev.has-prev .gp-image {
+  width: 44px !important;
+  background-position: 0 0 !important;
+}
+[gplex2003]:not([location$="home"]) .gp-pagination.active .gp-image {
+  background-position: -60px 0 !important;
+}
+[gplex2003]:not([location$="home"]) #gp-pagination-next .gp-image {
+  width: 62px !important;
+  background-position: -76px 0px !important;
+}
+[gplex2003]:not([location$="home"]) #gp-pagination-next span {
+  margin-left: 35px !important;
+}
+/* native buttons */
+[gplex2003] button.searchbtn {
+  all: revert;
+  font-size: 15px;
+  height: 1.85em !important;
+  margin: .2em;
+}
+[gplex2003] button.searchbtn-small {
+  all: revert;
+  font-size: 13px;
+  margin-left: 8px;
+}
+[gplex2003] #ugf-hp-buttons-row {
+  margin-top: 0 !important;
+}
+[gplex2003] #ugf-hp-buttons {
+  height: 38px;
+}
+[gplex2003] #ugf-search-btn,
+[gplex2003] #ugf-search-btn-2,
+[gplex2003] #ugf-lucky-btn {
+  display: none !important;
+}
+/* results typography */
+[gplex2003] .ugf-search-result-title {
+  font-family: arial, sans-serif !important;
+  font-size: 16px !important;
+  line-height: 19px !important;
+  font-weight: normal !important;
+  text-decoration: underline !important;
+  color: #0000cc !important;
+}
+[gplex2003] .ugf-search-result-title:visited {
+  color: #551a8b !important;
+}
+[gplex2003] .ugf-search-result-link {
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  color: #006621 !important;
+  text-decoration: none !important;
+}
+[gplex2003] .ugf-search-result-desc {
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  line-height: 17px !important;
+  color: #222 !important;
+}
+/* image results + viewer */
+[gplex2003][location="images"] #ugf-image-results {
+  background: #fff !important;
+}
+[gplex2003] .ugf-image-result {
+  width: 204px !important;
+  padding: 0 !important;
+  margin: 0 0 14px 0 !important;
+  display: block !important;
+}
+[gplex2003] .ugf-image-result img {
+  border: 1px solid #ccc;
+  padding: 1px;
+  max-width: 150px !important;
+  max-height: 150px !important;
+  margin: 0 !important;
+}
+[gplex2003] .ugf-image-result-hoverstats {
+  opacity: 1 !important;
+  position: static !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  font-size: 13px !important;
+  line-height: 16px !important;
+  color: #000 !important;
+  background: none !important;
+  width: auto !important;
+  padding: 2px 0 0 0 !important;
+  max-width: 152px;
+}
+[gplex2003] .ugf-image-result-title {
+  display: block;
+  color: #00c;
+  text-decoration: underline;
+  white-space: normal;
+  word-wrap: break-word;
+  max-width: 152px;
+}
+[gplex2003] .ugf-image-result-domain {
+  color: #006621 !important;
+  display: block !important;
+  margin: 2px 0 0 !important;
+}
+[gplex2003] .ugf-image-result-size-first {
+  display: none !important;
+}
+[gplex2003] .ugf-image-result-size-second {
+  display: block !important;
+}
+[gplex2003] #ugf-image-results-container {
+  align-items: flex-start;
+}
+[gplex2003] #ugf-image-viewer-inner {
+  background: #fff;
+  border: 1px solid #ccc;
+}
+[gplex2003] #ugf-image-viewer-title {
+  color: #00c;
+  text-decoration: underline;
+  font-size: 14px;
+}
+[gplex2003] #ugf-image-viewer-close {
+  color: #444;
+}
+[gplex2003] #ugf-image-viewer-domain {
+  color: #006621;
+}
+[gplex2003] #ugf-image-viewer-size {
+  color: #545454;
+}
+[gplex2003] .ugf-image-viewer-btn,
+[gplex2003] .ugf-image-viewer-btn-2 {
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  color: #444;
+  border-radius: 0;
+}
+/* ============ GPlex 2002 theme ============ */
+[gplex2002] #gp-gbar-inner,
+[gplex2002] #ugf-navbar,
+[gplex2002] #ugf-personal-buttons,
+[gplex2002] #ugf-settings-tab,
+[gplex2002] #gp-gbar-settings-button,
+[gplex2002] #gp-gbar-inner,
+[gplex2002] #ugf-navbar,
+[gplex2002] #ugf-personal-buttons,
+[gplex2002] #ugf-settings-tab,
+[gplex2002] #gp-gbar-settings-button {
+  display: none !important;
+}
+/* tabbed nav */
+[gplex2002] .ugf-era-tabs {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  margin: 0 auto 0 auto;
+  border-bottom: 2px solid #3a5fcd;
+  width: max-content;
+  white-space: nowrap;
+  display: flex;
+  align-items: flex-end;
+}
+[gplex2002] .ugf-era-tabs a {
+  display: inline-block;
+  background: #efefef;
+  border: 1px solid #c9c9c9;
+  border-bottom: none;
+  color: #00c;
+  text-decoration: none;
+  padding: 3px 26px;
+  margin: 0 3px 0 0;
+  line-height: 20px;
+}
+[gplex2002] .ugf-era-tabs a.active {
+  background: #3a5fcd;
+  border-color: #3a5fcd;
+  color: #fff;
+  font-weight: bold;
+}
+/* era footer, rebuilt in JS */
+[gplex2002] .ugf-era-footer-link,
+[gplex2005] .ugf-era-footer-link,
+[gplex2006] .ugf-era-footer-link,
+[gplex2007] .ugf-era-footer-link {
+  color: #00c !important;
+  text-decoration: underline !important;
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  margin: 0 6px;
+}
+[gplex2002] .ugf-era-footer-dash,
+[gplex2005] .ugf-era-footer-dash,
+[gplex2006] .ugf-era-footer-dash,
+[gplex2007] .ugf-era-footer-dash {
+  color: #000;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+}
+[gplex2002] .ugf-era-copyright,
+[gplex2005] .ugf-era-copyright,
+[gplex2006] .ugf-era-copyright,
+[gplex2007] .ugf-era-copyright {
+  color: #000;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+  line-height: 40px;
+}
+/* homepage */
+[gplex2002][location$="home"] #ugf-hp {
+  margin-top: -20px;
+}
+[gplex2002][location$="home"] #ugf-hp-search {
+  margin-top: 30px !important;
+}
+[gplex2002][location$="home"] #ugf-hp-logo-inner {
+  background-image: url(https://www.google.com/intl/en_ALL/images/logo.gif);
+  background-repeat: no-repeat;
+  width: 276px !important;
+  height: 110px !important;
+}
+[gplex2002][location$="home"] #ugf-hp-logo #ugf-hp-logo-inner img {
+  visibility: hidden;
+}
+[gplex2002][location$="home"] #ugf-search #ugf-searchbar {
+  border: none !important;
+  width: 560px;
+  background: none !important;
+}
+[gplex2002][location$="home"] #ugf-search-value {
+  border: 2px solid #3a5fcd !important;
+  outline: none !important;
+  background: #fff !important;
+  width: 560px !important;
+  height: 26px !important;
+  font: 15px arial, sans-serif !important;
+  padding: 2px 4px !important;
+  box-sizing: border-box;
+}
+[gplex2002][location$="home"] #ugf-search-predictions-container {
+  width: 560px !important;
+  top: 30px !important;
+}
+[gplex2002] #ugf-searchbar::after {
+  white-space: pre;
+  text-decoration: underline;
+  color: #00c;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+  line-height: 17px;
+  top: 0;
+  position: absolute;
+}
+[gplex2002][location$="home"] #ugf-searchbar::after {
+  content: "\\2022 Advanced Search\\a\\2022 Preferences\\a\\2022 Language Tools";
+  left: calc(100% + 14px);
+  right: auto;
+  text-decoration: none;
+}
+[gplex2002][location$="home"] #ugf-hp-footer {
+  bottom: unset;
+  position: static;
+  background: none !important;
+  border: none !important;
+  width: max-content;
+  margin: 55px auto 0 auto;
+  flex-flow: row wrap;
+}
+[gplex2002][location$="home"] #ugf-structured-hp-footer-left,
+[gplex2002][location$="home"] #ugf-structured-hp-footer-right {
+  margin-left: 0;
+  margin-right: 0;
+  display: block;
+  flex-basis: 100%;
+  text-align: center;
+}
+/* results pages */
+[gplex2002]:not([location$="home"]) #ugf-topbar {
+  background: none !important;
+  border: none !important;
+}
+[gplex2002]:not([location$="home"]) #ugf-left {
+  display: none;
+}
+[gplex2002]:not([location$="home"]) #ugf-main,
+[gplex2002]:not([location$="home"]) #ugf-footer {
+  width: 100%;
+}
+[gplex2002]:not([location$="home"]) #ugf-main-inner {
+  margin-top: 8px;
+}
+[gplex2002]:not([location$="home"]) #ugf-logo-cont {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  background-image: url(https://www.google.com/intl/en_ALL/images/logo.gif);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: 0 center;
+  width: 150px !important;
+  height: 55px !important;
+  display: block !important;
+}
+[gplex2002]:not([location$="home"]) #ugf-logo-cont img,
+[gplex2002]:not([location$="home"]) #ugf-logo-cont svg {
+  visibility: hidden;
+}
+[gplex2002]:not([location$="home"]) #ugf-searchbar {
+  border: none !important;
+  background: none !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  display: inline-block !important;
+  position: relative;
+}
+[gplex2002]:not([location$="home"]) #ugf-search-value {
+  border: 2px solid #3a5fcd !important;
+  background: #fff !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+  width: 380px !important;
+  height: 26px !important;
+  padding: 2px 6px !important;
+  font: 15px arial, sans-serif !important;
+  margin: 0 !important;
+}
+[gplex2002]:not([location$="home"]) #ugf-search {
+  display: flex !important;
+  align-items: center !important;
+}
+[gplex2002]:not([location$="home"]) #ugf-searchbar::after {
+  content: "\\2022 Advanced Search\\a\\2022 Preferences" !important;
+  font-size: 11px !important;
+  line-height: 13px !important;
+  left: calc(100% + 78px) !important;
+  right: auto !important;
+  top: 1px !important;
+  text-decoration: none;
+}
+[gplex2002]:not([location$="home"]) .gp-pagination .gp-image {
+  background-image: url("https://www.google.com/images/nav_logo3.png") !important;
+  width: 15px !important;
+  height: 26px !important;
+  background-position: -44px 0 !important;
+}
+[gplex2002]:not([location$="home"]) #gp-pagination-prev .gp-image {
+  width: 19px !important;
+  background-position: -25px 0 !important;
+}
+[gplex2002]:not([location$="home"]) #gp-pagination-prev.has-prev .gp-image {
+  width: 44px !important;
+  background-position: 0 0 !important;
+}
+[gplex2002]:not([location$="home"]) .gp-pagination.active .gp-image {
+  background-position: -60px 0 !important;
+}
+[gplex2002]:not([location$="home"]) #gp-pagination-next .gp-image {
+  width: 62px !important;
+  background-position: -76px 0px !important;
+}
+[gplex2002]:not([location$="home"]) #gp-pagination-next span {
+  margin-left: 35px !important;
+}
+/* native buttons */
+[gplex2002] button.searchbtn {
+  all: revert;
+  font-size: 15px;
+  height: 1.85em !important;
+  margin: .2em;
+}
+[gplex2002] button.searchbtn-small {
+  all: revert;
+  font-size: 13px;
+  margin-left: 8px;
+}
+[gplex2002] #ugf-hp-buttons-row {
+  margin-top: 0 !important;
+}
+[gplex2002] #ugf-hp-buttons {
+  height: 38px;
+}
+[gplex2002] #ugf-search-btn,
+[gplex2002] #ugf-search-btn-2,
+[gplex2002] #ugf-lucky-btn {
+  display: none !important;
+}
+/* results typography */
+[gplex2002] .ugf-search-result-title {
+  font-family: arial, sans-serif !important;
+  font-size: 16px !important;
+  line-height: 19px !important;
+  font-weight: normal !important;
+  text-decoration: underline !important;
+  color: #0000cc !important;
+}
+[gplex2002] .ugf-search-result-title:visited {
+  color: #551a8b !important;
+}
+[gplex2002] .ugf-search-result-link {
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  color: #006621 !important;
+  text-decoration: none !important;
+}
+[gplex2002] .ugf-search-result-desc {
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  line-height: 17px !important;
+  color: #222 !important;
+}
+/* image results + viewer */
+[gplex2002][location="images"] #ugf-image-results {
+  background: #fff !important;
+}
+[gplex2002] .ugf-image-result {
+  width: 204px !important;
+  padding: 0 !important;
+  margin: 0 0 14px 0 !important;
+  display: block !important;
+}
+[gplex2002] .ugf-image-result img {
+  border: 1px solid #ccc;
+  padding: 1px;
+  max-width: 150px !important;
+  max-height: 150px !important;
+  margin: 0 !important;
+}
+[gplex2002] .ugf-image-result-hoverstats {
+  opacity: 1 !important;
+  position: static !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  font-size: 13px !important;
+  line-height: 16px !important;
+  color: #000 !important;
+  background: none !important;
+  width: auto !important;
+  padding: 2px 0 0 0 !important;
+  max-width: 152px;
+}
+[gplex2002] .ugf-image-result-title {
+  display: block;
+  color: #00c;
+  text-decoration: underline;
+  white-space: normal;
+  word-wrap: break-word;
+  max-width: 152px;
+}
+[gplex2002] .ugf-image-result-domain {
+  color: #006621 !important;
+  display: block !important;
+  margin: 2px 0 0 !important;
+}
+[gplex2002] .ugf-image-result-size-first {
+  display: none !important;
+}
+[gplex2002] .ugf-image-result-size-second {
+  display: block !important;
+}
+[gplex2002] #ugf-image-results-container {
+  align-items: flex-start;
+}
+[gplex2002] #ugf-image-viewer-inner {
+  background: #fff;
+  border: 1px solid #ccc;
+}
+[gplex2002] #ugf-image-viewer-title {
+  color: #00c;
+  text-decoration: underline;
+  font-size: 14px;
+}
+[gplex2002] #ugf-image-viewer-close {
+  color: #444;
+}
+[gplex2002] #ugf-image-viewer-domain {
+  color: #006621;
+}
+[gplex2002] #ugf-image-viewer-size {
+  color: #545454;
+}
+[gplex2002] .ugf-image-viewer-btn,
+[gplex2002] .ugf-image-viewer-btn-2 {
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  color: #444;
+  border-radius: 0;
+}
+[gplex2002] .ugf-era-promo {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  color: #000;
+  margin: 40px auto 0 auto;
+}
+[gplex2002] .ugf-era-promo a {
+  color: #00c;
+  text-decoration: underline;
+}
+[gplex2002] .ugf-era-footer-link,
+[gplex2002] .ugf-era-footer-dash,
+[gplex2002] .ugf-era-copyright {
+  font-family: arial, sans-serif;
+  font-size: 13px;
+}
+[gplex2002] .ugf-era-footer-link {
+  color: #00c !important;
+  text-decoration: underline !important;
+  margin: 0 6px;
+}
+[gplex2002] .ugf-era-copyright {
+  color: #000;
+  line-height: 40px;
+}
+/* ============ GPlex 2001 theme ============ */
+[gplex2001] #gp-gbar-inner,
+[gplex2001] #ugf-navbar,
+[gplex2001] #ugf-personal-buttons,
+[gplex2001] #ugf-settings-tab,
+[gplex2001] #gp-gbar-settings-button,
+[gplex2001] #gp-gbar-inner,
+[gplex2001] #ugf-navbar,
+[gplex2001] #ugf-personal-buttons,
+[gplex2001] #ugf-settings-tab,
+[gplex2001] #gp-gbar-settings-button {
+  display: none !important;
+}
+/* tabbed nav */
+[gplex2001] .ugf-era-tabs {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  margin: 0 auto 0 auto;
+  border-bottom: 2px solid #3a5fcd;
+  width: max-content;
+  white-space: nowrap;
+  display: flex;
+  align-items: flex-end;
+}
+[gplex2001] .ugf-era-tabs a {
+  display: inline-block;
+  background: #efefef;
+  border: 1px solid #c9c9c9;
+  border-bottom: none;
+  color: #00c;
+  text-decoration: none;
+  padding: 3px 26px;
+  margin: 0 3px 0 0;
+  line-height: 20px;
+}
+[gplex2001] .ugf-era-tabs a.active {
+  background: #3a5fcd;
+  border-color: #3a5fcd;
+  color: #fff;
+  font-weight: bold;
+}
+/* era footer, rebuilt in JS */
+[gplex2001] .ugf-era-footer-link,
+[gplex2005] .ugf-era-footer-link,
+[gplex2006] .ugf-era-footer-link,
+[gplex2007] .ugf-era-footer-link {
+  color: #00c !important;
+  text-decoration: underline !important;
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  margin: 0 6px;
+}
+[gplex2001] .ugf-era-footer-dash,
+[gplex2005] .ugf-era-footer-dash,
+[gplex2006] .ugf-era-footer-dash,
+[gplex2007] .ugf-era-footer-dash {
+  color: #000;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+}
+[gplex2001] .ugf-era-copyright,
+[gplex2005] .ugf-era-copyright,
+[gplex2006] .ugf-era-copyright,
+[gplex2007] .ugf-era-copyright {
+  color: #000;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+  line-height: 40px;
+}
+/* homepage */
+[gplex2001][location$="home"] #ugf-hp {
+  margin-top: -20px;
+}
+[gplex2001][location$="home"] #ugf-hp-search {
+  margin-top: 30px !important;
+}
+[gplex2001][location$="home"] #ugf-hp-logo-inner {
+  background-image: url(https://www.google.com/intl/en_ALL/images/logo.gif);
+  background-repeat: no-repeat;
+  width: 276px !important;
+  height: 110px !important;
+}
+[gplex2001][location$="home"] #ugf-hp-logo #ugf-hp-logo-inner img {
+  visibility: hidden;
+}
+[gplex2001][location$="home"] #ugf-search #ugf-searchbar {
+  border: none !important;
+  width: 560px;
+  background: none !important;
+}
+[gplex2001][location$="home"] #ugf-search-value {
+  border: 2px solid #3a5fcd !important;
+  outline: none !important;
+  background: #fff !important;
+  width: 560px !important;
+  height: 26px !important;
+  font: 15px arial, sans-serif !important;
+  padding: 2px 4px !important;
+  box-sizing: border-box;
+}
+[gplex2001][location$="home"] #ugf-search-predictions-container {
+  width: 560px !important;
+  top: 30px !important;
+}
+[gplex2001] #ugf-searchbar::after {
+  white-space: pre;
+  text-decoration: underline;
+  color: #00c;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+  line-height: 17px;
+  top: 0;
+  position: absolute;
+}
+[gplex2001][location$="home"] #ugf-searchbar::after {
+  content: "\\2022 Advanced Search\\a\\2022 Preferences\\a\\2022 Language Tools";
+  left: calc(100% + 14px);
+  right: auto;
+  text-decoration: none;
+}
+[gplex2001][location$="home"] #ugf-hp-footer {
+  bottom: unset;
+  position: static;
+  background: none !important;
+  border: none !important;
+  width: max-content;
+  margin: 55px auto 0 auto;
+  flex-flow: row wrap;
+}
+[gplex2001][location$="home"] #ugf-structured-hp-footer-left,
+[gplex2001][location$="home"] #ugf-structured-hp-footer-right {
+  margin-left: 0;
+  margin-right: 0;
+  display: block;
+  flex-basis: 100%;
+  text-align: center;
+}
+/* results pages */
+[gplex2001]:not([location$="home"]) #ugf-topbar {
+  background: none !important;
+  border: none !important;
+}
+[gplex2001]:not([location$="home"]) #ugf-left {
+  display: none;
+}
+[gplex2001]:not([location$="home"]) #ugf-main,
+[gplex2001]:not([location$="home"]) #ugf-footer {
+  width: 100%;
+}
+[gplex2001]:not([location$="home"]) #ugf-main-inner {
+  margin-top: 8px;
+}
+[gplex2001]:not([location$="home"]) #ugf-logo-cont {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  background-image: url(https://www.google.com/intl/en_ALL/images/logo.gif);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: 0 center;
+  width: 150px !important;
+  height: 55px !important;
+  display: block !important;
+}
+[gplex2001]:not([location$="home"]) #ugf-logo-cont img,
+[gplex2001]:not([location$="home"]) #ugf-logo-cont svg {
+  visibility: hidden;
+}
+[gplex2001]:not([location$="home"]) #ugf-searchbar {
+  border: none !important;
+  background: none !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  display: inline-block !important;
+  position: relative;
+}
+[gplex2001]:not([location$="home"]) #ugf-search-value {
+  border: 2px solid #3a5fcd !important;
+  background: #fff !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+  width: 380px !important;
+  height: 26px !important;
+  padding: 2px 6px !important;
+  font: 15px arial, sans-serif !important;
+  margin: 0 !important;
+}
+[gplex2001]:not([location$="home"]) #ugf-search {
+  display: flex !important;
+  align-items: center !important;
+}
+[gplex2001]:not([location$="home"]) #ugf-searchbar::after {
+  content: "\\2022 Advanced Search\\a\\2022 Preferences" !important;
+  font-size: 11px !important;
+  line-height: 13px !important;
+  left: calc(100% + 78px) !important;
+  right: auto !important;
+  top: 1px !important;
+  text-decoration: none;
+}
+[gplex2001]:not([location$="home"]) .gp-pagination .gp-image {
+  background-image: url("https://www.google.com/images/nav_logo3.png") !important;
+  width: 15px !important;
+  height: 26px !important;
+  background-position: -44px 0 !important;
+}
+[gplex2001]:not([location$="home"]) #gp-pagination-prev .gp-image {
+  width: 19px !important;
+  background-position: -25px 0 !important;
+}
+[gplex2001]:not([location$="home"]) #gp-pagination-prev.has-prev .gp-image {
+  width: 44px !important;
+  background-position: 0 0 !important;
+}
+[gplex2001]:not([location$="home"]) .gp-pagination.active .gp-image {
+  background-position: -60px 0 !important;
+}
+[gplex2001]:not([location$="home"]) #gp-pagination-next .gp-image {
+  width: 62px !important;
+  background-position: -76px 0px !important;
+}
+[gplex2001]:not([location$="home"]) #gp-pagination-next span {
+  margin-left: 35px !important;
+}
+/* native buttons */
+[gplex2001] button.searchbtn {
+  all: revert;
+  font-size: 15px;
+  height: 1.85em !important;
+  margin: .2em;
+}
+[gplex2001] button.searchbtn-small {
+  all: revert;
+  font-size: 13px;
+  margin-left: 8px;
+}
+[gplex2001] #ugf-hp-buttons-row {
+  margin-top: 0 !important;
+}
+[gplex2001] #ugf-hp-buttons {
+  height: 38px;
+}
+[gplex2001] #ugf-search-btn,
+[gplex2001] #ugf-search-btn-2,
+[gplex2001] #ugf-lucky-btn {
+  display: none !important;
+}
+/* results typography */
+[gplex2001] .ugf-search-result-title {
+  font-family: arial, sans-serif !important;
+  font-size: 16px !important;
+  line-height: 19px !important;
+  font-weight: normal !important;
+  text-decoration: underline !important;
+  color: #0000cc !important;
+}
+[gplex2001] .ugf-search-result-title:visited {
+  color: #551a8b !important;
+}
+[gplex2001] .ugf-search-result-link {
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  color: #006621 !important;
+  text-decoration: none !important;
+}
+[gplex2001] .ugf-search-result-desc {
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  line-height: 17px !important;
+  color: #222 !important;
+}
+/* image results + viewer */
+[gplex2001][location="images"] #ugf-image-results {
+  background: #fff !important;
+}
+[gplex2001] .ugf-image-result {
+  width: 204px !important;
+  padding: 0 !important;
+  margin: 0 0 14px 0 !important;
+  display: block !important;
+}
+[gplex2001] .ugf-image-result img {
+  border: 1px solid #ccc;
+  padding: 1px;
+  max-width: 150px !important;
+  max-height: 150px !important;
+  margin: 0 !important;
+}
+[gplex2001] .ugf-image-result-hoverstats {
+  opacity: 1 !important;
+  position: static !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  font-size: 13px !important;
+  line-height: 16px !important;
+  color: #000 !important;
+  background: none !important;
+  width: auto !important;
+  padding: 2px 0 0 0 !important;
+  max-width: 152px;
+}
+[gplex2001] .ugf-image-result-title {
+  display: block;
+  color: #00c;
+  text-decoration: underline;
+  white-space: normal;
+  word-wrap: break-word;
+  max-width: 152px;
+}
+[gplex2001] .ugf-image-result-domain {
+  color: #006621 !important;
+  display: block !important;
+  margin: 2px 0 0 !important;
+}
+[gplex2001] .ugf-image-result-size-first {
+  display: none !important;
+}
+[gplex2001] .ugf-image-result-size-second {
+  display: block !important;
+}
+[gplex2001] #ugf-image-results-container {
+  align-items: flex-start;
+}
+[gplex2001] #ugf-image-viewer-inner {
+  background: #fff;
+  border: 1px solid #ccc;
+}
+[gplex2001] #ugf-image-viewer-title {
+  color: #00c;
+  text-decoration: underline;
+  font-size: 14px;
+}
+[gplex2001] #ugf-image-viewer-close {
+  color: #444;
+}
+[gplex2001] #ugf-image-viewer-domain {
+  color: #006621;
+}
+[gplex2001] #ugf-image-viewer-size {
+  color: #545454;
+}
+[gplex2001] .ugf-image-viewer-btn,
+[gplex2001] .ugf-image-viewer-btn-2 {
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  color: #444;
+  border-radius: 0;
+}
+[gplex2001] .ugf-era-promo {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  color: #000;
+  margin: 40px auto 0 auto;
+}
+[gplex2001] .ugf-era-promo a {
+  color: #00c;
+  text-decoration: underline;
+}
+[gplex2001] .ugf-era-footer-link,
+[gplex2001] .ugf-era-footer-dash,
+[gplex2001] .ugf-era-copyright {
+  font-family: arial, sans-serif;
+  font-size: 13px;
+}
+[gplex2001] .ugf-era-footer-link {
+  color: #00c !important;
+  text-decoration: underline !important;
+  margin: 0 6px;
+}
+[gplex2001] .ugf-era-copyright {
+  color: #000;
+  line-height: 40px;
+}
+[gplex2001] .ugf-era-count {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  color: #000;
+  margin: 0 0 2px 0;
+}
+[gplex2001] .ugf-era-promo {
+  text-align: center;
+  margin: 45px auto 0 auto;
+  font-family: arial, sans-serif;
+}
+[gplex2001] .ugf-era-promo a {
+  color: #008000 !important;
+  font-weight: bold;
+  font-size: 15px;
+  text-decoration: underline;
+}
+[gplex2001] .ugf-era-promo-tagline {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 14px;
+  font-style: italic;
+  color: #008000;
+  margin-top: 1px;
+}
+[gplex2001] .ugf-era-footer-link:last-of-type {
+  font-weight: bold;
+}
+[gplex2001][location$="home"] #ugf-searchbar::after {
+  content: "\\2022 Advanced Search\\a\\2022 Preferences" !important;
+}
+/* ============ GPlex 1999-2000 theme ============ */
+[gplex2000] #gp-gbar-inner,
+[gplex2000] #ugf-navbar,
+[gplex2000] #ugf-personal-buttons,
+[gplex2000] #ugf-settings-tab,
+[gplex2000] #gp-gbar-settings-button,
+[gplex2000] #gp-gbar-inner,
+[gplex2000] #ugf-navbar,
+[gplex2000] #ugf-personal-buttons,
+[gplex2000] #ugf-settings-tab,
+[gplex2000] #gp-gbar-settings-button {
+  display: none !important;
+}
+/* tabbed nav */
+[gplex2000] .ugf-era-tabs {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  margin: 0 auto 0 auto;
+  border-bottom: 2px solid #3a5fcd;
+  width: max-content;
+  white-space: nowrap;
+  display: flex;
+  align-items: flex-end;
+}
+[gplex2000] .ugf-era-tabs a {
+  display: inline-block;
+  background: #efefef;
+  border: 1px solid #c9c9c9;
+  border-bottom: none;
+  color: #00c;
+  text-decoration: none;
+  padding: 3px 26px;
+  margin: 0 3px 0 0;
+  line-height: 20px;
+}
+[gplex2000] .ugf-era-tabs a.active {
+  background: #3a5fcd;
+  border-color: #3a5fcd;
+  color: #fff;
+  font-weight: bold;
+}
+/* era footer, rebuilt in JS */
+[gplex2000] .ugf-era-footer-link,
+[gplex2005] .ugf-era-footer-link,
+[gplex2006] .ugf-era-footer-link,
+[gplex2007] .ugf-era-footer-link {
+  color: #00c !important;
+  text-decoration: underline !important;
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  margin: 0 6px;
+}
+[gplex2000] .ugf-era-footer-dash,
+[gplex2005] .ugf-era-footer-dash,
+[gplex2006] .ugf-era-footer-dash,
+[gplex2007] .ugf-era-footer-dash {
+  color: #000;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+}
+[gplex2000] .ugf-era-copyright,
+[gplex2005] .ugf-era-copyright,
+[gplex2006] .ugf-era-copyright,
+[gplex2007] .ugf-era-copyright {
+  color: #000;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+  line-height: 40px;
+}
+/* homepage */
+[gplex2000][location$="home"] #ugf-hp {
+  margin-top: -20px;
+}
+[gplex2000][location$="home"] #ugf-hp-search {
+  margin-top: 30px !important;
+}
+[gplex2000][location$="home"] #ugf-hp-logo-inner {
+  background-image: url(https://www.google.com/intl/en_ALL/images/logo.gif);
+  background-repeat: no-repeat;
+  width: 276px !important;
+  height: 110px !important;
+}
+[gplex2000][location$="home"] #ugf-hp-logo #ugf-hp-logo-inner img {
+  visibility: hidden;
+}
+[gplex2000][location$="home"] #ugf-search #ugf-searchbar {
+  border: none !important;
+  width: 560px;
+  background: none !important;
+}
+[gplex2000][location$="home"] #ugf-search-value {
+  border: 2px solid #3a5fcd !important;
+  outline: none !important;
+  background: #fff !important;
+  width: 560px !important;
+  height: 26px !important;
+  font: 15px arial, sans-serif !important;
+  padding: 2px 4px !important;
+  box-sizing: border-box;
+}
+[gplex2000][location$="home"] #ugf-search-predictions-container {
+  width: 560px !important;
+  top: 30px !important;
+}
+[gplex2000] #ugf-searchbar::after {
+  white-space: pre;
+  text-decoration: underline;
+  color: #00c;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+  line-height: 17px;
+  top: 0;
+  position: absolute;
+}
+[gplex2000][location$="home"] #ugf-searchbar::after {
+  content: "\\2022 Advanced Search\\a\\2022 Preferences\\a\\2022 Language Tools";
+  left: calc(100% + 14px);
+  right: auto;
+  text-decoration: none;
+}
+[gplex2000][location$="home"] #ugf-hp-footer {
+  bottom: unset;
+  position: static;
+  background: none !important;
+  border: none !important;
+  width: max-content;
+  margin: 55px auto 0 auto;
+  flex-flow: row wrap;
+}
+[gplex2000][location$="home"] #ugf-structured-hp-footer-left,
+[gplex2000][location$="home"] #ugf-structured-hp-footer-right {
+  margin-left: 0;
+  margin-right: 0;
+  display: block;
+  flex-basis: 100%;
+  text-align: center;
+}
+/* results pages */
+[gplex2000]:not([location$="home"]) #ugf-topbar {
+  background: none !important;
+  border: none !important;
+}
+[gplex2000]:not([location$="home"]) #ugf-left {
+  display: none;
+}
+[gplex2000]:not([location$="home"]) #ugf-main,
+[gplex2000]:not([location$="home"]) #ugf-footer {
+  width: 100%;
+}
+[gplex2000]:not([location$="home"]) #ugf-main-inner {
+  margin-top: 8px;
+}
+[gplex2000]:not([location$="home"]) #ugf-logo-cont {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  background-image: url(https://www.google.com/intl/en_ALL/images/logo.gif);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: 0 center;
+  width: 150px !important;
+  height: 55px !important;
+  display: block !important;
+}
+[gplex2000]:not([location$="home"]) #ugf-logo-cont img,
+[gplex2000]:not([location$="home"]) #ugf-logo-cont svg {
+  visibility: hidden;
+}
+[gplex2000]:not([location$="home"]) #ugf-searchbar {
+  border: none !important;
+  background: none !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  display: inline-block !important;
+  position: relative;
+}
+[gplex2000]:not([location$="home"]) #ugf-search-value {
+  border: 2px solid #3a5fcd !important;
+  background: #fff !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+  width: 380px !important;
+  height: 26px !important;
+  padding: 2px 6px !important;
+  font: 15px arial, sans-serif !important;
+  margin: 0 !important;
+}
+[gplex2000]:not([location$="home"]) #ugf-search {
+  display: flex !important;
+  align-items: center !important;
+}
+[gplex2000]:not([location$="home"]) #ugf-searchbar::after {
+  content: "\\2022 Advanced Search\\a\\2022 Preferences" !important;
+  font-size: 11px !important;
+  line-height: 13px !important;
+  left: calc(100% + 78px) !important;
+  right: auto !important;
+  top: 1px !important;
+  text-decoration: none;
+}
+[gplex2000]:not([location$="home"]) .gp-pagination .gp-image {
+  background-image: url("https://www.google.com/images/nav_logo3.png") !important;
+  width: 15px !important;
+  height: 26px !important;
+  background-position: -44px 0 !important;
+}
+[gplex2000]:not([location$="home"]) #gp-pagination-prev .gp-image {
+  width: 19px !important;
+  background-position: -25px 0 !important;
+}
+[gplex2000]:not([location$="home"]) #gp-pagination-prev.has-prev .gp-image {
+  width: 44px !important;
+  background-position: 0 0 !important;
+}
+[gplex2000]:not([location$="home"]) .gp-pagination.active .gp-image {
+  background-position: -60px 0 !important;
+}
+[gplex2000]:not([location$="home"]) #gp-pagination-next .gp-image {
+  width: 62px !important;
+  background-position: -76px 0px !important;
+}
+[gplex2000]:not([location$="home"]) #gp-pagination-next span {
+  margin-left: 35px !important;
+}
+/* native buttons */
+[gplex2000] button.searchbtn {
+  all: revert;
+  font-size: 15px;
+  height: 1.85em !important;
+  margin: .2em;
+}
+[gplex2000] button.searchbtn-small {
+  all: revert;
+  font-size: 13px;
+  margin-left: 8px;
+}
+[gplex2000] #ugf-hp-buttons-row {
+  margin-top: 0 !important;
+}
+[gplex2000] #ugf-hp-buttons {
+  height: 38px;
+}
+[gplex2000] #ugf-search-btn,
+[gplex2000] #ugf-search-btn-2,
+[gplex2000] #ugf-lucky-btn {
+  display: none !important;
+}
+/* results typography */
+[gplex2000] .ugf-search-result-title {
+  font-family: arial, sans-serif !important;
+  font-size: 16px !important;
+  line-height: 19px !important;
+  font-weight: normal !important;
+  text-decoration: underline !important;
+  color: #0000cc !important;
+}
+[gplex2000] .ugf-search-result-title:visited {
+  color: #551a8b !important;
+}
+[gplex2000] .ugf-search-result-link {
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  color: #006621 !important;
+  text-decoration: none !important;
+}
+[gplex2000] .ugf-search-result-desc {
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  line-height: 17px !important;
+  color: #222 !important;
+}
+/* image results + viewer */
+[gplex2000][location="images"] #ugf-image-results {
+  background: #fff !important;
+}
+[gplex2000] .ugf-image-result {
+  width: 204px !important;
+  padding: 0 !important;
+  margin: 0 0 14px 0 !important;
+  display: block !important;
+}
+[gplex2000] .ugf-image-result img {
+  border: 1px solid #ccc;
+  padding: 1px;
+  max-width: 150px !important;
+  max-height: 150px !important;
+  margin: 0 !important;
+}
+[gplex2000] .ugf-image-result-hoverstats {
+  opacity: 1 !important;
+  position: static !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  font-size: 13px !important;
+  line-height: 16px !important;
+  color: #000 !important;
+  background: none !important;
+  width: auto !important;
+  padding: 2px 0 0 0 !important;
+  max-width: 152px;
+}
+[gplex2000] .ugf-image-result-title {
+  display: block;
+  color: #00c;
+  text-decoration: underline;
+  white-space: normal;
+  word-wrap: break-word;
+  max-width: 152px;
+}
+[gplex2000] .ugf-image-result-domain {
+  color: #006621 !important;
+  display: block !important;
+  margin: 2px 0 0 !important;
+}
+[gplex2000] .ugf-image-result-size-first {
+  display: none !important;
+}
+[gplex2000] .ugf-image-result-size-second {
+  display: block !important;
+}
+[gplex2000] #ugf-image-results-container {
+  align-items: flex-start;
+}
+[gplex2000] #ugf-image-viewer-inner {
+  background: #fff;
+  border: 1px solid #ccc;
+}
+[gplex2000] #ugf-image-viewer-title {
+  color: #00c;
+  text-decoration: underline;
+  font-size: 14px;
+}
+[gplex2000] #ugf-image-viewer-close {
+  color: #444;
+}
+[gplex2000] #ugf-image-viewer-domain {
+  color: #006621;
+}
+[gplex2000] #ugf-image-viewer-size {
+  color: #545454;
+}
+[gplex2000] .ugf-image-viewer-btn,
+[gplex2000] .ugf-image-viewer-btn-2 {
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  color: #444;
+  border-radius: 0;
+}
+[gplex2000] .ugf-era-promo {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  color: #000;
+  margin: 40px auto 0 auto;
+}
+[gplex2000] .ugf-era-promo a {
+  color: #00c;
+  text-decoration: underline;
+}
+[gplex2000] .ugf-era-footer-link,
+[gplex2000] .ugf-era-footer-dash,
+[gplex2000] .ugf-era-copyright {
+  font-family: arial, sans-serif;
+  font-size: 13px;
+}
+[gplex2000] .ugf-era-footer-link {
+  color: #00c !important;
+  text-decoration: underline !important;
+  margin: 0 6px;
+}
+[gplex2000] .ugf-era-copyright {
+  color: #000;
+  line-height: 40px;
+}
+[gplex2000] .ugf-era-count {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  color: #000;
+  margin: 0 0 2px 0;
+}
+[gplex2000] .ugf-era-promo {
+  text-align: center;
+  margin: 45px auto 0 auto;
+  font-family: arial, sans-serif;
+}
+[gplex2000] .ugf-era-promo a {
+  color: #008000 !important;
+  font-weight: bold;
+  font-size: 15px;
+  text-decoration: underline;
+}
+[gplex2000] .ugf-era-promo-tagline {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 14px;
+  font-style: italic;
+  color: #008000;
+  margin-top: 1px;
+}
+[gplex2000] .ugf-era-footer-link:last-of-type {
+  font-weight: bold;
+}
+[gplex2000][location$="home"] #ugf-searchbar::after {
+  content: "\\2022 Advanced Search\\a\\2022 Preferences" !important;
+}
+/* 2000: links above the box replace the side bullets */
+[gplex2000] #ugf-searchbar::after {
+  content: none !important;
+  display: none !important;
+}
+[gplex2000] .ugf-era-above-links {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  color: #767676;
+  margin: 0 0 2px 0;
+}
+[gplex2000] .ugf-era-above-links a {
+  color: #767676;
+  text-decoration: underline;
+}
+[gplex2000] .ugf-era-index {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  color: #000;
+  margin: 55px auto 0 auto;
+}
+[gplex2000] .ugf-era-promo {
+  text-align: center;
+  margin: 18px auto 0 auto;
+  font-family: arial, sans-serif;
+}
+[gplex2000] .ugf-era-promo a {
+  color: #00c !important;
+  font-weight: normal;
+  font-size: 15px;
+  text-decoration: underline;
+}
+[gplex2000] .ugf-era-footer-link {
+  color: #767676 !important;
+  text-decoration: underline !important;
+  font-size: 14px !important;
+  font-weight: normal;
+}
+[gplex2000] .ugf-era-footer-dash {
+  color: #767676;
+  font-size: 14px;
+}
+[gplex2000] .ugf-era-copyright {
+  color: #767676;
+  font-size: 14px;
+  line-height: 34px;
+}
+[gplex2000][location$="home"] #ugf-hp-footer {
+  margin-top: 45px;
+}
+/* ============ GPlex 1999 theme ============ */
+[gplex1999] #gp-gbar-inner,
+[gplex1999] #ugf-navbar,
+[gplex1999] #ugf-personal-buttons,
+[gplex1999] #ugf-settings-tab,
+[gplex1999] #gp-gbar-settings-button,
+[gplex1999] #gp-gbar-inner,
+[gplex1999] #ugf-navbar,
+[gplex1999] #ugf-personal-buttons,
+[gplex1999] #ugf-settings-tab,
+[gplex1999] #gp-gbar-settings-button {
+  display: none !important;
+}
+/* tabbed nav */
+[gplex1999] .ugf-era-tabs {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  margin: 0 auto 0 auto;
+  border-bottom: 2px solid #3a5fcd;
+  width: max-content;
+  white-space: nowrap;
+  display: flex;
+  align-items: flex-end;
+}
+[gplex1999] .ugf-era-tabs a {
+  display: inline-block;
+  background: #efefef;
+  border: 1px solid #c9c9c9;
+  border-bottom: none;
+  color: #00c;
+  text-decoration: none;
+  padding: 3px 26px;
+  margin: 0 3px 0 0;
+  line-height: 20px;
+}
+[gplex1999] .ugf-era-tabs a.active {
+  background: #3a5fcd;
+  border-color: #3a5fcd;
+  color: #fff;
+  font-weight: bold;
+}
+/* era footer, rebuilt in JS */
+[gplex1999] .ugf-era-footer-link,
+[gplex2005] .ugf-era-footer-link,
+[gplex2006] .ugf-era-footer-link,
+[gplex2007] .ugf-era-footer-link {
+  color: #00c !important;
+  text-decoration: underline !important;
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  margin: 0 6px;
+}
+[gplex1999] .ugf-era-footer-dash,
+[gplex2005] .ugf-era-footer-dash,
+[gplex2006] .ugf-era-footer-dash,
+[gplex2007] .ugf-era-footer-dash {
+  color: #000;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+}
+[gplex1999] .ugf-era-copyright,
+[gplex2005] .ugf-era-copyright,
+[gplex2006] .ugf-era-copyright,
+[gplex2007] .ugf-era-copyright {
+  color: #000;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+  line-height: 40px;
+}
+/* homepage */
+[gplex1999][location$="home"] #ugf-hp {
+  margin-top: -20px;
+}
+[gplex1999][location$="home"] #ugf-hp-search {
+  margin-top: 30px !important;
+}
+[gplex1999][location$="home"] #ugf-hp-logo-inner {
+  background-image: url(https://www.google.com/intl/en_ALL/images/logo.gif);
+  background-repeat: no-repeat;
+  width: 276px !important;
+  height: 110px !important;
+}
+[gplex1999][location$="home"] #ugf-hp-logo #ugf-hp-logo-inner img {
+  visibility: hidden;
+}
+[gplex1999][location$="home"] #ugf-search #ugf-searchbar {
+  border: none !important;
+  width: 560px;
+  background: none !important;
+}
+[gplex1999][location$="home"] #ugf-search-value {
+  border: 2px solid #3a5fcd !important;
+  outline: none !important;
+  background: #fff !important;
+  width: 560px !important;
+  height: 26px !important;
+  font: 15px arial, sans-serif !important;
+  padding: 2px 4px !important;
+  box-sizing: border-box;
+}
+[gplex1999][location$="home"] #ugf-search-predictions-container {
+  width: 560px !important;
+  top: 30px !important;
+}
+[gplex1999] #ugf-searchbar::after {
+  white-space: pre;
+  text-decoration: underline;
+  color: #00c;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+  line-height: 17px;
+  top: 0;
+  position: absolute;
+}
+[gplex1999][location$="home"] #ugf-searchbar::after {
+  content: "\\2022 Advanced Search\\a\\2022 Preferences\\a\\2022 Language Tools";
+  left: calc(100% + 14px);
+  right: auto;
+  text-decoration: none;
+}
+[gplex1999][location$="home"] #ugf-hp-footer {
+  bottom: unset;
+  position: static;
+  background: none !important;
+  border: none !important;
+  width: max-content;
+  margin: 55px auto 0 auto;
+  flex-flow: row wrap;
+}
+[gplex1999][location$="home"] #ugf-structured-hp-footer-left,
+[gplex1999][location$="home"] #ugf-structured-hp-footer-right {
+  margin-left: 0;
+  margin-right: 0;
+  display: block;
+  flex-basis: 100%;
+  text-align: center;
+}
+/* results pages */
+[gplex1999]:not([location$="home"]) #ugf-topbar {
+  background: none !important;
+  border: none !important;
+}
+[gplex1999]:not([location$="home"]) #ugf-left {
+  display: none;
+}
+[gplex1999]:not([location$="home"]) #ugf-main,
+[gplex1999]:not([location$="home"]) #ugf-footer {
+  width: 100%;
+}
+[gplex1999]:not([location$="home"]) #ugf-main-inner {
+  margin-top: 8px;
+}
+[gplex1999]:not([location$="home"]) #ugf-logo-cont {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  background-image: url(https://www.google.com/intl/en_ALL/images/logo.gif);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: 0 center;
+  width: 150px !important;
+  height: 55px !important;
+  display: block !important;
+}
+[gplex1999]:not([location$="home"]) #ugf-logo-cont img,
+[gplex1999]:not([location$="home"]) #ugf-logo-cont svg {
+  visibility: hidden;
+}
+[gplex1999]:not([location$="home"]) #ugf-searchbar {
+  border: none !important;
+  background: none !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  display: inline-block !important;
+  position: relative;
+}
+[gplex1999]:not([location$="home"]) #ugf-search-value {
+  border: 2px solid #3a5fcd !important;
+  background: #fff !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+  width: 380px !important;
+  height: 26px !important;
+  padding: 2px 6px !important;
+  font: 15px arial, sans-serif !important;
+  margin: 0 !important;
+}
+[gplex1999]:not([location$="home"]) #ugf-search {
+  display: flex !important;
+  align-items: center !important;
+}
+[gplex1999]:not([location$="home"]) #ugf-searchbar::after {
+  content: "\\2022 Advanced Search\\a\\2022 Preferences" !important;
+  font-size: 11px !important;
+  line-height: 13px !important;
+  left: calc(100% + 78px) !important;
+  right: auto !important;
+  top: 1px !important;
+  text-decoration: none;
+}
+[gplex1999]:not([location$="home"]) .gp-pagination .gp-image {
+  background-image: url("https://www.google.com/images/nav_logo3.png") !important;
+  width: 15px !important;
+  height: 26px !important;
+  background-position: -44px 0 !important;
+}
+[gplex1999]:not([location$="home"]) #gp-pagination-prev .gp-image {
+  width: 19px !important;
+  background-position: -25px 0 !important;
+}
+[gplex1999]:not([location$="home"]) #gp-pagination-prev.has-prev .gp-image {
+  width: 44px !important;
+  background-position: 0 0 !important;
+}
+[gplex1999]:not([location$="home"]) .gp-pagination.active .gp-image {
+  background-position: -60px 0 !important;
+}
+[gplex1999]:not([location$="home"]) #gp-pagination-next .gp-image {
+  width: 62px !important;
+  background-position: -76px 0px !important;
+}
+[gplex1999]:not([location$="home"]) #gp-pagination-next span {
+  margin-left: 35px !important;
+}
+/* native buttons */
+[gplex1999] button.searchbtn {
+  all: revert;
+  font-size: 15px;
+  height: 1.85em !important;
+  margin: .2em;
+}
+[gplex1999] button.searchbtn-small {
+  all: revert;
+  font-size: 13px;
+  margin-left: 8px;
+}
+[gplex1999] #ugf-hp-buttons-row {
+  margin-top: 0 !important;
+}
+[gplex1999] #ugf-hp-buttons {
+  height: 38px;
+}
+[gplex1999] #ugf-search-btn,
+[gplex1999] #ugf-search-btn-2,
+[gplex1999] #ugf-lucky-btn {
+  display: none !important;
+}
+/* results typography */
+[gplex1999] .ugf-search-result-title {
+  font-family: arial, sans-serif !important;
+  font-size: 16px !important;
+  line-height: 19px !important;
+  font-weight: normal !important;
+  text-decoration: underline !important;
+  color: #0000cc !important;
+}
+[gplex1999] .ugf-search-result-title:visited {
+  color: #551a8b !important;
+}
+[gplex1999] .ugf-search-result-link {
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  color: #006621 !important;
+  text-decoration: none !important;
+}
+[gplex1999] .ugf-search-result-desc {
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  line-height: 17px !important;
+  color: #222 !important;
+}
+/* image results + viewer */
+[gplex1999][location="images"] #ugf-image-results {
+  background: #fff !important;
+}
+[gplex1999] .ugf-image-result {
+  width: 204px !important;
+  padding: 0 !important;
+  margin: 0 0 14px 0 !important;
+  display: block !important;
+}
+[gplex1999] .ugf-image-result img {
+  border: 1px solid #ccc;
+  padding: 1px;
+  max-width: 150px !important;
+  max-height: 150px !important;
+  margin: 0 !important;
+}
+[gplex1999] .ugf-image-result-hoverstats {
+  opacity: 1 !important;
+  position: static !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  font-size: 13px !important;
+  line-height: 16px !important;
+  color: #000 !important;
+  background: none !important;
+  width: auto !important;
+  padding: 2px 0 0 0 !important;
+  max-width: 152px;
+}
+[gplex1999] .ugf-image-result-title {
+  display: block;
+  color: #00c;
+  text-decoration: underline;
+  white-space: normal;
+  word-wrap: break-word;
+  max-width: 152px;
+}
+[gplex1999] .ugf-image-result-domain {
+  color: #006621 !important;
+  display: block !important;
+  margin: 2px 0 0 !important;
+}
+[gplex1999] .ugf-image-result-size-first {
+  display: none !important;
+}
+[gplex1999] .ugf-image-result-size-second {
+  display: block !important;
+}
+[gplex1999] #ugf-image-results-container {
+  align-items: flex-start;
+}
+[gplex1999] #ugf-image-viewer-inner {
+  background: #fff;
+  border: 1px solid #ccc;
+}
+[gplex1999] #ugf-image-viewer-title {
+  color: #00c;
+  text-decoration: underline;
+  font-size: 14px;
+}
+[gplex1999] #ugf-image-viewer-close {
+  color: #444;
+}
+[gplex1999] #ugf-image-viewer-domain {
+  color: #006621;
+}
+[gplex1999] #ugf-image-viewer-size {
+  color: #545454;
+}
+[gplex1999] .ugf-image-viewer-btn,
+[gplex1999] .ugf-image-viewer-btn-2 {
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  color: #444;
+  border-radius: 0;
+}
+[gplex1999] .ugf-era-promo {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  color: #000;
+  margin: 40px auto 0 auto;
+}
+[gplex1999] .ugf-era-promo a {
+  color: #00c;
+  text-decoration: underline;
+}
+[gplex1999] .ugf-era-footer-link,
+[gplex1999] .ugf-era-footer-dash,
+[gplex1999] .ugf-era-copyright {
+  font-family: arial, sans-serif;
+  font-size: 13px;
+}
+[gplex1999] .ugf-era-footer-link {
+  color: #00c !important;
+  text-decoration: underline !important;
+  margin: 0 6px;
+}
+[gplex1999] .ugf-era-copyright {
+  color: #000;
+  line-height: 40px;
+}
+[gplex1999] .ugf-era-count {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  color: #000;
+  margin: 0 0 2px 0;
+}
+[gplex1999] .ugf-era-promo {
+  text-align: center;
+  margin: 45px auto 0 auto;
+  font-family: arial, sans-serif;
+}
+[gplex1999] .ugf-era-promo a {
+  color: #008000 !important;
+  font-weight: bold;
+  font-size: 15px;
+  text-decoration: underline;
+}
+[gplex1999] .ugf-era-promo-tagline {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 14px;
+  font-style: italic;
+  color: #008000;
+  margin-top: 1px;
+}
+[gplex1999] .ugf-era-footer-link:last-of-type {
+  font-weight: bold;
+}
+[gplex1999][location$="home"] #ugf-searchbar::after {
+  content: "\\2022 Advanced Search\\a\\2022 Preferences" !important;
+}
+/* 2000: links above the box replace the side bullets */
+[gplex1999] #ugf-searchbar::after {
+  content: none !important;
+  display: none !important;
+}
+[gplex1999] .ugf-era-above-links {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  color: #767676;
+  margin: 0 0 2px 0;
+}
+[gplex1999] .ugf-era-above-links a {
+  color: #767676;
+  text-decoration: underline;
+}
+[gplex1999] .ugf-era-index {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  color: #000;
+  margin: 55px auto 0 auto;
+}
+[gplex1999] .ugf-era-promo {
+  text-align: center;
+  margin: 18px auto 0 auto;
+  font-family: arial, sans-serif;
+}
+[gplex1999] .ugf-era-promo a {
+  color: #00c !important;
+  font-weight: normal;
+  font-size: 15px;
+  text-decoration: underline;
+}
+[gplex1999] .ugf-era-footer-link {
+  color: #767676 !important;
+  text-decoration: underline !important;
+  font-size: 14px !important;
+  font-weight: normal;
+}
+[gplex1999] .ugf-era-footer-dash {
+  color: #767676;
+  font-size: 14px;
+}
+[gplex1999] .ugf-era-copyright {
+  color: #767676;
+  font-size: 14px;
+  line-height: 34px;
+}
+[gplex1999][location$="home"] #ugf-hp-footer {
+  margin-top: 45px;
+}
+/* 1999: serif type, logo left with links beside it */
+[gplex1999][location$="home"] #ugf-hp-inner {
+  font-family: "Times New Roman", Times, serif;
+}
+[gplex1999][location$="home"] #ugf-hp-logo {
+  display: inline-block;
+  margin-left: 0;
+}
+[gplex1999] .ugf-era-logo-links {
+  display: inline-block;
+  vertical-align: top;
+  margin: 60px 0 0 40px;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+}
+[gplex1999] .ugf-era-logo-links a {
+  color: #000;
+  text-decoration: none;
+  margin-right: 28px;
+  border-bottom: 2px solid #e8a33d;
+  padding-bottom: 1px;
+}
+[gplex1999] .ugf-era-logo-links a:last-child {
+  border-bottom-color: #3a5fcd;
+  margin-right: 0;
+}
+[gplex1999] .ugf-era-count {
+  font-family: "Times New Roman", Times, serif !important;
+  font-size: 19px !important;
+  color: #000;
+  margin-bottom: 3px !important;
+}
+[gplex1999] .ugf-era-promo {
+  text-align: center;
+  margin: 22px auto 0 auto;
+  font-family: "Times New Roman", Times, serif;
+}
+[gplex1999] .ugf-era-promo a {
+  color: #1a3a8f !important;
+  font-size: 19px;
+  font-weight: normal;
+  text-decoration: underline;
+}
+[gplex1999] .ugf-era-copyright {
+  color: #000;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+  line-height: 34px;
+}
+[gplex1999][location$="home"] #ugf-hp-footer {
+  margin-top: 30px;
+}
+[gplex1999][location$="home"] #ugf-search #ugf-searchbar,
+[gplex1999][location$="home"] #ugf-search-value {
+  width: 500px !important;
+}
+[gplex1999][location$="home"] #ugf-search-predictions-container {
+  width: 500px !important;
+}
+/* ============ GPlex 1997-1998 (Stanford) theme ============ */
+[gplex1998] #gp-gbar-inner,
+[gplex1998] #ugf-navbar,
+[gplex1998] #ugf-personal-buttons,
+[gplex1998] #ugf-settings-tab,
+[gplex1998] #gp-gbar-settings-button,
+[gplex1998] #gp-gbar-inner,
+[gplex1998] #ugf-navbar,
+[gplex1998] #ugf-personal-buttons,
+[gplex1998] #ugf-settings-tab,
+[gplex1998] #gp-gbar-settings-button {
+  display: none !important;
+}
+/* tabbed nav */
+[gplex1998] .ugf-era-tabs {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  margin: 0 auto 0 auto;
+  border-bottom: 2px solid #3a5fcd;
+  width: max-content;
+  white-space: nowrap;
+  display: flex;
+  align-items: flex-end;
+}
+[gplex1998] .ugf-era-tabs a {
+  display: inline-block;
+  background: #efefef;
+  border: 1px solid #c9c9c9;
+  border-bottom: none;
+  color: #00c;
+  text-decoration: none;
+  padding: 3px 26px;
+  margin: 0 3px 0 0;
+  line-height: 20px;
+}
+[gplex1998] .ugf-era-tabs a.active {
+  background: #3a5fcd;
+  border-color: #3a5fcd;
+  color: #fff;
+  font-weight: bold;
+}
+/* era footer, rebuilt in JS */
+[gplex1998] .ugf-era-footer-link,
+[gplex2005] .ugf-era-footer-link,
+[gplex2006] .ugf-era-footer-link,
+[gplex2007] .ugf-era-footer-link {
+  color: #00c !important;
+  text-decoration: underline !important;
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  margin: 0 6px;
+}
+[gplex1998] .ugf-era-footer-dash,
+[gplex2005] .ugf-era-footer-dash,
+[gplex2006] .ugf-era-footer-dash,
+[gplex2007] .ugf-era-footer-dash {
+  color: #000;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+}
+[gplex1998] .ugf-era-copyright,
+[gplex2005] .ugf-era-copyright,
+[gplex2006] .ugf-era-copyright,
+[gplex2007] .ugf-era-copyright {
+  color: #000;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+  line-height: 40px;
+}
+/* homepage */
+[gplex1998][location$="home"] #ugf-hp {
+  margin-top: -20px;
+}
+[gplex1998][location$="home"] #ugf-hp-search {
+  margin-top: 30px !important;
+}
+[gplex1998][location$="home"] #ugf-hp-logo-inner {
+  background-image: url(https://www.google.com/intl/en_ALL/images/logo.gif);
+  background-repeat: no-repeat;
+  width: 276px !important;
+  height: 110px !important;
+}
+[gplex1998][location$="home"] #ugf-hp-logo #ugf-hp-logo-inner img {
+  visibility: hidden;
+}
+[gplex1998][location$="home"] #ugf-search #ugf-searchbar {
+  border: none !important;
+  width: 560px;
+  background: none !important;
+}
+[gplex1998][location$="home"] #ugf-search-value {
+  border: 2px solid #3a5fcd !important;
+  outline: none !important;
+  background: #fff !important;
+  width: 560px !important;
+  height: 26px !important;
+  font: 15px arial, sans-serif !important;
+  padding: 2px 4px !important;
+  box-sizing: border-box;
+}
+[gplex1998][location$="home"] #ugf-search-predictions-container {
+  width: 560px !important;
+  top: 30px !important;
+}
+[gplex1998] #ugf-searchbar::after {
+  white-space: pre;
+  text-decoration: underline;
+  color: #00c;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+  line-height: 17px;
+  top: 0;
+  position: absolute;
+}
+[gplex1998][location$="home"] #ugf-searchbar::after {
+  content: "\\2022 Advanced Search\\a\\2022 Preferences\\a\\2022 Language Tools";
+  left: calc(100% + 14px);
+  right: auto;
+  text-decoration: none;
+}
+[gplex1998][location$="home"] #ugf-hp-footer {
+  bottom: unset;
+  position: static;
+  background: none !important;
+  border: none !important;
+  width: max-content;
+  margin: 55px auto 0 auto;
+  flex-flow: row wrap;
+}
+[gplex1998][location$="home"] #ugf-structured-hp-footer-left,
+[gplex1998][location$="home"] #ugf-structured-hp-footer-right {
+  margin-left: 0;
+  margin-right: 0;
+  display: block;
+  flex-basis: 100%;
+  text-align: center;
+}
+/* results pages */
+[gplex1998]:not([location$="home"]) #ugf-topbar {
+  background: none !important;
+  border: none !important;
+}
+[gplex1998]:not([location$="home"]) #ugf-left {
+  display: none;
+}
+[gplex1998]:not([location$="home"]) #ugf-main,
+[gplex1998]:not([location$="home"]) #ugf-footer {
+  width: 100%;
+}
+[gplex1998]:not([location$="home"]) #ugf-main-inner {
+  margin-top: 8px;
+}
+[gplex1998]:not([location$="home"]) #ugf-logo-cont {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  background-image: url(https://www.google.com/intl/en_ALL/images/logo.gif);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: 0 center;
+  width: 150px !important;
+  height: 55px !important;
+  display: block !important;
+}
+[gplex1998]:not([location$="home"]) #ugf-logo-cont img,
+[gplex1998]:not([location$="home"]) #ugf-logo-cont svg {
+  visibility: hidden;
+}
+[gplex1998]:not([location$="home"]) #ugf-searchbar {
+  border: none !important;
+  background: none !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  display: inline-block !important;
+  position: relative;
+}
+[gplex1998]:not([location$="home"]) #ugf-search-value {
+  border: 2px solid #3a5fcd !important;
+  background: #fff !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+  width: 380px !important;
+  height: 26px !important;
+  padding: 2px 6px !important;
+  font: 15px arial, sans-serif !important;
+  margin: 0 !important;
+}
+[gplex1998]:not([location$="home"]) #ugf-search {
+  display: flex !important;
+  align-items: center !important;
+}
+[gplex1998]:not([location$="home"]) #ugf-searchbar::after {
+  content: "\\2022 Advanced Search\\a\\2022 Preferences" !important;
+  font-size: 11px !important;
+  line-height: 13px !important;
+  left: calc(100% + 78px) !important;
+  right: auto !important;
+  top: 1px !important;
+  text-decoration: none;
+}
+[gplex1998]:not([location$="home"]) .gp-pagination .gp-image {
+  background-image: url("https://www.google.com/images/nav_logo3.png") !important;
+  width: 15px !important;
+  height: 26px !important;
+  background-position: -44px 0 !important;
+}
+[gplex1998]:not([location$="home"]) #gp-pagination-prev .gp-image {
+  width: 19px !important;
+  background-position: -25px 0 !important;
+}
+[gplex1998]:not([location$="home"]) #gp-pagination-prev.has-prev .gp-image {
+  width: 44px !important;
+  background-position: 0 0 !important;
+}
+[gplex1998]:not([location$="home"]) .gp-pagination.active .gp-image {
+  background-position: -60px 0 !important;
+}
+[gplex1998]:not([location$="home"]) #gp-pagination-next .gp-image {
+  width: 62px !important;
+  background-position: -76px 0px !important;
+}
+[gplex1998]:not([location$="home"]) #gp-pagination-next span {
+  margin-left: 35px !important;
+}
+/* native buttons */
+[gplex1998] button.searchbtn {
+  all: revert;
+  font-size: 15px;
+  height: 1.85em !important;
+  margin: .2em;
+}
+[gplex1998] button.searchbtn-small {
+  all: revert;
+  font-size: 13px;
+  margin-left: 8px;
+}
+[gplex1998] #ugf-hp-buttons-row {
+  margin-top: 0 !important;
+}
+[gplex1998] #ugf-hp-buttons {
+  height: 38px;
+}
+[gplex1998] #ugf-search-btn,
+[gplex1998] #ugf-search-btn-2,
+[gplex1998] #ugf-lucky-btn {
+  display: none !important;
+}
+/* results typography */
+[gplex1998] .ugf-search-result-title {
+  font-family: arial, sans-serif !important;
+  font-size: 16px !important;
+  line-height: 19px !important;
+  font-weight: normal !important;
+  text-decoration: underline !important;
+  color: #0000cc !important;
+}
+[gplex1998] .ugf-search-result-title:visited {
+  color: #551a8b !important;
+}
+[gplex1998] .ugf-search-result-link {
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  color: #006621 !important;
+  text-decoration: none !important;
+}
+[gplex1998] .ugf-search-result-desc {
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  line-height: 17px !important;
+  color: #222 !important;
+}
+/* image results + viewer */
+[gplex1998][location="images"] #ugf-image-results {
+  background: #fff !important;
+}
+[gplex1998] .ugf-image-result {
+  width: 204px !important;
+  padding: 0 !important;
+  margin: 0 0 14px 0 !important;
+  display: block !important;
+}
+[gplex1998] .ugf-image-result img {
+  border: 1px solid #ccc;
+  padding: 1px;
+  max-width: 150px !important;
+  max-height: 150px !important;
+  margin: 0 !important;
+}
+[gplex1998] .ugf-image-result-hoverstats {
+  opacity: 1 !important;
+  position: static !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  font-size: 13px !important;
+  line-height: 16px !important;
+  color: #000 !important;
+  background: none !important;
+  width: auto !important;
+  padding: 2px 0 0 0 !important;
+  max-width: 152px;
+}
+[gplex1998] .ugf-image-result-title {
+  display: block;
+  color: #00c;
+  text-decoration: underline;
+  white-space: normal;
+  word-wrap: break-word;
+  max-width: 152px;
+}
+[gplex1998] .ugf-image-result-domain {
+  color: #006621 !important;
+  display: block !important;
+  margin: 2px 0 0 !important;
+}
+[gplex1998] .ugf-image-result-size-first {
+  display: none !important;
+}
+[gplex1998] .ugf-image-result-size-second {
+  display: block !important;
+}
+[gplex1998] #ugf-image-results-container {
+  align-items: flex-start;
+}
+[gplex1998] #ugf-image-viewer-inner {
+  background: #fff;
+  border: 1px solid #ccc;
+}
+[gplex1998] #ugf-image-viewer-title {
+  color: #00c;
+  text-decoration: underline;
+  font-size: 14px;
+}
+[gplex1998] #ugf-image-viewer-close {
+  color: #444;
+}
+[gplex1998] #ugf-image-viewer-domain {
+  color: #006621;
+}
+[gplex1998] #ugf-image-viewer-size {
+  color: #545454;
+}
+[gplex1998] .ugf-image-viewer-btn,
+[gplex1998] .ugf-image-viewer-btn-2 {
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  color: #444;
+  border-radius: 0;
+}
+[gplex1998] .ugf-era-promo {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  color: #000;
+  margin: 40px auto 0 auto;
+}
+[gplex1998] .ugf-era-promo a {
+  color: #00c;
+  text-decoration: underline;
+}
+[gplex1998] .ugf-era-footer-link,
+[gplex1998] .ugf-era-footer-dash,
+[gplex1998] .ugf-era-copyright {
+  font-family: arial, sans-serif;
+  font-size: 13px;
+}
+[gplex1998] .ugf-era-footer-link {
+  color: #00c !important;
+  text-decoration: underline !important;
+  margin: 0 6px;
+}
+[gplex1998] .ugf-era-copyright {
+  color: #000;
+  line-height: 40px;
+}
+[gplex1998] .ugf-era-count {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  color: #000;
+  margin: 0 0 2px 0;
+}
+[gplex1998] .ugf-era-promo {
+  text-align: center;
+  margin: 45px auto 0 auto;
+  font-family: arial, sans-serif;
+}
+[gplex1998] .ugf-era-promo a {
+  color: #008000 !important;
+  font-weight: bold;
+  font-size: 15px;
+  text-decoration: underline;
+}
+[gplex1998] .ugf-era-promo-tagline {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 14px;
+  font-style: italic;
+  color: #008000;
+  margin-top: 1px;
+}
+[gplex1998] .ugf-era-footer-link:last-of-type {
+  font-weight: bold;
+}
+[gplex1998][location$="home"] #ugf-searchbar::after {
+  content: "\\2022 Advanced Search\\a\\2022 Preferences" !important;
+}
+/* 2000: links above the box replace the side bullets */
+[gplex1998] #ugf-searchbar::after {
+  content: none !important;
+  display: none !important;
+}
+[gplex1998] .ugf-era-above-links {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  color: #767676;
+  margin: 0 0 2px 0;
+}
+[gplex1998] .ugf-era-above-links a {
+  color: #767676;
+  text-decoration: underline;
+}
+[gplex1998] .ugf-era-index {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  color: #000;
+  margin: 55px auto 0 auto;
+}
+[gplex1998] .ugf-era-promo {
+  text-align: center;
+  margin: 18px auto 0 auto;
+  font-family: arial, sans-serif;
+}
+[gplex1998] .ugf-era-promo a {
+  color: #00c !important;
+  font-weight: normal;
+  font-size: 15px;
+  text-decoration: underline;
+}
+[gplex1998] .ugf-era-footer-link {
+  color: #767676 !important;
+  text-decoration: underline !important;
+  font-size: 14px !important;
+  font-weight: normal;
+}
+[gplex1998] .ugf-era-footer-dash {
+  color: #767676;
+  font-size: 14px;
+}
+[gplex1998] .ugf-era-copyright {
+  color: #767676;
+  font-size: 14px;
+  line-height: 34px;
+}
+[gplex1998][location$="home"] #ugf-hp-footer {
+  margin-top: 45px;
+}
+/* 1999: serif type, logo left with links beside it */
+[gplex1998][location$="home"] #ugf-hp-inner {
+  font-family: "Times New Roman", Times, serif;
+}
+[gplex1998][location$="home"] #ugf-hp-logo {
+  display: inline-block;
+  margin-left: 0;
+}
+[gplex1998] .ugf-era-logo-links {
+  display: inline-block;
+  vertical-align: top;
+  margin: 60px 0 0 40px;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+}
+[gplex1998] .ugf-era-logo-links a {
+  color: #000;
+  text-decoration: none;
+  margin-right: 28px;
+  border-bottom: 2px solid #e8a33d;
+  padding-bottom: 1px;
+}
+[gplex1998] .ugf-era-logo-links a:last-child {
+  border-bottom-color: #3a5fcd;
+  margin-right: 0;
+}
+[gplex1998] .ugf-era-count {
+  font-family: "Times New Roman", Times, serif !important;
+  font-size: 19px !important;
+  color: #000;
+  margin-bottom: 3px !important;
+}
+[gplex1998] .ugf-era-promo {
+  text-align: center;
+  margin: 22px auto 0 auto;
+  font-family: "Times New Roman", Times, serif;
+}
+[gplex1998] .ugf-era-promo a {
+  color: #1a3a8f !important;
+  font-size: 19px;
+  font-weight: normal;
+  text-decoration: underline;
+}
+[gplex1998] .ugf-era-copyright {
+  color: #000;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+  line-height: 34px;
+}
+[gplex1998][location$="home"] #ugf-hp-footer {
+  margin-top: 30px;
+}
+[gplex1998][location$="home"] #ugf-search #ugf-searchbar,
+[gplex1998][location$="home"] #ugf-search-value {
+  width: 500px !important;
+}
+[gplex1998][location$="home"] #ugf-search-predictions-container {
+  width: 500px !important;
+}
+/* 1998: Stanford-era Google! page */
+[gplex1998][location$="home"] #ugf-hp-inner {
+  font-family: "Times New Roman", Times, serif;
+}
+[gplex1998][location$="home"] #ugf-hp-logo {
+  display: block;
+  margin: 0 auto;
+}
+/* 1998 logo: hand-drawn "Google!" wordmark, inlined so nothing external can break */
+[gplex1998][location$="home"] #ugf-hp-logo-inner {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 420 140%22 width=%22420%22 height=%22140%22%3E%3Cdefs%3E%3Cfilter id=%22s%22 x=%22-20%25%22 y=%22-20%25%22 width=%22150%25%22 height=%22150%25%22%3E%3CfeDropShadow dx=%224%22 dy=%224%22 stdDeviation=%222%22 flood-color=%22%238a8a8a%22 flood-opacity=%220.85%22/%3E%3C/filter%3E%3C/defs%3E%3Cg filter=%22url(%23s)%22 font-family=%22Georgia, 'Times New Roman', Times, serif%22 font-weight=%22bold%22 font-size=%22112%22%3E%3Ctext x=%228%22   y=%22108%22 fill=%22%233355cc%22%3EG%3C/text%3E%3Ctext x=%2296%22  y=%22108%22 fill=%22%23dd2222%22%3Eo%3C/text%3E%3Ctext x=%22160%22 y=%22108%22 fill=%22%23eebb00%22%3Eo%3C/text%3E%3Ctext x=%22224%22 y=%22108%22 fill=%22%233355cc%22%3Eg%3C/text%3E%3Ctext x=%22286%22 y=%22108%22 fill=%22%2322aa33%22%3El%3C/text%3E%3Ctext x=%22320%22 y=%22108%22 fill=%22%23dd2222%22%3Ee%3C/text%3E%3Ctext x=%22378%22 y=%22108%22 fill=%22%233355cc%22%3E!%3C/text%3E%3C/g%3E%3C/svg%3E") !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  width: 340px !important;
+  height: 118px !important;
+  margin-bottom: 6px;
+}
+/* gray panel around the search block */
+[gplex1998][location$="home"] #ugf-hp-search {
+  background: #efefef;
+  padding: 10px 0 8px 0;
+  width: 780px;
+  margin: 34px auto 0 auto !important;
+}
+[gplex1998] .ugf-era-count {
+  font-family: "Times New Roman", Times, serif !important;
+  font-size: 21px !important;
+  margin-bottom: 6px !important;
+}
+[gplex1998] .ugf-era-index-note {
+  text-align: center;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 19px;
+  font-style: italic;
+  color: #000;
+  margin-top: 4px;
+}
+[gplex1998] .ugf-era-results-select {
+  all: revert;
+  font-size: 15px;
+  margin: .2em;
+  vertical-align: middle;
+}
+[gplex1998][location$="home"] #ugf-search-value {
+  border: 1px solid #767676 !important;
+  width: 480px !important;
+  height: 24px !important;
+}
+[gplex1998][location$="home"] #ugf-search #ugf-searchbar,
+[gplex1998][location$="home"] #ugf-search-predictions-container {
+  width: 480px !important;
+}
+[gplex1998] .ugf-era-big-link {
+  text-align: center;
+  margin: 40px auto 0 auto;
+}
+[gplex1998] .ugf-era-big-link a {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 30px;
+  font-weight: bold;
+  color: #0000cc;
+  text-decoration: underline;
+}
+[gplex1998] .ugf-era-extra-links {
+  text-align: center;
+  margin: 26px auto 0 auto;
+}
+[gplex1998] .ugf-era-extra-links a {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 19px;
+  color: #0000cc;
+  text-decoration: underline;
+  margin: 0 6px;
+}
+[gplex1998] .ugf-era-subscribe {
+  background: #efefef;
+  width: 780px;
+  margin: 18px auto 0 auto;
+  padding: 10px 0 10px 0;
+  text-align: center;
+}
+[gplex1998] .ugf-era-subscribe-heading {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 21px;
+  color: #000;
+  margin-bottom: 8px;
+}
+[gplex1998] .ugf-era-subscribe-row input {
+  all: revert;
+  font-size: 15px;
+  width: 230px;
+  padding: 2px 4px;
+}
+[gplex1998] .ugf-era-subscribe-row button {
+  all: revert;
+  font-size: 15px;
+  margin-left: 6px;
+}
+[gplex1998] .ugf-era-subscribe-row a {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 17px;
+  color: #0000cc;
+  text-decoration: underline;
+  margin-left: 12px;
+}
+[gplex1998] .ugf-era-copyright {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 17px;
+  color: #000;
+  line-height: 28px;
+}
+[gplex1998][location$="home"] #ugf-hp-footer {
+  margin-top: 2px !important;
+}
+[gplex1998] .ugf-era-promo,
+[gplex1998] .ugf-era-promo-tagline,
+[gplex1998] .ugf-era-index {
+  display: none !important;
+}
+/* ============ GPlex 1997 (Stanford) theme ============ */
+[gplex1997] #gp-gbar-inner,
+[gplex1997] #ugf-navbar,
+[gplex1997] #ugf-personal-buttons,
+[gplex1997] #ugf-settings-tab,
+[gplex1997] #gp-gbar-settings-button,
+[gplex1997] #gp-gbar-inner,
+[gplex1997] #ugf-navbar,
+[gplex1997] #ugf-personal-buttons,
+[gplex1997] #ugf-settings-tab,
+[gplex1997] #gp-gbar-settings-button {
+  display: none !important;
+}
+/* tabbed nav */
+[gplex1997] .ugf-era-tabs {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  margin: 0 auto 0 auto;
+  border-bottom: 2px solid #3a5fcd;
+  width: max-content;
+  white-space: nowrap;
+  display: flex;
+  align-items: flex-end;
+}
+[gplex1997] .ugf-era-tabs a {
+  display: inline-block;
+  background: #efefef;
+  border: 1px solid #c9c9c9;
+  border-bottom: none;
+  color: #00c;
+  text-decoration: none;
+  padding: 3px 26px;
+  margin: 0 3px 0 0;
+  line-height: 20px;
+}
+[gplex1997] .ugf-era-tabs a.active {
+  background: #3a5fcd;
+  border-color: #3a5fcd;
+  color: #fff;
+  font-weight: bold;
+}
+/* era footer, rebuilt in JS */
+[gplex1997] .ugf-era-footer-link,
+[gplex2005] .ugf-era-footer-link,
+[gplex2006] .ugf-era-footer-link,
+[gplex2007] .ugf-era-footer-link {
+  color: #00c !important;
+  text-decoration: underline !important;
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  margin: 0 6px;
+}
+[gplex1997] .ugf-era-footer-dash,
+[gplex2005] .ugf-era-footer-dash,
+[gplex2006] .ugf-era-footer-dash,
+[gplex2007] .ugf-era-footer-dash {
+  color: #000;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+}
+[gplex1997] .ugf-era-copyright,
+[gplex2005] .ugf-era-copyright,
+[gplex2006] .ugf-era-copyright,
+[gplex2007] .ugf-era-copyright {
+  color: #000;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+  line-height: 40px;
+}
+/* homepage */
+[gplex1997][location$="home"] #ugf-hp {
+  margin-top: -20px;
+}
+[gplex1997][location$="home"] #ugf-hp-search {
+  margin-top: 30px !important;
+}
+[gplex1997][location$="home"] #ugf-hp-logo-inner {
+  background-image: url(https://www.google.com/intl/en_ALL/images/logo.gif);
+  background-repeat: no-repeat;
+  width: 276px !important;
+  height: 110px !important;
+}
+[gplex1997][location$="home"] #ugf-hp-logo #ugf-hp-logo-inner img {
+  visibility: hidden;
+}
+[gplex1997][location$="home"] #ugf-search #ugf-searchbar {
+  border: none !important;
+  width: 560px;
+  background: none !important;
+}
+[gplex1997][location$="home"] #ugf-search-value {
+  border: 2px solid #3a5fcd !important;
+  outline: none !important;
+  background: #fff !important;
+  width: 560px !important;
+  height: 26px !important;
+  font: 15px arial, sans-serif !important;
+  padding: 2px 4px !important;
+  box-sizing: border-box;
+}
+[gplex1997][location$="home"] #ugf-search-predictions-container {
+  width: 560px !important;
+  top: 30px !important;
+}
+[gplex1997] #ugf-searchbar::after {
+  white-space: pre;
+  text-decoration: underline;
+  color: #00c;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+  line-height: 17px;
+  top: 0;
+  position: absolute;
+}
+[gplex1997][location$="home"] #ugf-searchbar::after {
+  content: "\\2022 Advanced Search\\a\\2022 Preferences\\a\\2022 Language Tools";
+  left: calc(100% + 14px);
+  right: auto;
+  text-decoration: none;
+}
+[gplex1997][location$="home"] #ugf-hp-footer {
+  bottom: unset;
+  position: static;
+  background: none !important;
+  border: none !important;
+  width: max-content;
+  margin: 55px auto 0 auto;
+  flex-flow: row wrap;
+}
+[gplex1997][location$="home"] #ugf-structured-hp-footer-left,
+[gplex1997][location$="home"] #ugf-structured-hp-footer-right {
+  margin-left: 0;
+  margin-right: 0;
+  display: block;
+  flex-basis: 100%;
+  text-align: center;
+}
+/* results pages */
+[gplex1997]:not([location$="home"]) #ugf-topbar {
+  background: none !important;
+  border: none !important;
+}
+[gplex1997]:not([location$="home"]) #ugf-left {
+  display: none;
+}
+[gplex1997]:not([location$="home"]) #ugf-main,
+[gplex1997]:not([location$="home"]) #ugf-footer {
+  width: 100%;
+}
+[gplex1997]:not([location$="home"]) #ugf-main-inner {
+  margin-top: 8px;
+}
+[gplex1997]:not([location$="home"]) #ugf-logo-cont {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  background-image: url(https://www.google.com/intl/en_ALL/images/logo.gif);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: 0 center;
+  width: 150px !important;
+  height: 55px !important;
+  display: block !important;
+}
+[gplex1997]:not([location$="home"]) #ugf-logo-cont img,
+[gplex1997]:not([location$="home"]) #ugf-logo-cont svg {
+  visibility: hidden;
+}
+[gplex1997]:not([location$="home"]) #ugf-searchbar {
+  border: none !important;
+  background: none !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  display: inline-block !important;
+  position: relative;
+}
+[gplex1997]:not([location$="home"]) #ugf-search-value {
+  border: 2px solid #3a5fcd !important;
+  background: #fff !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+  width: 380px !important;
+  height: 26px !important;
+  padding: 2px 6px !important;
+  font: 15px arial, sans-serif !important;
+  margin: 0 !important;
+}
+[gplex1997]:not([location$="home"]) #ugf-search {
+  display: flex !important;
+  align-items: center !important;
+}
+[gplex1997]:not([location$="home"]) #ugf-searchbar::after {
+  content: "\\2022 Advanced Search\\a\\2022 Preferences" !important;
+  font-size: 11px !important;
+  line-height: 13px !important;
+  left: calc(100% + 78px) !important;
+  right: auto !important;
+  top: 1px !important;
+  text-decoration: none;
+}
+[gplex1997]:not([location$="home"]) .gp-pagination .gp-image {
+  background-image: url("https://www.google.com/images/nav_logo3.png") !important;
+  width: 15px !important;
+  height: 26px !important;
+  background-position: -44px 0 !important;
+}
+[gplex1997]:not([location$="home"]) #gp-pagination-prev .gp-image {
+  width: 19px !important;
+  background-position: -25px 0 !important;
+}
+[gplex1997]:not([location$="home"]) #gp-pagination-prev.has-prev .gp-image {
+  width: 44px !important;
+  background-position: 0 0 !important;
+}
+[gplex1997]:not([location$="home"]) .gp-pagination.active .gp-image {
+  background-position: -60px 0 !important;
+}
+[gplex1997]:not([location$="home"]) #gp-pagination-next .gp-image {
+  width: 62px !important;
+  background-position: -76px 0px !important;
+}
+[gplex1997]:not([location$="home"]) #gp-pagination-next span {
+  margin-left: 35px !important;
+}
+/* native buttons */
+[gplex1997] button.searchbtn {
+  all: revert;
+  font-size: 15px;
+  height: 1.85em !important;
+  margin: .2em;
+}
+[gplex1997] button.searchbtn-small {
+  all: revert;
+  font-size: 13px;
+  margin-left: 8px;
+}
+[gplex1997] #ugf-hp-buttons-row {
+  margin-top: 0 !important;
+}
+[gplex1997] #ugf-hp-buttons {
+  height: 38px;
+}
+[gplex1997] #ugf-search-btn,
+[gplex1997] #ugf-search-btn-2,
+[gplex1997] #ugf-lucky-btn {
+  display: none !important;
+}
+/* results typography */
+[gplex1997] .ugf-search-result-title {
+  font-family: arial, sans-serif !important;
+  font-size: 16px !important;
+  line-height: 19px !important;
+  font-weight: normal !important;
+  text-decoration: underline !important;
+  color: #0000cc !important;
+}
+[gplex1997] .ugf-search-result-title:visited {
+  color: #551a8b !important;
+}
+[gplex1997] .ugf-search-result-link {
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  color: #006621 !important;
+  text-decoration: none !important;
+}
+[gplex1997] .ugf-search-result-desc {
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  line-height: 17px !important;
+  color: #222 !important;
+}
+/* image results + viewer */
+[gplex1997][location="images"] #ugf-image-results {
+  background: #fff !important;
+}
+[gplex1997] .ugf-image-result {
+  width: 204px !important;
+  padding: 0 !important;
+  margin: 0 0 14px 0 !important;
+  display: block !important;
+}
+[gplex1997] .ugf-image-result img {
+  border: 1px solid #ccc;
+  padding: 1px;
+  max-width: 150px !important;
+  max-height: 150px !important;
+  margin: 0 !important;
+}
+[gplex1997] .ugf-image-result-hoverstats {
+  opacity: 1 !important;
+  position: static !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  font-size: 13px !important;
+  line-height: 16px !important;
+  color: #000 !important;
+  background: none !important;
+  width: auto !important;
+  padding: 2px 0 0 0 !important;
+  max-width: 152px;
+}
+[gplex1997] .ugf-image-result-title {
+  display: block;
+  color: #00c;
+  text-decoration: underline;
+  white-space: normal;
+  word-wrap: break-word;
+  max-width: 152px;
+}
+[gplex1997] .ugf-image-result-domain {
+  color: #006621 !important;
+  display: block !important;
+  margin: 2px 0 0 !important;
+}
+[gplex1997] .ugf-image-result-size-first {
+  display: none !important;
+}
+[gplex1997] .ugf-image-result-size-second {
+  display: block !important;
+}
+[gplex1997] #ugf-image-results-container {
+  align-items: flex-start;
+}
+[gplex1997] #ugf-image-viewer-inner {
+  background: #fff;
+  border: 1px solid #ccc;
+}
+[gplex1997] #ugf-image-viewer-title {
+  color: #00c;
+  text-decoration: underline;
+  font-size: 14px;
+}
+[gplex1997] #ugf-image-viewer-close {
+  color: #444;
+}
+[gplex1997] #ugf-image-viewer-domain {
+  color: #006621;
+}
+[gplex1997] #ugf-image-viewer-size {
+  color: #545454;
+}
+[gplex1997] .ugf-image-viewer-btn,
+[gplex1997] .ugf-image-viewer-btn-2 {
+  background: #f5f5f5;
+  border: 1px solid #ccc;
+  color: #444;
+  border-radius: 0;
+}
+[gplex1997] .ugf-era-promo {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  color: #000;
+  margin: 40px auto 0 auto;
+}
+[gplex1997] .ugf-era-promo a {
+  color: #00c;
+  text-decoration: underline;
+}
+[gplex1997] .ugf-era-footer-link,
+[gplex1997] .ugf-era-footer-dash,
+[gplex1997] .ugf-era-copyright {
+  font-family: arial, sans-serif;
+  font-size: 13px;
+}
+[gplex1997] .ugf-era-footer-link {
+  color: #00c !important;
+  text-decoration: underline !important;
+  margin: 0 6px;
+}
+[gplex1997] .ugf-era-copyright {
+  color: #000;
+  line-height: 40px;
+}
+[gplex1997] .ugf-era-count {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  color: #000;
+  margin: 0 0 2px 0;
+}
+[gplex1997] .ugf-era-promo {
+  text-align: center;
+  margin: 45px auto 0 auto;
+  font-family: arial, sans-serif;
+}
+[gplex1997] .ugf-era-promo a {
+  color: #008000 !important;
+  font-weight: bold;
+  font-size: 15px;
+  text-decoration: underline;
+}
+[gplex1997] .ugf-era-promo-tagline {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 14px;
+  font-style: italic;
+  color: #008000;
+  margin-top: 1px;
+}
+[gplex1997] .ugf-era-footer-link:last-of-type {
+  font-weight: bold;
+}
+[gplex1997][location$="home"] #ugf-searchbar::after {
+  content: "\\2022 Advanced Search\\a\\2022 Preferences" !important;
+}
+/* 2000: links above the box replace the side bullets */
+[gplex1997] #ugf-searchbar::after {
+  content: none !important;
+  display: none !important;
+}
+[gplex1997] .ugf-era-above-links {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  color: #767676;
+  margin: 0 0 2px 0;
+}
+[gplex1997] .ugf-era-above-links a {
+  color: #767676;
+  text-decoration: underline;
+}
+[gplex1997] .ugf-era-index {
+  text-align: center;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  color: #000;
+  margin: 55px auto 0 auto;
+}
+[gplex1997] .ugf-era-promo {
+  text-align: center;
+  margin: 18px auto 0 auto;
+  font-family: arial, sans-serif;
+}
+[gplex1997] .ugf-era-promo a {
+  color: #00c !important;
+  font-weight: normal;
+  font-size: 15px;
+  text-decoration: underline;
+}
+[gplex1997] .ugf-era-footer-link {
+  color: #767676 !important;
+  text-decoration: underline !important;
+  font-size: 14px !important;
+  font-weight: normal;
+}
+[gplex1997] .ugf-era-footer-dash {
+  color: #767676;
+  font-size: 14px;
+}
+[gplex1997] .ugf-era-copyright {
+  color: #767676;
+  font-size: 14px;
+  line-height: 34px;
+}
+[gplex1997][location$="home"] #ugf-hp-footer {
+  margin-top: 45px;
+}
+/* 1999: serif type, logo left with links beside it */
+[gplex1997][location$="home"] #ugf-hp-inner {
+  font-family: "Times New Roman", Times, serif;
+}
+[gplex1997][location$="home"] #ugf-hp-logo {
+  display: inline-block;
+  margin-left: 0;
+}
+[gplex1997] .ugf-era-logo-links {
+  display: inline-block;
+  vertical-align: top;
+  margin: 60px 0 0 40px;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+}
+[gplex1997] .ugf-era-logo-links a {
+  color: #000;
+  text-decoration: none;
+  margin-right: 28px;
+  border-bottom: 2px solid #e8a33d;
+  padding-bottom: 1px;
+}
+[gplex1997] .ugf-era-logo-links a:last-child {
+  border-bottom-color: #3a5fcd;
+  margin-right: 0;
+}
+[gplex1997] .ugf-era-count {
+  font-family: "Times New Roman", Times, serif !important;
+  font-size: 19px !important;
+  color: #000;
+  margin-bottom: 3px !important;
+}
+[gplex1997] .ugf-era-promo {
+  text-align: center;
+  margin: 22px auto 0 auto;
+  font-family: "Times New Roman", Times, serif;
+}
+[gplex1997] .ugf-era-promo a {
+  color: #1a3a8f !important;
+  font-size: 19px;
+  font-weight: normal;
+  text-decoration: underline;
+}
+[gplex1997] .ugf-era-copyright {
+  color: #000;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+  line-height: 34px;
+}
+[gplex1997][location$="home"] #ugf-hp-footer {
+  margin-top: 30px;
+}
+[gplex1997][location$="home"] #ugf-search #ugf-searchbar,
+[gplex1997][location$="home"] #ugf-search-value {
+  width: 500px !important;
+}
+[gplex1997][location$="home"] #ugf-search-predictions-container {
+  width: 500px !important;
+}
+/* 1998: Stanford-era Google! page */
+[gplex1997][location$="home"] #ugf-hp-inner {
+  font-family: "Times New Roman", Times, serif;
+}
+[gplex1997][location$="home"] #ugf-hp-logo {
+  display: block;
+  margin: 0 auto;
+}
+[gplex1997][location$="home"] #ugf-hp-logo-inner {
+  background-image: url(https://static.wikia.nocookie.net/logopedia/images/a/a0/Google_1997.svg/revision/latest?cb=20240216165247) !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  width: 340px !important;
+  height: 118px !important;
+  margin-bottom: 6px;
+}
+/* gray panel around the search block */
+[gplex1997][location$="home"] #ugf-hp-search {
+  background: #efefef;
+  padding: 10px 0 8px 0;
+  width: 780px;
+  margin: 34px auto 0 auto !important;
+}
+[gplex1997] .ugf-era-count {
+  font-family: "Times New Roman", Times, serif !important;
+  font-size: 21px !important;
+  margin-bottom: 6px !important;
+}
+[gplex1997] .ugf-era-index-note {
+  text-align: center;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 19px;
+  font-style: italic;
+  color: #000;
+  margin-top: 4px;
+}
+[gplex1997] .ugf-era-results-select {
+  all: revert;
+  font-size: 15px;
+  margin: .2em;
+  vertical-align: middle;
+}
+[gplex1997][location$="home"] #ugf-search-value {
+  border: 1px solid #767676 !important;
+  width: 480px !important;
+  height: 24px !important;
+}
+[gplex1997][location$="home"] #ugf-search #ugf-searchbar,
+[gplex1997][location$="home"] #ugf-search-predictions-container {
+  width: 480px !important;
+}
+[gplex1997] .ugf-era-big-link {
+  text-align: center;
+  margin: 40px auto 0 auto;
+}
+[gplex1997] .ugf-era-big-link a {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 30px;
+  font-weight: bold;
+  color: #0000cc;
+  text-decoration: underline;
+}
+[gplex1997] .ugf-era-extra-links {
+  text-align: center;
+  margin: 26px auto 0 auto;
+}
+[gplex1997] .ugf-era-extra-links a {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 19px;
+  color: #0000cc;
+  text-decoration: underline;
+  margin: 0 6px;
+}
+[gplex1997] .ugf-era-subscribe {
+  background: #efefef;
+  width: 780px;
+  margin: 18px auto 0 auto;
+  padding: 10px 0 10px 0;
+  text-align: center;
+}
+[gplex1997] .ugf-era-subscribe-heading {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 21px;
+  color: #000;
+  margin-bottom: 8px;
+}
+[gplex1997] .ugf-era-subscribe-row input {
+  all: revert;
+  font-size: 15px;
+  width: 230px;
+  padding: 2px 4px;
+}
+[gplex1997] .ugf-era-subscribe-row button {
+  all: revert;
+  font-size: 15px;
+  margin-left: 6px;
+}
+[gplex1997] .ugf-era-subscribe-row a {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 17px;
+  color: #0000cc;
+  text-decoration: underline;
+  margin-left: 12px;
+}
+[gplex1997] .ugf-era-copyright {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 17px;
+  color: #000;
+  line-height: 28px;
+}
+[gplex1997][location$="home"] #ugf-hp-footer {
+  margin-top: 2px !important;
+}
+[gplex1997] .ugf-era-promo,
+[gplex1997] .ugf-era-promo-tagline,
+[gplex1997] .ugf-era-index {
+  display: none !important;
+}
+/* ============ end GPlex 1997 (Stanford) theme ============ */
+/* ---- Stanford-era results pages (1997/1998) ---- */
+[gplex1997]:not([location$="home"]) .ugf-search-result:nth-of-type(n+11),
+[gplex1998]:not([location$="home"]) .ugf-search-result:nth-of-type(n+11) {
+  display: none !important;
+}
+[gplex1997]:not([location$="home"]) #gp-pagination,
+[gplex1998]:not([location$="home"]) #gp-pagination {
+  display: none !important;
+}
+[gplex1997] #ugf-searchbar::after,
+[gplex1998] #ugf-searchbar::after {
+  content: none !important;
+  display: none !important;
+}
+[gplex1997]:not([location$="home"]) #ugf-main-inner,
+[gplex1998]:not([location$="home"]) #ugf-main-inner {
+  font-family: "Times New Roman", Times, serif;
+  margin-top: 10px;
+}
+[gplex1997]:not([location$="home"]) #ugf-topbar,
+[gplex1998]:not([location$="home"]) #ugf-topbar {
+  background: #efefef !important;
+  border: none !important;
+  padding: 6px 0;
+}
+[gplex1997]:not([location$="home"]) #ugf-logo-cont {
+  background-image: url(https://static.wikia.nocookie.net/logopedia/images/a/a0/Google_1997.svg/revision/latest?cb=20240216165247) !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: 0 center !important;
+  width: 180px !important;
+  height: 58px !important;
+}
+[gplex1998]:not([location$="home"]) #ugf-logo-cont {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 420 140%22 width=%22420%22 height=%22140%22%3E%3Cdefs%3E%3Cfilter id=%22s%22 x=%22-20%25%22 y=%22-20%25%22 width=%22150%25%22 height=%22150%25%22%3E%3CfeDropShadow dx=%224%22 dy=%224%22 stdDeviation=%222%22 flood-color=%22%238a8a8a%22 flood-opacity=%220.85%22/%3E%3C/filter%3E%3C/defs%3E%3Cg filter=%22url(%23s)%22 font-family=%22Georgia, 'Times New Roman', Times, serif%22 font-weight=%22bold%22 font-size=%22112%22%3E%3Ctext x=%228%22   y=%22108%22 fill=%22%233355cc%22%3EG%3C/text%3E%3Ctext x=%2296%22  y=%22108%22 fill=%22%23dd2222%22%3Eo%3C/text%3E%3Ctext x=%22160%22 y=%22108%22 fill=%22%23eebb00%22%3Eo%3C/text%3E%3Ctext x=%22224%22 y=%22108%22 fill=%22%233355cc%22%3Eg%3C/text%3E%3Ctext x=%22286%22 y=%22108%22 fill=%22%2322aa33%22%3El%3C/text%3E%3Ctext x=%22320%22 y=%22108%22 fill=%22%23dd2222%22%3Ee%3C/text%3E%3Ctext x=%22378%22 y=%22108%22 fill=%22%233355cc%22%3E!%3C/text%3E%3C/g%3E%3C/svg%3E") !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: 0 center !important;
+  width: 180px !important;
+  height: 58px !important;
+}
+[gplex1997]:not([location$="home"]) #ugf-search-value,
+[gplex1998]:not([location$="home"]) #ugf-search-value {
+  border: 1px solid #767676 !important;
+  width: 330px !important;
+  height: 24px !important;
+  font: 15px arial, sans-serif !important;
+}
+[gplex1997]:not([location$="home"]) .ugf-search-result-title,
+[gplex1998]:not([location$="home"]) .ugf-search-result-title {
+  font-family: "Times New Roman", Times, serif !important;
+  font-size: 19px !important;
+  line-height: 22px !important;
+  color: #0000cc !important;
+  text-decoration: underline !important;
+}
+[gplex1997]:not([location$="home"]) .ugf-search-result-desc,
+[gplex1998]:not([location$="home"]) .ugf-search-result-desc {
+  font-family: "Times New Roman", Times, serif !important;
+  font-size: 17px !important;
+  line-height: 20px !important;
+  color: #000 !important;
+}
+[gplex1997]:not([location$="home"]) .ugf-search-result-link,
+[gplex1998]:not([location$="home"]) .ugf-search-result-link {
+  font-family: "Times New Roman", Times, serif !important;
+  font-size: 16px !important;
+  color: #008000 !important;
+}
+[gplex1997]:not([location$="home"]) .ugf-era-extras,
+[gplex1998]:not([location$="home"]) .ugf-era-extras,
+[gplex1997]:not([location$="home"]) .ugf-era-count,
+[gplex1998]:not([location$="home"]) .ugf-era-count {
+  display: none !important;
+}
+/* ============ end GPlex 1997-1998 (Stanford) theme ============ */
+/* ============ end GPlex 1999 theme ============ */
+/* ============ end GPlex 1999-2000 theme ============ */
+/* ============ end GPlex 2001 theme ============ */
+/* ============ end GPlex 2002 theme ============ */
+/* ============ end GPlex 2003-Early 2004 theme ============ */
+/* ---- no ads: hide Google's ad/sponsored blocks on every layout ---- */
+#tads,
+#tadsb,
+#bottomads,
+#tvcap,
+#taw,
+.commercial-unit-desktop-top,
+.commercial-unit-desktop-rhs,
+.mnr-c[data-text-ad],
+[data-text-ad],
+[aria-label="Ads"],
+.uEierd,
+.ads-ad,
+.ads-fr {
+  display: none !important;
+}
+/* ---- retro layouts: underlined arial result links ---- */
+[gplex2007] .ugf-search-result-title,
+[gplex2009] .ugf-search-result-title,
+[gplex2010] .ugf-search-result-title {
+  font-family: arial, sans-serif !important;
+  font-size: 16px !important;
+  line-height: 19px !important;
+  font-weight: normal !important;
+  letter-spacing: normal !important;
+  text-decoration: underline !important;
+  color: #0000cc !important;
+}
+[gplex2007] .ugf-search-result-title:visited,
+[gplex2009] .ugf-search-result-title:visited,
+[gplex2010] .ugf-search-result-title:visited {
+  color: #551a8b !important;
+}
+[gplex2007] .ugf-search-result-link,
+[gplex2009] .ugf-search-result-link,
+[gplex2010] .ugf-search-result-link {
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  color: #006621 !important;
+  text-decoration: none !important;
+}
+[gplex2007] .ugf-search-result-desc,
+[gplex2009] .ugf-search-result-desc,
+[gplex2010] .ugf-search-result-desc {
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+  line-height: 17px !important;
+  color: #222 !important;
+}
+[gplex2007] #ugf-searchbar::after,
+[gplex2009] #ugf-searchbar::after,
+[gplex2010] #ugf-searchbar::after {
+  font-family: arial, sans-serif !important;
+  text-decoration: underline !important;
+}
+/* ---- retro gbar: separators + era sidebar labels ---- */
+[gplex2007] .ugf-retro-gbar-sep,
+[gplex2009] .ugf-retro-gbar-sep,
+[gplex2010] .ugf-retro-gbar-sep {
+  color: #666;
+  font-size: 13px;
+  line-height: 24px;
+  padding: 0 6px;
+}
+[gplex2007] #gp-gbar-right,
+[gplex2009] #gp-gbar-right,
+[gplex2010] #gp-gbar-right {
+  align-items: center;
+}
+/* 2010 sidebar: "Everything" label, era-appropriate entries only */
+[gplex2010] #ugf-everything-text {
+  display: inline !important;
+}
+[gplex2010] #ugf-web-text {
+  display: none !important;
+}
+[gplex2010] #ugf-settings-item,
+[gplex2010] #ugf-maps-item {
+  display: none !important;
+}
+[gplex2010] #ugf-left .ugf-sidebar-tab span,
+[gplex2010] #ugf-left .ugf-sidebar-tool span {
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+}
+/* ---- 2010 results: single "Advanced search" link like the era ---- */
+[gplex2010]:not([location$="home"]) #ugf-searchbar::after {
+  content: "Advanced search" !important;
+  font-size: 13px !important;
+  line-height: 15px !important;
+  left: calc(100% + 78px) !important;
+  top: 5px !important;
+}
 /* ---- 2009 / 2010 results-page search box (bordered input, button beside it) ---- */
 [gplex2009]:not([location$="home"]) #ugf-searchbar,
 [gplex2010]:not([location$="home"]) #ugf-searchbar {
@@ -4305,8 +8870,18 @@ li.tg2Kqf{
         "l2013": "Late 2012-2013",
         "l2013L": "2013 (Legacy/old browser version)",
         "l2012": "Late 2011-Early 2012",
-        "l2009": "2009-Early 2010 (Buggy, not fully done yet)",
-        "l2010N": "2010-Early 2011 (Buggy, not fully done yet)",
+        "l2009": "2009-Early 2010",
+        "l2010N": "2010-Early 2011",
+        "l2007": "2007-2008",
+        "l2006": "2006",
+        "l2005": "2004-2005",
+        "l2003": "2003-Early 2004",
+        "l2002": "2002",
+        "l2001": "2001",
+        "l2000": "2000",
+        "l1999": "1999",
+        "l1998": "1998 (Stanford)",
+        "l1997": "1997 (Stanford)",
         "notonOn": "On",
         "notonOff": "Off (compatible with the Google Images Restored extension)",
         "forceLoadMsgOn": "On",
@@ -4363,10 +8938,86 @@ li.tg2Kqf{
         case '2009':
             document.querySelector("html").setAttribute("layout","2010");
             document.querySelector("html").setAttribute("gplex2009","");
+            document.querySelector("html").setAttribute("legacy-gbar","");
+            document.querySelector("html").setAttribute("legacy-images","");
+            document.querySelector("html").setAttribute("legacy-footer","");
             break;
         case '2010N':
             document.querySelector("html").setAttribute("layout","2011");
             document.querySelector("html").setAttribute("gplex2010","");
+            document.querySelector("html").setAttribute("legacy-gbar","");
+            document.querySelector("html").setAttribute("legacy-images","");
+            document.querySelector("html").setAttribute("legacy-footer","");
+            break;
+        case '2007':
+            document.querySelector("html").setAttribute("layout","2010");
+            document.querySelector("html").setAttribute("gplex2007","");
+            document.querySelector("html").setAttribute("legacy-gbar","");
+            document.querySelector("html").setAttribute("legacy-images","");
+            document.querySelector("html").setAttribute("legacy-footer","");
+            break;
+        case '2006':
+            document.querySelector("html").setAttribute("layout","2010");
+            document.querySelector("html").setAttribute("gplex2006","");
+            document.querySelector("html").setAttribute("legacy-gbar","");
+            document.querySelector("html").setAttribute("legacy-images","");
+            document.querySelector("html").setAttribute("legacy-footer","");
+            break;
+        case '1997':
+            document.querySelector("html").setAttribute("layout","2010");
+            document.querySelector("html").setAttribute("gplex1997","");
+            document.querySelector("html").setAttribute("legacy-gbar","");
+            document.querySelector("html").setAttribute("legacy-images","");
+            document.querySelector("html").setAttribute("legacy-footer","");
+            break;
+        case '1998':
+            document.querySelector("html").setAttribute("layout","2010");
+            document.querySelector("html").setAttribute("gplex1998","");
+            document.querySelector("html").setAttribute("legacy-gbar","");
+            document.querySelector("html").setAttribute("legacy-images","");
+            document.querySelector("html").setAttribute("legacy-footer","");
+            break;
+        case '1999':
+            document.querySelector("html").setAttribute("layout","2010");
+            document.querySelector("html").setAttribute("gplex1999","");
+            document.querySelector("html").setAttribute("legacy-gbar","");
+            document.querySelector("html").setAttribute("legacy-images","");
+            document.querySelector("html").setAttribute("legacy-footer","");
+            break;
+        case '2000':
+            document.querySelector("html").setAttribute("layout","2010");
+            document.querySelector("html").setAttribute("gplex2000","");
+            document.querySelector("html").setAttribute("legacy-gbar","");
+            document.querySelector("html").setAttribute("legacy-images","");
+            document.querySelector("html").setAttribute("legacy-footer","");
+            break;
+        case '2001':
+            document.querySelector("html").setAttribute("layout","2010");
+            document.querySelector("html").setAttribute("gplex2001","");
+            document.querySelector("html").setAttribute("legacy-gbar","");
+            document.querySelector("html").setAttribute("legacy-images","");
+            document.querySelector("html").setAttribute("legacy-footer","");
+            break;
+        case '2002':
+            document.querySelector("html").setAttribute("layout","2010");
+            document.querySelector("html").setAttribute("gplex2002","");
+            document.querySelector("html").setAttribute("legacy-gbar","");
+            document.querySelector("html").setAttribute("legacy-images","");
+            document.querySelector("html").setAttribute("legacy-footer","");
+            break;
+        case '2003':
+            document.querySelector("html").setAttribute("layout","2010");
+            document.querySelector("html").setAttribute("gplex2003","");
+            document.querySelector("html").setAttribute("legacy-gbar","");
+            document.querySelector("html").setAttribute("legacy-images","");
+            document.querySelector("html").setAttribute("legacy-footer","");
+            break;
+        case '2005':
+            document.querySelector("html").setAttribute("layout","2010");
+            document.querySelector("html").setAttribute("gplex2005","");
+            document.querySelector("html").setAttribute("legacy-gbar","");
+            document.querySelector("html").setAttribute("legacy-images","");
+            document.querySelector("html").setAttribute("legacy-footer","");
             break;
         case '2010':
             document.querySelector("html").setAttribute("layout","2010");
@@ -4795,6 +9446,36 @@ li.tg2Kqf{
                                                 </a>
                                                 <a id="UGF_SET_LAYOUT_2009" class="ugf-dropdown-item" value="2009">
                                                     <span>${UImessages.l2009}</span>
+                                                </a>
+                                                <a id="UGF_SET_LAYOUT_2007" class="ugf-dropdown-item" value="2007">
+                                                    <span>${UImessages.l2007}</span>
+                                                </a>
+                                                <a id="UGF_SET_LAYOUT_2006" class="ugf-dropdown-item" value="2006">
+                                                    <span>${UImessages.l2006}</span>
+                                                </a>
+                                                <a id="UGF_SET_LAYOUT_2005" class="ugf-dropdown-item" value="2005">
+                                                    <span>${UImessages.l2005}</span>
+                                                </a>
+                                                <a id="UGF_SET_LAYOUT_2003" class="ugf-dropdown-item" value="2003">
+                                                    <span>${UImessages.l2003}</span>
+                                                </a>
+                                                <a id="UGF_SET_LAYOUT_2002" class="ugf-dropdown-item" value="2002">
+                                                    <span>${UImessages.l2002}</span>
+                                                </a>
+                                                <a id="UGF_SET_LAYOUT_2001" class="ugf-dropdown-item" value="2001">
+                                                    <span>${UImessages.l2001}</span>
+                                                </a>
+                                                <a id="UGF_SET_LAYOUT_2000" class="ugf-dropdown-item" value="2000">
+                                                    <span>${UImessages.l2000}</span>
+                                                </a>
+                                                <a id="UGF_SET_LAYOUT_1999" class="ugf-dropdown-item" value="1999">
+                                                    <span>${UImessages.l1999}</span>
+                                                </a>
+                                                <a id="UGF_SET_LAYOUT_1998" class="ugf-dropdown-item" value="1998">
+                                                    <span>${UImessages.l1998}</span>
+                                                </a>
+                                                <a id="UGF_SET_LAYOUT_1997" class="ugf-dropdown-item" value="1997">
+                                                    <span>${UImessages.l1997}</span>
                                                 </a>
                                             </div>
                                         </div>
@@ -7184,12 +11865,88 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                         let value = itemRoot.getAttribute("value");
                         document.querySelector("html").removeAttribute("gplex2009");
                         document.querySelector("html").removeAttribute("gplex2010");
+                        document.querySelector("html").removeAttribute("gplex2007");
+                        document.querySelector("html").removeAttribute("gplex2006");
+                        document.querySelector("html").removeAttribute("gplex2005");
+                        document.querySelector("html").removeAttribute("gplex2003");
+                        document.querySelector("html").removeAttribute("gplex2002");
+                        document.querySelector("html").removeAttribute("gplex2001");
+                        document.querySelector("html").removeAttribute("gplex2000");
+                        document.querySelector("html").removeAttribute("gplex1999");
+                        document.querySelector("html").removeAttribute("gplex1998");
+                        document.querySelector("html").removeAttribute("gplex1997");
                         if (value === "2009") {
                             document.querySelector("html").setAttribute("layout","2010");
                             document.querySelector("html").setAttribute("gplex2009","");
+                            document.querySelector("html").setAttribute("legacy-gbar","");
+                            document.querySelector("html").setAttribute("legacy-images","");
+                            document.querySelector("html").setAttribute("legacy-footer","");
                         } else if (value === "2010N") {
                             document.querySelector("html").setAttribute("layout","2011");
                             document.querySelector("html").setAttribute("gplex2010","");
+                            document.querySelector("html").setAttribute("legacy-gbar","");
+                            document.querySelector("html").setAttribute("legacy-images","");
+                            document.querySelector("html").setAttribute("legacy-footer","");
+                        } else if (value === "2007") {
+                            document.querySelector("html").setAttribute("layout","2010");
+                            document.querySelector("html").setAttribute("gplex2007","");
+                            document.querySelector("html").setAttribute("legacy-gbar","");
+                            document.querySelector("html").setAttribute("legacy-images","");
+                            document.querySelector("html").setAttribute("legacy-footer","");
+                        } else if (value === "2006") {
+                            document.querySelector("html").setAttribute("layout","2010");
+                            document.querySelector("html").setAttribute("gplex2006","");
+                            document.querySelector("html").setAttribute("legacy-gbar","");
+                            document.querySelector("html").setAttribute("legacy-images","");
+                            document.querySelector("html").setAttribute("legacy-footer","");
+                        } else if (value === "1997") {
+                            document.querySelector("html").setAttribute("layout","2010");
+                            document.querySelector("html").setAttribute("gplex1997","");
+                            document.querySelector("html").setAttribute("legacy-gbar","");
+                            document.querySelector("html").setAttribute("legacy-images","");
+                            document.querySelector("html").setAttribute("legacy-footer","");
+                        } else if (value === "1998") {
+                            document.querySelector("html").setAttribute("layout","2010");
+                            document.querySelector("html").setAttribute("gplex1998","");
+                            document.querySelector("html").setAttribute("legacy-gbar","");
+                            document.querySelector("html").setAttribute("legacy-images","");
+                            document.querySelector("html").setAttribute("legacy-footer","");
+                        } else if (value === "1999") {
+                            document.querySelector("html").setAttribute("layout","2010");
+                            document.querySelector("html").setAttribute("gplex1999","");
+                            document.querySelector("html").setAttribute("legacy-gbar","");
+                            document.querySelector("html").setAttribute("legacy-images","");
+                            document.querySelector("html").setAttribute("legacy-footer","");
+                        } else if (value === "2000") {
+                            document.querySelector("html").setAttribute("layout","2010");
+                            document.querySelector("html").setAttribute("gplex2000","");
+                            document.querySelector("html").setAttribute("legacy-gbar","");
+                            document.querySelector("html").setAttribute("legacy-images","");
+                            document.querySelector("html").setAttribute("legacy-footer","");
+                        } else if (value === "2001") {
+                            document.querySelector("html").setAttribute("layout","2010");
+                            document.querySelector("html").setAttribute("gplex2001","");
+                            document.querySelector("html").setAttribute("legacy-gbar","");
+                            document.querySelector("html").setAttribute("legacy-images","");
+                            document.querySelector("html").setAttribute("legacy-footer","");
+                        } else if (value === "2002") {
+                            document.querySelector("html").setAttribute("layout","2010");
+                            document.querySelector("html").setAttribute("gplex2002","");
+                            document.querySelector("html").setAttribute("legacy-gbar","");
+                            document.querySelector("html").setAttribute("legacy-images","");
+                            document.querySelector("html").setAttribute("legacy-footer","");
+                        } else if (value === "2003") {
+                            document.querySelector("html").setAttribute("layout","2010");
+                            document.querySelector("html").setAttribute("gplex2003","");
+                            document.querySelector("html").setAttribute("legacy-gbar","");
+                            document.querySelector("html").setAttribute("legacy-images","");
+                            document.querySelector("html").setAttribute("legacy-footer","");
+                        } else if (value === "2005") {
+                            document.querySelector("html").setAttribute("layout","2010");
+                            document.querySelector("html").setAttribute("gplex2005","");
+                            document.querySelector("html").setAttribute("legacy-gbar","");
+                            document.querySelector("html").setAttribute("legacy-images","");
+                            document.querySelector("html").setAttribute("legacy-footer","");
                         } else {
                             document.querySelector("html").setAttribute("layout",value);
                         }
@@ -7344,6 +12101,36 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     break;
                 case '2010N':
                     layoutBtnSpan.textContent = UImessages.l2010N;
+                    break;
+                case '2007':
+                    layoutBtnSpan.textContent = UImessages.l2007;
+                    break;
+                case '2006':
+                    layoutBtnSpan.textContent = UImessages.l2006;
+                    break;
+                case '2005':
+                    layoutBtnSpan.textContent = UImessages.l2005;
+                    break;
+                case '2003':
+                    layoutBtnSpan.textContent = UImessages.l2003;
+                    break;
+                case '2002':
+                    layoutBtnSpan.textContent = UImessages.l2002;
+                    break;
+                case '2001':
+                    layoutBtnSpan.textContent = UImessages.l2001;
+                    break;
+                case '2000':
+                    layoutBtnSpan.textContent = UImessages.l2000;
+                    break;
+                case '1999':
+                    layoutBtnSpan.textContent = UImessages.l1999;
+                    break;
+                case '1998':
+                    layoutBtnSpan.textContent = UImessages.l1998;
+                    break;
+                case '1997':
+                    layoutBtnSpan.textContent = UImessages.l1997;
                     break;
                 case '2014':
                     layoutBtnSpan.textContent = UImessages.l2014;
@@ -8371,6 +13158,611 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             }
         }
     }
+    const UGF_RETRO_CHROME = {
+        gplex1997: {
+            navAbove: true,
+            left: [],
+            right: [],
+            aboveBox: "Search the web using Google!",
+            luckyLabel: "I\'m feeling lucky",
+            resultsDropdown: ["10 results", "20 results", "30 results", "50 results", "100 results"],
+            indexNote: "Index contains ~25 million pages (soon to be much bigger)",
+            bigLink: ["About Google!", "https://about.google/"],
+            extraLinks: [
+                ["Stanford Search", "https://www.stanford.edu/"],
+                ["Linux Search", "https://www.google.com/"]
+            ],
+            subscribe: {
+                heading: "Get Google! updates monthly!",
+                placeholder: "your e-mail",
+                button: "Subscribe",
+                archive: "Archive",
+                archiveHref: "https://about.google/"
+            },
+            footer: [],
+            copyright: "Copyright \u00a91997 Stanford University"
+        },
+        gplex1998: {
+            navAbove: true,
+            left: [],
+            right: [],
+            aboveBox: "Search the web using Google!",
+            luckyLabel: "I\'m feeling lucky",
+            resultsDropdown: ["10 results", "20 results", "30 results", "50 results", "100 results"],
+            indexNote: "Index contains ~25 million pages (soon to be much bigger)",
+            bigLink: ["About Google!", "https://about.google/"],
+            extraLinks: [
+                ["Stanford Search", "https://www.stanford.edu/"],
+                ["Linux Search", "https://www.google.com/"]
+            ],
+            subscribe: {
+                heading: "Get Google! updates monthly!",
+                placeholder: "your e-mail",
+                button: "Subscribe",
+                archive: "Archive",
+                archiveHref: "https://about.google/"
+            },
+            footer: [],
+            copyright: "Copyright \u00a91997-8 Stanford University"
+        },
+        gplex1999: {
+            navAbove: true,
+            left: [],
+            right: [],
+            aboveBox: "Search the web using Google",
+            logoLinks: [
+                ["Jobs@Google", "https://about.google/"],
+                ["About Google", "https://about.google/"]
+            ],
+            luckyLabel: "I\'m feeling lucky",
+            promo: ["", "Google Launches! Read the press release.", "https://about.google/", ""],
+            footer: [],
+            copyright: "\u00a91999 Google Inc."
+        },
+        gplex2000: {
+            navAbove: true,
+            left: [],
+            right: [],
+            aboveLinks: [
+                ["Advanced Search", "https://www.google.com/advanced_search"],
+                ["Language, Display, & Filtering Options", "https://www.google.com/preferences"]
+            ],
+            indexLine: "Google index: 1,060,000,000 web pages",
+            promo: ["", "Independent Survey Ranks Google #1", "https://about.google/", ""],
+            footer: [
+                ["Cool Jobs", "https://about.google/"],
+                ["Try our Web Directory", "https://www.google.com/"],
+                ["Advertise with Us", "https://ads.google.com"],
+                ["Add Google to your Site", "https://www.google.com/"],
+                ["Google Browser Buttons", "https://www.google.com/"],
+                ["Everything Else", "https://about.google/"]
+            ],
+            footerBreakAfter: 3,
+            copyright: "\u00a92000 Google"
+        },
+        gplex2001: {
+            navAbove: true,
+            left: [],
+            right: [],
+            aboveBox: "Search 1,346,966,000 web pages",
+            promo: ["", "Google Web Directory", "https://www.google.com/", ""],
+            promoTagline: "the web organized by topic",
+            footer: [
+                ["Cool Jobs", "https://about.google/"],
+                ["Add Google to Your Site", "https://www.google.com/"],
+                ["Advertise with Us", "https://ads.google.com"],
+                ["All About Google", "https://about.google/"]
+            ],
+            copyright: "\u00a92001 Google"
+        },
+        gplex2002: {
+            navAbove: true,
+            tabs: true,
+            left: [
+                ["Web", "https://www.google.com"],
+                ["Images", "https://www.google.com/imghp"],
+                ["Groups", "https://groups.google.com"],
+                ["Directory", "https://www.google.com"]
+            ],
+            right: [],
+            promo: ["Improve your company\'s website with the ", "Google Search Appliance", "https://www.google.com/", "."],
+            footer: [
+                ["Advertise with Us", "https://ads.google.com"],
+                ["Search Solutions", "https://www.google.com/services/"],
+                ["News and Resources", "https://about.google/"],
+                ["Jobs, Press, Cool Stuff...", "https://about.google/"]
+            ],
+            copyright: "\u00a92002 Google - Searching 2,073,418,204 web pages"
+        },
+        gplex2003: {
+            navAbove: true,
+            tabs: true,
+            left: [
+                ["Web", "https://www.google.com"],
+                ["Images", "https://www.google.com/imghp"],
+                ["Groups", "https://groups.google.com"],
+                ["Directory", "https://www.google.com"],
+                ["News", "https://news.google.com"]
+            ],
+            right: [],
+            footer: [
+                ["Advertise with Us", "https://ads.google.com"],
+                ["Business Solutions", "https://www.google.com/services/"],
+                ["Services & Tools", "https://www.google.com/options/"],
+                ["Jobs, Press, & Help", "https://about.google/"]
+            ],
+            copyright: "©2003 Google - Searching 3,083,324,652 web pages"
+        },
+        gplex2005: {
+            navAbove: true,
+            footer: [
+                ["Advertising Programs", "https://ads.google.com"],
+                ["About Google", "https://about.google/"]
+            ],
+            copyright: "©2005 Google - Searching 8,058,044,651 web pages",
+            left: [
+                ["Web", "https://www.google.com"],
+                ["Images", "https://www.google.com/imghp"],
+                ["Groups", "https://groups.google.com"],
+                ["News", "https://news.google.com"],
+                ["Froogle", "https://www.google.com/shopping"],
+                ["Local", "https://maps.google.com"]
+            ],
+            right: []
+        },
+        gplex2006: {
+            navAbove: true,
+            footer: [
+                ["Advertising Programs", "https://ads.google.com"],
+                ["Business Solutions", "https://www.google.com/services/"],
+                ["About Google", "https://about.google/"]
+            ],
+            copyright: "©2006 Google",
+            left: [
+                ["Web", "https://www.google.com"],
+                ["Images", "https://www.google.com/imghp"],
+                ["Groups", "https://groups.google.com"],
+                ["News", "https://news.google.com"],
+                ["Froogle", "https://www.google.com/shopping"],
+                ["Maps", "https://maps.google.com"]
+            ],
+            right: [
+                ["Personalized Home", "https://www.google.com/ig"]
+            ]
+        },
+        gplex2007: {
+            footer: [
+                ["Advertising Programs", "https://ads.google.com"],
+                ["Business Solutions", "https://www.google.com/services/"],
+                ["About Google", "https://about.google/"]
+            ],
+            copyright: "©2007 Google",
+            left: [
+                ["Web", "https://www.google.com"],
+                ["Images", "https://www.google.com/imghp"],
+                ["Video", "https://www.google.com/videohp"],
+                ["News", "https://news.google.com"],
+                ["Maps", "https://maps.google.com"],
+                ["Gmail", "https://mail.google.com"]
+            ],
+            right: [
+                ["iGoogle", "https://www.google.com/ig"]
+            ]
+        },
+        gplex2009: {
+            left: [
+                ["Web", "https://www.google.com"],
+                ["Images", "https://www.google.com/imghp"],
+                ["Videos", "https://www.google.com/videohp"],
+                ["Maps", "https://maps.google.com"],
+                ["News", "https://news.google.com"],
+                ["Shopping", "https://www.google.com/shopping"],
+                ["Gmail", "https://mail.google.com"]
+            ],
+            right: [
+                ["iGoogle", "https://www.google.com/ig"],
+                ["Search settings", "https://www.google.com/preferences"]
+            ]
+        },
+        gplex2010: {
+            left: [
+                ["Web", "https://www.google.com"],
+                ["Images", "https://www.google.com/imghp"],
+                ["Videos", "https://www.google.com/videohp"],
+                ["Maps", "https://maps.google.com"],
+                ["News", "https://news.google.com"],
+                ["Shopping", "https://www.google.com/shopping"],
+                ["Gmail", "https://mail.google.com"]
+            ],
+            right: [
+                ["iGoogle", "https://www.google.com/ig"],
+                ["Search settings", "https://www.google.com/preferences"]
+            ]
+        }
+    };
+    function ugfRetroEra() {
+        const h = document.querySelector("html");
+        if (h.hasAttribute("gplex2007")) { return "gplex2007"; }
+        if (h.hasAttribute("gplex2006")) { return "gplex2006"; }
+        if (h.hasAttribute("gplex2005")) { return "gplex2005"; }
+        if (h.hasAttribute("gplex2003")) { return "gplex2003"; }
+        if (h.hasAttribute("gplex2002")) { return "gplex2002"; }
+        if (h.hasAttribute("gplex2001")) { return "gplex2001"; }
+        if (h.hasAttribute("gplex2000")) { return "gplex2000"; }
+        if (h.hasAttribute("gplex1999")) { return "gplex1999"; }
+        if (h.hasAttribute("gplex1998")) { return "gplex1998"; }
+        if (h.hasAttribute("gplex1997")) { return "gplex1997"; }
+        if (h.hasAttribute("gplex2009")) { return "gplex2009"; }
+        if (h.hasAttribute("gplex2010")) { return "gplex2010"; }
+        return null;
+    }
+    function ugfRetroGbarLink(label, href, active) {
+        const a = document.createElement("a");
+        a.className = "gp-gbar-link ugf-retro-gbar" + (active ? " active" : "");
+        a.href = href;
+        const inner = document.createElement("div");
+        inner.className = "gp-gbar-link-inner";
+        const span = document.createElement("span");
+        span.textContent = label;
+        inner.appendChild(span);
+        a.appendChild(inner);
+        return a;
+    }
+    function ugfRetroFooter() {
+        const era = ugfRetroEra();
+        if (!era) {
+            return;
+        }
+        const conf = UGF_RETRO_CHROME[era];
+        if (!conf || !conf.footer) {
+            return;
+        }
+        ugf2009WaitFor("#ugf-structured-hp-footer-left", function(left) {
+            if (left.querySelector(".ugf-era-footer-link")) {
+                return;
+            }
+            Array.from(left.children).forEach(function(el) {
+                el.style.display = "none";
+            });
+            conf.footer.forEach(function(item, i) {
+                if (i > 0) {
+                    const dash = document.createElement("span");
+                    dash.className = "ugf-era-footer-dash";
+                    dash.textContent = "-";
+                    left.appendChild(dash);
+                }
+                const a = document.createElement("a");
+                a.className = "ugf-era-footer-link";
+                a.href = item[1];
+                a.textContent = item[0];
+                left.appendChild(a);
+                if (conf.footerBreakAfter && (i + 1) === conf.footerBreakAfter) {
+                    left.appendChild(document.createElement("br"));
+                }
+            });
+        });
+        if (conf.copyright) {
+            ugf2009WaitFor("#ugf-structured-hp-footer-right", function(right) {
+                if (right.querySelector(".ugf-era-copyright")) {
+                    return;
+                }
+                Array.from(right.children).forEach(function(el) {
+                    el.style.display = "none";
+                });
+                const span = document.createElement("span");
+                span.className = "ugf-era-copyright";
+                span.textContent = conf.copyright;
+                right.appendChild(span);
+            });
+        }
+    }
+    function ugfRetroExtras() {
+        const era = ugfRetroEra();
+        if (!era) {
+            return;
+        }
+        const conf = UGF_RETRO_CHROME[era];
+        if (!conf) {
+            return;
+        }
+        const loc = document.querySelector("html").getAttribute("location") || "";
+        if (loc.indexOf("home") === -1) {
+            return;
+        }
+        ugf2009WaitFor("#ugf-hp-search", function(hpSearch) {
+            if (document.querySelector(".ugf-era-extras")) {
+                return;
+            }
+            const holder = document.createElement("div");
+            holder.className = "ugf-era-extras";
+            if (conf.indexNote) {
+                const note = document.createElement("div");
+                note.className = "ugf-era-index-note";
+                note.textContent = conf.indexNote;
+                hpSearch.appendChild(note);
+            }
+            if (conf.bigLink) {
+                const big = document.createElement("div");
+                big.className = "ugf-era-big-link";
+                const a = document.createElement("a");
+                a.href = conf.bigLink[1];
+                a.textContent = conf.bigLink[0];
+                big.appendChild(a);
+                holder.appendChild(big);
+            }
+            if (conf.extraLinks) {
+                const row = document.createElement("div");
+                row.className = "ugf-era-extra-links";
+                conf.extraLinks.forEach(function(item) {
+                    const a = document.createElement("a");
+                    a.href = item[1];
+                    a.textContent = item[0];
+                    row.appendChild(a);
+                });
+                holder.appendChild(row);
+            }
+            if (conf.subscribe) {
+                const box = document.createElement("div");
+                box.className = "ugf-era-subscribe";
+                const h = document.createElement("div");
+                h.className = "ugf-era-subscribe-heading";
+                h.textContent = conf.subscribe.heading;
+                box.appendChild(h);
+                const row = document.createElement("div");
+                row.className = "ugf-era-subscribe-row";
+                const input = document.createElement("input");
+                input.type = "text";
+                input.value = conf.subscribe.placeholder;
+                row.appendChild(input);
+                const btn = document.createElement("button");
+                btn.textContent = conf.subscribe.button;
+                row.appendChild(btn);
+                const arc = document.createElement("a");
+                arc.href = conf.subscribe.archiveHref;
+                arc.textContent = conf.subscribe.archive;
+                row.appendChild(arc);
+                box.appendChild(row);
+                holder.appendChild(box);
+            }
+            if (holder.children.length) {
+                hpSearch.parentElement.insertBefore(holder, hpSearch.nextSibling);
+            }
+        });
+    }
+    function ugfRetroLogoLinks() {
+        const era = ugfRetroEra();
+        if (!era) {
+            return;
+        }
+        const conf = UGF_RETRO_CHROME[era];
+        if (!conf || !conf.logoLinks) {
+            return;
+        }
+        const loc = document.querySelector("html").getAttribute("location") || "";
+        if (loc.indexOf("home") === -1) {
+            return;
+        }
+        ugf2009WaitFor("#ugf-hp-logo", function(logo) {
+            if (document.querySelector(".ugf-era-logo-links")) {
+                return;
+            }
+            const wrap = document.createElement("div");
+            wrap.className = "ugf-era-logo-links";
+            conf.logoLinks.forEach(function(item) {
+                const a = document.createElement("a");
+                a.href = item[1];
+                a.textContent = item[0];
+                wrap.appendChild(a);
+            });
+            logo.parentElement.insertBefore(wrap, logo.nextSibling);
+        });
+    }
+    function ugfRetroPromo() {
+        const era = ugfRetroEra();
+        if (!era) {
+            return;
+        }
+        const conf = UGF_RETRO_CHROME[era];
+        if (!conf || !conf.promo) {
+            return;
+        }
+        const loc = document.querySelector("html").getAttribute("location") || "";
+        if (loc.indexOf("home") === -1) {
+            return;
+        }
+        ugf2009WaitFor("#ugf-hp-search", function(hpSearch) {
+            if (document.querySelector(".ugf-era-promo")) {
+                return;
+            }
+            if (conf.indexLine) {
+                const idx = document.createElement("div");
+                idx.className = "ugf-era-index";
+                idx.textContent = conf.indexLine;
+                hpSearch.parentElement.insertBefore(idx, hpSearch.nextSibling);
+            }
+            const div = document.createElement("div");
+            div.className = "ugf-era-promo";
+            div.appendChild(document.createTextNode(conf.promo[0]));
+            const a = document.createElement("a");
+            a.href = conf.promo[2];
+            a.textContent = conf.promo[1];
+            div.appendChild(a);
+            div.appendChild(document.createTextNode(conf.promo[3] || ""));
+            hpSearch.parentElement.insertBefore(div, hpSearch.nextSibling);
+            if (conf.promoTagline) {
+                const tag = document.createElement("div");
+                tag.className = "ugf-era-promo-tagline";
+                tag.textContent = conf.promoTagline;
+                div.parentElement.insertBefore(tag, div.nextSibling);
+            }
+        });
+    }
+    function ugfRetroChrome() {
+        const era = ugfRetroEra();
+        if (!era) {
+            return;
+        }
+        const conf = UGF_RETRO_CHROME[era];
+        if (conf.navAbove) {
+            ugf2009WaitFor("#ugf-search", function(searchEl) {
+                if (document.querySelector(".ugf-era-nav") || document.querySelector(".ugf-era-count") || document.querySelector(".ugf-era-above-links")) {
+                    return;
+                }
+                let q = "";
+                try {
+                    q = new URLSearchParams(window.location.search).get("q") || "";
+                } catch (e) {
+                    q = "";
+                }
+                const onImages = document.querySelector("html").getAttribute("location") === "images";
+                if (conf.aboveLinks) {
+                    const row = document.createElement("div");
+                    row.className = "ugf-era-above-links";
+                    conf.aboveLinks.forEach(function(item, i) {
+                        if (i > 0) {
+                            const dash = document.createElement("span");
+                            dash.textContent = " - ";
+                            row.appendChild(dash);
+                        }
+                        const a = document.createElement("a");
+                        a.href = item[1];
+                        a.textContent = item[0];
+                        row.appendChild(a);
+                    });
+                    searchEl.parentElement.insertBefore(row, searchEl);
+                }
+                if (conf.aboveBox) {
+                    const line = document.createElement("div");
+                    line.className = "ugf-era-count";
+                    line.textContent = conf.aboveBox;
+                    searchEl.parentElement.insertBefore(line, searchEl);
+                }
+                if (!conf.left || !conf.left.length) {
+                    return;
+                }
+                const nav = document.createElement("div");
+                nav.className = "ugf-era-nav" + (conf.tabs ? " ugf-era-tabs" : "");
+                conf.left.forEach(function(item) {
+                    let href = item[1];
+                    if (q) {
+                        if (item[0] === "Images") {
+                            href = "https://www.google.com/search?q=" + encodeURIComponent(q) + "&udm=2";
+                        } else if (item[0] === "News") {
+                            href = "https://www.google.com/search?q=" + encodeURIComponent(q) + "&tbm=nws";
+                        } else if (item[0] === "Web") {
+                            href = "https://www.google.com/search?q=" + encodeURIComponent(q);
+                        }
+                    }
+                    const a = document.createElement("a");
+                    a.href = href;
+                    a.textContent = item[0];
+                    if ((onImages && item[0] === "Images") || (!onImages && item[0] === "Web")) {
+                        a.className = "active";
+                    }
+                    nav.appendChild(a);
+                });
+                if (!conf.tabs) {
+                    const moreLink = document.createElement("a");
+                    moreLink.href = "https://www.google.com/intl/en/options/";
+                    moreLink.className = "more";
+                    moreLink.textContent = "more \u00bb";
+                    nav.appendChild(moreLink);
+                }
+                searchEl.parentElement.insertBefore(nav, searchEl);
+            });
+        }
+        ugf2009WaitFor("#gp-gbar-inner", function(bar) {
+            if (conf.navAbove) {
+                const more2 = bar.querySelector("#gp-gbar-more");
+                Array.from(bar.children).forEach(function(el) {
+                    if (el.classList && el.classList.contains("gp-gbar-link")) {
+                        el.style.display = "none";
+                    }
+                });
+                if (more2) {
+                    more2.style.display = "none";
+                }
+                const right2 = bar.querySelector("#gp-gbar-right");
+                if (right2 && !right2.querySelector(".ugf-retro-gbar")) {
+                    const anchor2 = right2.firstElementChild;
+                    conf.right.forEach(function(item) {
+                        const link = ugfRetroGbarLink(item[0], item[1], false);
+                        const sep = document.createElement("span");
+                        sep.className = "ugf-retro-gbar-sep";
+                        sep.textContent = "|";
+                        if (anchor2) {
+                            right2.insertBefore(link, anchor2);
+                            right2.insertBefore(sep, anchor2);
+                        } else {
+                            right2.appendChild(link);
+                            right2.appendChild(sep);
+                        }
+                    });
+                }
+                return;
+            }
+            if (bar.querySelector(".ugf-retro-gbar")) {
+                return;
+            }
+            const more = bar.querySelector("#gp-gbar-more");
+            const right = bar.querySelector("#gp-gbar-right");
+            Array.from(bar.children).forEach(function(el) {
+                if (el.classList && el.classList.contains("gp-gbar-link") && el !== more) {
+                    el.style.display = "none";
+                }
+            });
+            const onImages = document.querySelector("html").getAttribute("location") === "images";
+            let q = "";
+            try {
+                q = new URLSearchParams(window.location.search).get("q") || "";
+            } catch (e) {
+                q = "";
+            }
+            conf.left.forEach(function(item) {
+                const isActive = (onImages && item[0] === "Images") || (!onImages && item[0] === "Web");
+                let href = item[1];
+                if (q) {
+                    if (item[0] === "Images") {
+                        href = "https://www.google.com/search?q=" + encodeURIComponent(q) + "&udm=2";
+                    } else if (item[0] === "Video" || item[0] === "Videos") {
+                        href = "https://www.google.com/search?q=" + encodeURIComponent(q) + "&tbm=vid";
+                    } else if (item[0] === "News") {
+                        href = "https://www.google.com/search?q=" + encodeURIComponent(q) + "&tbm=nws";
+                    } else if (item[0] === "Web") {
+                        href = "https://www.google.com/search?q=" + encodeURIComponent(q);
+                    }
+                }
+                const link = ugfRetroGbarLink(item[0], href, isActive);
+                if (more) {
+                    bar.insertBefore(link, more);
+                } else {
+                    bar.appendChild(link);
+                }
+            });
+            if (more) {
+                const moreSpan = more.querySelector(".gp-gbar-link-inner span");
+                if (moreSpan) {
+                    moreSpan.textContent = "more";
+                }
+            }
+            if (right) {
+                const anchorEl = right.firstElementChild;
+                conf.right.forEach(function(item) {
+                    const link = ugfRetroGbarLink(item[0], item[1], false);
+                    const sep = document.createElement("span");
+                    sep.className = "ugf-retro-gbar-sep";
+                    sep.textContent = "|";
+                    if (anchorEl) {
+                        right.insertBefore(link, anchorEl);
+                        right.insertBefore(sep, anchorEl);
+                    } else {
+                        right.appendChild(link);
+                        right.appendChild(sep);
+                    }
+                });
+            }
+        });
+    }
     function ugf2009WaitFor(selector, callback) {
         let tries = 0;
         const interval = setInterval(function() {
@@ -8384,7 +13776,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         }, 100);
     }
     function ugf2009Buttons() {
-        if (!document.querySelector("html").hasAttribute("gplex2009") && !document.querySelector("html").hasAttribute("gplex2010")) {
+        if (!ugfRetroEra()) {
             return;
         }
         if (window.location.pathname === "/search") {
@@ -8416,11 +13808,28 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 iflBtn.addEventListener("click", function() {
                     document.querySelector("#ugf-lucky-btn").click();
                 });
-                iflBtn.innerText = "I\'m Feeling Lucky";
+                const eraConf = UGF_RETRO_CHROME[ugfRetroEra()];
+                iflBtn.innerText = (eraConf && eraConf.luckyLabel) ? eraConf.luckyLabel : "I\'m Feeling Lucky";
+                const eraConf2 = UGF_RETRO_CHROME[ugfRetroEra()];
+                if (eraConf2 && eraConf2.resultsDropdown) {
+                    const sel = document.createElement("select");
+                    sel.className = "ugf-era-results-select";
+                    eraConf2.resultsDropdown.forEach(function(opt) {
+                        const o = document.createElement("option");
+                        o.textContent = opt;
+                        sel.appendChild(o);
+                    });
+                    btnRow.appendChild(sel);
+                }
                 btnRow.appendChild(gsBtn);
                 btnRow.appendChild(iflBtn);
             });
         }
     }
     ugf2009Buttons();
+    ugfRetroChrome();
+    ugfRetroFooter();
+    ugfRetroPromo();
+    ugfRetroLogoLinks();
+    ugfRetroExtras();
 })();
