@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex - Old Google Frontend
 // @namespace    http://tampermonkey.net/
-// @version      0.7.2.9
+// @version      0.7.3.0
 // @description  2011-2019 Google frontend (public beta release)
 // @author       lightbeam24
 // @match        *://www.google.com/search*
@@ -29,7 +29,7 @@
 // @require      https://openuserjs.org/src/libs/sizzle/GM_config.js
 // @run-at document-body
 // @downloadURL https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
-// @updateURL https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
+// @updateURL   https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
 // ==/UserScript==
 function showMenu(){
     window.location = "https://www.google.com/gplex";
