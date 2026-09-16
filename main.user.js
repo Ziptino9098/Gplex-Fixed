@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      2.1.1
+// @version      2.1.3
 // @description  2009-2019 Old Google Frontend (Full public release)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -2196,6 +2196,27 @@ html[gplex2010]:not([layout="2016C"]):not([layout="2017"]):not([layout="2018"]):
 }
 [gplex2010] .ugf-footer-link[href="https://www.google.com/tools/feedback/survey/html?productId=196"]:hover:before {
   text-decoration: underline;
+}
+/* -- scale corrections: ps_logo2.png is the hi-DPI asset, render it at 2010 size -- */
+[gplex2010] #ugf-hp-logo img {
+  width: 275px !important;
+  height: 95px !important;
+}
+[gplex2010] #ugf-hp-logo {
+  height: 140px;
+  padding-top: 22px;
+}
+[gplex2010] #ugf-logo img {
+  width: 137px !important;
+  height: 49px !important;
+}
+[gplex2010] #ugf-search-predictions-container {
+  font-size: 13px;
+  text-align: left;
+}
+[gplex2010] #ugf-search-predictions-container * {
+  font-weight: normal;
+  font-size: 13px;
 }
 /* ============ end GPlex 2010-Early 2011 theme ============ */
 /* ============ GPlex 2007-2008 theme ============ */
@@ -5839,9 +5860,8 @@ html[gplex2010]:not([layout="2016C"]):not([layout="2017"]):not([layout="2018"]):
   display: block;
   margin: 0 auto;
 }
-/* 1998 logo: hand-drawn "Google!" wordmark, inlined so nothing external can break */
 [gplex1998][location$="home"] #ugf-hp-logo-inner {
-  background-image: url("https://commons.wikimedia.org/wiki/Special:FilePath/Google%20logo%20(1998-1999).svg"), url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 420 140%22 width=%22420%22 height=%22140%22%3E%3Cdefs%3E%3Cfilter id=%22s%22 x=%22-20%25%22 y=%22-20%25%22 width=%22150%25%22 height=%22150%25%22%3E%3CfeDropShadow dx=%224%22 dy=%224%22 stdDeviation=%222%22 flood-color=%22%238a8a8a%22 flood-opacity=%220.85%22/%3E%3C/filter%3E%3C/defs%3E%3Cg filter=%22url(%23s)%22 font-family=%22Georgia, 'Times New Roman', Times, serif%22 font-weight=%22bold%22 font-size=%22112%22%3E%3Ctext x=%228%22   y=%22108%22 fill=%22%233355cc%22%3EG%3C/text%3E%3Ctext x=%2296%22  y=%22108%22 fill=%22%23dd2222%22%3Eo%3C/text%3E%3Ctext x=%22160%22 y=%22108%22 fill=%22%23eebb00%22%3Eo%3C/text%3E%3Ctext x=%22224%22 y=%22108%22 fill=%22%233355cc%22%3Eg%3C/text%3E%3Ctext x=%22286%22 y=%22108%22 fill=%22%2322aa33%22%3El%3C/text%3E%3Ctext x=%22320%22 y=%22108%22 fill=%22%23dd2222%22%3Ee%3C/text%3E%3Ctext x=%22378%22 y=%22108%22 fill=%22%233355cc%22%3E!%3C/text%3E%3C/g%3E%3C/svg%3E") !important;
+  background-image: url("https://commons.wikimedia.org/wiki/Special:FilePath/Google%20logo%20(1998-1999).svg") !important;
   background-size: contain !important;
   background-repeat: no-repeat !important;
   background-position: center !important;
@@ -6623,7 +6643,7 @@ html[gplex2010]:not([layout="2016C"]):not([layout="2017"]):not([layout="2018"]):
   height: 58px !important;
 }
 [gplex1998]:not([location$="home"]) #ugf-logo-cont {
-  background-image: url("https://commons.wikimedia.org/wiki/Special:FilePath/Google%20logo%20(1998-1999).svg"), url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 420 140%22 width=%22420%22 height=%22140%22%3E%3Cdefs%3E%3Cfilter id=%22s%22 x=%22-20%25%22 y=%22-20%25%22 width=%22150%25%22 height=%22150%25%22%3E%3CfeDropShadow dx=%224%22 dy=%224%22 stdDeviation=%222%22 flood-color=%22%238a8a8a%22 flood-opacity=%220.85%22/%3E%3C/filter%3E%3C/defs%3E%3Cg filter=%22url(%23s)%22 font-family=%22Georgia, 'Times New Roman', Times, serif%22 font-weight=%22bold%22 font-size=%22112%22%3E%3Ctext x=%228%22   y=%22108%22 fill=%22%233355cc%22%3EG%3C/text%3E%3Ctext x=%2296%22  y=%22108%22 fill=%22%23dd2222%22%3Eo%3C/text%3E%3Ctext x=%22160%22 y=%22108%22 fill=%22%23eebb00%22%3Eo%3C/text%3E%3Ctext x=%22224%22 y=%22108%22 fill=%22%233355cc%22%3Eg%3C/text%3E%3Ctext x=%22286%22 y=%22108%22 fill=%22%2322aa33%22%3El%3C/text%3E%3Ctext x=%22320%22 y=%22108%22 fill=%22%23dd2222%22%3Ee%3C/text%3E%3Ctext x=%22378%22 y=%22108%22 fill=%22%233355cc%22%3E!%3C/text%3E%3C/g%3E%3C/svg%3E") !important;
+  background-image: url("https://commons.wikimedia.org/wiki/Special:FilePath/Google%20logo%20(1998-1999).svg") !important;
   background-size: contain !important;
   background-repeat: no-repeat !important;
   background-position: 0 center !important;
