@@ -3,7 +3,7 @@
 // @namespace    http://tampermonkey.net/
 // @version      0.7.3.0
 // @description  2011-2019 Google frontend (public beta release)
-// @author       lightbeam24
+// @author       Ziptino9098
 // @match        *://www.google.com/search*
 // @match        *://www.google.com/
 // @match        *://www.google.com/webhp*
