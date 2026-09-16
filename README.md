@@ -21,3 +21,4 @@ StarTube by lightbeam24
 https://github.com/lightbeam24/StarTube/raw/refs/heads/main/StarTube.user.js
 
 StarTube requires Vorapis V3. Since Vorapis V3 is ARR, I'm not risking distributing it here. Just search for "Vorapis V3 Old YouTube" to find it.
+NOTE: Some layouts have sightly different looks (Like the search box being near the center instead of higher up, e.g the 2005 layout), this is too make it look better on modern ultrawide screens. This still looks EXTREMELY close and is not noticeable unless you are a picky picky PICKY person
