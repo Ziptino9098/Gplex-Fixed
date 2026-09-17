@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      2.2.3
-// @description  2009-2019 Old Google Frontend (Full public release)
+// @version      2.2.4
+// @description  1997-2024 Old Google Frontend (Full public release)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
 // @match        *://www.google.com/
@@ -28,8 +28,6 @@
 // @license      MIT
 // @require      https://openuserjs.org/src/libs/sizzle/GM_config.js
 // @run-at document-body
-// @downloadURL https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
-// @updateURL   https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
 // ==/UserScript==
 function showMenu(){
     window.location = "https://www.google.com/gplex";
@@ -1657,7 +1655,6 @@ html[noton-images][location="images"]:not([disabled]) body > div#main {
 [gplex2009]:not([location$="home"]) #ugf-left {
   display: none;
 }
-[gplex2009]:not([location$="home"]) #ugf-main,
 [gplex2009]:not([location$="home"]) #ugf-footer {
   width: 100%;
 }
@@ -2322,6 +2319,11 @@ html[gplex2010]:not([layout="2013L"]):not([layout="2015L"]):not([layout="2016L"]
   font-size: 13px;
 }
 /* ============ end GPlex 2010-Early 2011 theme ============ */
+/* ---- Info Cards toggle ---- */
+html[info-cards="false"] #ugf-side-info,
+html[info-cards="false"] #ugf-side-info-container {
+  display: none !important;
+}
 /* ============ GPlex 2022 (continuous scroll) ============ */
 [gplex2022] #gp-pagination {
   display: none !important;
@@ -2471,7 +2473,6 @@ html[gplex2010]:not([layout="2013L"]):not([layout="2015L"]):not([layout="2016L"]
 [gplex2007]:not([location$="home"]) #ugf-left {
   display: none;
 }
-[gplex2007]:not([location$="home"]) #ugf-main,
 [gplex2007]:not([location$="home"]) #ugf-footer {
   width: 100%;
 }
@@ -2806,7 +2807,6 @@ html[gplex2010]:not([layout="2013L"]):not([layout="2015L"]):not([layout="2016L"]
 [gplex2006]:not([location$="home"]) #ugf-left {
   display: none;
 }
-[gplex2006]:not([location$="home"]) #ugf-main,
 [gplex2006]:not([location$="home"]) #ugf-footer {
   width: 100%;
 }
@@ -3137,7 +3137,6 @@ html[gplex2010]:not([layout="2013L"]):not([layout="2015L"]):not([layout="2016L"]
 [gplex2005]:not([location$="home"]) #ugf-left {
   display: none;
 }
-[gplex2005]:not([location$="home"]) #ugf-main,
 [gplex2005]:not([location$="home"]) #ugf-footer {
   width: 100%;
 }
@@ -3486,7 +3485,6 @@ html[gplex2010]:not([layout="2013L"]):not([layout="2015L"]):not([layout="2016L"]
 [gplex2003]:not([location$="home"]) #ugf-left {
   display: none;
 }
-[gplex2003]:not([location$="home"]) #ugf-main,
 [gplex2003]:not([location$="home"]) #ugf-footer {
   width: 100%;
 }
@@ -3835,7 +3833,6 @@ html[gplex2010]:not([layout="2013L"]):not([layout="2015L"]):not([layout="2016L"]
 [gplex2002]:not([location$="home"]) #ugf-left {
   display: none;
 }
-[gplex2002]:not([location$="home"]) #ugf-main,
 [gplex2002]:not([location$="home"]) #ugf-footer {
   width: 100%;
 }
@@ -4210,7 +4207,6 @@ html[gplex2010]:not([layout="2013L"]):not([layout="2015L"]):not([layout="2016L"]
 [gplex2001]:not([location$="home"]) #ugf-left {
   display: none;
 }
-[gplex2001]:not([location$="home"]) #ugf-main,
 [gplex2001]:not([location$="home"]) #ugf-footer {
   width: 100%;
 }
@@ -4617,7 +4613,6 @@ html[gplex2010]:not([layout="2013L"]):not([layout="2015L"]):not([layout="2016L"]
 [gplex2000]:not([location$="home"]) #ugf-left {
   display: none;
 }
-[gplex2000]:not([location$="home"]) #ugf-main,
 [gplex2000]:not([location$="home"]) #ugf-footer {
   width: 100%;
 }
@@ -5076,7 +5071,6 @@ html[gplex2010]:not([layout="2013L"]):not([layout="2015L"]):not([layout="2016L"]
 [gplex1999]:not([location$="home"]) #ugf-left {
   display: none;
 }
-[gplex1999]:not([location$="home"]) #ugf-main,
 [gplex1999]:not([location$="home"]) #ugf-footer {
   width: 100%;
 }
@@ -5594,7 +5588,6 @@ html[gplex2010]:not([layout="2013L"]):not([layout="2015L"]):not([layout="2016L"]
 [gplex1998]:not([location$="home"]) #ugf-left {
   display: none;
 }
-[gplex1998]:not([location$="home"]) #ugf-main,
 [gplex1998]:not([location$="home"]) #ugf-footer {
   width: 100%;
 }
@@ -6231,7 +6224,6 @@ html[gplex2010]:not([layout="2013L"]):not([layout="2015L"]):not([layout="2016L"]
 [gplex1997]:not([location$="home"]) #ugf-left {
   display: none;
 }
-[gplex1997]:not([location$="home"]) #ugf-main,
 [gplex1997]:not([location$="home"]) #ugf-footer {
   width: 100%;
 }
@@ -7356,6 +7348,8 @@ html:not([layout-dd-open]) #ugf-layout-dd,
 html:not([layout-dd-open]) #ugf-layout-fence,
 html:not([noton-dd-open]) #ugf-noton-dd,
 html:not([noton-dd-open]) #ugf-noton-fence,
+html:not([infocards-dd-open]) #ugf-infocards-dd,
+html:not([infocards-dd-open]) #ugf-infocards-fence,
 html:not([neuro-dd-open]) #ugf-neuro-dd,
 html:not([neuro-dd-open]) #ugf-neuro-fence,
 html:not([forceload-dd-open]) #ugf-forceload-dd,
@@ -9111,6 +9105,8 @@ li.tg2Kqf{
         "l1999": "1999",
         "l1998": "1998 (Stanford)",
         "l1997": "1997 (Stanford)",
+        "infoCardsOn": "On",
+        "infoCardsOff": "Off (hide info cards)",
         "notonOn": "On",
         "notonOff": "Off (compatible with the Google Images Restored extension)",
         "forceLoadMsgOn": "On",
@@ -9152,6 +9148,7 @@ li.tg2Kqf{
     let layout = localStorage.getItem("UGF_LAYOUT");
     let structuredHP = localStorage.getItem("UGF_STRUCTURED_HOMEPAGE");
     let notOnImages = localStorage.getItem("UGF_NOTON_IMAGES");
+    let infoCards = localStorage.getItem("UGF_INFO_CARDS");
     let forceLoadMsg = localStorage.getItem("UGF_FORCE_LOAD_MSG");
     let nameEmail = localStorage.getItem("UGF_NAME_EMAIL");
     let neuro = localStorage.getItem("UGF_NEURO");
@@ -9326,6 +9323,11 @@ li.tg2Kqf{
         localStorage.setItem("UGF_NOTON_IMAGES","true");
         notOnImages = "true";
     }
+    if (infoCards == null) {
+        localStorage.setItem("UGF_INFO_CARDS","true");
+        infoCards = "true";
+    }
+    document.querySelector("html").setAttribute("info-cards",infoCards);
     if (forceLoadMsg == null) {
         localStorage.setItem("UGF_FORCE_LOAD_MSG","true");
         forceLoadMsg = "true";
@@ -9565,6 +9567,8 @@ li.tg2Kqf{
             </div>
             <div id="ugf-noton-fence" class="ugf-fence">
             </div>
+            <div id="ugf-infocards-fence" class="ugf-fence">
+            </div>
             <div id="ugf-forceload-fence" class="ugf-fence">
             </div>
             <div id="ugf-settings-display-fence" class="ugf-fence">
@@ -9667,6 +9671,33 @@ li.tg2Kqf{
                                                 </a>
                                                 <a id="UGF_SET_LAYOUT_1997" class="ugf-dropdown-item" value="1997">
                                                     <span>${UImessages.l1997}</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ugf-gplex-section">
+                            <div class="ugf-gplex-section-inner">
+                                <div class="ugf-gplex-section-title">
+                                    <span>Info Cards</span>
+                                </div>
+                                <div class="ugf-gplex-section-content">
+                                    <div id="ugf-option-infocards" class="ugf-gplex-option flex" value="${infoCards}">
+                                        <a class="ugf-dropdown-button" id="ugf-infocards-dd-btn">
+                                            <span>${UImessages.infoCardsOn}</span>
+                                        </a>
+                                        <div class="ugf-gplex-text">
+                                            <span>Info cards were added in 2012, so for full accuracy I would disable this on Late 2011-Early 2012 and older. But if you just like the UI of e.g. 2006 and want to have the features they provide, then leave it on.</span>
+                                        </div>
+                                        <div class="ugf-dropdown" id="ugf-infocards-dd">
+                                            <div class="ugf-dropdown-inner">
+                                                <a class="ugf-dropdown-item" value="true">
+                                                    <span>${UImessages.infoCardsOn}</span>
+                                                </a>
+                                                <a class="ugf-dropdown-item" value="false">
+                                                    <span>${UImessages.infoCardsOff}</span>
                                                 </a>
                                             </div>
                                         </div>
@@ -10205,7 +10236,7 @@ li.tg2Kqf{
             </div>
             <div id="ugf-footer-links-middle" class="flex-bar ugf-footer-links">
                 <a class="ugf-footer-link" href="https://www.google.com/">Google Home</a>
-                <a class="ugf-footer-link" href="https://www.google.com/intl/en/ads">Advertising Programs</a>
+                <a class="ugf-footer-link" href="https://www.google.com/intl/en/ads">Advertising Programs</a>
                 <a class="ugf-footer-link" href="https://www.google.com/services">Business Solutions</a>
                 <a class="ugf-footer-link" href="https://www.google.com/intl/en/policies/">Privacy & Terms</a>
             </div>
@@ -12016,6 +12047,10 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     document.querySelector("html").setAttribute("noton-dd-open","");
                     document.title = "Gplex Settings";
                 });
+                document.querySelector("#ugf-infocards-dd-btn").addEventListener("click",function() {
+                    document.querySelector("html").setAttribute("infocards-dd-open","");
+                    document.title = "Gplex Settings";
+                });
                 document.querySelector("#ugf-forceload-dd-btn").addEventListener("click",function() {
                     document.querySelector("html").setAttribute("forceload-dd-open","");
                     document.title = "Gplex Settings";
@@ -12037,6 +12072,9 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 });
                 document.querySelector("#ugf-noton-fence").addEventListener("click",function() {
                     document.querySelector("html").removeAttribute("noton-dd-open");
+                });
+                document.querySelector("#ugf-infocards-fence").addEventListener("click",function() {
+                    document.querySelector("html").removeAttribute("infocards-dd-open");
                 });
                 document.querySelector("#ugf-forceload-fence").addEventListener("click",function() {
                     document.querySelector("html").removeAttribute("forceload-dd-open");
@@ -12159,6 +12197,17 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                         notOnImages = value;
                         doGplexDropdowns("noton");
                         document.querySelector("html").removeAttribute("noton-dd-open");
+                    });
+                });
+                let infoCardsBtns = document.querySelectorAll("#ugf-option-infocards .ugf-dropdown-item");
+                infoCardsBtns.forEach(itemRoot => {
+                    itemRoot.addEventListener("click",function() {
+                        let value = itemRoot.getAttribute("value");
+                        localStorage.setItem("UGF_INFO_CARDS",value);
+                        infoCards = value;
+                        document.querySelector("html").setAttribute("info-cards",value);
+                        doGplexDropdowns("infocards");
+                        document.querySelector("html").removeAttribute("infocards-dd-open");
                     });
                 });
                 let forceloadBtns = document.querySelectorAll("#ugf-option-forceload .ugf-dropdown-item");
@@ -12368,6 +12417,19 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 case 'true':
                     notonBtnSpan.textContent = UImessages.notonOff;
                     break;
+            }
+        }
+        if (setting == "infocards" || setting == "all") {
+            let infoCardsBtnSpan = document.querySelector("#ugf-option-infocards .ugf-dropdown-button span");
+            if (infoCardsBtnSpan) {
+                switch (infoCards) {
+                    case 'true':
+                        infoCardsBtnSpan.textContent = UImessages.infoCardsOn;
+                        break;
+                    case 'false':
+                        infoCardsBtnSpan.textContent = UImessages.infoCardsOff;
+                        break;
+                }
             }
         }
         if (setting == "forceload" || setting == "all") {
@@ -13258,7 +13320,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
 					     	    	<img src="${SRA.thumbnail}">
                                 </div>
                                 <div class="ugf-search-result-duration">
-                                    <span>▶ ${SRA.duration}</span>
+                                    <span>▶ ${SRA.duration}</span>
                                 </div>
 				     		</a>
                             <div class="ugf-video-result-right">
