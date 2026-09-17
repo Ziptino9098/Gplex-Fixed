@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      2.2.5
+// @version      2.5
 // @description  1997-2024 Old Google Frontend (Full public release)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -12579,6 +12579,88 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             document.querySelector("#gp-pagination-prev").classList.add("has-prev");
         }
     }
+    const UGF_FAVICON_CLASSIC = "https://commons.wikimedia.org/wiki/Special:FilePath/Google%20favicon.svg";
+    const UGF_FAVICON_2009 = "https://commons.wikimedia.org/wiki/Special:FilePath/Google%20favicon%202009.svg";
+    const UGF_FAVICON_BLUE_G = "https://commons.wikimedia.org/wiki/Special:FilePath/Google%20Icon%20%282010-2015%29.svg";
+    const UGF_FAVICON_FOUR_COLOUR = "https://commons.wikimedia.org/wiki/Special:FilePath/Google%20%22G%22%20logo.svg";
+    function ugfFaviconForLayout() {
+        const h = document.querySelector("html");
+        const era = ugfRetroEra();
+        // 2009/2010 eras used the multicolour tile; everything older used the classic capital G
+        if (era === "gplex2009" || era === "gplex2010") {
+            return UGF_FAVICON_2009;
+        }
+        if (era && era !== "gplex2022") {
+            return UGF_FAVICON_CLASSIC;
+        }
+        if (era === "gplex2022") {
+            return UGF_FAVICON_FOUR_COLOUR;
+        }
+        const layout = h.getAttribute("layout") || "";
+        if (["2010", "2011", "2012", "2013", "2013L", "2014", "2015", "2015L"].indexOf(layout) > -1) {
+            return UGF_FAVICON_BLUE_G;
+        }
+        if (["2016", "2016C", "2016L", "2017", "2018", "2018M", "2019"].indexOf(layout) > -1) {
+            return UGF_FAVICON_FOUR_COLOUR;
+        }
+        if (layout === "retro") {
+            return UGF_FAVICON_CLASSIC;
+        }
+        return null;
+    }
+    let ugfFaviconObserver = null;
+    function ugfApplyFavicon(href) {
+        document.querySelectorAll("link[rel~='icon'], link[rel='shortcut icon'], link[rel='apple-touch-icon'], link[rel='mask-icon']").forEach(function(el) {
+            if (el.id !== "ugf-favicon" && el.parentElement) {
+                el.parentElement.removeChild(el);
+            }
+        });
+        let link = document.querySelector("#ugf-favicon");
+        if (!link) {
+            link = document.createElement("link");
+            link.id = "ugf-favicon";
+            link.setAttribute("rel", "icon");
+            link.setAttribute("type", "image/svg+xml");
+        }
+        if (link.getAttribute("href") !== href) {
+            link.setAttribute("href", href);
+        }
+        const head = document.head || document.documentElement;
+        if (link.parentElement !== head || head.lastElementChild !== link) {
+            head.appendChild(link);
+        }
+    }
+    function ugfSetFavicon() {
+        const href = ugfFaviconForLayout();
+        if (!href) {
+            return;
+        }
+        ugfApplyFavicon(href);
+        if (ugfFaviconObserver) {
+            ugfFaviconObserver.disconnect();
+        }
+        // Google re-inserts its own favicon link after we run, so hold ours in place
+        ugfFaviconObserver = new MutationObserver(function(muts) {
+            for (let i = 0; i < muts.length; i++) {
+                const added = muts[i].addedNodes;
+                for (let j = 0; j < added.length; j++) {
+                    const n = added[j];
+                    if (n.nodeType === 1 && n.tagName === "LINK" && (n.getAttribute("rel") || "").indexOf("icon") > -1 && n.id !== "ugf-favicon") {
+                        ugfApplyFavicon(href);
+                        return;
+                    }
+                }
+            }
+        });
+        ugfFaviconObserver.observe(document.head || document.documentElement, { childList: true, subtree: true });
+        let ticks = 0;
+        const iv = setInterval(function() {
+            ugfApplyFavicon(href);
+            if (++ticks > 20) {
+                clearInterval(iv);
+            }
+        }, 500);
+    }
     function ugfSetEraLayout(storeKey, baseLayout, attr) {
         const h = document.querySelector("html");
         ["gplex1997", "gplex1998", "gplex1999", "gplex2000", "gplex2001", "gplex2002", "gplex2003", "gplex2005", "gplex2006", "gplex2007", "gplex2009", "gplex2010", "gplex2022"].forEach(function(a) {
@@ -12589,6 +12671,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             h.setAttribute(attr, "");
         }
         localStorage.setItem("UGF_LAYOUT", storeKey);
+        ugfSetFavicon();
         if (attr && attr !== "gplex2022") {
             h.setAttribute("legacy-gbar", "");
             h.setAttribute("legacy-images", "");
@@ -14339,6 +14422,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
     ugfRetroChrome();
     ugfRetroFooter();
     ugfContinuousScroll();
+    ugfSetFavicon();
     ugfRetroPromo();
     ugfRetroLogoLinks();
     ugfRetroExtras();
