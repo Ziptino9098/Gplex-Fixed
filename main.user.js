@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      2.1.3
+// @version      2.1.10
 // @description  2009-2019 Old Google Frontend (Full public release)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -2196,6 +2196,109 @@ html[gplex2010]:not([layout="2016C"]):not([layout="2017"]):not([layout="2018"]):
 }
 [gplex2010] .ugf-footer-link[href="https://www.google.com/tools/feedback/survey/html?productId=196"]:hover:before {
   text-decoration: underline;
+}
+/* ---- retro homepages: sit near the top, buttons attached under the box ---- */
+[gplex1997][location$="home"] #ugf-hp-inner,
+[gplex1998][location$="home"] #ugf-hp-inner,
+[gplex1999][location$="home"] #ugf-hp-inner,
+[gplex2000][location$="home"] #ugf-hp-inner,
+[gplex2001][location$="home"] #ugf-hp-inner,
+[gplex2002][location$="home"] #ugf-hp-inner,
+[gplex2003][location$="home"] #ugf-hp-inner,
+[gplex2005][location$="home"] #ugf-hp-inner,
+[gplex2006][location$="home"] #ugf-hp-inner,
+[gplex2007][location$="home"] #ugf-hp-inner {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+[gplex1997][location$="home"] #ugf-hp-buttons-row,
+[gplex1998][location$="home"] #ugf-hp-buttons-row,
+[gplex1999][location$="home"] #ugf-hp-buttons-row,
+[gplex2000][location$="home"] #ugf-hp-buttons-row,
+[gplex2001][location$="home"] #ugf-hp-buttons-row,
+[gplex2002][location$="home"] #ugf-hp-buttons-row,
+[gplex2003][location$="home"] #ugf-hp-buttons-row,
+[gplex2005][location$="home"] #ugf-hp-buttons-row,
+[gplex2006][location$="home"] #ugf-hp-buttons-row,
+[gplex2007][location$="home"] #ugf-hp-buttons-row {
+  margin-top: 12px !important;
+  padding-top: 0 !important;
+}
+[gplex1997][location$="home"] #ugf-hp-search,
+[gplex1998][location$="home"] #ugf-hp-search,
+[gplex1999][location$="home"] #ugf-hp-search,
+[gplex2000][location$="home"] #ugf-hp-search,
+[gplex2001][location$="home"] #ugf-hp-search,
+[gplex2002][location$="home"] #ugf-hp-search,
+[gplex2003][location$="home"] #ugf-hp-search,
+[gplex2005][location$="home"] #ugf-hp-search,
+[gplex2006][location$="home"] #ugf-hp-search,
+[gplex2007][location$="home"] #ugf-hp-search {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+/* ---- 2010 results logo: draw it on the container, not via content: on an img ---- */
+[gplex2010]:not([location$="home"]) #ugf-logo-cont {
+  background: url(https://www.google.com/images/logos/ps_logo2.png) no-repeat 0 center !important;
+  background-size: contain !important;
+  width: 137px !important;
+  height: 49px !important;
+  padding: 0 !important;
+  margin: 12px 0 0 12px !important;
+  overflow: hidden !important;
+  display: block !important;
+}
+[gplex2010]:not([location$="home"]) #ugf-logo {
+  width: 137px !important;
+  height: 49px !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+[gplex2010]:not([location$="home"]) #ugf-logo img,
+[gplex2010]:not([location$="home"]) #ugf-logo svg,
+[gplex2010]:not([location$="home"]) #ugf-logo-cont img,
+[gplex2010]:not([location$="home"]) #ugf-logo-cont svg {
+  visibility: hidden !important;
+}
+[gplex2010] #ugf-topbar,
+[gplex2010] #ugf-topbar-inner,
+[gplex2010] #ugf-top {
+  overflow: visible !important;
+}
+/* ---- 2010: centre the content block ---- */
+[gplex2010][location$="home"] #ugf-hp-search,
+[gplex2010][location$="home"] #ugf-search {
+  border: none !important;
+  border-bottom: none !important;
+}
+[gplex2010] #ugf-hp,
+[gplex2010] #ugf-hp-inner,
+[gplex2010] #ugf-hp-footer,
+[gplex2010] #ugf-structured-hp-footer-right {
+  box-sizing: border-box !important;
+}
+[gplex2010] #ugf-hp,
+[gplex2010] #ugf-hp-footer {
+  min-width: 0 !important;
+}
+[gplex2010] #ugf-homepage #ugf-hp #ugf-search-outer {
+  width: 590px !important;
+  margin: 0 auto !important;
+}
+html[gplex2010]:not([layout="2016C"]):not([layout="2017"]):not([layout="2018"]):not([layout="2019"]) #ugf-homepage #ugf-searchbar {
+  width: 590px !important;
+}
+[gplex2010][location$="home"] #ugf-search-predictions-container {
+  width: 590px !important;
+}
+html[gplex2010]:not([layout="2013L"]):not([layout="2015L"]):not([layout="2016L"]) #ugf-hp-inner {
+  padding-left: 254px;
+}
+[gplex2010] #ugf-hp-footer {
+  padding-left: 254px;
+}
+[gplex2010] #ugf-hp {
+  margin: 0 auto !important;
 }
 /* -- scale corrections: ps_logo2.png is the hi-DPI asset, render it at 2010 size -- */
 [gplex2010] #ugf-hp-logo img {
@@ -6612,10 +6715,6 @@ html[gplex2010]:not([layout="2016C"]):not([layout="2017"]):not([layout="2018"]):
 /* ---- Stanford-era results pages (1997/1998) ---- */
 [gplex1997]:not([location$="home"]) .ugf-search-result:nth-of-type(n+11),
 [gplex1998]:not([location$="home"]) .ugf-search-result:nth-of-type(n+11) {
-  display: none !important;
-}
-[gplex1997]:not([location$="home"]) #gp-pagination,
-[gplex1998]:not([location$="home"]) #gp-pagination {
   display: none !important;
 }
 [gplex1997] #ugf-searchbar::after,
