@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      2.2.4
-// @description  1997-2019 Old Google Frontend (Full public release)
+// @version      2.2.5
+// @description  1997-2024 Old Google Frontend (Full public release)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
 // @match        *://www.google.com/
@@ -12579,6 +12579,22 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             document.querySelector("#gp-pagination-prev").classList.add("has-prev");
         }
     }
+    function ugfSetEraLayout(storeKey, baseLayout, attr) {
+        const h = document.querySelector("html");
+        ["gplex1997", "gplex1998", "gplex1999", "gplex2000", "gplex2001", "gplex2002", "gplex2003", "gplex2005", "gplex2006", "gplex2007", "gplex2009", "gplex2010", "gplex2022"].forEach(function(a) {
+            h.removeAttribute(a);
+        });
+        h.setAttribute("layout", baseLayout);
+        if (attr) {
+            h.setAttribute(attr, "");
+        }
+        localStorage.setItem("UGF_LAYOUT", storeKey);
+        if (attr && attr !== "gplex2022") {
+            h.setAttribute("legacy-gbar", "");
+            h.setAttribute("legacy-images", "");
+            h.setAttribute("legacy-footer", "");
+        }
+    }
     function setLayout() {
         if (searchValue == null) {
             searchValue = "";
@@ -12599,6 +12615,81 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 checkProperty("legacy-footer",false);
                 checkProperty("legacy-neuro",false);
             }, 1000);
+        }
+        if (
+            searchValue.toLowerCase()=="google in 1997"
+        ) {
+            ugfSetEraLayout("1997", "2010", "gplex1997");
+        }
+        if (
+            searchValue.toLowerCase()=="google in 1998"
+        ) {
+            ugfSetEraLayout("1998", "2010", "gplex1998");
+        }
+        if (
+            searchValue.toLowerCase()=="google in 1999"
+        ) {
+            ugfSetEraLayout("1999", "2010", "gplex1999");
+        }
+        if (
+            searchValue.toLowerCase()=="google in 2000"
+        ) {
+            ugfSetEraLayout("2000", "2010", "gplex2000");
+        }
+        if (
+            searchValue.toLowerCase()=="google in 2001"
+        ) {
+            ugfSetEraLayout("2001", "2010", "gplex2001");
+        }
+        if (
+            searchValue.toLowerCase()=="google in 2002"
+        ) {
+            ugfSetEraLayout("2002", "2010", "gplex2002");
+        }
+        if (
+            searchValue.toLowerCase()=="google in 2003"
+        ) {
+            ugfSetEraLayout("2003", "2010", "gplex2003");
+        }
+        if (
+            searchValue.toLowerCase()=="google in 2004"||
+            searchValue.toLowerCase()=="google in 2005"
+        ) {
+            ugfSetEraLayout("2005", "2010", "gplex2005");
+        }
+        if (
+            searchValue.toLowerCase()=="google in 2006"
+        ) {
+            ugfSetEraLayout("2006", "2010", "gplex2006");
+        }
+        if (
+            searchValue.toLowerCase()=="google in 2007"||
+            searchValue.toLowerCase()=="google in 2008"
+        ) {
+            ugfSetEraLayout("2007", "2010", "gplex2007");
+        }
+        if (
+            searchValue.toLowerCase()=="google in 2009"
+        ) {
+            ugfSetEraLayout("2009", "2010", "gplex2009");
+        }
+        if (
+            searchValue.toLowerCase()=="google in 2010"
+        ) {
+            ugfSetEraLayout("2010N", "2012", "gplex2010");
+        }
+        if (
+            searchValue.toLowerCase()=="google in 2020"||
+            searchValue.toLowerCase()=="google in 2021"
+        ) {
+            ugfSetEraLayout("2019", "2019", null);
+        }
+        if (
+            searchValue.toLowerCase()=="google in 2022"||
+            searchValue.toLowerCase()=="google in 2023"||
+            searchValue.toLowerCase()=="google in 2024"
+        ) {
+            ugfSetEraLayout("2022", "2019", "gplex2022");
         }
         if (
             searchValue.toLowerCase()=="google in 2017"||
