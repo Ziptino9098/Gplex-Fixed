@@ -2,7 +2,7 @@
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
 // @version      2.2.4
-// @description  1997-2024 Old Google Frontend (Full public release)
+// @description  1997-2019 Old Google Frontend (Full public release)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
 // @match        *://www.google.com/
@@ -28,6 +28,8 @@
 // @license      MIT
 // @require      https://openuserjs.org/src/libs/sizzle/GM_config.js
 // @run-at document-body
+// @downloadURL https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
+// @updateURL   https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
 // ==/UserScript==
 function showMenu(){
     window.location = "https://www.google.com/gplex";
@@ -10236,7 +10238,7 @@ li.tg2Kqf{
             </div>
             <div id="ugf-footer-links-middle" class="flex-bar ugf-footer-links">
                 <a class="ugf-footer-link" href="https://www.google.com/">Google Home</a>
-                <a class="ugf-footer-link" href="https://www.google.com/intl/en/ads">Advertising Programs</a>
+                <a class="ugf-footer-link" href="https://www.google.com/intl/en/ads">Advertising Programs</a>
                 <a class="ugf-footer-link" href="https://www.google.com/services">Business Solutions</a>
                 <a class="ugf-footer-link" href="https://www.google.com/intl/en/policies/">Privacy & Terms</a>
             </div>
@@ -13320,7 +13322,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
 					     	    	<img src="${SRA.thumbnail}">
                                 </div>
                                 <div class="ugf-search-result-duration">
-                                    <span>▶ ${SRA.duration}</span>
+                                    <span>▶ ${SRA.duration}</span>
                                 </div>
 				     		</a>
                             <div class="ugf-video-result-right">
