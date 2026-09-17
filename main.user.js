@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      2.1.10
+// @version      2.2.3
 // @description  2009-2019 Old Google Frontend (Full public release)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -2322,6 +2322,17 @@ html[gplex2010]:not([layout="2013L"]):not([layout="2015L"]):not([layout="2016L"]
   font-size: 13px;
 }
 /* ============ end GPlex 2010-Early 2011 theme ============ */
+/* ============ GPlex 2022 (continuous scroll) ============ */
+[gplex2022] #gp-pagination {
+  display: none !important;
+}
+[gplex2022] .ugf-scroll-status {
+  text-align: center;
+  font: 14px arial, sans-serif;
+  color: #70757a;
+  padding: 18px 0 30px 0;
+}
+/* ============ end GPlex 2022 ============ */
 /* ============ GPlex 2007-2008 theme ============ */
 [gplex2007] #gp-gbar-inner {
   background: none !important;
@@ -9075,7 +9086,8 @@ li.tg2Kqf{
         }
     }
     let UImessages = {
-        "l2019": "2019",
+        "l2019": "2019-Early 2022",
+        "l2022": "2022-2024 (Disable the script for present google, this can also act as \"Present google but no AI\")",
         "l2018M": "2017-2018 (Custom material version)",
         "l2018": "2017-2018",
         "l2016": "2016",
@@ -9297,6 +9309,10 @@ li.tg2Kqf{
             break;
         case "2019":
             document.querySelector("html").setAttribute("layout","2019");
+            break;
+        case "2022":
+            document.querySelector("html").setAttribute("layout","2019");
+            document.querySelector("html").setAttribute("gplex2022","");
             break;
         default:
             document.querySelector("html").setAttribute("layout","2015");
@@ -9577,6 +9593,9 @@ li.tg2Kqf{
                                         </div>
                                         <div class="ugf-dropdown" id="ugf-layout-dd">
                                             <div class="ugf-dropdown-inner">
+                                                <a id="UGF_SET_LAYOUT_2022" class="ugf-dropdown-item" value="2022">
+                                                    <span>${UImessages.l2022}</span>
+                                                </a>
                                                 <a id="UGF_SET_LAYOUT_2019" class="ugf-dropdown-item" value="2019">
                                                     <span>${UImessages.l2019}</span>
                                                 </a>
@@ -12038,6 +12057,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                         document.querySelector("html").removeAttribute("gplex2009");
                         document.querySelector("html").removeAttribute("gplex2010");
                         document.querySelector("html").removeAttribute("gplex2007");
+                        document.querySelector("html").removeAttribute("gplex2022");
                         document.querySelector("html").removeAttribute("gplex2006");
                         document.querySelector("html").removeAttribute("gplex2005");
                         document.querySelector("html").removeAttribute("gplex2003");
@@ -12059,6 +12079,9 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                             document.querySelector("html").setAttribute("legacy-gbar","");
                             document.querySelector("html").setAttribute("legacy-images","");
                             document.querySelector("html").setAttribute("legacy-footer","");
+                        } else if (value === "2022") {
+                            document.querySelector("html").setAttribute("layout","2019");
+                            document.querySelector("html").setAttribute("gplex2022","");
                         } else if (value === "2007") {
                             document.querySelector("html").setAttribute("layout","2010");
                             document.querySelector("html").setAttribute("gplex2007","");
@@ -12327,6 +12350,9 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     break;
                 case "2018M":
                     layoutBtnSpan.textContent = UImessages.l2018M;
+                    break;
+                case "2022":
+                    layoutBtnSpan.textContent = UImessages.l2022;
                     break;
                 case "2019":
                     layoutBtnSpan.textContent = UImessages.l2019;
@@ -13602,6 +13628,139 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         a.appendChild(inner);
         return a;
     }
+    function ugfEscapeHtml(t) {
+        return String(t == null ? "" : t)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+    }
+    function ugfParseResultsFrom(doc) {
+        const out = [];
+        const heads = doc.querySelectorAll("h3");
+        heads.forEach(function(h) {
+            const a = h.closest("a[href]");
+            if (!a) {
+                return;
+            }
+            let href = a.getAttribute("href") || "";
+            if (href.indexOf("/url?") === 0) {
+                try {
+                    href = new URLSearchParams(href.split("?")[1]).get("q") || href;
+                } catch (e) {}
+            }
+            if (href.indexOf("http") !== 0) {
+                return;
+            }
+            if (href.indexOf("google.com/search") > -1) {
+                return;
+            }
+            const title = (h.textContent || "").trim();
+            if (!title) {
+                return;
+            }
+            let desc = "";
+            let block = a.closest("div[data-hveid]") || a.parentElement;
+            for (let hop = 0; hop < 4 && block; hop++) {
+                const spans = block.querySelectorAll("div > span, div[data-sncf] span");
+                for (let i = 0; i < spans.length; i++) {
+                    const t = (spans[i].textContent || "").trim();
+                    if (t.length > 40 && t.indexOf(title) === -1) {
+                        desc = t;
+                        break;
+                    }
+                }
+                if (desc) {
+                    break;
+                }
+                block = block.parentElement;
+            }
+            out.push({ title: title, href: href, desc: desc });
+        });
+        return out;
+    }
+    function ugfContinuousScroll() {
+        if (!document.querySelector("html").hasAttribute("gplex2022")) {
+            return;
+        }
+        const loc = document.querySelector("html").getAttribute("location") || "";
+        if (loc === "home" || loc === "structured-home" || loc === "gplex") {
+            return;
+        }
+        ugf2009WaitFor("#ugf-search-results-container", function(container) {
+            let q = "";
+            let start = 0;
+            try {
+                const sp = new URLSearchParams(window.location.search);
+                q = sp.get("q") || "";
+                start = parseInt(sp.get("start") || "0", 10) || 0;
+            } catch (e) {
+                return;
+            }
+            if (!q) {
+                return;
+            }
+            let nextStart = start + 10;
+            let loading = false;
+            let pagesLoaded = 0;
+            const maxPages = 8;
+            const status = document.createElement("div");
+            status.className = "ugf-scroll-status";
+            container.parentElement.appendChild(status);
+            function loadMore() {
+                if (loading || pagesLoaded >= maxPages) {
+                    return;
+                }
+                loading = true;
+                status.textContent = "Loading more results\u2026";
+                fetch("https://www.google.com/search?q=" + encodeURIComponent(q) + "&start=" + nextStart, { credentials: "same-origin" })
+                    .then(function(r) { return r.text(); })
+                    .then(function(html) {
+                        const doc = new DOMParser().parseFromString(html, "text/html");
+                        const results = ugfParseResultsFrom(doc);
+                        if (!results.length) {
+                            console.warn("[Gplex] continuous scroll: no results parsed from start=" + nextStart + " (Google markup may have changed)");
+                            status.textContent = "";
+                            pagesLoaded = maxPages;
+                            return;
+                        }
+                        results.forEach(function(res) {
+                            const el = document.createElement("div");
+                            el.classList.add("ugf-search-result");
+                            el.innerHTML = `
+                    <div class="ugf-search-result-inner">
+                        <a class="ugf-search-result-title" title="${ugfEscapeHtml(res.title)}" href="${ugfEscapeHtml(res.href)}">
+                            <span>${ugfEscapeHtml(res.title)}</span>
+                        </a>
+                        <a class="ugf-search-result-link" title="${ugfEscapeHtml(res.href)}" href="${ugfEscapeHtml(res.href)}">
+                            <span>${ugfEscapeHtml(res.href)}</span>
+                        </a>
+                        <div class="ugf-search-result-desc">
+                            <span>${ugfEscapeHtml(res.desc)}</span>
+                        </div>
+                    </div>
+                    `;
+                            container.appendChild(el);
+                        });
+                        nextStart += 10;
+                        pagesLoaded++;
+                        status.textContent = "";
+                        loading = false;
+                    })
+                    .catch(function(err) {
+                        console.warn("[Gplex] continuous scroll fetch failed:", err);
+                        status.textContent = "";
+                        loading = false;
+                        pagesLoaded = maxPages;
+                    });
+            }
+            window.addEventListener("scroll", function() {
+                if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 900) {
+                    loadMore();
+                }
+            });
+        });
+    }
     function ugfRetroFooter() {
         const era = ugfRetroEra();
         if (!era) {
@@ -14024,6 +14183,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
     ugf2009Buttons();
     ugfRetroChrome();
     ugfRetroFooter();
+    ugfContinuousScroll();
     ugfRetroPromo();
     ugfRetroLogoLinks();
     ugfRetroExtras();
