@@ -9,7 +9,8 @@ I considered rebranding the entire repo to Gplex Extended, but I don't want to b
 
 After working on this since the day I fixed the image page, and after 2 weeks of development, it's finally HERE: Layouts for every google design ever!
 
-This is the full release of Gplex. There is nothing more I plan to add. All future updates will be focused on bug fixes, because I will NEVER let this script die. EVER.
+This script will always be adding new features back from old google layouts.
+I also will do many bug fixes.
 
 So when Google updates something and breaks the script, expect me to fix it as soon as possible!
 
