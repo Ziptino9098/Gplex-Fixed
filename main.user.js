@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      2.7.1
+// @version      2.7.4
 // @description  1997-2024 Old Google Frontend (Full public release)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -10033,6 +10033,78 @@ html:not([home-vertical]) #ugf-hp-vertical-label {
 [home-vertical] #ugf-lucky-btn {
   display: none !important;
 }
+/* 2.7.4: 1997-1998 - Times snippets; pager limited by the "N results" dropdown */
+[gplex1997]:not([location$="home"]) .ugf-search-result-desc span,
+[gplex1998]:not([location$="home"]) .ugf-search-result-desc span {
+  font-family: "Times New Roman", Times, serif !important;
+  color: #000 !important;
+}
+[era-last-page] #gp-pagination-next {
+  display: none !important;
+}
+[era-max-pages="1"] #gp-pagination-2,
+[era-max-pages="1"] #gp-pagination-3,
+[era-max-pages="1"] #gp-pagination-4,
+[era-max-pages="1"] #gp-pagination-5,
+[era-max-pages="1"] #gp-pagination-6,
+[era-max-pages="1"] #gp-pagination-7,
+[era-max-pages="1"] #gp-pagination-8,
+[era-max-pages="1"] #gp-pagination-9,
+[era-max-pages="1"] #gp-pagination-10 {
+  display: none !important;
+}
+[era-max-pages="2"] #gp-pagination-3,
+[era-max-pages="2"] #gp-pagination-4,
+[era-max-pages="2"] #gp-pagination-5,
+[era-max-pages="2"] #gp-pagination-6,
+[era-max-pages="2"] #gp-pagination-7,
+[era-max-pages="2"] #gp-pagination-8,
+[era-max-pages="2"] #gp-pagination-9,
+[era-max-pages="2"] #gp-pagination-10 {
+  display: none !important;
+}
+[era-max-pages="3"] #gp-pagination-4,
+[era-max-pages="3"] #gp-pagination-5,
+[era-max-pages="3"] #gp-pagination-6,
+[era-max-pages="3"] #gp-pagination-7,
+[era-max-pages="3"] #gp-pagination-8,
+[era-max-pages="3"] #gp-pagination-9,
+[era-max-pages="3"] #gp-pagination-10 {
+  display: none !important;
+}
+[era-max-pages="4"] #gp-pagination-5,
+[era-max-pages="4"] #gp-pagination-6,
+[era-max-pages="4"] #gp-pagination-7,
+[era-max-pages="4"] #gp-pagination-8,
+[era-max-pages="4"] #gp-pagination-9,
+[era-max-pages="4"] #gp-pagination-10 {
+  display: none !important;
+}
+[era-max-pages="5"] #gp-pagination-6,
+[era-max-pages="5"] #gp-pagination-7,
+[era-max-pages="5"] #gp-pagination-8,
+[era-max-pages="5"] #gp-pagination-9,
+[era-max-pages="5"] #gp-pagination-10 {
+  display: none !important;
+}
+[era-max-pages="6"] #gp-pagination-7,
+[era-max-pages="6"] #gp-pagination-8,
+[era-max-pages="6"] #gp-pagination-9,
+[era-max-pages="6"] #gp-pagination-10 {
+  display: none !important;
+}
+[era-max-pages="7"] #gp-pagination-8,
+[era-max-pages="7"] #gp-pagination-9,
+[era-max-pages="7"] #gp-pagination-10 {
+  display: none !important;
+}
+[era-max-pages="8"] #gp-pagination-9,
+[era-max-pages="8"] #gp-pagination-10 {
+  display: none !important;
+}
+[era-max-pages="9"] #gp-pagination-10 {
+  display: none !important;
+}
         </style>
         `;
         class SearchResultAPI {
@@ -15463,6 +15535,28 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         });
         return out;
     }
+    // 1997-1998: the "N results" dropdown limits how many result pages the Goooogle pager offers
+    // (10 results = page 1 only, 30 = pages 1-3, 100 = pages 1-10).
+    function ugfEraPageLimit() {
+        const era = ugfRetroEra();
+        if (era !== "gplex1997" && era !== "gplex1998") {
+            return;
+        }
+        let num = 10;
+        let start = 0;
+        try {
+            const sp = new URLSearchParams(window.location.search);
+            num = parseInt(sp.get("num") || "", 10) || parseInt(localStorage.getItem("UGF_ERA_NUM") || "10", 10) || 10;
+            start = parseInt(sp.get("start") || "0", 10) || 0;
+        } catch (e) {}
+        const maxPages = Math.max(1, Math.min(10, Math.round(num / 10)));
+        const curPage = Math.floor(start / 10) + 1;
+        const h = document.querySelector("html");
+        h.setAttribute("era-max-pages", String(maxPages));
+        if (curPage >= maxPages) {
+            h.setAttribute("era-last-page", "");
+        }
+    }
     function ugfContinuousScroll() {
         if (!document.querySelector("html").hasAttribute("gplex2022")) {
             return;
@@ -16036,7 +16130,21 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     eraConf2.resultsDropdown.forEach(function(opt) {
                         const o = document.createElement("option");
                         o.textContent = opt;
+                        o.value = String(parseInt(opt, 10) || 10);
                         sel.appendChild(o);
+                    });
+                    let savedNum = "10";
+                    try {
+                        savedNum = localStorage.getItem("UGF_ERA_NUM") || "10";
+                    } catch (e) {}
+                    sel.value = savedNum;
+                    if (!sel.value) {
+                        sel.value = "10";
+                    }
+                    sel.addEventListener("change", function() {
+                        try {
+                            localStorage.setItem("UGF_ERA_NUM", sel.value);
+                        } catch (e) {}
                     });
                     btnRow.appendChild(sel);
                 }
@@ -16048,6 +16156,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
     ugf2009Buttons();
     ugfEraHomeButtons();
     ugfVerticalHome();
+    ugfEraPageLimit();
     ugfRetroChrome();
     ugfRetroFooter();
     ugfContinuousScroll();
