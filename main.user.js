@@ -25,7 +25,7 @@
 // @grant        GM_setValue
 // @grant        GM_deleteValue
 // @grant        GM_registerMenuCommand
-// @grant        unsafeWindow // Needed to access page-context google.ldi for deferred image thumbnails
+// @grant        unsafeWindow
 // @license      MIT
 // @require      https://openuserjs.org/src/libs/sizzle/GM_config.js
 // @run-at document-body
