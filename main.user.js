@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      2.5.2
+// @version      2.6.0
 // @description  1997-2024 Old Google Frontend (Full public release)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -9943,6 +9943,70 @@ html[gplex2010][location$="home"]:not([layout="2016C"]):not([layout="2017"]):not
   color: #fff !important;
   font-weight: bold !important;
 }
+/* 2.6.0: Google News tab */
+html[news-results] #ugf-search-results-container .ugf-news-result .ugf-news-result-inner {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  gap: 12px;
+}
+html[news-results] #ugf-search-results-container .ugf-news-result .ugf-news-result-main {
+  flex: 0 1 auto !important;
+  min-width: 0;
+  max-width: 540px;
+}
+[news-results] .ugf-news-result-meta {
+  color: #666;
+  font-family: arial, sans-serif;
+  font-size: 13px;
+  line-height: 16px;
+}
+[news-results] .ugf-news-result-meta .ugf-news-result-sep {
+  color: #666;
+}
+[news-results] .ugf-news-result-thumb {
+  flex: 0 0 auto;
+  display: block;
+  width: 80px;
+  height: 80px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+}
+[news-results] .ugf-news-result-thumb img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  display: block;
+}
+/* news thumbnails in web results arrived with Universal Search (2007); older layouts stay text-only */
+[news-results][gplex1997] .ugf-news-result-thumb,
+[news-results][gplex1998] .ugf-news-result-thumb,
+[news-results][gplex1999] .ugf-news-result-thumb,
+[news-results][gplex2000] .ugf-news-result-thumb,
+[news-results][gplex2001] .ugf-news-result-thumb,
+[news-results][gplex2002] .ugf-news-result-thumb,
+[news-results][gplex2003] .ugf-news-result-thumb,
+[news-results][gplex2005] .ugf-news-result-thumb,
+[news-results][gplex2006] .ugf-news-result-thumb {
+  display: none !important;
+}
+[news-results][gplex1997] .ugf-news-result-meta,
+[news-results][gplex1998] .ugf-news-result-meta,
+[news-results][gplex1999] .ugf-news-result-meta,
+[news-results][gplex2000] .ugf-news-result-meta,
+[news-results][gplex2001] .ugf-news-result-meta,
+[news-results][gplex2002] .ugf-news-result-meta,
+[news-results][gplex2003] .ugf-news-result-meta,
+[news-results][gplex2005] .ugf-news-result-meta,
+[news-results][gplex2006] .ugf-news-result-meta,
+[news-results][gplex2007] .ugf-news-result-meta {
+  color: #008000;
+}
+[news-results][gplex2006] #ugf-search-results-header:before,
+[news-results][gplex2007] #ugf-search-results-header:before,
+[news-results][gplex2009] #ugf-search-results-header:before {
+  content: "News" !important;
+}
         </style>
         `;
         class SearchResultAPI {
@@ -10375,12 +10439,16 @@ html[gplex2010][location$="home"]:not([layout="2016C"]):not([layout="2017"]):not
     }
     if (
         url.includes("tbm=bks") ||
-        url.includes("tbm=shop") ||
-        url.includes("tbm=nws")
+        url.includes("tbm=shop")
     ) {
         location = "news";
         document.querySelector("html").setAttribute("location","news");
         document.querySelector("html").setAttribute("disabled","");
+    }
+    if (url.includes("tbm=nws")) {
+        location = "news";
+        document.querySelector("html").setAttribute("location","news");
+        document.querySelector("html").setAttribute("news-results","");
     }
     if (
         url.includes("https://www.google.com/gplex") ||
@@ -12088,7 +12156,6 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         !window.location.href.includes("https://www.google.com/sorry") &&
         !window.location.href.includes("https://www.google.com/recaptcha") &&
         !window.location.href.includes("imgres") &&
-        !window.location.href.includes("tbm=nws") &&
         !window.location.href.includes("tbm=shop") &&
         !window.location.href.includes("tbm=bks")
     ) {
@@ -12165,7 +12232,12 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             }
             let doInterval = setInterval(function() {
                 asArray = document.querySelectorAll("#rso span > a");
-                if (location != "images") {
+                if (location == "news" && document.querySelector("html").hasAttribute("news-results")) {
+                    if (ugfFindNewsCards(document).length >= 8) {
+                        parseHTMLNeo(location);
+                        clearInterval(doInterval);
+                    }
+                } else if (location != "images") {
                     if (asArray.length >= 10) {
                         parseHTMLNeo(location);
                         clearInterval(doInterval);
@@ -12277,6 +12349,10 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
     function parseHTMLNeo(location) {
         if (started == false) {
             started = true;
+            if (location == "news" && document.querySelector("html").hasAttribute("news-results")) {
+                ugfParseNews();
+                return;
+            }
             if (location == "images") {
                 let newImagesExp = false;
                 let modernImages = false;
@@ -13623,6 +13699,8 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 newHref = itemRoot.getAttribute("href").replaceAll("TEMP_REPLACEME",searchValue + "&udm=2");
             } else if (location == "videos") {
                 newHref = itemRoot.getAttribute("href").replaceAll("TEMP_REPLACEME",searchValue + "&udm=7");
+            } else if (location == "news" && document.querySelector("html").hasAttribute("news-results")) {
+                newHref = itemRoot.getAttribute("href").replaceAll("TEMP_REPLACEME",searchValue + "&tbm=nws");
             } else {
                 newHref = itemRoot.getAttribute("href").replaceAll("TEMP_REPLACEME",searchValue);
             }
@@ -13636,6 +13714,8 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             pageSuffix = "&udm=2";
         } else if (location == "videos") {
             pageSuffix = "&udm=7";
+        } else if (location == "news" && document.querySelector("html").hasAttribute("news-results")) {
+            pageSuffix = "&tbm=nws";
         }
         const pageBase = "https://www.google.com/search?q=" + searchValue + pageSuffix;
         const pageLinks = document.querySelectorAll("#gp-page-numbers .gp-pagination");
@@ -14330,6 +14410,12 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             document.querySelector("#gp-gbar-search").classList.remove("active");
             document.querySelector("#gp-gbar-images").classList.add("active");
         }
+        if (location == "news" && document.querySelector("html").hasAttribute("news-results")) {
+            document.querySelector("#ugf-all-tab").classList.remove("active");
+            document.querySelector("#ugf-news-tab").classList.add("active");
+            document.querySelector("#ugf-all-item").classList.remove("active");
+            document.querySelector("#ugf-news-item").classList.add("active");
+        }
         if (location == "videos") {
             document.querySelector("#ugf-all-tab").classList.remove("active");
             document.querySelector("#ugf-videos-tab").classList.add("active");
@@ -14392,6 +14478,9 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 }
                 if (itemRoot.imageResult) {
                     createItem(itemRoot, "imageResult");
+                }
+                if (itemRoot.newsResult) {
+                    createItem(itemRoot, "newsResult");
                 }
                 if (itemRoot.searchInfoBlock) {
                     createItem(itemRoot, "searchBlock");
@@ -14524,6 +14613,10 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 });
     }
     function createItem(itemGet, itemType) {
+        if (itemType == "newsResult") {
+            ugfRenderNewsItem(itemGet.newsResult);
+            return;
+        }
         let item;
         let type;
         let SRA;
@@ -15060,6 +15153,202 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         const q = searchValue || "";
         span.innerHTML = trusted_policy.createHTML("Results <b>" + first + "</b> - <b>" + (first + 9) + "</b> of about <b>" + ugfEscapeHtml(count) + "</b> for <b>" + ugfEscapeHtml(q) + "</b>." + (secs ? " (<b>" + ugfEscapeHtml(secs) + "</b> seconds)" : ""));
     }
+    // ---- Google News tab (tbm=nws) -------------------------------------------------
+    // Cards are found structurally (a link that contains a heading) so Google's
+    // obfuscated class names can change without breaking this.
+    const UGF_NEWS_TIME_RE = /(\bago\b|\byesterday\b|^\d+\s*(min|mins|minute|minutes|h|hr|hrs|hour|hours|d|day|days|w|wk|week|weeks|mo|month|months|y|yr|year|years)\b|^(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.? \d{1,2},? \d{4}$|^\d{1,2} (jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.? \d{4}$|^\d{1,2}\/\d{1,2}\/\d{2,4}$)/i;
+    function ugfFindNewsCards(root) {
+        const scope = root.querySelector("#rso") || root.querySelector("#search") || root.querySelector("#center_col") || root.body || root;
+        const cards = [];
+        scope.querySelectorAll("a[href]").forEach(function(a) {
+            const heading = a.querySelector('[role="heading"], h3');
+            if (!heading || !heading.textContent.trim()) {
+                return;
+            }
+            let href = a.getAttribute("href") || "";
+            if (href.indexOf("/url?") === 0 || href.indexOf("https://www.google.com/url?") === 0) {
+                try {
+                    const u = new URL(href, "https://www.google.com");
+                    href = u.searchParams.get("q") || u.searchParams.get("url") || href;
+                } catch (e) {}
+            }
+            if (!/^https?:\/\//.test(href) || /^https?:\/\/(www\.)?google\.[^/]+\/(search|preferences|advanced_search)/.test(href)) {
+                return;
+            }
+            for (let i = 0; i < cards.length; i++) {
+                if (cards[i].a.contains(a) || a.contains(cards[i].a)) {
+                    return;
+                }
+            }
+            cards.push({ a: a, heading: heading, href: href });
+        });
+        return cards;
+    }
+    function ugfNewsCardContainer(card, all) {
+        let el = card.a;
+        while (el.parentElement && el.parentElement !== document.body) {
+            const p = el.parentElement;
+            let n = 0;
+            for (let i = 0; i < all.length; i++) {
+                if (p.contains(all[i].heading)) {
+                    n++;
+                }
+            }
+            if (n > 1) {
+                break;
+            }
+            el = p;
+            if (el.id === "rso" || el.id === "search") {
+                break;
+            }
+        }
+        return el;
+    }
+    function ugfNewsTextBlocks(container) {
+        const blocks = [];
+        const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+        let node;
+        let lastEl = null;
+        while ((node = walker.nextNode())) {
+            const t = node.nodeValue.replace(/\s+/g, " ").trim();
+            if (!t) {
+                continue;
+            }
+            const el = node.parentElement;
+            if (!el || el.closest("script, style")) {
+                continue;
+            }
+            const cs = window.getComputedStyle ? window.getComputedStyle(el) : null;
+            if (cs && (cs.display === "none" || cs.visibility === "hidden")) {
+                continue;
+            }
+            if (lastEl && (lastEl === el || lastEl.contains(el) || el.contains(lastEl)) && blocks.length) {
+                blocks[blocks.length - 1].text += " " + t;
+            } else {
+                blocks.push({ el: el, text: t });
+            }
+            lastEl = el;
+        }
+        return blocks;
+    }
+    function ugfNewsBold(text) {
+        let html = ugfEscapeHtml(text);
+        const words = (searchValue || "").split(/\s+/).filter(function(w) {
+            return w.length >= 3;
+        });
+        words.forEach(function(w) {
+            const safe = ugfEscapeHtml(w).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            html = html.replace(new RegExp("(^|[^\\w>])(" + safe + ")(?=[^\\w<]|$)", "gi"), "$1<b>$2</b>");
+        });
+        return html;
+    }
+    function ugfParseNews() {
+        const cards = ugfFindNewsCards(document);
+        let itemNo = 0;
+        cards.forEach(function(card) {
+            const container = ugfNewsCardContainer(card, cards);
+            const title = card.heading.textContent.replace(/\s+/g, " ").trim();
+            const blocks = ugfNewsTextBlocks(container).filter(function(b) {
+                return !card.heading.contains(b.el) && b.text !== title;
+            });
+            let source = "";
+            let time = "";
+            let snippet = "";
+            blocks.forEach(function(b) {
+                const before = card.heading.compareDocumentPosition(b.el) & Node.DOCUMENT_POSITION_PRECEDING;
+                if (before) {
+                    if (!source && b.text.length < 80) {
+                        source = b.text;
+                    }
+                } else if (UGF_NEWS_TIME_RE.test(b.text) && b.text.length < 40) {
+                    time = b.text;
+                } else if (b.text.length > snippet.length) {
+                    snippet = b.text;
+                }
+            });
+            if (!source) {
+                try {
+                    source = new URL(card.href).hostname.replace(/^www\./, "");
+                } catch (e) {}
+            }
+            let imgEl = null;
+            container.querySelectorAll("img").forEach(function(img) {
+                if (imgEl) {
+                    return;
+                }
+                const w = parseInt(img.getAttribute("width") || img.width || 0, 10);
+                const afterHeading = card.heading.compareDocumentPosition(img) & Node.DOCUMENT_POSITION_FOLLOWING;
+                if (w >= 40 || (afterHeading && !img.closest('[role="heading"]'))) {
+                    imgEl = img;
+                }
+            });
+            let thumb = "";
+            if (imgEl) {
+                thumb = imgEl.getAttribute("src") || "";
+                if (!thumb || thumb.indexOf("data:image/gif") === 0 || thumb.length < 60) {
+                    thumb = ugfGetDeferredImage(imgEl.id) || imgEl.getAttribute("data-src") || "";
+                }
+            }
+            linkList.push({newsResult: {
+                itemNo: itemNo,
+                type: "news",
+                href: card.href,
+                title: title,
+                source: source,
+                time: time,
+                description: snippet,
+                thumbnail: thumb,
+                origImg: imgEl
+            }});
+            createItem(linkList[linkList.length - 1], "newsResult");
+            itemNo++;
+        });
+        if (itemNo > 0) {
+            document.querySelector("html").setAttribute("results-arrived", "");
+        }
+    }
+    function ugfRenderNewsItem(item) {
+        const container = document.querySelector("#ugf-search-results-container");
+        if (!container) {
+            return;
+        }
+        const el = document.createElement("div");
+        el.className = "ugf-search-result ugf-news-result";
+        const meta = [item.source, item.time].filter(Boolean).map(ugfEscapeHtml).join('<span class="ugf-news-result-sep"> - </span>');
+        const hasThumb = item.thumbnail && item.thumbnail.indexOf("data:image/gif") !== 0;
+        el.innerHTML = trusted_policy.createHTML(
+            '<div class="ugf-search-result-inner ugf-news-result-inner">' +
+                '<div class="ugf-news-result-main">' +
+                    '<a class="ugf-search-result-title" href="' + ugfEscapeHtml(item.href) + '"><span>' + ugfNewsBold(item.title) + '</span></a>' +
+                    '<div class="ugf-news-result-meta">' + meta + '</div>' +
+                    '<div class="ugf-search-result-desc"><span>' + ugfNewsBold(item.description) + '</span></div>' +
+                '</div>' +
+                (hasThumb ? '<a class="ugf-news-result-thumb" href="' + ugfEscapeHtml(item.href) + '"><img src="' + ugfEscapeHtml(item.thumbnail) + '"></a>' : '') +
+            '</div>');
+        container.insertBefore(el, container.children[item.itemNo] || null);
+        if (!hasThumb && item.origImg) {
+            let tries = 0;
+            const t = setInterval(function() {
+                tries++;
+                let src = item.origImg.getAttribute("src") || "";
+                if (!src || src.indexOf("data:image/gif") === 0 || src.length < 60) {
+                    src = ugfGetDeferredImage(item.origImg.id) || "";
+                }
+                if (src && src.indexOf("data:image/gif") !== 0 && src.length >= 60) {
+                    clearInterval(t);
+                    const a = document.createElement("a");
+                    a.className = "ugf-news-result-thumb";
+                    a.href = item.href;
+                    const img = document.createElement("img");
+                    img.src = src;
+                    a.appendChild(img);
+                    el.querySelector(".ugf-news-result-inner").appendChild(a);
+                } else if (tries >= 40) {
+                    clearInterval(t);
+                }
+            }, 150);
+        }
+    }
     function ugfEscapeHtml(t) {
         return String(t == null ? "" : t)
             .replace(/&/g, "&amp;")
@@ -15116,7 +15405,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             return;
         }
         const loc = document.querySelector("html").getAttribute("location") || "";
-        if (loc === "home" || loc === "structured-home" || loc === "gplex") {
+        if (loc === "home" || loc === "structured-home" || loc === "gplex" || loc === "news" || loc === "images") {
             return;
         }
         ugf2009WaitFor("#ugf-search-results-container", function(container) {
@@ -15441,7 +15730,8 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     const a = document.createElement("a");
                     a.href = href;
                     a.textContent = item[0];
-                    if ((onImages && item[0] === "Images") || (!onImages && item[0] === "Web")) {
+                    const onNewsTab = document.querySelector("html").hasAttribute("news-results");
+                    if ((onImages && item[0] === "Images") || (onNewsTab && item[0] === "News") || (!onImages && !onNewsTab && item[0] === "Web")) {
                         a.className = "active";
                     }
                     nav.appendChild(a);
@@ -15504,7 +15794,8 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 q = "";
             }
             conf.left.forEach(function(item) {
-                const isActive = (onImages && item[0] === "Images") || (!onImages && item[0] === "Web");
+                const onNews = document.querySelector("html").hasAttribute("news-results");
+                const isActive = (onImages && item[0] === "Images") || (onNews && item[0] === "News") || (!onImages && !onNews && item[0] === "Web");
                 let href = item[1];
                 if (q) {
                     if (item[0] === "Images") {
