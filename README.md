@@ -1,6 +1,8 @@
 Install Gplex Extended:
 https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
 
+CONTRIBUTORS: lightbeam24 (The original script), StonedKahjiit (Helping fix bugs), Ebeiw123 (Helping fix bugs)
+
 NOTE: Do not have the original script installed while installing this. This has all of the original script's code built in and having both will cause issues. If you have it installed REMOVE IT FIRST!!!!
 
 I considered rebranding the entire repo to Gplex Extended, but I don't want to break the existing update URLs.
