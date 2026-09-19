@@ -2,6 +2,8 @@
 Install Gplex Extended:
 https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
 
+To get any layout: Search Google in [year] so for example, you can get 1998 layout by searching "Google in 1998"
+
 CONTRIBUTORS: lightbeam24 (The original script), StonedKahjiit (Helping fix bugs), Ebeiw123 (Helping fix bugs)
 
 Original Script: https://greasyfork.org/en/scripts/492193
