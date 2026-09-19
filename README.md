@@ -26,6 +26,10 @@ Recommended if you're using the 2015 theme. I don't have layouts for the other G
 
 https://raw.githubusercontent.com/Ziptino9098/Old-Gmail-UI-2015-/main/main.user.css
 
+Geckium (A Firefox theme that makes the browser look like every version of Chrome from 1-58, it is what I use daily and what is used in the screenshots)
+
+https://github.com/angelbruni/geckium
+
 StarTube by lightbeam24
 https://github.com/lightbeam24/StarTube/raw/refs/heads/main/StarTube.user.js
 
