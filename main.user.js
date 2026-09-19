@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      2.5.1
+// @version      2.5.2
 // @description  1997-2024 Old Google Frontend (Full public release)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -2409,7 +2409,7 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex2007][location$="home"] #ugf-search #ugf-searchbar {
   border: none !important;
-  width: 570px;
+  width: 400px;
   margin-left: 27px !important;
   background: none !important;
 }
@@ -2417,13 +2417,13 @@ html[info-cards="false"] #ugf-side-info-container {
   border: revert !important;
   outline: revert !important;
   background: revert !important;
-  width: 570px !important;
+  width: 400px !important;
   height: revert !important;
-  font: 17px arial, sans-serif !important;
+  font: 13px arial, sans-serif !important;
   vertical-align: bottom;
 }
 [gplex2007][location$="home"] #ugf-search-predictions-container {
-  width: 570px !important;
+  width: 400px !important;
   top: 25px !important;
   margin-left: 27px !important;
 }
@@ -2515,10 +2515,10 @@ html[info-cards="false"] #ugf-side-info-container {
   box-shadow: none !important;
   outline: none !important;
   box-sizing: border-box !important;
-  width: 380px !important;
-  height: 26px !important;
+  width: 300px !important;
+  height: 22px !important;
   padding: 2px 6px !important;
-  font: 15px arial, sans-serif !important;
+  font: 13px arial, sans-serif !important;
   vertical-align: middle !important;
   margin: 0 !important;
 }
@@ -2539,14 +2539,14 @@ html[info-cards="false"] #ugf-side-info-container {
   top: 1px !important;
 }
 [gplex2007]:not([location$="home"]) #ugf-search-predictions-container {
-  width: 380px !important;
+  width: 300px !important;
   top: 28px !important;
   margin-left: 0 !important;
 }
 /* native buttons */
 [gplex2007] button.searchbtn {
   all: revert;
-  font-size: 15px;
+  font-size: 13px;
   height: 1.85em !important;
   margin: .2em;
 }
@@ -2630,7 +2630,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex2007] #ugf-image-viewer-title {
   color: #00c;
   text-decoration: underline;
-  font-size: 14px;
+  font-size: 13px;
 }
 [gplex2007] #ugf-image-viewer-close {
   color: #444;
@@ -2737,21 +2737,21 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex2006][location$="home"] #ugf-search #ugf-searchbar {
   border: none !important;
-  width: 590px;
+  width: 400px;
   background: none !important;
 }
 [gplex2006][location$="home"] #ugf-search-value {
   border: 1px solid #7e9db9 !important;
   outline: none !important;
   background: #fff !important;
-  width: 590px !important;
-  height: 24px !important;
-  font: 15px arial, sans-serif !important;
+  width: 400px !important;
+  height: 22px !important;
+  font: 13px arial, sans-serif !important;
   padding: 2px 4px !important;
   box-sizing: border-box;
 }
 [gplex2006][location$="home"] #ugf-search-predictions-container {
-  width: 590px !important;
+  width: 400px !important;
   top: 28px !important;
 }
 [gplex2006] #ugf-searchbar::after {
@@ -2849,10 +2849,10 @@ html[info-cards="false"] #ugf-side-info-container {
   background: #fff !important;
   outline: none !important;
   box-sizing: border-box !important;
-  width: 380px !important;
-  height: 26px !important;
+  width: 300px !important;
+  height: 22px !important;
   padding: 2px 6px !important;
-  font: 15px arial, sans-serif !important;
+  font: 13px arial, sans-serif !important;
   margin: 0 !important;
 }
 [gplex2006]:not([location$="home"]) #ugf-search {
@@ -2894,7 +2894,7 @@ html[info-cards="false"] #ugf-side-info-container {
 /* native buttons */
 [gplex2006] button.searchbtn {
   all: revert;
-  font-size: 15px;
+  font-size: 13px;
   height: 1.85em !important;
   margin: .2em;
 }
@@ -2997,7 +2997,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex2006] #ugf-image-viewer-title {
   color: #00c;
   text-decoration: underline;
-  font-size: 14px;
+  font-size: 13px;
 }
 [gplex2006] #ugf-image-viewer-close {
   color: #444;
@@ -3063,21 +3063,21 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex2005][location$="home"] #ugf-search #ugf-searchbar {
   border: none !important;
-  width: 590px;
+  width: 400px;
   background: none !important;
 }
 [gplex2005][location$="home"] #ugf-search-value {
   border: 1px solid #7e9db9 !important;
   outline: none !important;
   background: #fff !important;
-  width: 590px !important;
-  height: 24px !important;
-  font: 15px arial, sans-serif !important;
+  width: 400px !important;
+  height: 22px !important;
+  font: 13px arial, sans-serif !important;
   padding: 2px 4px !important;
   box-sizing: border-box;
 }
 [gplex2005][location$="home"] #ugf-search-predictions-container {
-  width: 590px !important;
+  width: 400px !important;
   top: 28px !important;
 }
 [gplex2005] #ugf-searchbar::after {
@@ -3179,10 +3179,10 @@ html[info-cards="false"] #ugf-side-info-container {
   background: #fff !important;
   outline: none !important;
   box-sizing: border-box !important;
-  width: 380px !important;
-  height: 26px !important;
+  width: 300px !important;
+  height: 22px !important;
   padding: 2px 6px !important;
-  font: 15px arial, sans-serif !important;
+  font: 13px arial, sans-serif !important;
   margin: 0 !important;
 }
 [gplex2005]:not([location$="home"]) #ugf-search {
@@ -3224,7 +3224,7 @@ html[info-cards="false"] #ugf-side-info-container {
 /* native buttons */
 [gplex2005] button.searchbtn {
   all: revert;
-  font-size: 15px;
+  font-size: 13px;
   height: 1.85em !important;
   margin: .2em;
 }
@@ -3327,7 +3327,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex2005] #ugf-image-viewer-title {
   color: #00c;
   text-decoration: underline;
-  font-size: 14px;
+  font-size: 13px;
 }
 [gplex2005] #ugf-image-viewer-close {
   color: #444;
@@ -3363,7 +3363,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex2003] .ugf-era-tabs {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   margin: 0 auto 0 auto;
   border-bottom: 2px solid #3a5fcd;
   width: max-content;
@@ -3434,21 +3434,21 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex2003][location$="home"] #ugf-search #ugf-searchbar {
   border: none !important;
-  width: 560px;
+  width: 400px;
   background: none !important;
 }
 [gplex2003][location$="home"] #ugf-search-value {
   border: 2px solid #3a5fcd !important;
   outline: none !important;
   background: #fff !important;
-  width: 560px !important;
-  height: 26px !important;
-  font: 15px arial, sans-serif !important;
+  width: 400px !important;
+  height: 22px !important;
+  font: 13px arial, sans-serif !important;
   padding: 2px 4px !important;
   box-sizing: border-box;
 }
 [gplex2003][location$="home"] #ugf-search-predictions-container {
-  width: 560px !important;
+  width: 400px !important;
   top: 30px !important;
 }
 [gplex2003] #ugf-searchbar::after {
@@ -3527,10 +3527,10 @@ html[info-cards="false"] #ugf-side-info-container {
   background: #fff !important;
   outline: none !important;
   box-sizing: border-box !important;
-  width: 380px !important;
-  height: 26px !important;
+  width: 300px !important;
+  height: 22px !important;
   padding: 2px 6px !important;
-  font: 15px arial, sans-serif !important;
+  font: 13px arial, sans-serif !important;
   margin: 0 !important;
 }
 [gplex2003]:not([location$="home"]) #ugf-search {
@@ -3573,7 +3573,7 @@ html[info-cards="false"] #ugf-side-info-container {
 /* native buttons */
 [gplex2003] button.searchbtn {
   all: revert;
-  font-size: 15px;
+  font-size: 13px;
   height: 1.85em !important;
   margin: .2em;
 }
@@ -3676,7 +3676,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex2003] #ugf-image-viewer-title {
   color: #00c;
   text-decoration: underline;
-  font-size: 14px;
+  font-size: 13px;
 }
 [gplex2003] #ugf-image-viewer-close {
   color: #444;
@@ -3711,7 +3711,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex2002] .ugf-era-tabs {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   margin: 0 auto 0 auto;
   border-bottom: 2px solid #3a5fcd;
   width: max-content;
@@ -3782,21 +3782,21 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex2002][location$="home"] #ugf-search #ugf-searchbar {
   border: none !important;
-  width: 560px;
+  width: 400px;
   background: none !important;
 }
 [gplex2002][location$="home"] #ugf-search-value {
   border: 2px solid #3a5fcd !important;
   outline: none !important;
   background: #fff !important;
-  width: 560px !important;
-  height: 26px !important;
-  font: 15px arial, sans-serif !important;
+  width: 400px !important;
+  height: 22px !important;
+  font: 13px arial, sans-serif !important;
   padding: 2px 4px !important;
   box-sizing: border-box;
 }
 [gplex2002][location$="home"] #ugf-search-predictions-container {
-  width: 560px !important;
+  width: 400px !important;
   top: 30px !important;
 }
 [gplex2002] #ugf-searchbar::after {
@@ -3875,10 +3875,10 @@ html[info-cards="false"] #ugf-side-info-container {
   background: #fff !important;
   outline: none !important;
   box-sizing: border-box !important;
-  width: 380px !important;
-  height: 26px !important;
+  width: 300px !important;
+  height: 22px !important;
   padding: 2px 6px !important;
-  font: 15px arial, sans-serif !important;
+  font: 13px arial, sans-serif !important;
   margin: 0 !important;
 }
 [gplex2002]:not([location$="home"]) #ugf-search {
@@ -3921,7 +3921,7 @@ html[info-cards="false"] #ugf-side-info-container {
 /* native buttons */
 [gplex2002] button.searchbtn {
   all: revert;
-  font-size: 15px;
+  font-size: 13px;
   height: 1.85em !important;
   margin: .2em;
 }
@@ -4024,7 +4024,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex2002] #ugf-image-viewer-title {
   color: #00c;
   text-decoration: underline;
-  font-size: 14px;
+  font-size: 13px;
 }
 [gplex2002] #ugf-image-viewer-close {
   color: #444;
@@ -4045,7 +4045,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex2002] .ugf-era-promo {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   color: #000;
   margin: 40px auto 0 auto;
 }
@@ -4085,7 +4085,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex2001] .ugf-era-tabs {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   margin: 0 auto 0 auto;
   border-bottom: 2px solid #3a5fcd;
   width: max-content;
@@ -4156,21 +4156,21 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex2001][location$="home"] #ugf-search #ugf-searchbar {
   border: none !important;
-  width: 560px;
+  width: 400px;
   background: none !important;
 }
 [gplex2001][location$="home"] #ugf-search-value {
   border: 2px solid #3a5fcd !important;
   outline: none !important;
   background: #fff !important;
-  width: 560px !important;
-  height: 26px !important;
-  font: 15px arial, sans-serif !important;
+  width: 400px !important;
+  height: 22px !important;
+  font: 13px arial, sans-serif !important;
   padding: 2px 4px !important;
   box-sizing: border-box;
 }
 [gplex2001][location$="home"] #ugf-search-predictions-container {
-  width: 560px !important;
+  width: 400px !important;
   top: 30px !important;
 }
 [gplex2001] #ugf-searchbar::after {
@@ -4249,10 +4249,10 @@ html[info-cards="false"] #ugf-side-info-container {
   background: #fff !important;
   outline: none !important;
   box-sizing: border-box !important;
-  width: 380px !important;
-  height: 26px !important;
+  width: 300px !important;
+  height: 22px !important;
   padding: 2px 6px !important;
-  font: 15px arial, sans-serif !important;
+  font: 13px arial, sans-serif !important;
   margin: 0 !important;
 }
 [gplex2001]:not([location$="home"]) #ugf-search {
@@ -4295,7 +4295,7 @@ html[info-cards="false"] #ugf-side-info-container {
 /* native buttons */
 [gplex2001] button.searchbtn {
   all: revert;
-  font-size: 15px;
+  font-size: 13px;
   height: 1.85em !important;
   margin: .2em;
 }
@@ -4398,7 +4398,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex2001] #ugf-image-viewer-title {
   color: #00c;
   text-decoration: underline;
-  font-size: 14px;
+  font-size: 13px;
 }
 [gplex2001] #ugf-image-viewer-close {
   color: #444;
@@ -4419,7 +4419,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex2001] .ugf-era-promo {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   color: #000;
   margin: 40px auto 0 auto;
 }
@@ -4445,7 +4445,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex2001] .ugf-era-count {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   color: #000;
   margin: 0 0 2px 0;
 }
@@ -4457,13 +4457,13 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex2001] .ugf-era-promo a {
   color: #008000 !important;
   font-weight: bold;
-  font-size: 15px;
+  font-size: 13px;
   text-decoration: underline;
 }
 [gplex2001] .ugf-era-promo-tagline {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-style: italic;
   color: #008000;
   margin-top: 1px;
@@ -4491,7 +4491,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex2000] .ugf-era-tabs {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   margin: 0 auto 0 auto;
   border-bottom: 2px solid #3a5fcd;
   width: max-content;
@@ -4562,21 +4562,21 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex2000][location$="home"] #ugf-search #ugf-searchbar {
   border: none !important;
-  width: 560px;
+  width: 400px;
   background: none !important;
 }
 [gplex2000][location$="home"] #ugf-search-value {
   border: 2px solid #3a5fcd !important;
   outline: none !important;
   background: #fff !important;
-  width: 560px !important;
-  height: 26px !important;
-  font: 15px arial, sans-serif !important;
+  width: 400px !important;
+  height: 22px !important;
+  font: 13px arial, sans-serif !important;
   padding: 2px 4px !important;
   box-sizing: border-box;
 }
 [gplex2000][location$="home"] #ugf-search-predictions-container {
-  width: 560px !important;
+  width: 400px !important;
   top: 30px !important;
 }
 [gplex2000] #ugf-searchbar::after {
@@ -4655,10 +4655,10 @@ html[info-cards="false"] #ugf-side-info-container {
   background: #fff !important;
   outline: none !important;
   box-sizing: border-box !important;
-  width: 380px !important;
-  height: 26px !important;
+  width: 300px !important;
+  height: 22px !important;
   padding: 2px 6px !important;
-  font: 15px arial, sans-serif !important;
+  font: 13px arial, sans-serif !important;
   margin: 0 !important;
 }
 [gplex2000]:not([location$="home"]) #ugf-search {
@@ -4701,7 +4701,7 @@ html[info-cards="false"] #ugf-side-info-container {
 /* native buttons */
 [gplex2000] button.searchbtn {
   all: revert;
-  font-size: 15px;
+  font-size: 13px;
   height: 1.85em !important;
   margin: .2em;
 }
@@ -4804,7 +4804,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex2000] #ugf-image-viewer-title {
   color: #00c;
   text-decoration: underline;
-  font-size: 14px;
+  font-size: 13px;
 }
 [gplex2000] #ugf-image-viewer-close {
   color: #444;
@@ -4825,7 +4825,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex2000] .ugf-era-promo {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   color: #000;
   margin: 40px auto 0 auto;
 }
@@ -4851,7 +4851,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex2000] .ugf-era-count {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   color: #000;
   margin: 0 0 2px 0;
 }
@@ -4863,13 +4863,13 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex2000] .ugf-era-promo a {
   color: #008000 !important;
   font-weight: bold;
-  font-size: 15px;
+  font-size: 13px;
   text-decoration: underline;
 }
 [gplex2000] .ugf-era-promo-tagline {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-style: italic;
   color: #008000;
   margin-top: 1px;
@@ -4888,7 +4888,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex2000] .ugf-era-above-links {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   color: #767676;
   margin: 0 0 2px 0;
 }
@@ -4899,7 +4899,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex2000] .ugf-era-index {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   color: #000;
   margin: 55px auto 0 auto;
 }
@@ -4911,22 +4911,22 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex2000] .ugf-era-promo a {
   color: #00c !important;
   font-weight: normal;
-  font-size: 15px;
+  font-size: 13px;
   text-decoration: underline;
 }
 [gplex2000] .ugf-era-footer-link {
   color: #767676 !important;
   text-decoration: underline !important;
-  font-size: 14px !important;
+  font-size: 13px !important;
   font-weight: normal;
 }
 [gplex2000] .ugf-era-footer-dash {
   color: #767676;
-  font-size: 14px;
+  font-size: 13px;
 }
 [gplex2000] .ugf-era-copyright {
   color: #767676;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 34px;
 }
 [gplex2000][location$="home"] #ugf-hp-footer {
@@ -4949,7 +4949,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1999] .ugf-era-tabs {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   margin: 0 auto 0 auto;
   border-bottom: 2px solid #3a5fcd;
   width: max-content;
@@ -5020,21 +5020,21 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex1999][location$="home"] #ugf-search #ugf-searchbar {
   border: none !important;
-  width: 560px;
+  width: 355px;
   background: none !important;
 }
 [gplex1999][location$="home"] #ugf-search-value {
   border: 2px solid #3a5fcd !important;
   outline: none !important;
   background: #fff !important;
-  width: 560px !important;
-  height: 26px !important;
-  font: 15px arial, sans-serif !important;
+  width: 355px !important;
+  height: 22px !important;
+  font: 13px arial, sans-serif !important;
   padding: 2px 4px !important;
   box-sizing: border-box;
 }
 [gplex1999][location$="home"] #ugf-search-predictions-container {
-  width: 560px !important;
+  width: 355px !important;
   top: 30px !important;
 }
 [gplex1999] #ugf-searchbar::after {
@@ -5113,10 +5113,10 @@ html[info-cards="false"] #ugf-side-info-container {
   background: #fff !important;
   outline: none !important;
   box-sizing: border-box !important;
-  width: 380px !important;
-  height: 26px !important;
+  width: 300px !important;
+  height: 22px !important;
   padding: 2px 6px !important;
-  font: 15px arial, sans-serif !important;
+  font: 13px arial, sans-serif !important;
   margin: 0 !important;
 }
 [gplex1999]:not([location$="home"]) #ugf-search {
@@ -5159,7 +5159,7 @@ html[info-cards="false"] #ugf-side-info-container {
 /* native buttons */
 [gplex1999] button.searchbtn {
   all: revert;
-  font-size: 15px;
+  font-size: 13px;
   height: 1.85em !important;
   margin: .2em;
 }
@@ -5262,7 +5262,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1999] #ugf-image-viewer-title {
   color: #00c;
   text-decoration: underline;
-  font-size: 14px;
+  font-size: 13px;
 }
 [gplex1999] #ugf-image-viewer-close {
   color: #444;
@@ -5283,7 +5283,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1999] .ugf-era-promo {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   color: #000;
   margin: 40px auto 0 auto;
 }
@@ -5309,7 +5309,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1999] .ugf-era-count {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   color: #000;
   margin: 0 0 2px 0;
 }
@@ -5321,13 +5321,13 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1999] .ugf-era-promo a {
   color: #008000 !important;
   font-weight: bold;
-  font-size: 15px;
+  font-size: 13px;
   text-decoration: underline;
 }
 [gplex1999] .ugf-era-promo-tagline {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-style: italic;
   color: #008000;
   margin-top: 1px;
@@ -5346,7 +5346,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1999] .ugf-era-above-links {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   color: #767676;
   margin: 0 0 2px 0;
 }
@@ -5357,7 +5357,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1999] .ugf-era-index {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   color: #000;
   margin: 55px auto 0 auto;
 }
@@ -5369,22 +5369,22 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1999] .ugf-era-promo a {
   color: #00c !important;
   font-weight: normal;
-  font-size: 15px;
+  font-size: 13px;
   text-decoration: underline;
 }
 [gplex1999] .ugf-era-footer-link {
   color: #767676 !important;
   text-decoration: underline !important;
-  font-size: 14px !important;
+  font-size: 13px !important;
   font-weight: normal;
 }
 [gplex1999] .ugf-era-footer-dash {
   color: #767676;
-  font-size: 14px;
+  font-size: 13px;
 }
 [gplex1999] .ugf-era-copyright {
   color: #767676;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 34px;
 }
 [gplex1999][location$="home"] #ugf-hp-footer {
@@ -5403,7 +5403,7 @@ html[info-cards="false"] #ugf-side-info-container {
   vertical-align: top;
   margin: 60px 0 0 40px;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
 }
 [gplex1999] .ugf-era-logo-links a {
   color: #000;
@@ -5418,7 +5418,7 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex1999] .ugf-era-count {
   font-family: "Times New Roman", Times, serif !important;
-  font-size: 19px !important;
+  font-size: 16px !important;
   color: #000;
   margin-bottom: 3px !important;
 }
@@ -5429,7 +5429,7 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex1999] .ugf-era-promo a {
   color: #1a3a8f !important;
-  font-size: 19px;
+  font-size: 16px;
   font-weight: normal;
   text-decoration: underline;
 }
@@ -5444,10 +5444,10 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex1999][location$="home"] #ugf-search #ugf-searchbar,
 [gplex1999][location$="home"] #ugf-search-value {
-  width: 500px !important;
+  width: 355px !important;
 }
 [gplex1999][location$="home"] #ugf-search-predictions-container {
-  width: 500px !important;
+  width: 355px !important;
 }
 /* ============ GPlex 1997-1998 (Stanford) theme ============ */
 [gplex1998] #gp-gbar-inner,
@@ -5466,7 +5466,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1998] .ugf-era-tabs {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   margin: 0 auto 0 auto;
   border-bottom: 2px solid #3a5fcd;
   width: max-content;
@@ -5537,21 +5537,21 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex1998][location$="home"] #ugf-search #ugf-searchbar {
   border: none !important;
-  width: 560px;
+  width: 345px;
   background: none !important;
 }
 [gplex1998][location$="home"] #ugf-search-value {
   border: 2px solid #3a5fcd !important;
   outline: none !important;
   background: #fff !important;
-  width: 560px !important;
-  height: 26px !important;
-  font: 15px arial, sans-serif !important;
+  width: 345px !important;
+  height: 22px !important;
+  font: 13px arial, sans-serif !important;
   padding: 2px 4px !important;
   box-sizing: border-box;
 }
 [gplex1998][location$="home"] #ugf-search-predictions-container {
-  width: 560px !important;
+  width: 345px !important;
   top: 30px !important;
 }
 [gplex1998] #ugf-searchbar::after {
@@ -5630,10 +5630,10 @@ html[info-cards="false"] #ugf-side-info-container {
   background: #fff !important;
   outline: none !important;
   box-sizing: border-box !important;
-  width: 380px !important;
-  height: 26px !important;
+  width: 260px !important;
+  height: 22px !important;
   padding: 2px 6px !important;
-  font: 15px arial, sans-serif !important;
+  font: 13px arial, sans-serif !important;
   margin: 0 !important;
 }
 [gplex1998]:not([location$="home"]) #ugf-search {
@@ -5676,7 +5676,7 @@ html[info-cards="false"] #ugf-side-info-container {
 /* native buttons */
 [gplex1998] button.searchbtn {
   all: revert;
-  font-size: 15px;
+  font-size: 13px;
   height: 1.85em !important;
   margin: .2em;
 }
@@ -5779,7 +5779,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1998] #ugf-image-viewer-title {
   color: #00c;
   text-decoration: underline;
-  font-size: 14px;
+  font-size: 13px;
 }
 [gplex1998] #ugf-image-viewer-close {
   color: #444;
@@ -5800,7 +5800,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1998] .ugf-era-promo {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   color: #000;
   margin: 40px auto 0 auto;
 }
@@ -5826,7 +5826,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1998] .ugf-era-count {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   color: #000;
   margin: 0 0 2px 0;
 }
@@ -5838,13 +5838,13 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1998] .ugf-era-promo a {
   color: #008000 !important;
   font-weight: bold;
-  font-size: 15px;
+  font-size: 13px;
   text-decoration: underline;
 }
 [gplex1998] .ugf-era-promo-tagline {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-style: italic;
   color: #008000;
   margin-top: 1px;
@@ -5863,7 +5863,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1998] .ugf-era-above-links {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   color: #767676;
   margin: 0 0 2px 0;
 }
@@ -5874,7 +5874,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1998] .ugf-era-index {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   color: #000;
   margin: 55px auto 0 auto;
 }
@@ -5886,22 +5886,22 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1998] .ugf-era-promo a {
   color: #00c !important;
   font-weight: normal;
-  font-size: 15px;
+  font-size: 13px;
   text-decoration: underline;
 }
 [gplex1998] .ugf-era-footer-link {
   color: #767676 !important;
   text-decoration: underline !important;
-  font-size: 14px !important;
+  font-size: 13px !important;
   font-weight: normal;
 }
 [gplex1998] .ugf-era-footer-dash {
   color: #767676;
-  font-size: 14px;
+  font-size: 13px;
 }
 [gplex1998] .ugf-era-copyright {
   color: #767676;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 34px;
 }
 [gplex1998][location$="home"] #ugf-hp-footer {
@@ -5920,7 +5920,7 @@ html[info-cards="false"] #ugf-side-info-container {
   vertical-align: top;
   margin: 60px 0 0 40px;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
 }
 [gplex1998] .ugf-era-logo-links a {
   color: #000;
@@ -5935,7 +5935,7 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex1998] .ugf-era-count {
   font-family: "Times New Roman", Times, serif !important;
-  font-size: 19px !important;
+  font-size: 16px !important;
   color: #000;
   margin-bottom: 3px !important;
 }
@@ -5946,7 +5946,7 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex1998] .ugf-era-promo a {
   color: #1a3a8f !important;
-  font-size: 19px;
+  font-size: 16px;
   font-weight: normal;
   text-decoration: underline;
 }
@@ -5961,10 +5961,10 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex1998][location$="home"] #ugf-search #ugf-searchbar,
 [gplex1998][location$="home"] #ugf-search-value {
-  width: 500px !important;
+  width: 345px !important;
 }
 [gplex1998][location$="home"] #ugf-search-predictions-container {
-  width: 500px !important;
+  width: 345px !important;
 }
 /* 1998: Stanford-era Google! page */
 [gplex1998][location$="home"] #ugf-hp-inner {
@@ -5992,31 +5992,31 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex1998] .ugf-era-count {
   font-family: "Times New Roman", Times, serif !important;
-  font-size: 21px !important;
+  font-size: 18px !important;
   margin-bottom: 6px !important;
 }
 [gplex1998] .ugf-era-index-note {
   text-align: center;
   font-family: "Times New Roman", Times, serif;
-  font-size: 19px;
+  font-size: 16px;
   font-style: italic;
   color: #000;
   margin-top: 4px;
 }
 [gplex1998] .ugf-era-results-select {
   all: revert;
-  font-size: 15px;
+  font-size: 13px;
   margin: .2em;
   vertical-align: middle;
 }
 [gplex1998][location$="home"] #ugf-search-value {
   border: 1px solid #767676 !important;
-  width: 480px !important;
-  height: 24px !important;
+  width: 345px !important;
+  height: 22px !important;
 }
 [gplex1998][location$="home"] #ugf-search #ugf-searchbar,
 [gplex1998][location$="home"] #ugf-search-predictions-container {
-  width: 480px !important;
+  width: 345px !important;
 }
 [gplex1998] .ugf-era-big-link {
   text-align: center;
@@ -6024,7 +6024,7 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex1998] .ugf-era-big-link a {
   font-family: "Times New Roman", Times, serif;
-  font-size: 30px;
+  font-size: 24px;
   font-weight: bold;
   color: #0000cc;
   text-decoration: underline;
@@ -6035,7 +6035,7 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex1998] .ugf-era-extra-links a {
   font-family: "Times New Roman", Times, serif;
-  font-size: 19px;
+  font-size: 16px;
   color: #0000cc;
   text-decoration: underline;
   margin: 0 6px;
@@ -6049,31 +6049,31 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex1998] .ugf-era-subscribe-heading {
   font-family: "Times New Roman", Times, serif;
-  font-size: 21px;
+  font-size: 18px;
   color: #000;
   margin-bottom: 8px;
 }
 [gplex1998] .ugf-era-subscribe-row input {
   all: revert;
-  font-size: 15px;
+  font-size: 13px;
   width: 230px;
   padding: 2px 4px;
 }
 [gplex1998] .ugf-era-subscribe-row button {
   all: revert;
-  font-size: 15px;
+  font-size: 13px;
   margin-left: 6px;
 }
 [gplex1998] .ugf-era-subscribe-row a {
   font-family: "Times New Roman", Times, serif;
-  font-size: 17px;
+  font-size: 13px;
   color: #0000cc;
   text-decoration: underline;
   margin-left: 12px;
 }
 [gplex1998] .ugf-era-copyright {
   font-family: "Times New Roman", Times, serif;
-  font-size: 17px;
+  font-size: 13px;
   color: #000;
   line-height: 28px;
 }
@@ -6102,7 +6102,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1997] .ugf-era-tabs {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   margin: 0 auto 0 auto;
   border-bottom: 2px solid #3a5fcd;
   width: max-content;
@@ -6173,21 +6173,21 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex1997][location$="home"] #ugf-search #ugf-searchbar {
   border: none !important;
-  width: 560px;
+  width: 345px;
   background: none !important;
 }
 [gplex1997][location$="home"] #ugf-search-value {
   border: 2px solid #3a5fcd !important;
   outline: none !important;
   background: #fff !important;
-  width: 560px !important;
-  height: 26px !important;
-  font: 15px arial, sans-serif !important;
+  width: 345px !important;
+  height: 22px !important;
+  font: 13px arial, sans-serif !important;
   padding: 2px 4px !important;
   box-sizing: border-box;
 }
 [gplex1997][location$="home"] #ugf-search-predictions-container {
-  width: 560px !important;
+  width: 345px !important;
   top: 30px !important;
 }
 [gplex1997] #ugf-searchbar::after {
@@ -6266,10 +6266,10 @@ html[info-cards="false"] #ugf-side-info-container {
   background: #fff !important;
   outline: none !important;
   box-sizing: border-box !important;
-  width: 380px !important;
-  height: 26px !important;
+  width: 260px !important;
+  height: 22px !important;
   padding: 2px 6px !important;
-  font: 15px arial, sans-serif !important;
+  font: 13px arial, sans-serif !important;
   margin: 0 !important;
 }
 [gplex1997]:not([location$="home"]) #ugf-search {
@@ -6312,7 +6312,7 @@ html[info-cards="false"] #ugf-side-info-container {
 /* native buttons */
 [gplex1997] button.searchbtn {
   all: revert;
-  font-size: 15px;
+  font-size: 13px;
   height: 1.85em !important;
   margin: .2em;
 }
@@ -6415,7 +6415,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1997] #ugf-image-viewer-title {
   color: #00c;
   text-decoration: underline;
-  font-size: 14px;
+  font-size: 13px;
 }
 [gplex1997] #ugf-image-viewer-close {
   color: #444;
@@ -6436,7 +6436,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1997] .ugf-era-promo {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   color: #000;
   margin: 40px auto 0 auto;
 }
@@ -6462,7 +6462,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1997] .ugf-era-count {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   color: #000;
   margin: 0 0 2px 0;
 }
@@ -6474,13 +6474,13 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1997] .ugf-era-promo a {
   color: #008000 !important;
   font-weight: bold;
-  font-size: 15px;
+  font-size: 13px;
   text-decoration: underline;
 }
 [gplex1997] .ugf-era-promo-tagline {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-style: italic;
   color: #008000;
   margin-top: 1px;
@@ -6499,7 +6499,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1997] .ugf-era-above-links {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   color: #767676;
   margin: 0 0 2px 0;
 }
@@ -6510,7 +6510,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1997] .ugf-era-index {
   text-align: center;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   color: #000;
   margin: 55px auto 0 auto;
 }
@@ -6522,22 +6522,22 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1997] .ugf-era-promo a {
   color: #00c !important;
   font-weight: normal;
-  font-size: 15px;
+  font-size: 13px;
   text-decoration: underline;
 }
 [gplex1997] .ugf-era-footer-link {
   color: #767676 !important;
   text-decoration: underline !important;
-  font-size: 14px !important;
+  font-size: 13px !important;
   font-weight: normal;
 }
 [gplex1997] .ugf-era-footer-dash {
   color: #767676;
-  font-size: 14px;
+  font-size: 13px;
 }
 [gplex1997] .ugf-era-copyright {
   color: #767676;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 34px;
 }
 [gplex1997][location$="home"] #ugf-hp-footer {
@@ -6556,7 +6556,7 @@ html[info-cards="false"] #ugf-side-info-container {
   vertical-align: top;
   margin: 60px 0 0 40px;
   font-family: arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
 }
 [gplex1997] .ugf-era-logo-links a {
   color: #000;
@@ -6571,7 +6571,7 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex1997] .ugf-era-count {
   font-family: "Times New Roman", Times, serif !important;
-  font-size: 19px !important;
+  font-size: 16px !important;
   color: #000;
   margin-bottom: 3px !important;
 }
@@ -6582,7 +6582,7 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex1997] .ugf-era-promo a {
   color: #1a3a8f !important;
-  font-size: 19px;
+  font-size: 16px;
   font-weight: normal;
   text-decoration: underline;
 }
@@ -6597,10 +6597,10 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex1997][location$="home"] #ugf-search #ugf-searchbar,
 [gplex1997][location$="home"] #ugf-search-value {
-  width: 500px !important;
+  width: 345px !important;
 }
 [gplex1997][location$="home"] #ugf-search-predictions-container {
-  width: 500px !important;
+  width: 345px !important;
 }
 /* 1998: Stanford-era Google! page */
 [gplex1997][location$="home"] #ugf-hp-inner {
@@ -6628,31 +6628,31 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex1997] .ugf-era-count {
   font-family: "Times New Roman", Times, serif !important;
-  font-size: 21px !important;
+  font-size: 18px !important;
   margin-bottom: 6px !important;
 }
 [gplex1997] .ugf-era-index-note {
   text-align: center;
   font-family: "Times New Roman", Times, serif;
-  font-size: 19px;
+  font-size: 16px;
   font-style: italic;
   color: #000;
   margin-top: 4px;
 }
 [gplex1997] .ugf-era-results-select {
   all: revert;
-  font-size: 15px;
+  font-size: 13px;
   margin: .2em;
   vertical-align: middle;
 }
 [gplex1997][location$="home"] #ugf-search-value {
   border: 1px solid #767676 !important;
-  width: 480px !important;
-  height: 24px !important;
+  width: 345px !important;
+  height: 22px !important;
 }
 [gplex1997][location$="home"] #ugf-search #ugf-searchbar,
 [gplex1997][location$="home"] #ugf-search-predictions-container {
-  width: 480px !important;
+  width: 345px !important;
 }
 [gplex1997] .ugf-era-big-link {
   text-align: center;
@@ -6660,7 +6660,7 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex1997] .ugf-era-big-link a {
   font-family: "Times New Roman", Times, serif;
-  font-size: 30px;
+  font-size: 24px;
   font-weight: bold;
   color: #0000cc;
   text-decoration: underline;
@@ -6671,7 +6671,7 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex1997] .ugf-era-extra-links a {
   font-family: "Times New Roman", Times, serif;
-  font-size: 19px;
+  font-size: 16px;
   color: #0000cc;
   text-decoration: underline;
   margin: 0 6px;
@@ -6685,31 +6685,31 @@ html[info-cards="false"] #ugf-side-info-container {
 }
 [gplex1997] .ugf-era-subscribe-heading {
   font-family: "Times New Roman", Times, serif;
-  font-size: 21px;
+  font-size: 18px;
   color: #000;
   margin-bottom: 8px;
 }
 [gplex1997] .ugf-era-subscribe-row input {
   all: revert;
-  font-size: 15px;
+  font-size: 13px;
   width: 230px;
   padding: 2px 4px;
 }
 [gplex1997] .ugf-era-subscribe-row button {
   all: revert;
-  font-size: 15px;
+  font-size: 13px;
   margin-left: 6px;
 }
 [gplex1997] .ugf-era-subscribe-row a {
   font-family: "Times New Roman", Times, serif;
-  font-size: 17px;
+  font-size: 13px;
   color: #0000cc;
   text-decoration: underline;
   margin-left: 12px;
 }
 [gplex1997] .ugf-era-copyright {
   font-family: "Times New Roman", Times, serif;
-  font-size: 17px;
+  font-size: 13px;
   color: #000;
   line-height: 28px;
 }
@@ -6764,12 +6764,12 @@ html[info-cards="false"] #ugf-side-info-container {
   border: 1px solid #767676 !important;
   width: 330px !important;
   height: 24px !important;
-  font: 15px arial, sans-serif !important;
+  font: 13px arial, sans-serif !important;
 }
 [gplex1997]:not([location$="home"]) .ugf-search-result-title,
 [gplex1998]:not([location$="home"]) .ugf-search-result-title {
   font-family: "Times New Roman", Times, serif !important;
-  font-size: 19px !important;
+  font-size: 16px !important;
   line-height: 22px !important;
   color: #0000cc !important;
   text-decoration: underline !important;
@@ -6777,7 +6777,7 @@ html[info-cards="false"] #ugf-side-info-container {
 [gplex1997]:not([location$="home"]) .ugf-search-result-desc,
 [gplex1998]:not([location$="home"]) .ugf-search-result-desc {
   font-family: "Times New Roman", Times, serif !important;
-  font-size: 17px !important;
+  font-size: 13px !important;
   line-height: 20px !important;
   color: #000 !important;
 }
@@ -8978,6 +8978,970 @@ li.tg2Kqf{
 .v8MW6c.mWcf0e, /* feedback on block */
 .x2qcTc /* neuro rating */ {
   display:none!important
+}
+/* ---- 2.5.8: period-accurate small print (Google used <font size=-2> = 10px) ---- */
+[gplex2001][location$="home"] #ugf-searchbar::after,
+[gplex2002][location$="home"] #ugf-searchbar::after,
+[gplex2003][location$="home"] #ugf-searchbar::after,
+[gplex2005][location$="home"] #ugf-searchbar::after,
+[gplex2006][location$="home"] #ugf-searchbar::after,
+[gplex2007][location$="home"] #ugf-searchbar::after,
+[gplex2001]:not([location$="home"]) #ugf-searchbar::after,
+[gplex2002]:not([location$="home"]) #ugf-searchbar::after,
+[gplex2003]:not([location$="home"]) #ugf-searchbar::after,
+[gplex2005]:not([location$="home"]) #ugf-searchbar::after,
+[gplex2006]:not([location$="home"]) #ugf-searchbar::after,
+[gplex2007]:not([location$="home"]) #ugf-searchbar::after {
+  font-size: 10px !important;
+  line-height: 12px !important;
+}
+[gplex2001] .ugf-era-copyright,
+[gplex2002] .ugf-era-copyright,
+[gplex2003] .ugf-era-copyright,
+[gplex2005] .ugf-era-copyright,
+[gplex2006] .ugf-era-copyright,
+[gplex2007] .ugf-era-copyright {
+  font-size: 10px !important;
+  display: inline-block;
+  text-decoration: none !important;
+  color: #000 !important;
+}
+/* 2007 results page had only Advanced Search / Preferences next to the box */
+[gplex2007]:not([location$="home"]) #ugf-searchbar::after {
+  content: "Advanced Search\\aPreferences" !important;
+}
+/* 1999-2007 results: black snippets, green URLs */
+[gplex1999]:not([location$="home"]) .ugf-search-result-desc,
+[gplex1999]:not([location$="home"]) .ugf-search-result-desc span:not(.ugf-keyword),
+[gplex2000]:not([location$="home"]) .ugf-search-result-desc,
+[gplex2000]:not([location$="home"]) .ugf-search-result-desc span:not(.ugf-keyword),
+[gplex2001]:not([location$="home"]) .ugf-search-result-desc,
+[gplex2001]:not([location$="home"]) .ugf-search-result-desc span:not(.ugf-keyword),
+[gplex2002]:not([location$="home"]) .ugf-search-result-desc,
+[gplex2002]:not([location$="home"]) .ugf-search-result-desc span:not(.ugf-keyword),
+[gplex2003]:not([location$="home"]) .ugf-search-result-desc,
+[gplex2003]:not([location$="home"]) .ugf-search-result-desc span:not(.ugf-keyword),
+[gplex2005]:not([location$="home"]) .ugf-search-result-desc,
+[gplex2005]:not([location$="home"]) .ugf-search-result-desc span:not(.ugf-keyword),
+[gplex2006]:not([location$="home"]) .ugf-search-result-desc,
+[gplex2006]:not([location$="home"]) .ugf-search-result-desc span:not(.ugf-keyword),
+[gplex2007]:not([location$="home"]) .ugf-search-result-desc,
+[gplex2007]:not([location$="home"]) .ugf-search-result-desc span:not(.ugf-keyword) {
+  color: #000 !important;
+}
+[gplex1999]:not([location$="home"]) .ugf-search-result-link,
+[gplex2000]:not([location$="home"]) .ugf-search-result-link,
+[gplex2001]:not([location$="home"]) .ugf-search-result-link,
+[gplex2002]:not([location$="home"]) .ugf-search-result-link,
+[gplex2003]:not([location$="home"]) .ugf-search-result-link,
+[gplex2005]:not([location$="home"]) .ugf-search-result-link,
+[gplex2006]:not([location$="home"]) .ugf-search-result-link,
+[gplex2007]:not([location$="home"]) .ugf-search-result-link {
+  color: #008000 !important;
+}
+/* 2006-2007 light-blue results bar */
+[gplex2006]:not([location$="home"]) #ugf-search-results-header,
+[gplex2007]:not([location$="home"]) #ugf-search-results-header {
+  box-sizing: border-box;
+  width: calc(100vw - 32px) !important;
+  max-width: none !important;
+  margin: 0;
+  border-top: 1px solid #3366cc;
+  background: #e5ecf9;
+  height: 24px;
+  padding: 0 4px;
+  align-items: center;
+  color: #000;
+  font-family: arial, sans-serif;
+}
+[gplex2006]:not([location$="home"]) #ugf-search-results-header:before,
+[gplex2007]:not([location$="home"]) #ugf-search-results-header:before {
+  content: "Web";
+  font-size: 16px;
+  font-weight: bold;
+}
+[gplex2006]:not([location$="home"]) #ugf-search-results-header span,
+[gplex2007]:not([location$="home"]) #ugf-search-results-header span {
+  font-size: 13px;
+  color: #000;
+  margin-left: auto;
+}
+/* ---- 2.5.9: classic homepage geometry: box centred under the logo, buttons tight under the box ---- */
+[gplex1997][location$="home"] #ugf-hp-search #ugf-search-outer {
+  width: 410px !important;
+  flex: 0 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+[gplex1997][location$="home"] #ugf-search {
+  height: auto !important;
+}
+[gplex1997][location$="home"] #ugf-search #ugf-searchbar {
+  width: 410px !important;
+  height: auto !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+[gplex1997][location$="home"] #ugf-search-value {
+  width: 410px !important;
+  height: 22px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  vertical-align: top !important;
+}
+[gplex1997][location$="home"] #ugf-search-predictions-container {
+  width: 410px !important;
+  margin-left: 0 !important;
+  top: 22px !important;
+}
+[gplex1997][location$="home"] #ugf-hp-search #ugf-search-outer #ugf-hp-buttons-row {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  position: static !important;
+}
+[gplex1997][location$="home"] #ugf-hp-search #ugf-search-outer #ugf-hp-buttons {
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  top: 0 !important;
+  position: static !important;
+  justify-content: center !important;
+  align-items: center !important;
+  display: flex !important;
+  width: 100% !important;
+}
+[gplex1997][location$="home"] #ugf-hp-search #ugf-search-outer button.searchbtn,
+[gplex1997][location$="home"] #ugf-hp-search #ugf-search-outer .ugf-era-results-select {
+  margin: 0 2px !important;
+}
+[gplex1998][location$="home"] #ugf-hp-search #ugf-search-outer {
+  width: 410px !important;
+  flex: 0 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+[gplex1998][location$="home"] #ugf-search {
+  height: auto !important;
+}
+[gplex1998][location$="home"] #ugf-search #ugf-searchbar {
+  width: 410px !important;
+  height: auto !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+[gplex1998][location$="home"] #ugf-search-value {
+  width: 410px !important;
+  height: 22px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  vertical-align: top !important;
+}
+[gplex1998][location$="home"] #ugf-search-predictions-container {
+  width: 410px !important;
+  margin-left: 0 !important;
+  top: 22px !important;
+}
+[gplex1998][location$="home"] #ugf-hp-search #ugf-search-outer #ugf-hp-buttons-row {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  position: static !important;
+}
+[gplex1998][location$="home"] #ugf-hp-search #ugf-search-outer #ugf-hp-buttons {
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  top: 0 !important;
+  position: static !important;
+  justify-content: center !important;
+  align-items: center !important;
+  display: flex !important;
+  width: 100% !important;
+}
+[gplex1998][location$="home"] #ugf-hp-search #ugf-search-outer button.searchbtn,
+[gplex1998][location$="home"] #ugf-hp-search #ugf-search-outer .ugf-era-results-select {
+  margin: 0 2px !important;
+}
+[gplex1999][location$="home"] #ugf-hp-search {
+  justify-content: center !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+}
+[gplex1999][location$="home"] #ugf-hp-search #ugf-search-outer {
+  width: 430px !important;
+  flex: 0 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+[gplex1999][location$="home"] #ugf-search {
+  height: auto !important;
+}
+[gplex1999][location$="home"] #ugf-search #ugf-searchbar {
+  width: 430px !important;
+  height: auto !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+[gplex1999][location$="home"] #ugf-search-value {
+  width: 430px !important;
+  height: 22px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  vertical-align: top !important;
+}
+[gplex1999][location$="home"] #ugf-search-predictions-container {
+  width: 430px !important;
+  margin-left: 0 !important;
+  top: 22px !important;
+}
+[gplex1999][location$="home"] #ugf-hp-search #ugf-search-outer #ugf-hp-buttons-row {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  position: static !important;
+}
+[gplex1999][location$="home"] #ugf-hp-search #ugf-search-outer #ugf-hp-buttons {
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  top: 0 !important;
+  position: static !important;
+  justify-content: center !important;
+  align-items: center !important;
+  display: flex !important;
+  width: 100% !important;
+}
+[gplex1999][location$="home"] #ugf-hp-search #ugf-search-outer button.searchbtn,
+[gplex1999][location$="home"] #ugf-hp-search #ugf-search-outer .ugf-era-results-select {
+  margin: 0 !important;
+}
+[gplex2000][location$="home"] #ugf-hp-search {
+  justify-content: center !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+}
+[gplex2000][location$="home"] #ugf-hp-search #ugf-search-outer {
+  width: 480px !important;
+  flex: 0 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+[gplex2000][location$="home"] #ugf-search {
+  height: auto !important;
+}
+[gplex2000][location$="home"] #ugf-search #ugf-searchbar {
+  width: 480px !important;
+  height: auto !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+[gplex2000][location$="home"] #ugf-search-value {
+  width: 480px !important;
+  height: 22px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  vertical-align: top !important;
+}
+[gplex2000][location$="home"] #ugf-search-predictions-container {
+  width: 480px !important;
+  margin-left: 0 !important;
+  top: 22px !important;
+}
+[gplex2000][location$="home"] #ugf-hp-search #ugf-search-outer #ugf-hp-buttons-row {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  position: static !important;
+}
+[gplex2000][location$="home"] #ugf-hp-search #ugf-search-outer #ugf-hp-buttons {
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  top: 0 !important;
+  position: static !important;
+  justify-content: center !important;
+  align-items: center !important;
+  display: flex !important;
+  width: 100% !important;
+}
+[gplex2000][location$="home"] #ugf-hp-search #ugf-search-outer button.searchbtn,
+[gplex2000][location$="home"] #ugf-hp-search #ugf-search-outer .ugf-era-results-select {
+  margin: 0 !important;
+}
+[gplex2001][location$="home"] #ugf-hp-search {
+  justify-content: center !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+}
+[gplex2001][location$="home"] #ugf-hp-search #ugf-search-outer {
+  width: 480px !important;
+  flex: 0 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+[gplex2001][location$="home"] #ugf-search {
+  height: auto !important;
+}
+[gplex2001][location$="home"] #ugf-search #ugf-searchbar {
+  width: 480px !important;
+  height: auto !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+[gplex2001][location$="home"] #ugf-search-value {
+  width: 480px !important;
+  height: 22px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  vertical-align: top !important;
+}
+[gplex2001][location$="home"] #ugf-search-predictions-container {
+  width: 480px !important;
+  margin-left: 0 !important;
+  top: 22px !important;
+}
+[gplex2001][location$="home"] #ugf-hp-search #ugf-search-outer #ugf-hp-buttons-row {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  position: static !important;
+}
+[gplex2001][location$="home"] #ugf-hp-search #ugf-search-outer #ugf-hp-buttons {
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  top: 0 !important;
+  position: static !important;
+  justify-content: center !important;
+  align-items: center !important;
+  display: flex !important;
+  width: 100% !important;
+}
+[gplex2001][location$="home"] #ugf-hp-search #ugf-search-outer button.searchbtn,
+[gplex2001][location$="home"] #ugf-hp-search #ugf-search-outer .ugf-era-results-select {
+  margin: 0 !important;
+}
+[gplex2002][location$="home"] #ugf-hp-search {
+  justify-content: center !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+}
+[gplex2002][location$="home"] #ugf-hp-search #ugf-search-outer {
+  width: 480px !important;
+  flex: 0 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+[gplex2002][location$="home"] #ugf-search {
+  height: auto !important;
+}
+[gplex2002][location$="home"] #ugf-search #ugf-searchbar {
+  width: 480px !important;
+  height: auto !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+[gplex2002][location$="home"] #ugf-search-value {
+  width: 480px !important;
+  height: 22px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  vertical-align: top !important;
+}
+[gplex2002][location$="home"] #ugf-search-predictions-container {
+  width: 480px !important;
+  margin-left: 0 !important;
+  top: 22px !important;
+}
+[gplex2002][location$="home"] #ugf-hp-search #ugf-search-outer #ugf-hp-buttons-row {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  position: static !important;
+}
+[gplex2002][location$="home"] #ugf-hp-search #ugf-search-outer #ugf-hp-buttons {
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  top: 0 !important;
+  position: static !important;
+  justify-content: center !important;
+  align-items: center !important;
+  display: flex !important;
+  width: 100% !important;
+}
+[gplex2002][location$="home"] #ugf-hp-search #ugf-search-outer button.searchbtn,
+[gplex2002][location$="home"] #ugf-hp-search #ugf-search-outer .ugf-era-results-select {
+  margin: 0 !important;
+}
+[gplex2003][location$="home"] #ugf-hp-search {
+  justify-content: center !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+}
+[gplex2003][location$="home"] #ugf-hp-search #ugf-search-outer {
+  width: 480px !important;
+  flex: 0 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+[gplex2003][location$="home"] #ugf-search {
+  height: auto !important;
+}
+[gplex2003][location$="home"] #ugf-search #ugf-searchbar {
+  width: 480px !important;
+  height: auto !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+[gplex2003][location$="home"] #ugf-search-value {
+  width: 480px !important;
+  height: 22px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  vertical-align: top !important;
+}
+[gplex2003][location$="home"] #ugf-search-predictions-container {
+  width: 480px !important;
+  margin-left: 0 !important;
+  top: 22px !important;
+}
+[gplex2003][location$="home"] #ugf-hp-search #ugf-search-outer #ugf-hp-buttons-row {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  position: static !important;
+}
+[gplex2003][location$="home"] #ugf-hp-search #ugf-search-outer #ugf-hp-buttons {
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  top: 0 !important;
+  position: static !important;
+  justify-content: center !important;
+  align-items: center !important;
+  display: flex !important;
+  width: 100% !important;
+}
+[gplex2003][location$="home"] #ugf-hp-search #ugf-search-outer button.searchbtn,
+[gplex2003][location$="home"] #ugf-hp-search #ugf-search-outer .ugf-era-results-select {
+  margin: 0 !important;
+}
+[gplex2005][location$="home"] #ugf-hp-search {
+  justify-content: center !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+}
+[gplex2005][location$="home"] #ugf-hp-search #ugf-search-outer {
+  width: 480px !important;
+  flex: 0 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+[gplex2005][location$="home"] #ugf-search {
+  height: auto !important;
+}
+[gplex2005][location$="home"] #ugf-search #ugf-searchbar {
+  width: 480px !important;
+  height: auto !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+[gplex2005][location$="home"] #ugf-search-value {
+  width: 480px !important;
+  height: 22px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  vertical-align: top !important;
+}
+[gplex2005][location$="home"] #ugf-search-predictions-container {
+  width: 480px !important;
+  margin-left: 0 !important;
+  top: 22px !important;
+}
+[gplex2005][location$="home"] #ugf-hp-search #ugf-search-outer #ugf-hp-buttons-row {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  position: static !important;
+}
+[gplex2005][location$="home"] #ugf-hp-search #ugf-search-outer #ugf-hp-buttons {
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  top: 0 !important;
+  position: static !important;
+  justify-content: center !important;
+  align-items: center !important;
+  display: flex !important;
+  width: 100% !important;
+}
+[gplex2005][location$="home"] #ugf-hp-search #ugf-search-outer button.searchbtn,
+[gplex2005][location$="home"] #ugf-hp-search #ugf-search-outer .ugf-era-results-select {
+  margin: 0 !important;
+}
+[gplex2006][location$="home"] #ugf-hp-search {
+  justify-content: center !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+}
+[gplex2006][location$="home"] #ugf-hp-search #ugf-search-outer {
+  width: 480px !important;
+  flex: 0 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+[gplex2006][location$="home"] #ugf-search {
+  height: auto !important;
+}
+[gplex2006][location$="home"] #ugf-search #ugf-searchbar {
+  width: 480px !important;
+  height: auto !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+[gplex2006][location$="home"] #ugf-search-value {
+  width: 480px !important;
+  height: 22px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  vertical-align: top !important;
+}
+[gplex2006][location$="home"] #ugf-search-predictions-container {
+  width: 480px !important;
+  margin-left: 0 !important;
+  top: 22px !important;
+}
+[gplex2006][location$="home"] #ugf-hp-search #ugf-search-outer #ugf-hp-buttons-row {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  position: static !important;
+}
+[gplex2006][location$="home"] #ugf-hp-search #ugf-search-outer #ugf-hp-buttons {
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  top: 0 !important;
+  position: static !important;
+  justify-content: center !important;
+  align-items: center !important;
+  display: flex !important;
+  width: 100% !important;
+}
+[gplex2006][location$="home"] #ugf-hp-search #ugf-search-outer button.searchbtn,
+[gplex2006][location$="home"] #ugf-hp-search #ugf-search-outer .ugf-era-results-select {
+  margin: 0 !important;
+}
+[gplex2007][location$="home"] #ugf-hp-search {
+  justify-content: center !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+}
+[gplex2007][location$="home"] #ugf-hp-search #ugf-search-outer {
+  width: 480px !important;
+  flex: 0 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+[gplex2007][location$="home"] #ugf-search {
+  height: auto !important;
+}
+[gplex2007][location$="home"] #ugf-search #ugf-searchbar {
+  width: 480px !important;
+  height: auto !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+[gplex2007][location$="home"] #ugf-search-value {
+  width: 480px !important;
+  height: 22px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  vertical-align: top !important;
+}
+[gplex2007][location$="home"] #ugf-search-predictions-container {
+  width: 480px !important;
+  margin-left: 0 !important;
+  top: 22px !important;
+}
+[gplex2007][location$="home"] #ugf-hp-search #ugf-search-outer #ugf-hp-buttons-row {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  position: static !important;
+}
+[gplex2007][location$="home"] #ugf-hp-search #ugf-search-outer #ugf-hp-buttons {
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  top: 0 !important;
+  position: static !important;
+  justify-content: center !important;
+  align-items: center !important;
+  display: flex !important;
+  width: 100% !important;
+}
+[gplex2007][location$="home"] #ugf-hp-search #ugf-search-outer button.searchbtn,
+[gplex2007][location$="home"] #ugf-hp-search #ugf-search-outer .ugf-era-results-select {
+  margin: 0 !important;
+}
+/* 2.5.9: side links sit 8px off the box; 2004-2006 tab spacing and logo gap from real captures */
+[gplex2001][location$="home"] #ugf-searchbar::after,
+[gplex2002][location$="home"] #ugf-searchbar::after,
+[gplex2003][location$="home"] #ugf-searchbar::after,
+[gplex2005][location$="home"] #ugf-searchbar::after,
+[gplex2006][location$="home"] #ugf-searchbar::after,
+[gplex2007][location$="home"] #ugf-searchbar::after {
+  left: calc(100% + 8px) !important;
+  right: auto !important;
+  top: 3px !important;
+}
+[gplex2005] .ugf-era-nav a,
+[gplex2006] .ugf-era-nav a {
+  margin: 0 7px !important;
+}
+[gplex2005][location$="home"] #ugf-hp-search,
+[gplex2006][location$="home"] #ugf-hp-search {
+  margin-top: 42px !important;
+}
+[gplex1997][location$="home"] #ugf-hp-logo {
+  width: 340px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+[gplex1997][location$="home"] #ugf-hp-search,
+[gplex1997][location$="home"] .ugf-era-subscribe {
+  position: relative !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+[gplex1998][location$="home"] #ugf-hp-logo {
+  width: 340px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+[gplex1998][location$="home"] #ugf-hp-search,
+[gplex1998][location$="home"] .ugf-era-subscribe {
+  position: relative !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+/* 2.5.10: 2009 homepage - box centred under the logo, buttons directly under it (Google's own .lsb margin .2em) */
+[gplex2009][location$="home"] #ugf-hp-search {
+  justify-content: center !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+}
+[gplex2009][location$="home"] #ugf-hp-search #ugf-search-outer {
+  width: 515px !important;
+  flex: 0 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+[gplex2009][location$="home"] #ugf-search {
+  height: auto !important;
+}
+[gplex2009][location$="home"] #ugf-search #ugf-searchbar {
+  width: 515px !important;
+  height: auto !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+[gplex2009][location$="home"] #ugf-search-value {
+  width: 515px !important;
+  margin: 0 !important;
+  vertical-align: top !important;
+}
+[gplex2009][location$="home"] #ugf-search-predictions-container {
+  width: 515px !important;
+  margin-left: 0 !important;
+}
+[gplex2009][location$="home"] #ugf-hp-search #ugf-search-outer #ugf-hp-buttons-row {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  position: static !important;
+}
+[gplex2009][location$="home"] #ugf-hp-search #ugf-search-outer #ugf-hp-buttons {
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  top: 0 !important;
+  position: static !important;
+  display: flex !important;
+  width: 100% !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+/* 2.5.10: results-page search box scale (2009 = captured 303px/13px; 2010 = 380px/15px / 1.17) */
+[gplex2009]:not([location$="home"]) #ugf-search-value {
+  width: 303px !important;
+  height: 22px !important;
+  padding: 1px 4px !important;
+  font: 13px arial, sans-serif !important;
+}
+[gplex2009]:not([location$="home"]) #ugf-search-predictions-container {
+  width: 303px !important;
+}
+[gplex2010]:not([location$="home"]) #ugf-search-value {
+  width: 325px !important;
+  height: 24px !important;
+  padding: 1px 5px !important;
+  font: 13px arial, sans-serif !important;
+}
+[gplex2010]:not([location$="home"]) #ugf-search-predictions-container {
+  width: 325px !important;
+}
+[gplex2009] #ugf-image-viewer-title {
+  font-size: 13px !important;
+}
+/* 2.5.11: 2009 homepage matched to the July 2009 capture (483x22 box, 13px buttons flush under it) */
+[gplex2009][location$="home"] #ugf-hp-search {
+  margin-top: 43px !important;
+}
+[gplex2009][location$="home"] #ugf-hp-search #ugf-search-outer,
+[gplex2009][location$="home"] #ugf-search #ugf-searchbar {
+  width: 483px !important;
+}
+[gplex2009][location$="home"] #ugf-search-value {
+  width: 483px !important;
+  height: 22px !important;
+  box-sizing: border-box !important;
+  padding: 1px 3px !important;
+  font: 13px arial, sans-serif !important;
+}
+[gplex2009][location$="home"] #ugf-search-predictions-container {
+  width: 483px !important;
+  top: 22px !important;
+}
+[gplex2009][location$="home"] #ugf-hp-search #ugf-search-outer button.searchbtn {
+  font: 13px arial, sans-serif !important;
+  height: 22px !important;
+  margin: 0 1px !important;
+  padding: 0 6px !important;
+}
+[gplex2009][location$="home"] #ugf-searchbar::after {
+  content: "Advanced Search\\aPreferences\\aLanguage Tools" !important;
+  left: calc(100% + 6px) !important;
+  right: auto !important;
+  top: 4px !important;
+  font-size: 10px !important;
+  line-height: 14px !important;
+}
+[gplex2009][location$="home"] #ugf-hp-footer {
+  margin-top: 60px !important;
+}
+[gplex2009][location$="home"] .ugf-structured-hp-footer-link {
+  font-size: 13px !important;
+}
+[gplex2009][location$="home"] #ugf-structured-hp-footer-right .ugf-structured-hp-footer-link {
+  font-size: 10px !important;
+  line-height: 63px !important;
+}
+/* 2.5.11: 2010 homepage scaled to match (1/1.17) */
+[gplex2010][location$="home"] #ugf-homepage #ugf-hp #ugf-search-outer,
+html[gplex2010][location$="home"]:not([layout="2016C"]):not([layout="2017"]):not([layout="2018"]):not([layout="2019"]) #ugf-homepage #ugf-searchbar,
+[gplex2010][location$="home"] #ugf-search-predictions-container {
+  width: 504px !important;
+}
+[gplex2010][location$="home"] #ugf-homepage #ugf-search-value {
+  height: 27px !important;
+  font-size: 16px !important;
+}
+[gplex2010][location$="home"] #ugf-hp-buttons a {
+  height: 27px !important;
+}
+[gplex2010][location$="home"] #ugf-hp-buttons a span {
+  font: 13px arial, sans-serif !important;
+  height: 25px !important;
+  line-height: 25px !important;
+}
+/* 2.5.13: 2002-2003 homepage tabs measured from the June 2003 capture */
+[gplex2002][location$="home"] .ugf-era-tabs {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: flex-end !important;
+  align-self: center !important;
+  gap: 15px !important;
+  width: max-content !important;
+  padding: 0 15px !important;
+  margin: 8px 0 20px 0 !important;
+  border-bottom: 1px solid #3366cc !important;
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+}
+[gplex2002][location$="home"] .ugf-era-tabs a {
+  display: block !important;
+  box-sizing: border-box !important;
+  width: 95px !important;
+  height: 19px !important;
+  line-height: 19px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  background: #efefef !important;
+  color: #00c !important;
+  text-decoration: none !important;
+  text-align: center !important;
+  font-weight: normal !important;
+}
+[gplex2002][location$="home"] .ugf-era-tabs a.active {
+  background: #3366cc !important;
+  color: #fff !important;
+  font-weight: bold !important;
+}
+[gplex2003][location$="home"] .ugf-era-tabs {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: flex-end !important;
+  align-self: center !important;
+  gap: 15px !important;
+  width: max-content !important;
+  padding: 0 15px !important;
+  margin: 8px 0 20px 0 !important;
+  border-bottom: 1px solid #3366cc !important;
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+}
+[gplex2003][location$="home"] .ugf-era-tabs a {
+  display: block !important;
+  box-sizing: border-box !important;
+  width: 95px !important;
+  height: 19px !important;
+  line-height: 19px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  background: #efefef !important;
+  color: #00c !important;
+  text-decoration: none !important;
+  text-align: center !important;
+  font-weight: normal !important;
+}
+[gplex2003][location$="home"] .ugf-era-tabs a.active {
+  background: #3366cc !important;
+  color: #fff !important;
+  font-weight: bold !important;
+}
+/* 2.5.13: 2003 side links - un-underlined bullets, underlined links (June 2003 capture) */
+[gplex2003][location$="home"] #ugf-searchbar::before {
+  content: "\\2022\\a\\2022\\a\\2022";
+  white-space: pre;
+  position: absolute;
+  left: calc(100% + 3px);
+  top: 4px;
+  font: 10px arial, sans-serif;
+  line-height: 13px;
+  color: #000;
+  text-decoration: none;
+  pointer-events: none;
+}
+[gplex2003][location$="home"] #ugf-searchbar::after {
+  content: "Advanced Search\\aPreferences\\aLanguage Tools" !important;
+  left: calc(100% + 9px) !important;
+  top: 4px !important;
+  line-height: 13px !important;
+  text-decoration: underline !important;
+}
+/* 2.5.14: 2002-2003 results-page tabs, same flat style/size as the June 2003 capture */
+[gplex2002]:not([location$="home"]) .ugf-era-tabs {
+  display: flex !important;
+  align-items: flex-end !important;
+  gap: 15px !important;
+  width: max-content !important;
+  padding: 0 15px 0 0 !important;
+  margin: 0 0 5px 0 !important;
+  border-bottom: 1px solid #3366cc !important;
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+}
+[gplex2002]:not([location$="home"]) .ugf-era-tabs a {
+  display: block !important;
+  box-sizing: border-box !important;
+  width: 95px !important;
+  height: 19px !important;
+  line-height: 19px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  background: #efefef !important;
+  color: #00c !important;
+  text-decoration: none !important;
+  text-align: center !important;
+  font-weight: normal !important;
+}
+[gplex2002]:not([location$="home"]) .ugf-era-tabs a.active {
+  background: #3366cc !important;
+  color: #fff !important;
+  font-weight: bold !important;
+}
+[gplex2003]:not([location$="home"]) .ugf-era-tabs {
+  display: flex !important;
+  align-items: flex-end !important;
+  gap: 15px !important;
+  width: max-content !important;
+  padding: 0 15px 0 0 !important;
+  margin: 0 0 5px 0 !important;
+  border-bottom: 1px solid #3366cc !important;
+  font-family: arial, sans-serif !important;
+  font-size: 13px !important;
+}
+[gplex2003]:not([location$="home"]) .ugf-era-tabs a {
+  display: block !important;
+  box-sizing: border-box !important;
+  width: 95px !important;
+  height: 19px !important;
+  line-height: 19px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  background: #efefef !important;
+  color: #00c !important;
+  text-decoration: none !important;
+  text-align: center !important;
+  font-weight: normal !important;
+}
+[gplex2003]:not([location$="home"]) .ugf-era-tabs a.active {
+  background: #3366cc !important;
+  color: #fff !important;
+  font-weight: bold !important;
 }
         </style>
         `;
@@ -12433,6 +13397,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             if (document.querySelector("#result-stats nobr")) {
                 resultCount = document.querySelector("#result-stats").innerHTML;
                 document.querySelector("#ugf-search-results-header span").innerHTML = resultCount;
+                ugfEraResultsLine();
             } else {
                 var elm = "#result-stats";
                 waitForElement10(elm).then(function(elm) {
@@ -12440,6 +13405,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                         if (document.querySelector("#result-stats nobr")) {
                             resultCount = document.querySelector("#result-stats").innerHTML;
                             document.querySelector("#ugf-search-results-header span").innerHTML = resultCount;
+                            ugfEraResultsLine();
                         }
                     }
                 });
@@ -14014,7 +14980,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             left: [
                 ["Web", "https://www.google.com"],
                 ["Images", "https://www.google.com/imghp"],
-                ["Videos", "https://www.google.com/videohp"],
+                ["Video", "https://www.google.com/videohp"],
                 ["Maps", "https://maps.google.com"],
                 ["News", "https://news.google.com"],
                 ["Shopping", "https://www.google.com/shopping"],
@@ -14068,6 +15034,31 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         inner.appendChild(span);
         a.appendChild(inner);
         return a;
+    }
+    // 2006-2007: "Results 1 - 10 of about N for q. (0.29 seconds)"
+    function ugfEraResultsLine() {
+        const era = ugfRetroEra();
+        if (era !== "gplex2006" && era !== "gplex2007") {
+            return;
+        }
+        const span = document.querySelector("#ugf-search-results-header span");
+        if (!span) {
+            return;
+        }
+        const txt = span.textContent || "";
+        const nums = txt.match(/\d[\d.,\u00a0\u202f ]*\d|\d/g);
+        if (!nums || nums.length < 1) {
+            return;
+        }
+        const count = nums[0].trim();
+        const secs = nums.length > 1 ? nums[nums.length - 1].trim() : "";
+        let first = parseInt(new URLSearchParams(window.location.search).get("start") || "0", 10);
+        if (isNaN(first)) {
+            first = 0;
+        }
+        first = first + 1;
+        const q = searchValue || "";
+        span.innerHTML = trusted_policy.createHTML("Results <b>" + first + "</b> - <b>" + (first + 9) + "</b> of about <b>" + ugfEscapeHtml(count) + "</b> for <b>" + ugfEscapeHtml(q) + "</b>." + (secs ? " (<b>" + ugfEscapeHtml(secs) + "</b> seconds)" : ""));
     }
     function ugfEscapeHtml(t) {
         return String(t == null ? "" : t)
@@ -14569,6 +15560,33 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             }
         }, 100);
     }
+    // Classic Google put the buttons in the same centred cell as the search box (input<br>buttons)
+    function ugfEraHomeButtons() {
+        const era = ugfRetroEra();
+        if (!era || era === "gplex2010" || era === "gplex2022") {
+            return;
+        }
+        const loc = document.querySelector("html").getAttribute("location") || "";
+        if (!/home$/.test(loc)) {
+            return;
+        }
+        if (era === "gplex2009") {
+            ugf2009WaitFor("#ugf-structured-hp-footer-left .ugf-structured-hp-footer-link", function() {
+                const labels = ["Advertising Programs", "Business Solutions", "About Google"];
+                document.querySelectorAll("#ugf-structured-hp-footer-left .ugf-structured-hp-footer-link").forEach(function(a, i) {
+                    if (labels[i]) {
+                        a.textContent = labels[i];
+                    }
+                });
+            });
+        }
+        ugf2009WaitFor("#ugf-hp-search #ugf-search-outer", function(outer) {
+            const row = document.querySelector("#ugf-hp-buttons-row");
+            if (row && row.parentElement !== outer) {
+                outer.appendChild(row);
+            }
+        });
+    }
     function ugf2009Buttons() {
         const btnEra = ugfRetroEra();
         if (!btnEra || btnEra === "gplex2010") {
@@ -14622,6 +15640,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         }
     }
     ugf2009Buttons();
+    ugfEraHomeButtons();
     ugfRetroChrome();
     ugfRetroFooter();
     ugfContinuousScroll();
