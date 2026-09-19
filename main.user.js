@@ -1,12 +1,14 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      2.6.0
+// @version      2.7.1
 // @description  1997-2024 Old Google Frontend (Full public release)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
 // @match        *://www.google.com/
 // @match        *://www.google.com/webhp*
+// @match        *://www.google.com/imghp*
+// @match        *://www.google.com/videohp*
 // @match        *://www.google.com/gplex
 // @match        *://www.google.com/Gplex
 // @exclude      *://*/*!!!*
@@ -16,8 +18,6 @@
 // @exclude      *://www.google.com/sorry
 // @exclude      *://www.google.com/recaptcha
 // @exclude      *://www.google.com/finance
-// @exclude      *://www.google.com/imghp
-// @exclude      *://www.google.com/videohp
 // @exclude      *://*/*&gplex=false
 // @exclude      *://*/*?gplex=false
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=google.com
@@ -10007,6 +10007,32 @@ html[news-results] #ugf-search-results-container .ugf-news-result .ugf-news-resu
 [news-results][gplex2009] #ugf-search-results-header:before {
   content: "News" !important;
 }
+/* 2.6.1: Google Images / Google Video homepages */
+html:not([home-vertical]) #ugf-hp-vertical-label {
+  display: none;
+}
+[home-vertical] #ugf-hp-logo-companion {
+  position: relative;
+  height: 0;
+}
+[home-vertical] #ugf-hp-vertical-label {
+  position: absolute;
+  right: 0;
+  top: -6px;
+  font-family: arial, sans-serif;
+  font-size: 16px;
+  color: #777;
+  white-space: nowrap;
+}
+[home-vertical][legacy-gbar] #ugf-hp-vertical-label {
+  top: -26px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #555;
+}
+[home-vertical] #ugf-lucky-btn {
+  display: none !important;
+}
         </style>
         `;
         class SearchResultAPI {
@@ -10165,6 +10191,7 @@ html[news-results] #ugf-search-results-container .ugf-news-result .ugf-news-resu
     let linkList = [];
     let searchValue;
     let searchValueV;
+    let ugfHomeVertical = "";
     let hasSidebar = false;
     let sidebarInfoList = [];
     let SB = new SearchSidebarAPI(null);
@@ -10460,6 +10487,8 @@ html[news-results] #ugf-search-results-container .ugf-news-result .ugf-news-resu
     if (structuredHP == "false") {
         if (
             url.includes("www.google.com/webhp") ||
+            url.includes("www.google.com/imghp") ||
+            url.includes("www.google.com/videohp") ||
             url == "https://www.google.com/"
         ) {
 
@@ -10479,6 +10508,38 @@ html[news-results] #ugf-search-results-container .ugf-news-result .ugf-news-resu
         }
     }
 
+    // Google Images / Google Video homepages (imghp / videohp)
+    if (url.includes("www.google.com/imghp")) {
+        ugfHomeVertical = "images";
+    } else if (url.includes("www.google.com/videohp")) {
+        ugfHomeVertical = "videos";
+    }
+    // Google now redirects /imghp (and friends) to /search?udm=...&udf=... with no query.
+    // A /search page with no q is a homepage, not an empty results page.
+    try {
+        const sp0 = new URLSearchParams(window.location.search);
+        const q0 = (sp0.get("q") || "").trim();
+        if (window.location.pathname === "/search" && !q0) {
+            const udm0 = sp0.get("udm") || "";
+            const tbm0 = sp0.get("tbm") || "";
+            if (udm0 === "2" || udm0 === "49" || tbm0 === "isch") {
+                ugfHomeVertical = "images";
+            } else if (udm0 === "7" || tbm0 === "vid") {
+                ugfHomeVertical = "videos";
+            }
+            if (structuredHP == "false") {
+                location = "home";
+                document.querySelector("html").setAttribute("location","home");
+            } else {
+                location = "structured-home";
+                document.querySelector("html").setAttribute("location","structured-home");
+            }
+            document.querySelector("html").removeAttribute("news-results");
+        }
+    } catch (e) {}
+    if (ugfHomeVertical) {
+        document.querySelector("html").setAttribute("home-vertical", ugfHomeVertical);
+    }
     try {
         const startParam = parseInt(new URLSearchParams(window.location.search).get("start") || "0", 10);
         if (!isNaN(startParam) && startParam > 0) {
@@ -12780,8 +12841,8 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                             }
 
                             // Resolve clean canonical URL from data-surl or data-curl if available
-                            let cleanVideoLink = result.closest?.("[data-surl]")?.getAttribute("data-surl") || 
-                                                 result.closest?.("[data-curl]")?.getAttribute("data-curl") || 
+                            let cleanVideoLink = result.closest?.("[data-surl]")?.getAttribute("data-surl") ||
+                                                 result.closest?.("[data-curl]")?.getAttribute("data-curl") ||
                                                  link;
                             if (cleanVideoLink) {
                                 link = cleanVideoLink;
@@ -12811,13 +12872,13 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                                 let imgEl = nextElem.querySelector("img");
                                 let origImgId = imgEl ? (imgEl.id || "") : "";
                                 let thumbnail = imgEl ? (imgEl.getAttribute("src") || imgEl.src || "") : "";
-                                
+
                                 const isPlaceholder = !thumbnail || thumbnail.includes("data:image/gif;base64") || thumbnail.length < 100;
-                                
+
                                 // Strategy 1: For YouTube videos, fallback to official high-res CDN thumbnail to avoid deferred loading delay
                                 if (isPlaceholder && ytVideoId) {
                                     thumbnail = "https://i.ytimg.com/vi/" + ytVideoId + "/mqdefault.jpg";
-                                } 
+                                }
                                 // Strategy 2: For other platforms (X, Instagram Reels, etc.), look up deferred image dictionary
                                 else if (isPlaceholder && origImgId) {
                                     const defSrc = ugfGetDeferredImage(origImgId);
@@ -12837,7 +12898,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                                 } else if (nextElem.querySelector("a div div div:last-child span")) {
                                     duration = nextElem.querySelector("a div div div:last-child span").textContent;
                                 }
-                                
+
                                 // Video snippet/description extraction: support modern Google containers (.ITZIwc, line-clamp, .fzUZNc)
                                 if (nextElem.querySelector(".ITZIwc")) {
                                     description = nextElem.querySelector(".ITZIwc").innerHTML;
@@ -14282,8 +14343,10 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         container.insertBefore(newElem, container.children[item.itemNo]);
         let a = newElem.textContent;
         a = a.trim();
-        if (location == "images") {
+        if (location == "images" || ugfHomeVertical == "images") {
             newElem.setAttribute("href","https://www.google.com/search?q=" + a + "&udm=2");
+        } else if (location == "videos" || ugfHomeVertical == "videos") {
+            newElem.setAttribute("href","https://www.google.com/search?q=" + a + "&udm=7");
         } else {
             newElem.setAttribute("href","https://www.google.com/search?q=" + a);
         }
@@ -14551,9 +14614,9 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     }
                     else {
                         window.location = "https://www.google.com/search?q=" + value;
-                        if (location == "images") {
+                        if (location == "images" || ugfHomeVertical == "images") {
                             window.location = "https://www.google.com/search?q=" + value + "&udm=2";
-                        } else if (location == "videos") {
+                        } else if (location == "videos" || ugfHomeVertical == "videos") {
                             window.location = "https://www.google.com/search?q=" + value + "&udm=7";
                         } else if (location == "news") {
                             window.location = "https://www.google.com/search?q=" + value + "&tbm=nws";
@@ -14592,9 +14655,9 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                         }
                         else {
                             window.location = "https://www.google.com/search?q=" + value;
-                            if (location == "images") {
+                            if (location == "images" || ugfHomeVertical == "images") {
                                 window.location = "https://www.google.com/search?q=" + value + "&udm=2";
-                            } else if (location == "videos") {
+                            } else if (location == "videos" || ugfHomeVertical == "videos") {
                                 window.location = "https://www.google.com/search?q=" + value + "&udm=7";
                             } else if (location == "news") {
                                 window.location = "https://www.google.com/search?q=" + value + "&tbm=nws";
@@ -15688,7 +15751,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 } catch (e) {
                     q = "";
                 }
-                const onImages = document.querySelector("html").getAttribute("location") === "images";
+                const onImages = document.querySelector("html").getAttribute("location") === "images" || ugfHomeVertical === "images";
                 if (conf.aboveLinks) {
                     const row = document.createElement("div");
                     row.className = "ugf-era-above-links";
@@ -15731,7 +15794,8 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     a.href = href;
                     a.textContent = item[0];
                     const onNewsTab = document.querySelector("html").hasAttribute("news-results");
-                    if ((onImages && item[0] === "Images") || (onNewsTab && item[0] === "News") || (!onImages && !onNewsTab && item[0] === "Web")) {
+                    const onVideoTab = ugfHomeVertical === "videos";
+                    if ((onImages && item[0] === "Images") || (onNewsTab && item[0] === "News") || (onVideoTab && (item[0] === "Video" || item[0] === "Videos")) || (!onImages && !onNewsTab && !onVideoTab && item[0] === "Web")) {
                         a.className = "active";
                     }
                     nav.appendChild(a);
@@ -15786,7 +15850,8 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     el.style.display = "none";
                 }
             });
-            const onImages = document.querySelector("html").getAttribute("location") === "images";
+            const onImages = document.querySelector("html").getAttribute("location") === "images" || ugfHomeVertical === "images";
+            const onVideoHome = ugfHomeVertical === "videos";
             let q = "";
             try {
                 q = new URLSearchParams(window.location.search).get("q") || "";
@@ -15795,7 +15860,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             }
             conf.left.forEach(function(item) {
                 const onNews = document.querySelector("html").hasAttribute("news-results");
-                const isActive = (onImages && item[0] === "Images") || (onNews && item[0] === "News") || (!onImages && !onNews && item[0] === "Web");
+                const isActive = (onImages && item[0] === "Images") || (onNews && item[0] === "News") || (onVideoHome && (item[0] === "Video" || item[0] === "Videos")) || (!onImages && !onNews && !onVideoHome && item[0] === "Web");
                 let href = item[1];
                 if (q) {
                     if (item[0] === "Images") {
@@ -15878,12 +15943,62 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             }
         });
     }
+    // imghp / videohp: logo label, button labels, active tabs
+    function ugfVerticalHome() {
+        if (!ugfHomeVertical) {
+            return;
+        }
+        const isImages = ugfHomeVertical === "images";
+        document.title = isImages ? "Google Images" : "Google Videos";
+        ugf2009WaitFor("#ugf-hp-logo-companion", function(comp) {
+            if (!comp.querySelector("#ugf-hp-vertical-label")) {
+                const lab = document.createElement("div");
+                lab.id = "ugf-hp-vertical-label";
+                const old = document.querySelector("html").hasAttribute("legacy-gbar");
+                lab.textContent = isImages ? (old ? "Images" : "images") : (old ? "Video" : "videos");
+                comp.appendChild(lab);
+            }
+        });
+        const label = isImages ? "Search Images" : "Search Video";
+        ugf2009WaitFor("#ugf-hp-buttons", function(row) {
+            const relabel = function() {
+                const retro = row.querySelectorAll("button.searchbtn");
+                if (retro.length) {
+                    retro[0].textContent = label;
+                    for (let i = 1; i < retro.length; i++) {
+                        retro[i].style.display = "none";
+                    }
+                }
+                const s2 = document.querySelector("#ugf-search-btn-2 span");
+                if (s2) {
+                    s2.textContent = label;
+                }
+                return retro.length;
+            };
+            relabel();
+            let n = 0;
+            const t = setInterval(function() {
+                n++;
+                if (relabel() || n > 30) {
+                    clearInterval(t);
+                }
+            }, 100);
+        });
+        ugf2009WaitFor("#gp-gbar-inner", function() {
+            const search = document.querySelector("#gp-gbar-search");
+            const images = document.querySelector("#gp-gbar-images");
+            if (isImages && search && images) {
+                search.classList.remove("active");
+                images.classList.add("active");
+            }
+        });
+    }
     function ugf2009Buttons() {
         const btnEra = ugfRetroEra();
         if (!btnEra || btnEra === "gplex2010") {
             return;
         }
-        if (window.location.pathname === "/search") {
+        if (!/home$/.test(document.querySelector("html").getAttribute("location") || "")) {
             ugf2009WaitFor("#ugf-search", function(searchBar) {
                 if (searchBar.querySelector(".searchbtn-small")) {
                     return;
@@ -15932,6 +16047,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
     }
     ugf2009Buttons();
     ugfEraHomeButtons();
+    ugfVerticalHome();
     ugfRetroChrome();
     ugfRetroFooter();
     ugfContinuousScroll();
