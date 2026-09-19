@@ -1,3 +1,5 @@
+<img width="1730" height="905" alt="Screen Shot 2026-09-19 at 2 52 42 PM" src="https://github.com/user-attachments/assets/daa56e60-c3f7-4c89-a758-418137cfdab0" />
+<img width="1723" height="937" alt="Screen Shot 2026-09-19 at 2 49 48 PM" src="https://github.com/user-attachments/assets/db459258-5435-45f6-87d9-3a17333ec1c9" />
 Install Gplex Extended:
 https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
 
