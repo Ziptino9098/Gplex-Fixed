@@ -27,5 +27,3 @@ StarTube by lightbeam24
 https://github.com/lightbeam24/StarTube/raw/refs/heads/main/StarTube.user.js
 
 StarTube requires Vorapis V3. Since Vorapis V3 is ARR, I'm not risking distributing it here. Just search for "Vorapis V3 Old YouTube" to find it.
-
-Also if you see the build jump from 2.1.3 to like 2.1.10 it is that every time I internally update the code I bump the version
