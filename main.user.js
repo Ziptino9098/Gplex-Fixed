@@ -25,11 +25,12 @@
 // @grant        GM_setValue
 // @grant        GM_deleteValue
 // @grant        GM_registerMenuCommand
+// @grant        unsafeWindow // Needed to access page-context google.ldi for deferred image thumbnails
 // @license      MIT
 // @require      https://openuserjs.org/src/libs/sizzle/GM_config.js
 // @run-at document-body
-// @downloadURL https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
-// @updateURL   https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
+// @downloadURL https://update.greasyfork.org/scripts/596098/Gplex%20Extended%20-%20Fixed%20and%20extended%20version%20of%20the%20legendary%20Gplex%20Old%20Google%20script.user.js
+// @updateURL https://update.greasyfork.org/scripts/596098/Gplex%20Extended%20-%20Fixed%20and%20extended%20version%20of%20the%20legendary%20Gplex%20Old%20Google%20script.meta.js
 // ==/UserScript==
 function showMenu(){
     window.location = "https://www.google.com/gplex";
@@ -8996,6 +8997,10 @@ li.tg2Kqf{
         list;
         thumbnail;
         duration;
+        // Reference to the native <img> element to observe deferred src changes
+        origImg;
+        // Native dimg id (e.g. "dimg_xxx") used by Google's deferred image dictionary (google.ldi)
+        origImgId;
         constructor(item, type) {
             if (type == "result") {
                 this.href = item.href;
@@ -9012,6 +9017,8 @@ li.tg2Kqf{
                 this.description = item.description;
                 this.thumbnail = item.thumbnail;
                 this.duration = item.duration;
+                this.origImg = item.origImg;
+                this.origImgId = item.origImgId;
             }
             if (type == "image") {
                 this.itemNo = item.itemNo;
@@ -11145,7 +11152,8 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             // for (i = 0; i < 9; i++) {
             if (item.parentNode) {
                 if (item.parentNode.tagName == "SPAN") {
-                    if (item.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.class = ".MjjYud") {
+                    // Fix: Safe check for .MjjYud container using classList.contains to prevent invalid assignment and TypeError
+                    if (item.parentNode?.parentNode?.parentNode?.parentNode?.parentNode?.parentNode?.parentNode?.classList?.contains("MjjYud")) {
                         resolve(item);
                     } else {
                         resolve(item);
@@ -11650,12 +11658,20 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                                     }
                                 });
                             }
-                            if (result.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.querySelector('[data-sncf="1"]')) {
-                                description = result.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.querySelector('[data-sncf="1"]').innerHTML;
-                            } else if (result.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.querySelector('[data-sncf="2"]')) {
-                                description = result.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.querySelector('[data-sncf="2"]').innerHTML;
-                            } else if (result.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.querySelector('[data-sncf="3"]')) {
-                                description = result.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.querySelector('[data-sncf="3"]').innerHTML;
+                            // Snippet extraction with fallbacks for modern Google classes (.VwiC3b and line-clamp)
+                            let container7 = result.parentNode?.parentNode?.parentNode?.parentNode?.parentNode?.parentNode?.parentNode;
+                            if (container7 && container7.querySelector('[data-sncf="1"]')) {
+                                description = container7.querySelector('[data-sncf="1"]').innerHTML;
+                            } else if (container7 && container7.querySelector('[data-sncf="2"]')) {
+                                description = container7.querySelector('[data-sncf="2"]').innerHTML;
+                            } else if (container7 && container7.querySelector('[data-sncf="3"]')) {
+                                description = container7.querySelector('[data-sncf="3"]').innerHTML;
+                            } else if (container7 && container7.querySelector('.VwiC3b')) {
+                                // Modern standard snippet class fallback
+                                description = container7.querySelector('.VwiC3b').innerHTML;
+                            } else if (container7 && container7.querySelector('.ITZIwc, [style*="-webkit-line-clamp"]')) {
+                                // Modern card snippet class fallback
+                                description = container7.querySelector('.ITZIwc, [style*="-webkit-line-clamp"]').innerHTML;
                             }
                             let isVideo = false;
                             if (
@@ -11670,21 +11686,106 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                             ) {
                                 isVideo = true;
                             }
+                            // Helper: Parse YouTube video ID from standard watch URLs, shorts, youtu.be, and Google redirect URLs
+                            function ugfExtractYtId(u) {
+                                if (!u) return null;
+                                let raw = u;
+                                try {
+                                    if (raw.includes("url=") || raw.includes("q=")) {
+                                        const parsed = new URL(raw, "https://www.google.com");
+                                        raw = parsed.searchParams.get("url") || parsed.searchParams.get("q") || raw;
+                                    }
+                                    raw = decodeURIComponent(raw);
+                                } catch (e) {}
+                                const m = raw.match(/(?:v=|vi=|\/v\/|\/vi\/|youtu\.be\/|\/shorts\/)([a-zA-Z0-9_-]{11})/);
+                                return m ? m[1] : null;
+                            }
+
+                            // Helper: Resolve deferred images populated by Google scripts (google.ldi or _setImagesSrc)
+                            // This provides early resolution for non-YouTube platforms such as X and Instagram Reels
+                            function ugfGetDeferredImage(imgId) {
+                                if (!imgId) return "";
+                                const gWin = (typeof unsafeWindow !== "undefined" ? unsafeWindow : window);
+                                if (gWin && gWin.google && gWin.google.ldi && gWin.google.ldi[imgId]) {
+                                    return gWin.google.ldi[imgId];
+                                }
+                                if (window.google && window.google.ldi && window.google.ldi[imgId]) {
+                                    return window.google.ldi[imgId];
+                                }
+                                const scripts = document.querySelectorAll("script");
+                                for (let si = scripts.length - 1; si >= 0; si--) {
+                                    const st = scripts[si].textContent || scripts[si].innerHTML;
+                                    if (!st || !st.includes(imgId)) continue;
+                                    const ldiM = st.match(new RegExp('"' + imgId + '"\\s*:\\s*"([^"]+)"'));
+                                    if (ldiM) {
+                                        return ldiM[1].replace(/\\u003d/g, '=').replace(/\\u0026/g, '&');
+                                    }
+                                    const setM = st.match(/var\s+s\s*=\s*'([^']+)'[\s\S]*?\[\s*'([^']+)'\s*\][\s\S]*?_setImagesSrc/);
+                                    if (setM && setM[2] === imgId) {
+                                        return setM[1].replace(/\\x3d/g, '=').replace(/\\u003d/g, '=');
+                                    }
+                                }
+                                return "";
+                            }
+
+                            // Modern Google video cards use <div role="button"> for thumbnails instead of <a> tags.
+                            // We loosen the check so video results with snippet or thumbnail container are properly recognized.
                             if (
                                 isVideo == true &&
-                                //result.parentNode.parentNode.parentNode.parentNode.nextSibling.querySelector("[role='presentation'] span")
-                                result.parentNode.parentNode.parentNode.parentNode.nextSibling.querySelector("a + div")
+                                result.parentNode.parentNode.parentNode.parentNode.nextSibling &&
+                                (
+                                    result.parentNode.parentNode.parentNode.parentNode.nextSibling.querySelector("a + div") ||
+                                    result.parentNode.parentNode.parentNode.parentNode.nextSibling.querySelector(".fzUZNc, .ITZIwc, [style*='-webkit-line-clamp'], img")
+                                )
                             ) {
                                 let nextElem = result.parentNode.parentNode.parentNode.parentNode.nextSibling;
-                                let thumbnail = nextElem.querySelector("img").src;
-                                let duration = "361:97";
+                                let imgEl = nextElem.querySelector("img");
+                                let origImgId = imgEl ? (imgEl.id || "") : "";
+                                let thumbnail = imgEl ? (imgEl.getAttribute("src") || imgEl.src || "") : "";
+                                
+                                // Resolve clean canonical URL from data-surl or data-curl if available
+                                let cleanVideoLink = result.closest?.("[data-surl]")?.getAttribute("data-surl") || 
+                                                     result.closest?.("[data-curl]")?.getAttribute("data-curl") || 
+                                                     link;
+                                if (cleanVideoLink) {
+                                    link = cleanVideoLink;
+                                }
+                                
+                                const isPlaceholder = !thumbnail || thumbnail.includes("data:image/gif;base64") || thumbnail.length < 100;
+                                
+                                // Strategy 1: For YouTube videos, fallback to official high-res CDN thumbnail to avoid deferred loading delay
+                                const ytVideoId = ugfExtractYtId(cleanVideoLink) || ugfExtractYtId(link);
+                                if (isPlaceholder && ytVideoId) {
+                                    thumbnail = "https://i.ytimg.com/vi/" + ytVideoId + "/mqdefault.jpg";
+                                } 
+                                // Strategy 2: For other platforms (X, Instagram Reels, etc.), look up deferred image dictionary
+                                else if (isPlaceholder && origImgId) {
+                                    const defSrc = ugfGetDeferredImage(origImgId);
+                                    if (defSrc) {
+                                        thumbnail = defSrc;
+                                    } else if (imgEl.getAttribute("data-src")) {
+                                        thumbnail = imgEl.getAttribute("data-src");
+                                    }
+                                }
+
+                                // Video duration extraction: support modern Google containers (.c8rnLc, .kSFuOd)
+                                let duration = "0:00";
                                 if (nextElem.querySelector("[role='presentation'] span")) {
                                     duration = nextElem.querySelector("[role='presentation'] span").textContent;
-                                }
-                                if (nextElem.querySelector("a div div div:last-child span")) {
+                                } else if (nextElem.querySelector(".c8rnLc span, .kSFuOd span")) {
+                                    duration = nextElem.querySelector(".c8rnLc span, .kSFuOd span").textContent;
+                                } else if (nextElem.querySelector("a div div div:last-child span")) {
                                     duration = nextElem.querySelector("a div div div:last-child span").textContent;
                                 }
-                                if (nextElem.querySelector("a + div > div")) {
+                                
+                                // Video snippet/description extraction: support modern Google containers (.ITZIwc, line-clamp, .fzUZNc)
+                                if (nextElem.querySelector(".ITZIwc")) {
+                                    description = nextElem.querySelector(".ITZIwc").innerHTML;
+                                } else if (nextElem.querySelector("[style*='-webkit-line-clamp']")) {
+                                    description = nextElem.querySelector("[style*='-webkit-line-clamp']").innerHTML;
+                                } else if (nextElem.querySelector(".fzUZNc > div")) {
+                                    description = nextElem.querySelector(".fzUZNc > div").innerHTML;
+                                } else if (nextElem.querySelector("a + div > div")) {
                                     description = nextElem.querySelector("a + div > div").innerHTML;
                                 }
                                 linkList.push({videoResult: {
@@ -11695,7 +11796,9 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                                     unmoddedTitle: unmoddedTitle,
                                     description: description,
                                     thumbnail: thumbnail,
-                                    duration: duration
+                                    duration: duration,
+                                    origImg: imgEl,
+                                    origImgId: origImgId
                                 }});
                                 createItem(linkList[itemNo], "videoResult");
                                 document.querySelector("html").setAttribute("results-arrived","");
@@ -13485,6 +13588,77 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             newElem.classList.add("ugf-search-result");
             newElem.classList.add("ugf-video-result");
             newElem.setAttribute("thumb-url",SRA.thumbnail);
+
+            // Synchronize deferred thumbnails for items located in the lower half of SERP (e.g. items 6-10).
+            // In modern Google, these items load deferred thumbnails via google.ldi at the bottom of the HTML.
+            // We observe the native <img> src attribute and poll google.ldi to update Gplex's <img> and thumb-url attribute.
+            (function() {
+                const targetItem = newElem;
+                const origImg = SRA.origImg;
+                const origId = SRA.origImgId;
+
+                function applyResolvedThumb(realUrl) {
+                    if (realUrl && !realUrl.includes("data:image/gif;base64") && realUrl.length > 50) {
+                        targetItem.setAttribute("thumb-url", realUrl);
+                        const gImg = targetItem.querySelector(".ugf-video-result-thumbnail img");
+                        if (gImg) {
+                            gImg.src = realUrl;
+                        }
+                        return true;
+                    }
+                    return false;
+                }
+
+                const currentThumb = targetItem.getAttribute("thumb-url");
+                if (!currentThumb || currentThumb.includes("data:image/gif;base64") || currentThumb.length < 100) {
+                    // Check if native origImg was already populated
+                    if (origImg) {
+                        const directSrc = origImg.getAttribute("src") || origImg.src || "";
+                        if (applyResolvedThumb(directSrc)) return;
+
+                        // Listen directly to native <img> src attribute changes via MutationObserver
+                        try {
+                            const imgObserver = new MutationObserver(function() {
+                                const newSrc = origImg.getAttribute("src") || origImg.src || "";
+                                if (applyResolvedThumb(newSrc)) {
+                                    imgObserver.disconnect();
+                                }
+                            });
+                            imgObserver.observe(origImg, { attributes: true, attributeFilter: ["src"] });
+                        } catch (e) {}
+                    }
+
+                    // Polling fallback to check google.ldi and document scripts
+                    let attempts = 0;
+                    const syncTimer = setInterval(function() {
+                        attempts++;
+                        const gWin = (typeof unsafeWindow !== "undefined" ? unsafeWindow : window);
+                        if (origId && gWin && gWin.google && gWin.google.ldi && gWin.google.ldi[origId]) {
+                            if (applyResolvedThumb(gWin.google.ldi[origId])) {
+                                clearInterval(syncTimer);
+                                return;
+                            }
+                        }
+                        if (origImg) {
+                            const cur = origImg.getAttribute("src") || origImg.src || "";
+                            if (applyResolvedThumb(cur)) {
+                                clearInterval(syncTimer);
+                                return;
+                            }
+                        }
+                        if (origId) {
+                            const def = ugfGetDeferredImage(origId);
+                            if (applyResolvedThumb(def)) {
+                                clearInterval(syncTimer);
+                                return;
+                            }
+                        }
+                        if (attempts >= 35) {
+                            clearInterval(syncTimer);
+                        }
+                    }, 120);
+                }
+            })();
             newElem.innerHTML = `
 					<div class="ugf-search-result-inner">
 						<a class="ugf-search-result-title" title='${SRA.unmoddedTitle}' href="${SRA.href}">
