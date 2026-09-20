@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      2.7.4
+// @version      2.8.3
 // @description  1997-2024 Old Google Frontend (Full public release)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -21,16 +21,14 @@
 // @exclude      *://*/*&gplex=false
 // @exclude      *://*/*?gplex=false
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=google.com
-// @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_deleteValue
 // @grant        GM_registerMenuCommand
 // @grant        unsafeWindow
 // @license      MIT
-// @require      https://openuserjs.org/src/libs/sizzle/GM_config.js
 // @run-at document-body
-// @downloadURL https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
-// @updateURL   https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
+// @downloadURL https://update.greasyfork.org/scripts/596098/Gplex%20Extended%20-%20Fixed%20and%20extended%20version%20of%20the%20legendary%20Gplex%20Old%20Google%20script.user.js
+// @updateURL https://update.greasyfork.org/scripts/596098/Gplex%20Extended%20-%20Fixed%20and%20extended%20version%20of%20the%20legendary%20Gplex%20Old%20Google%20script.meta.js
 // ==/UserScript==
 function showMenu(){
     window.location = "https://www.google.com/gplex";
@@ -1182,7 +1180,8 @@ html:not([search-focus]) #ugf-search-predictions-container {
   color: #222;
   text-decoration: none !important;
 }
-.ugf-search-prediction:hover {
+.ugf-search-prediction:hover,
+.ugf-search-prediction.ugf-prediction-selected {
   background: #c6dafc;
 }
 [layout="2010"] .ugf-search-prediction,
@@ -1223,15 +1222,20 @@ html:not([search-focus]) #ugf-search-predictions-container {
 [layout="2019"] .ugf-search-prediction:not(:visited) {
   color: #000;
 }
-[layout="2013"] .ugf-search-prediction:hover {
+[layout="2013"] .ugf-search-prediction:hover,
+[layout="2013"] .ugf-search-prediction.ugf-prediction-selected {
   background: #eee;
 }
 [layout="2016C"] .ugf-search-prediction:hover,
+[layout="2016C"] .ugf-search-prediction.ugf-prediction-selected,
 [layout^="2018"] .ugf-search-prediction:hover,
-[layout="2019"] .ugf-search-prediction:hover {
+[layout^="2018"] .ugf-search-prediction.ugf-prediction-selected,
+[layout="2019"] .ugf-search-prediction:hover,
+[layout="2019"] .ugf-search-prediction.ugf-prediction-selected {
   background: #f7f8f9;
 }
-[layout^="2018M"] .ugf-search-prediction:hover{
+[layout^="2018M"] .ugf-search-prediction:hover,
+[layout^="2018M"] .ugf-search-prediction.ugf-prediction-selected {
   background:#93bcff;
 }
 #ugf-search-predictions-fence {
@@ -9039,7 +9043,8 @@ li.tg2Kqf{
 [gplex2007]:not([location$="home"]) .ugf-search-result-link {
   color: #008000 !important;
 }
-/* 2006-2007 light-blue results bar */
+/* 2005-2007 light-blue results bar */
+[gplex2005]:not([location$="home"]) #ugf-search-results-header,
 [gplex2006]:not([location$="home"]) #ugf-search-results-header,
 [gplex2007]:not([location$="home"]) #ugf-search-results-header {
   box-sizing: border-box;
@@ -9054,12 +9059,14 @@ li.tg2Kqf{
   color: #000;
   font-family: arial, sans-serif;
 }
+[gplex2005]:not([location$="home"]) #ugf-search-results-header:before,
 [gplex2006]:not([location$="home"]) #ugf-search-results-header:before,
 [gplex2007]:not([location$="home"]) #ugf-search-results-header:before {
   content: "Web";
   font-size: 16px;
   font-weight: bold;
 }
+[gplex2005]:not([location$="home"]) #ugf-search-results-header span,
 [gplex2006]:not([location$="home"]) #ugf-search-results-header span,
 [gplex2007]:not([location$="home"]) #ugf-search-results-header span {
   font-size: 13px;
@@ -10002,6 +10009,7 @@ html[news-results] #ugf-search-results-container .ugf-news-result .ugf-news-resu
 [news-results][gplex2007] .ugf-news-result-meta {
   color: #008000;
 }
+[news-results][gplex2005] #ugf-search-results-header:before,
 [news-results][gplex2006] #ugf-search-results-header:before,
 [news-results][gplex2007] #ugf-search-results-header:before,
 [news-results][gplex2009] #ugf-search-results-header:before {
@@ -10104,6 +10112,738 @@ html:not([home-vertical]) #ugf-hp-vertical-label {
 }
 [era-max-pages="9"] #gp-pagination-10 {
   display: none !important;
+}
+/* 2.7.5: 2000-2005 results pages (Dec 2000 / Nov 2002 / Apr 2003 captures) */
+html[era-serp-classic] #ugf-topbar {
+  height: auto !important;
+  min-height: 0 !important;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  position: relative !important;
+  padding: 0 !important;
+}
+html[era-serp-classic] #ugf-topbar-inner {
+  display: flex !important;
+  align-items: flex-start !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  height: auto !important;
+}
+html[era-serp-classic] #ugf-topbar #ugf-logo-cont {
+  background-image: url("https://www.google.com/intl/en_extra/images/Title_Left.gif") !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: left top !important;
+  width: 200px !important;
+  height: 78px !important;
+  min-width: 200px !important;
+  margin: 2px 0 0 0 !important;
+  padding: 0 !important;
+  flex: 0 0 200px !important;
+}
+html[era-serp-classic] #ugf-topbar #ugf-logo-cont img,
+html[era-serp-classic] #ugf-topbar #ugf-logo-cont svg {
+  visibility: hidden !important;
+}
+html[era-serp-classic] #ugf-topbar #ugf-search-outer {
+  display: block !important;
+  width: auto !important;
+  margin: 3px 0 0 0 !important;
+  padding: 0 !important;
+  position: static !important;
+}
+html[era-serp-classic] #ugf-topbar .ugf-era-above-links,
+html[era-serp-classic] #ugf-topbar .ugf-era-count,
+html[era-serp-classic] #ugf-topbar .ugf-era-nav {
+  display: none !important;
+}
+html[era-serp-classic] #ugf-classic-links {
+  font: 13px arial, sans-serif;
+  line-height: 13px;
+  height: 13px;
+  margin: 0 0 4px 0;
+  white-space: nowrap;
+}
+html[era-serp-classic] #ugf-classic-links a {
+  color: #00c !important;
+  text-decoration: underline !important;
+  margin-right: 15px;
+}
+html[era-serp-classic] #ugf-topbar #ugf-search {
+  display: flex !important;
+  align-items: center !important;
+  height: 22px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: auto !important;
+}
+html[era-serp-classic] #ugf-topbar #ugf-searchbar {
+  width: 281px !important;
+  height: 22px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  background: none !important;
+}
+html[era-serp-classic] #ugf-topbar #ugf-searchbar::after,
+html[era-serp-classic] #ugf-topbar #ugf-searchbar::before {
+  content: none !important;
+  display: none !important;
+}
+html[era-serp-classic] #ugf-topbar #ugf-search-value {
+  width: 281px !important;
+  height: 22px !important;
+  box-sizing: border-box !important;
+  border: 1px solid #999 !important;
+  border-top-color: #7a7a7a !important;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.12) !important;
+  outline: none !important;
+  background: #fff !important;
+  padding: 1px 4px !important;
+  margin: 0 !important;
+  font: 13px arial, sans-serif !important;
+}
+html[era-serp-classic] #ugf-topbar button.searchbtn-small {
+  all: revert;
+  font: 13px arial, sans-serif !important;
+  height: 22px !important;
+  margin: 0 0 0 5px !important;
+  padding: 0 6px !important;
+  vertical-align: middle !important;
+}
+html[era-serp-classic] #ugf-topbar #ugf-search-predictions-container {
+  width: 281px !important;
+  top: 22px !important;
+  margin-left: 0 !important;
+}
+html[era-serp-classic] .ugf-era-nav.ugf-classic-tabs {
+  display: flex !important;
+  align-items: flex-end !important;
+  gap: 0 !important;
+  width: max-content !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  font: 13px arial, sans-serif !important;
+  position: static !important;
+}
+html[era-serp-classic] .ugf-era-nav.ugf-classic-tabs a {
+  display: block !important;
+  box-sizing: border-box !important;
+  width: 62px !important;
+  height: 15px !important;
+  line-height: 15px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: #efefef !important;
+  color: #00c !important;
+  text-decoration: none !important;
+  text-align: center !important;
+  font-weight: normal !important;
+  border: none !important;
+  border-right: 1px solid #777 !important;
+  box-shadow: inset -1px 0 0 #fff !important;
+}
+html[era-serp-classic] .ugf-era-nav.ugf-classic-tabs a.ugf-classic-wide {
+  width: 82px !important;
+}
+html[era-serp-classic] .ugf-era-nav.ugf-classic-tabs a.active {
+  width: 60px !important;
+  background: #3366cc !important;
+  color: #fff !important;
+  font-weight: bold !important;
+  border-right: none !important;
+  box-shadow: none !important;
+}
+html[era-serp-classic] #ugf-search-results-header {
+  display: flex !important;
+  align-items: center !important;
+  position: static !important;
+  top: auto !important;
+  left: auto !important;
+  box-sizing: border-box !important;
+  width: calc(100vw - 32px) !important;
+  max-width: none !important;
+  height: 20px !important;
+  margin: 0 !important;
+  padding: 0 3px !important;
+  background: #3366cc !important;
+  border: none !important;
+  color: #fff !important;
+  font: 13px arial, sans-serif !important;
+}
+html[era-serp-classic] #ugf-search-results-header:before,
+html[era-serp-classic] #ugf-search-results-header:after {
+  content: none !important;
+  display: none !important;
+}
+html[era-serp-classic] #ugf-search-results-header > span {
+  display: flex !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  margin: 0 !important;
+  color: #fff !important;
+  font: 13px arial, sans-serif !important;
+  white-space: nowrap;
+}
+html[era-serp-classic] #ugf-search-results-header b,
+html[era-serp-classic] #ugf-search-results-header u {
+  color: #fff !important;
+}
+html[era-serp-classic] #ugf-main-inner {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+html[era-serp-classic] #ugf-search-results-container {
+  padding-top: 16px !important;
+  padding-left: 0 !important;
+}
+html[era-serp-classic="tabs"] #ugf-topbar #ugf-logo-cont {
+  height: 76px !important;
+}
+html[era-serp-classic="notabs"] #ugf-topbar #ugf-search-outer {
+  margin-left: 6px !important;
+}
+html[era-serp-classic="notabs"] #ugf-classic-links {
+  margin: 9px 0 23px 14px !important;
+}
+html[era-serp-classic="notabs"] #ugf-search-results-header {
+  margin-top: 2px !important;
+}
+html[era-serp-classic] #ugf-search-results,
+html[era-serp-classic] #ugf-search-results-container {
+  width: auto !important;
+  max-width: 700px !important;
+}
+html[era-serp-classic] .ugf-search-result {
+  max-width: 700px !important;
+  margin: 0 0 17px 0 !important;
+  padding: 0 !important;
+  font-family: arial, sans-serif !important;
+}
+html[era-serp-classic] .ugf-search-result .ugf-search-result-title,
+html[era-serp-classic] .ugf-search-result .ugf-search-result-title span {
+  font: 16px arial, sans-serif !important;
+  line-height: 19px !important;
+  color: #00c !important;
+  text-decoration: underline !important;
+}
+html[era-serp-classic] .ugf-search-result .ugf-search-result-title .ugf-keyword,
+html[era-serp-classic] .ugf-search-result .ugf-search-result-title b {
+  font-weight: bold !important;
+}
+html[era-serp-classic] .ugf-search-result .ugf-search-result-link {
+  display: none !important;
+}
+html[era-serp-classic] .ugf-search-result .ugf-search-result-desc,
+html[era-serp-classic] .ugf-search-result .ugf-search-result-desc span {
+  font: 13px arial, sans-serif !important;
+  line-height: 15px !important;
+  color: #000 !important;
+  margin: 0 !important;
+  max-width: 700px !important;
+}
+html[era-serp-classic] .ugf-classic-urlline {
+  font: 13px arial, sans-serif;
+  line-height: 15px;
+  color: #008000;
+}
+html[era-serp-classic] .ugf-classic-urlline .ugf-classic-sub {
+  color: #666 !important;
+  text-decoration: underline !important;
+}
+/* 2.7.12: 2000-2005 results footer (Apr 2003 capture) */
+html[era-serp-classic]:not([location="images"]) #ugf-footer-links {
+  display: none !important;
+}
+html[era-serp-classic]:not([location="images"]) #ugf-footer {
+  width: 100% !important;
+  height: auto !important;
+  padding: 0 !important;
+}
+html[era-serp-classic]:not([location="images"]) #gp-pagination {
+  margin-top: 48px !important;
+}
+html[era-serp-classic]:not([location="images"]) #gp-pagination-inner {
+  position: relative !important;
+}
+html[era-serp-classic]:not([location="images"]) #gp-pagination-inner::before {
+  content: "Result Page:";
+  position: absolute;
+  right: 100%;
+  bottom: 3px;
+  margin-right: 1px;
+  font: 13px arial, sans-serif;
+  color: #000;
+  white-space: nowrap;
+}
+html[era-serp-classic] #gp-page-numbers .gp-pagination span {
+  color: #00c !important;
+  text-decoration: underline !important;
+  font: 13px arial, sans-serif !important;
+}
+html[era-serp-classic] #gp-page-numbers .gp-pagination.active span {
+  color: #a61f1f !important;
+  text-decoration: none !important;
+  font-weight: bold !important;
+}
+html[era-serp-classic] #gp-pagination-next span,
+html[era-serp-classic] #gp-pagination-prev span {
+  color: #00c !important;
+  text-decoration: underline !important;
+  font: bold 16px arial, sans-serif !important;
+}
+html[era-serp-classic] #ugf-classic-bottom {
+  text-align: center;
+  font: 13px arial, sans-serif;
+  color: #000;
+  margin: 0;
+  padding: 0 0 12px 0;
+}
+html[era-serp-classic] #ugf-classic-bottom .ugf-cb-search {
+  margin-top: 39px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+html[era-serp-classic] #ugf-classic-bottom .ugf-cb-search input {
+  width: 281px;
+  height: 22px;
+  box-sizing: border-box;
+  border: 1px solid #999;
+  border-top-color: #7a7a7a;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.12);
+  padding: 1px 4px;
+  font: 13px arial, sans-serif;
+  margin: 0;
+}
+html[era-serp-classic] #ugf-classic-bottom .ugf-cb-search button {
+  all: revert;
+  font: 13px arial, sans-serif;
+  height: 22px;
+  padding: 0 6px;
+  margin: 0;
+}
+html[era-serp-classic] #ugf-classic-bottom a {
+  color: #00c !important;
+  text-decoration: underline !important;
+}
+html[era-serp-classic] #ugf-classic-bottom .ugf-cb-dissatisfied {
+  margin-top: 34px;
+  line-height: 15px;
+}
+html[era-serp-classic] #ugf-classic-bottom .ugf-cb-bar {
+  margin-top: 16px;
+  background: #3366cc;
+  color: #fff;
+  height: 19px;
+  line-height: 19px;
+  white-space: nowrap;
+}
+html[era-serp-classic] #ugf-classic-bottom .ugf-cb-bar a {
+  color: #fff !important;
+}
+html[era-serp-classic] #ugf-classic-bottom .ugf-cb-copy {
+  margin-top: 20px;
+  line-height: 15px;
+}
+/* 2.7.13: 2004-2005 results use the 2006-style header and light-blue bar (Oct 2005 capture) */
+html[era-urlline] .ugf-search-result .ugf-search-result-title,
+html[era-urlline] .ugf-search-result .ugf-search-result-title span {
+  font: 16px arial, sans-serif !important;
+  line-height: 19px !important;
+  color: #00c !important;
+  text-decoration: underline !important;
+}
+html[era-urlline] .ugf-search-result .ugf-search-result-title .ugf-keyword {
+  font-weight: bold !important;
+}
+html[era-urlline] .ugf-search-result .ugf-search-result-link {
+  display: none !important;
+}
+html[era-urlline] .ugf-search-result .ugf-search-result-desc,
+html[era-urlline] .ugf-search-result .ugf-search-result-desc span {
+  font: 13px arial, sans-serif !important;
+  line-height: 15px !important;
+  color: #000 !important;
+  max-width: 600px !important;
+}
+html[era-urlline] .ugf-search-result {
+  margin: 0 0 14px 0 !important;
+  padding: 0 !important;
+}
+html[era-urlline] #ugf-search-results-container {
+  padding-top: 10px !important;
+}
+html[era-urlline] .ugf-classic-urlline {
+  font: 13px arial, sans-serif;
+  line-height: 15px;
+  color: #008000;
+}
+html[era-urlline] .ugf-classic-urlline .ugf-classic-sub {
+  color: #77c !important;
+  text-decoration: underline !important;
+}
+/* 2.8.0: reverse image search - "Search by image" (2011-2016) / "Google Lens" (2017+) */
+html[lens-page] #ugf-search-results-header,
+html[lens-page] #gp-pagination,
+html[lens-page] #ugf-right,
+html[lens-page] #ugf-load-now-container {
+  display: none !important;
+}
+html[lens-page] #ugf-searchbar {
+  display: flex !important;
+  align-items: center !important;
+}
+html[lens-page] .ugf-lens-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+  height: 22px;
+  margin: 0 6px 0 4px;
+  padding: 0 4px 0 2px;
+  background: #f1f1f1;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+  font: 13px arial, sans-serif;
+  color: #222;
+  white-space: nowrap;
+  z-index: 2;
+}
+html[lens-page] .ugf-lens-chip img {
+  height: 18px;
+  max-width: 32px;
+  object-fit: cover;
+}
+html[lens-page] .ugf-lens-chip a {
+  color: #777 !important;
+  text-decoration: none !important;
+  font-size: 15px;
+  line-height: 15px;
+}
+html[lens-page] #ugf-search-results,
+html[lens-page] #ugf-search-results-container,
+html[lens-page] #ugf-main-inner,
+html[lens-page] #ugf-main {
+  width: auto !important;
+  max-width: none !important;
+}
+html[lens-page] #ugf-lens {
+  font-family: arial, sans-serif;
+  color: #222;
+  max-width: 980px;
+  padding-top: 12px;
+}
+html[lens-page] .ugf-lens-top {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+html[lens-page] .ugf-lens-query {
+  max-width: 160px;
+  max-height: 160px;
+  border: 1px solid #e5e5e5;
+  object-fit: contain;
+}
+html[lens-page] .ugf-lens-info {
+  font-size: 13px;
+  line-height: 18px;
+}
+html[lens-page] .ugf-lens-brand {
+  font-size: 18px;
+  line-height: 24px;
+  color: #222;
+  margin-bottom: 4px;
+}
+html[lens-page] .ugf-lens-dim {
+  color: #222;
+  margin-bottom: 6px;
+}
+html[lens-page] .ugf-lens-sub {
+  color: #777;
+}
+html[lens-page] .ugf-lens-heading {
+  font-size: 18px;
+  line-height: 22px;
+  color: #1a0dab;
+  margin: 8px 0 10px 0;
+}
+html[lens-page="sbi"] .ugf-lens-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 22px;
+}
+html[lens-page="sbi"] .ugf-lens-card img {
+  height: 110px;
+  width: auto;
+  max-width: 200px;
+  object-fit: cover;
+  display: block;
+}
+html[lens-page="sbi"] .ugf-lens-page-result {
+  display: flex !important;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 18px !important;
+}
+html[lens-page="sbi"] .ugf-lens-page-thumb img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  display: block;
+}
+html[lens-page="lens"] .ugf-lens-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 16px 12px;
+  max-width: 980px;
+}
+html[lens-page="lens"] .ugf-lens-card {
+  display: block;
+  text-decoration: none !important;
+  color: #202124 !important;
+}
+html[lens-page="lens"] .ugf-lens-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+  margin-bottom: 6px;
+}
+html[lens-page="lens"] .ugf-lens-card-source {
+  font-size: 12px;
+  color: #70757a;
+  line-height: 16px;
+}
+html[lens-page="lens"] .ugf-lens-card-title {
+  font-size: 13px;
+  line-height: 18px;
+  color: #202124;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+html[lens-page="lens"] .ugf-lens-heading {
+  color: #202124;
+}
+/* 2.8.1: Lens loading state + Search by image / Lens entry panel */
+html[lens-loading] body > div:not(#ugf):not(#sZmt3b),
+html[lens-loading] body > c-wiz,
+html[lens-loading] body > span:not(#ugf) {
+  display: block !important;
+  position: absolute !important;
+  left: -20000px !important;
+  top: 0 !important;
+  width: 1200px !important;
+  visibility: visible !important;
+  pointer-events: none !important;
+}
+#ugf-lens-loading {
+  font: 13px arial, sans-serif;
+  color: #777;
+  padding: 18px 0;
+}
+html[sbi-camera] #ugf-searchbar {
+  position: relative !important;
+}
+.ugf-sbi-camera {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #777 !important;
+  z-index: 5;
+  text-decoration: none !important;
+}
+html[sbi-camera="lens"] .ugf-sbi-camera {
+  color: #4285f4 !important;
+}
+.ugf-sbi-camera:hover {
+  color: #222 !important;
+}
+#ugf-sbi-panel {
+  position: absolute;
+  left: -1px;
+  top: calc(100% + 2px);
+  width: 100%;
+  min-width: 460px;
+  box-sizing: border-box;
+  z-index: 1000;
+  background: #fff;
+  font: 13px arial, sans-serif;
+  color: #222;
+  text-align: left;
+}
+#ugf-sbi-panel .ugf-sbi-close {
+  position: absolute;
+  right: 10px;
+  top: 6px;
+  font-size: 20px;
+  line-height: 20px;
+  color: #777 !important;
+  text-decoration: none !important;
+}
+#ugf-sbi-panel.ugf-sbi-sbi {
+  border: 1px solid #c5c5c5;
+  box-shadow: 0 2px 4px rgba(0,0,0,.2);
+  padding: 16px 20px 20px 20px;
+}
+.ugf-sbi-sbi .ugf-sbi-title {
+  font-size: 16px;
+  font-weight: normal;
+  color: #222;
+  margin-bottom: 6px;
+}
+.ugf-sbi-sbi .ugf-sbi-desc {
+  color: #666;
+  margin-bottom: 14px;
+}
+.ugf-sbi-sbi .ugf-sbi-tabs {
+  display: flex;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 14px;
+}
+.ugf-sbi-sbi .ugf-sbi-tabs a {
+  padding: 6px 12px;
+  color: #1155cc !important;
+  text-decoration: none !important;
+  border: 1px solid transparent;
+  border-bottom: none;
+  margin-bottom: -1px;
+}
+.ugf-sbi-sbi .ugf-sbi-tabs a.active {
+  color: #222 !important;
+  font-weight: bold;
+  border-color: #ccc;
+  background: #fff;
+}
+.ugf-sbi-sbi .ugf-sbi-body {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.ugf-sbi-sbi .ugf-sbi-body input {
+  flex: 1 1 auto;
+  height: 27px;
+  box-sizing: border-box;
+  border: 1px solid #d9d9d9;
+  border-top-color: #c0c0c0;
+  padding: 0 6px;
+  font: 13px arial, sans-serif;
+}
+.ugf-sbi-sbi .ugf-sbi-body input:focus {
+  outline: none;
+  border-color: #4d90fe;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.3);
+}
+.ugf-sbi-lens .ugf-sbi-body input:focus {
+  outline: none;
+  border-color: #4285f4;
+}
+.ugf-sbi-sbi .ugf-sbi-body button:not(.ugf-sbi-choose) {
+  height: 27px;
+  padding: 0 12px;
+  border: 1px solid #3079ed;
+  border-radius: 2px;
+  background: linear-gradient(#4d90fe, #4787ed);
+  color: #fff;
+  font: bold 11px arial, sans-serif;
+  cursor: pointer;
+}
+.ugf-sbi-sbi .ugf-sbi-choose {
+  all: revert;
+  font: 13px arial, sans-serif;
+}
+#ugf-sbi-panel.ugf-sbi-lens {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(32,33,36,.28);
+  padding: 20px;
+  font-family: arial, sans-serif;
+}
+.ugf-sbi-lens .ugf-sbi-title {
+  font-size: 16px;
+  color: #202124;
+  text-align: center;
+  margin-bottom: 16px;
+}
+.ugf-sbi-lens .ugf-sbi-drop {
+  border: 1px dashed #dadce0;
+  border-radius: 8px;
+  background: #f8f9fa;
+  padding: 28px 12px;
+  text-align: center;
+  color: #5f6368;
+}
+.ugf-sbi-lens .ugf-sbi-drop-icon {
+  color: #4285f4;
+  margin-bottom: 8px;
+}
+.ugf-sbi-lens .ugf-sbi-drop a {
+  color: #1a73e8 !important;
+  text-decoration: none !important;
+}
+.ugf-sbi-lens .ugf-sbi-or {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #70757a;
+  font-size: 13px;
+  margin: 14px 0;
+}
+.ugf-sbi-lens .ugf-sbi-or::before,
+.ugf-sbi-lens .ugf-sbi-or::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid #dadce0;
+}
+.ugf-sbi-lens .ugf-sbi-body {
+  display: flex;
+  gap: 8px;
+}
+.ugf-sbi-lens .ugf-sbi-body input {
+  flex: 1 1 auto;
+  height: 40px;
+  box-sizing: border-box;
+  border: 1px solid #dadce0;
+  border-radius: 20px;
+  padding: 0 16px;
+  font: 14px arial, sans-serif;
+}
+.ugf-sbi-lens .ugf-sbi-body button {
+  height: 40px;
+  padding: 0 22px;
+  border: 1px solid #dadce0;
+  border-radius: 20px;
+  background: #fff;
+  color: #1a73e8;
+  font: 500 14px arial, sans-serif;
+  cursor: pointer;
+}
+/* 2017-2018: rounded-rectangle search box era, not 2019 pills */
+html[layout="2017"] #ugf-sbi-panel.ugf-sbi-lens,
+html[layout^="2018"] #ugf-sbi-panel.ugf-sbi-lens,
+html[layout="2017"] .ugf-sbi-lens .ugf-sbi-drop,
+html[layout^="2018"] .ugf-sbi-lens .ugf-sbi-drop,
+html[layout="2017"] .ugf-sbi-lens .ugf-sbi-body input,
+html[layout^="2018"] .ugf-sbi-lens .ugf-sbi-body input,
+html[layout="2017"] .ugf-sbi-lens .ugf-sbi-body button,
+html[layout^="2018"] .ugf-sbi-lens .ugf-sbi-body button {
+  border-radius: 4px;
+}
+#ugf-sbi-panel.ugf-sbi-dragging {
+  outline: 2px dashed #4285f4;
 }
         </style>
         `;
@@ -10283,7 +11023,6 @@ html:not([home-vertical]) #ugf-hp-vertical-label {
     let tbs;
     let page = 1;
     let navbarText = "Search";
-    let tempQuery = window.location.href.split("q=");
     let location = "all";
     let layout = localStorage.getItem("UGF_LAYOUT");
     let structuredHP = localStorage.getItem("UGF_STRUCTURED_HOMEPAGE");
@@ -10522,6 +11261,21 @@ html:not([home-vertical]) #ugf-hp-vertical-label {
             break;
     }
     document.querySelector("html").setAttribute("location","all");
+    // Reverse image search (Google Lens) results live on /search with Lens parameters and no q.
+    // Gplex has no Lens UI, so these pages pass through untouched.
+    const ugfLensPage = (function() {
+        try {
+            const sp = new URLSearchParams(window.location.search);
+            return window.location.pathname.indexOf("/searchbyimage") === 0 ||
+                sp.has("vsrid") || sp.has("lns_mode") || sp.has("lns_surface") || sp.has("vsint") ||
+                /^lns/.test(sp.get("source") || "") ||
+                sp.get("udm") === "26" ||
+                /(^|,)sbi:/.test(sp.get("tbs") || "") ||
+                sp.has("imgurl") && !sp.get("q");
+        } catch (e) {
+            return false;
+        }
+    })();
     if (
         url.includes("tbm=isch") ||
         url.includes("udm=2")
@@ -10544,7 +11298,12 @@ html:not([home-vertical]) #ugf-hp-vertical-label {
         document.querySelector("html").setAttribute("location","news");
         document.querySelector("html").setAttribute("disabled","");
     }
-    if (url.includes("tbm=nws")) {
+    if (ugfLensPage) {
+        location = "lens";
+        document.querySelector("html").setAttribute("location","lens");
+        document.querySelector("html").setAttribute("disabled","");
+    }
+    if (url.includes("tbm=nws") && !ugfLensPage) {
         location = "news";
         document.querySelector("html").setAttribute("location","news");
         document.querySelector("html").setAttribute("news-results","");
@@ -10591,7 +11350,7 @@ html:not([home-vertical]) #ugf-hp-vertical-label {
     try {
         const sp0 = new URLSearchParams(window.location.search);
         const q0 = (sp0.get("q") || "").trim();
-        if (window.location.pathname === "/search" && !q0) {
+        if (window.location.pathname === "/search" && !q0 && !ugfLensPage) {
             const udm0 = sp0.get("udm") || "";
             const tbm0 = sp0.get("tbm") || "";
             if (udm0 === "2" || udm0 === "49" || tbm0 === "isch") {
@@ -10710,12 +11469,16 @@ html:not([home-vertical]) #ugf-hp-vertical-label {
         });
     }
     async function waitForElement10M(elm, parent) {
+        let tries = 0;
         while (null == elm) {
+            if (++tries > 200) {
+                return null;
+            }
             await new Promise(r => requestAnimationFrame(r));
         }
         await timeout(10).then(function() {
             canGo = true;
-            return parent.querySelector(elm);
+            return parent ? parent.querySelector(elm) : elm;
         });
     }
     async function waitForElement1000M(elm, parent) {
@@ -12290,6 +13053,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         !window.location.href.includes("https://www.google.com/recaptcha") &&
         !window.location.href.includes("imgres") &&
         !window.location.href.includes("tbm=shop") &&
+        !ugfLensPage &&
         !window.location.href.includes("tbm=bks")
     ) {
         doSetup(location);
@@ -12352,7 +13116,12 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 parseHTMLNeo(location);
             }
             else if (location == "images") {
+                let tries1 = 0;
                 let doInterval1 = setInterval(function() {
+                    if (++tries1 > 100) {
+                        clearInterval(doInterval1);
+                        return;
+                    }
                     let scripts = document.querySelectorAll("script");
                     //console.log(scripts);
                     scripts.forEach(itemRoot => {
@@ -12658,9 +13427,10 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                                 });
                             }
                         } else {
-                            var refdoc = itemRoot.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.getAttribute("data-ref-docid");
-                            var imgdoc = itemRoot.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.getAttribute("data-docid");
-                            var mera = itemRoot.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.querySelector("div:nth-child(3)");
+                            let cardRoot = itemRoot.closest("[data-docid]") || itemRoot.closest("[data-ref-docid]");
+                            var refdoc = cardRoot ? cardRoot.getAttribute("data-ref-docid") : "";
+                            var imgdoc = cardRoot ? cardRoot.getAttribute("data-docid") : "";
+                            var mera = cardRoot ? cardRoot.querySelector("div:nth-child(3)") : null;
                             var domain;
                             if (mera.querySelector("a")) {
                                 var link = mera.querySelector("a").getAttribute("href");
@@ -13882,32 +14652,44 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         }
     }
     // Inlined favicon SVGs (no Wikimedia hotlinking / HTTP 429). Credit: StonedKhajiit
-    const UGF_FAVICON_CLASSIC = "data:image/svg+xml;base64,PHN2ZwogICB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iCiAgIHhtbG5zOmNjPSJodHRwOi8vY3JlYXRpdmVjb21tb25zLm9yZy9ucyMiCiAgIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyIKICAgeG1sbnM6c3ZnPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICB2ZXJzaW9uPSIxLjEiCiAgIHdpZHRoPSI2NzQiCiAgIGhlaWdodD0iNjkyIgogICBpZD0ic3ZnMiI+PGRlZnMKICAgICBpZD0iZGVmczQiIC8+PHBhdGgKICAgICBkPSJtIDNlLTUsMzQ2IDAsLTM0NiAzMzcsMCAzMzcsMCAwLDM0NiAwLDM0NS45OTk5NyAtMzM3LDAgLTMzNywwIEwgM2UtNSwzNDYgeiIKICAgICBpZD0icGF0aDMwMjgiCiAgICAgc3R5bGU9ImZpbGw6I2ZmZmZmZjtmaWxsLW9wYWNpdHk6MSIKICAgICAgLz48cGF0aAogICAgIGQ9Im0gMzEyLjAwMDAzLDY4Ny40MDM2NyBjIDQ5LjEwNzYxLC0yNi4zNjE4IDg5LjI1MzY0LC02NS4wNTg5IDEwNy40NzAzNCwtMTAzLjU5MTQxIDkuODg0NSwtMjAuOTA3OTggMTMuMDAzMjYsLTM1LjEwNzYzIDEyLjkxNzMyLC01OC44MTIyNiAtMC4wNTY4LC0xNS42NjE5OSAtMC4zNDMxNCwtMTguNTUwMjkgLTIuNzI2NDksLTI3LjUgLTQuODM3MTMsLTE4LjE2MzkzIC0xMi45NTE2OSwtMzIuNTY5MTcgLTI2LjA2NzYsLTQ2LjI3NjA1IC0xNy4xMDY4NCwtMTcuODc3NjQgLTM3LjgxMDI1LC0yOS40MTU1IC02NC45Njc0NSwtMzYuMjA1ODkgLTIyLjg1OTU2LC01LjcxNTggLTU5LjQ3Nzg1LC04LjU3MDU5IC0xNDEuMTI2MTIsLTExLjAwMjI3IEMgMTExLjcyMzQ3LDQwMS40NjExNiA5Ni4wNzMxMiw0MDAuNDQ4NzggODAuMTQwOSwzOTYuNDI0MDggNjMuMjQ0OTksMzkyLjE1NTk0IDUzLjAzODk5LDM4NC4zNTQxMSA0OS45NTg0NiwzNzMuMzUxNTQgNDcuNDkzMTYsMzY0LjU0NjMzIDUxLjkxNDk5LDM0OS42NDI5NyA2MS4xOTYzMywzMzUuNDc1MzggNjcuNDExOTcsMzI1Ljk4NzQ0IDg3Ljc2NzgsMzA1IDkwLjc1NDU2LDMwNSBjIDEuMTE2NjcsMCA3LjU5MTIyLDEuMzE0NzkgMTQuMzg3ODksMi45MjE3NSA0My4yNDg2OCwxMC4yMjU0NSA4OC4xMzQyNywxMC4wNzI0IDEyOS4wNjM2NSwtMC40NDAxIDM0Ljg4MTAzLC04Ljk1OTAxIDY2LjAxODA4LC0yNy4zOTA4OSA4OS4zNjQ0MywtNTIuOTAwMTUgMjcuNTAwNzksLTMwLjA0ODU5IDQxLjU1NDY0LC02My44MDMgNDMuMTI2NzgsLTEwMy41ODE1IDEuNDg3MDEsLTM3LjYyNDQ4IC03LjA1MDUxLC03Mi4zMzg3MiAtMjQuMjE5NjksLTk4LjQ3OTI5IC0yLjQ2MjY4LC0zLjc0OTQ5IC00LjQ3NzU5LC03LjIwMDUzIC00LjQ3NzU5LC03LjY2ODk4IDAsLTAuNDY4NDUgMTYuMDg3NSwtMC44NzcwMiAzNS43NSwtMC45MDc5MyAxOS42NjI1LC0wLjAzMDkgNDAuMzc0OTYsLTAuNDAyMzUgNDYuMDI3NjksLTAuODI1NDIgMTYuMDk1MDUsLTEuMjA0NjEgMTguMjczNzgsLTMuNzQxNyAxOC45NTI5OCwtMjIuMDcwMzUgMC4zMTE5NiwtOC40MTgyIDAuMDI2NCwtMTIuODM1NDEgLTEuMDUzNSwtMTYuMjk4MDMgTCA0MzYuMTk1NzcsMCA1NTUuMDk3OSwwIGwgMTE4LjkwMjEzLDAgMCwzNDYgMCwzNDUuOTk5OTcgLTE4NS4yNSwtMC4wMTcgLTE4NS4yNSwtMC4wMTcgOC41LC00LjU2MjkgeiBtIC0xNTUsLTMzLjQ0NDUgQyAxMDIuODc4Nyw2NDguOTkzNDcgNjQuMDc0OTcsNjM3LjQzNzk3IDM1LjIyODAzLDYxNy42OTY0NyAyMi40MjY5NSw2MDguOTM1OTcgMTMuODM1MTEsNTk4LjEyMDI3IDEwLjQ2MzQxLDU4Ni41MjIwMiA4LjI3MzczLDU3OC45ODk4IDguOTM5NTgsNTY0Ljg0ODg4IDExLjk5NDc1LDU1NCAxNy4zMjMxOCw1MzUuMDc4ODQgMzUuMjA5ODYsNTA0Ljg4MDgxIDUzLjA4NDM2LDQ4NC42Mjg1IGwgNC4yOTk1NSwtNC44NzE1MSA2LjA1ODA2LDAuNTQzMDkgYyAzLjMzMTkzLDAuMjk4NyAxNS41MDgwNiwxLjQ2NTIxIDI3LjA1ODA2LDIuNTkyMjMgMzguMDEzNzQsMy43MDkzMiA4My45OTc0OCw2LjIzOTA5IDE0Ny41LDguMTE0NjYgNzguMDU0MTksMi4zMDUzNiAxMTAuNzIxMDIsNi41ODgzMiAxMzEuMjUyODYsMTcuMjA4NjMgMTcuODkxMSw5LjI1NDM1IDI2LjA0NTU5LDI1LjgwODcyIDIzLjAwMTM5LDQ2LjY5NDk1IC0yLjQ4MTIyLDE3LjAyMzY1IC0xMS4yOTc2NywzMy4wMzEyMyAtMjYuNzU0MjUsNDguNTc2MzIgLTIzLjE3ODM2LDIzLjMxMTEgLTUwLjY5ODE0LDM3LjM4OSAtODcuNzk0OTYsNDQuOTEyMiAtMjQuODA1MjgsNS4wMzA0IC0zNC44MTI5Miw1Ljg2MDUgLTc0LjIwNTA0LDYuMTU1MSAtMjAuMzUsMC4xNTIxIC00MS4yNzUsLTAuMTE1NiAtNDYuNSwtMC41OTUgeiBtIC0xNTcsLTE3My45Mzk1MyAwLC0yMi45ODAzNSAxMi43NSw4LjYyODI0IGMgNy4wMTI1LDQuNzQ1NTMgMTIuODk0NCw4Ljk5NDg4IDEzLjA3MDg4LDkuNDQzIEMgMjYuMTExNyw0NzUuODQ4ODcgMS4zNzI4NSw1MDMgMC40MDkzMiw1MDMgMC4xODQyMSw1MDMgM2UtNSw0OTIuNjU4ODQgM2UtNSw0ODAuMDE5NjQgeiBNIDAuMDE5NjMsMjk3LjgzNjA3IDAuMDM5MjMsMjQyLjUgMy43NTI1NCwyNDcgYyAxMi4yMjM3MywxNC44MTM0MyAyNy4zMzA3MywyNy43MTg4NiA0My45Mjk1OCwzNy41Mjc2NiA1Ljk0OTg4LDMuNTE1OTggMTEuNjU2NjksNi45ODYxNCAxMi42ODE4LDcuNzExNDggMS43MTA1MywxLjIxMDMyIDAuNTUwNzgsMi40ODQ4NiAtMTQuMDk5OTcsMTUuNDk1NTggLTguNzgwMDksNy43OTcyNCAtMjIuNzgxMzEsMjEuMjEwNDMgLTMxLjExMzgzLDI5LjgwNzExIEwgOWUtNSwzNTMuMTcyMTQgMC4wMTk2OSwyOTcuODM2MDcgeiBtIDE1NC40ODA0MywtMTIuMzU5NSBDIDEyNC45MjcyMSwyNzguOTU3NjggMTAyLjAzMzIyLDI1OS41NTQ4IDg1LjE1NzM3LDIyNi43MDc5OCA3Ni4wNjE4NiwyMDkuMDA0NjQgNjkuODA4NzMsMTg4LjMyNTAyIDY1LjgzMTg1LDE2Mi43OTY4NiA2Mi44MzMwMSwxNDMuNTQ2ODMgNjIuNTMxNyw5NS40MTA4NSA2NS4zMTA0Niw3OS41IDcxLjU3MDE1LDQzLjY1NzYyIDgzLjQwNDE2LDIxLjI5MjYzIDEwNS4zMzk4NiwzLjg0ODc0IEwgMTEwLjE3OTY2LDAgbCA0OS44MjA0LDAgNDkuODIwNCwwIDQuODM5OCwzLjg0MiBjIDE3LjU5NzM4LDEzLjk2OTQzIDMzLjMyMzYzLDM3LjgzNjMyIDQyLjY1NzA0LDY0LjczODM1IDE3LjYxODcxLDUwLjc4MzA1IDE4LjE2NTAzLDEyMy41Mjc1NiAxLjIyMjE4LDE2Mi43MzgxOSAtNS4yODQwNywxMi4yMjg4NyAtOS4zNzM2NCwxOC40MDc2MyAtMTguNTI3MDEsMjcuOTkxNjcgLTEzLjYxODMyLDE0LjI1OTA2IC0yNy45MDY2LDIyLjMyNzk2IC00Ni4yMjAyNSwyNi4xMDE1NiAtOS4zNzM5NiwxLjkzMTU0IC0zMC42NjQ0MywxLjk2NjY1IC0zOS4yOTIxNiwwLjA2NDggeiBNIDZlLTUsMTguNSA2ZS01LDAgMTguMjEwNjksMCAzNi40MjEzMiwwIDI5LjAwMzI1LDYuNzUgQyAxOS45MjI2NiwxNS4wMTI3OSAxMC41NzA0MywyNC43NTYwMSA1LjAwNjQ4LDMxLjc1IDIuNzA5MzcsMzQuNjM3NSAwLjY0MzIxLDM3IDAuNDE0OTksMzcgMC4xODY3OCwzNyA2ZS01LDI4LjY3NSA2ZS01LDE4LjUgeiIKICAgICBpZD0icGF0aDMwMjYiCiAgICAgc3R5bGU9ImZpbGw6I2ZmZGQwNDtmaWxsLW9wYWNpdHk6MSIKICAgICAgLz48cGF0aAogICAgIGQ9Im0gMzEyLjAwMDAzLDY4Ny40MDM2NyBjIDQ5LjEwNzYxLC0yNi4zNjE4IDg5LjI1MzY0LC02NS4wNTg5IDEwNy40NzAzNCwtMTAzLjU5MTQxIDkuODg0NSwtMjAuOTA3OTggMTMuMDAzMjYsLTM1LjEwNzYzIDEyLjkxNzMyLC01OC44MTIyNiAtMC4wNTY4LC0xNS42NjE5OSAtMC4zNDMxNCwtMTguNTUwMjkgLTIuNzI2NDksLTI3LjUgLTQuODM3MTMsLTE4LjE2MzkzIC0xMi45NTE2OSwtMzIuNTY5MTcgLTI2LjA2NzYsLTQ2LjI3NjA1IC0xNy4xMDY4NCwtMTcuODc3NjQgLTM3LjgxMDI1LC0yOS40MTU1IC02NC45Njc0NSwtMzYuMjA1ODkgLTIyLjg1OTU2LC01LjcxNTggLTU5LjQ3Nzg1LC04LjU3MDU5IC0xNDEuMTI2MTIsLTExLjAwMjI3IEMgMTExLjcyMzQ3LDQwMS40NjExNiA5Ni4wNzMxMiw0MDAuNDQ4NzggODAuMTQwOSwzOTYuNDI0MDggNjMuMjQ0OTksMzkyLjE1NTk0IDUzLjAzODk5LDM4NC4zNTQxMSA0OS45NTg0NiwzNzMuMzUxNTQgNDcuNDkzMTYsMzY0LjU0NjMzIDUxLjkxNDk5LDM0OS42NDI5NyA2MS4xOTYzMywzMzUuNDc1MzggNjcuNDExOTcsMzI1Ljk4NzQ0IDg3Ljc2NzgsMzA1IDkwLjc1NDU2LDMwNSBjIDEuMTE2NjcsMCA3LjU5MTIyLDEuMzE0NzkgMTQuMzg3ODksMi45MjE3NSA0My4yNDg2OCwxMC4yMjU0NSA4OC4xMzQyNywxMC4wNzI0IDEyOS4wNjM2NSwtMC40NDAxIDM0Ljg4MTAzLC04Ljk1OTAxIDY2LjAxODA4LC0yNy4zOTA4OSA4OS4zNjQ0MywtNTIuOTAwMTUgMjcuNTAwNzksLTMwLjA0ODU5IDQxLjU1NDY0LC02My44MDMgNDMuMTI2NzgsLTEwMy41ODE1IDEuNDg3MDEsLTM3LjYyNDQ4IC03LjA1MDUxLC03Mi4zMzg3MiAtMjQuMjE5NjksLTk4LjQ3OTI5IC0yLjQ2MjY4LC0zLjc0OTQ5IC00LjQ3NzU5LC03LjIwMDUzIC00LjQ3NzU5LC03LjY2ODk4IDAsLTAuNDY4NDUgMTYuMDg3NSwtMC44NzcwMiAzNS43NSwtMC45MDc5MyAxOS42NjI1LC0wLjAzMDkgNDAuMzc0OTYsLTAuNDAyMzUgNDYuMDI3NjksLTAuODI1NDIgMTYuMDk1MDUsLTEuMjA0NjEgMTguMjczNzgsLTMuNzQxNyAxOC45NTI5OCwtMjIuMDcwMzUgMC4zMTE5NiwtOC40MTgyIDAuMDI2NCwtMTIuODM1NDEgLTEuMDUzNSwtMTYuMjk4MDMgTCA0MzYuMTk1NzcsMCA1NTUuMDk3OSwwIGwgMTE4LjkwMjEzLDAgMCwzNDYgMCwzNDUuOTk5OTcgLTE4NS4yNSwtMC4wMTcgLTE4NS4yNSwtMC4wMTcgOC41LC00LjU2MjkgeiBtIC0zMTIsLTIwNy4zODQwMyAwLC0yMi45ODAzNSAxMi43NSw4LjYyODI0IGMgNy4wMTI1LDQuNzQ1NTMgMTIuODk0NCw4Ljk5NDg4IDEzLjA3MDg4LDkuNDQzIEMgMjYuMTExNyw0NzUuODQ4ODcgMS4zNzI4NSw1MDMgMC40MDkzMiw1MDMgMC4xODQyMSw1MDMgM2UtNSw0OTIuNjU4ODQgM2UtNSw0ODAuMDE5NjQgeiBNIDAuMDE5NjMsMjk3LjgzNjA3IDAuMDM5MjMsMjQyLjUgMy43NTI1NCwyNDcgYyAxMi4yMjM3MywxNC44MTM0MyAyNy4zMzA3MywyNy43MTg4NiA0My45Mjk1OCwzNy41Mjc2NiA1Ljk0OTg4LDMuNTE1OTggMTEuNjU2NjksNi45ODYxNCAxMi42ODE4LDcuNzExNDggMS43MTA1MywxLjIxMDMyIDAuNTUwNzgsMi40ODQ4NiAtMTQuMDk5OTcsMTUuNDk1NTggLTguNzgwMDksNy43OTcyNCAtMjIuNzgxMzEsMjEuMjEwNDMgLTMxLjExMzgzLDI5LjgwNzExIEwgOWUtNSwzNTMuMTcyMTQgMC4wMTk2OSwyOTcuODM2MDcgeiBtIDE1NC40ODA0MywtMTIuMzU5NSBDIDEyNC45MjcyMSwyNzguOTU3NjggMTAyLjAzMzIyLDI1OS41NTQ4IDg1LjE1NzM3LDIyNi43MDc5OCA3Ni4wNjE4NiwyMDkuMDA0NjQgNjkuODA4NzMsMTg4LjMyNTAyIDY1LjgzMTg1LDE2Mi43OTY4NiA2Mi44MzMwMSwxNDMuNTQ2ODMgNjIuNTMxNyw5NS40MTA4NSA2NS4zMTA0Niw3OS41IDcxLjU3MDE1LDQzLjY1NzYyIDgzLjQwNDE2LDIxLjI5MjYzIDEwNS4zMzk4NiwzLjg0ODc0IEwgMTEwLjE3OTY2LDAgbCA0OS44MjA0LDAgNDkuODIwNCwwIDQuODM5OCwzLjg0MiBjIDE3LjU5NzM4LDEzLjk2OTQzIDMzLjMyMzYzLDM3LjgzNjMyIDQyLjY1NzA0LDY0LjczODM1IDE3LjYxODcxLDUwLjc4MzA1IDE4LjE2NTAzLDEyMy41Mjc1NiAxLjIyMjE4LDE2Mi43MzgxOSAtNS4yODQwNywxMi4yMjg4NyAtOS4zNzM2NCwxOC40MDc2MyAtMTguNTI3MDEsMjcuOTkxNjcgLTEzLjYxODMyLDE0LjI1OTA2IC0yNy45MDY2LDIyLjMyNzk2IC00Ni4yMjAyNSwyNi4xMDE1NiAtOS4zNzM5NiwxLjkzMTU0IC0zMC42NjQ0MywxLjk2NjY1IC0zOS4yOTIxNiwwLjA2NDggeiBNIDZlLTUsMTguNSA2ZS01LDAgMTguMjEwNjksMCAzNi40MjEzMiwwIDI5LjAwMzI1LDYuNzUgQyAxOS45MjI2NiwxNS4wMTI3OSAxMC41NzA0MywyNC43NTYwMSA1LjAwNjQ4LDMxLjc1IDIuNzA5MzcsMzQuNjM3NSAwLjY0MzIxLDM3IDAuNDE0OTksMzcgMC4xODY3OCwzNyA2ZS01LDI4LjY3NSA2ZS01LDE4LjUgeiIKICAgICBpZD0icGF0aDMwMjQiCiAgICAgc3R5bGU9ImZpbGw6I2VkMWE0YjtmaWxsLW9wYWNpdHk6MSIKICAgICAgLz48cGF0aAogICAgIGQ9Im0gMzEyLjAwMDAzLDY4Ny40MDM2NyBjIDQ5LjEwNzYxLC0yNi4zNjE4IDg5LjI1MzY0LC02NS4wNTg5IDEwNy40NzAzNCwtMTAzLjU5MTQxIDkuODg0NSwtMjAuOTA3OTggMTMuMDAzMjYsLTM1LjEwNzYzIDEyLjkxNzMyLC01OC44MTIyNiAtMC4wNTY4LC0xNS42NjE5OSAtMC4zNDMxNCwtMTguNTUwMjkgLTIuNzI2NDksLTI3LjUgLTQuODM3MTMsLTE4LjE2MzkzIC0xMi45NTE2OSwtMzIuNTY5MTcgLTI2LjA2NzYsLTQ2LjI3NjA1IC0xNy4xMDY4NCwtMTcuODc3NjQgLTM3LjgxMDI1LC0yOS40MTU1IC02NC45Njc0NSwtMzYuMjA1ODkgLTIyLjg1OTU2LC01LjcxNTggLTU5LjQ3Nzg1LC04LjU3MDU5IC0xNDEuMTI2MTIsLTExLjAwMjI3IEMgMTExLjcyMzQ3LDQwMS40NjExNiA5Ni4wNzMxMiw0MDAuNDQ4NzggODAuMTQwOSwzOTYuNDI0MDggNjMuMjQ0OTksMzkyLjE1NTk0IDUzLjAzODk5LDM4NC4zNTQxMSA0OS45NTg0NiwzNzMuMzUxNTQgNDcuNDkzMTYsMzY0LjU0NjMzIDUxLjkxNDk5LDM0OS42NDI5NyA2MS4xOTYzMywzMzUuNDc1MzggNjcuNDExOTcsMzI1Ljk4NzQ0IDg3Ljc2NzgsMzA1IDkwLjc1NDU2LDMwNSBjIDEuMTE2NjcsMCA3LjU5MTIyLDEuMzE0NzkgMTQuMzg3ODksMi45MjE3NSA0My4yNDg2OCwxMC4yMjU0NSA4OC4xMzQyNywxMC4wNzI0IDEyOS4wNjM2NSwtMC40NDAxIDI2LjI0ODIyLC02Ljc0MTcxIDUxLjg4MDUyLC0xOS42MTE1MiA3MS41MDk2NywtMzUuOTA0NTIgbCA2LjMwNjMxLC01LjIzNDQ5IDEyLjczODk3LC0yLjE3ODc3IGMgNDAuOTQxODMsLTcuMDAyMzQgNjAuMzczNjcsLTguNTk4MyAxMDQuMjM4OTgsLTguNTYxMjMgMzcuOTg4NjEsMC4wMzIxIDUyLjUyODk3LDAuOTc5MzEgODQsNS40NzIwMiA1My43ODA0OSw3LjY3NzU1IDEwMy42NDA4NiwyMi44OTUxOSAxNDYuMjUsNDQuNjM2MjcgbCAxNC43NSw3LjUyNjEgMCwxODkuMzgxNDggMCwxODkuMzgxNDYgLTE4NS4yNSwtMC4wMTcgLTE4NS4yNSwtMC4wMTcgOC41LC00LjU2MjkgeiBtIC0zMTIsLTIwNy4zODQwMyAwLC0yMi45ODAzNSAxMi43NSw4LjYyODI0IGMgNy4wMTI1LDQuNzQ1NTMgMTIuODk0NCw4Ljk5NDg4IDEzLjA3MDg4LDkuNDQzIEMgMjYuMTExNyw0NzUuODQ4ODcgMS4zNzI4NSw1MDMgMC40MDkzMiw1MDMgMC4xODQyMSw1MDMgM2UtNSw0OTIuNjU4ODQgM2UtNSw0ODAuMDE5NjQgeiBNIDAuMDE5NjMsMjk3LjgzNjA3IDAuMDM5MjMsMjQyLjUgMy43NTI1NCwyNDcgYyAxMi4yMjM3MywxNC44MTM0MyAyNy4zMzA3MywyNy43MTg4NiA0My45Mjk1OCwzNy41Mjc2NiA1Ljk0OTg4LDMuNTE1OTggMTEuNjU2NjksNi45ODYxNCAxMi42ODE4LDcuNzExNDggMS43MTA1MywxLjIxMDMyIDAuNTUwNzgsMi40ODQ4NiAtMTQuMDk5OTcsMTUuNDk1NTggLTguNzgwMDksNy43OTcyNCAtMjIuNzgxMzEsMjEuMjEwNDMgLTMxLjExMzgzLDI5LjgwNzExIEwgOWUtNSwzNTMuMTcyMTQgMC4wMTk2OSwyOTcuODM2MDcgeiBtIDE1NC40ODA0MywtMTIuMzU5NSBDIDEyNC45MjcyMSwyNzguOTU3NjggMTAyLjAzMzIyLDI1OS41NTQ4IDg1LjE1NzM3LDIyNi43MDc5OCA3Ni4wNjE4NiwyMDkuMDA0NjQgNjkuODA4NzMsMTg4LjMyNTAyIDY1LjgzMTg1LDE2Mi43OTY4NiA2Mi44MzMwMSwxNDMuNTQ2ODMgNjIuNTMxNyw5NS40MTA4NSA2NS4zMTA0Niw3OS41IDcxLjU3MDE1LDQzLjY1NzYyIDgzLjQwNDE2LDIxLjI5MjYzIDEwNS4zMzk4NiwzLjg0ODc0IEwgMTEwLjE3OTY2LDAgbCA0OS44MjA0LDAgNDkuODIwNCwwIDQuODM5OCwzLjg0MiBjIDE3LjU5NzM4LDEzLjk2OTQzIDMzLjMyMzYzLDM3LjgzNjMyIDQyLjY1NzA0LDY0LjczODM1IDE3LjYxODcxLDUwLjc4MzA1IDE4LjE2NTAzLDEyMy41Mjc1NiAxLjIyMjE4LDE2Mi43MzgxOSAtNS4yODQwNywxMi4yMjg4NyAtOS4zNzM2NCwxOC40MDc2MyAtMTguNTI3MDEsMjcuOTkxNjcgLTEzLjYxODMyLDE0LjI1OTA2IC0yNy45MDY2LDIyLjMyNzk2IC00Ni4yMjAyNSwyNi4xMDE1NiAtOS4zNzM5NiwxLjkzMTU0IC0zMC42NjQ0MywxLjk2NjY1IC0zOS4yOTIxNiwwLjA2NDggeiBNIDZlLTUsMTguNSA2ZS01LDAgMTguMjEwNjksMCAzNi40MjEzMiwwIDI5LjAwMzI1LDYuNzUgQyAxOS45MjI2NiwxNS4wMTI3OSAxMC41NzA0MywyNC43NTYwMSA1LjAwNjQ4LDMxLjc1IDIuNzA5MzcsMzQuNjM3NSAwLjY0MzIxLDM3IDAuNDE0OTksMzcgMC4xODY3OCwzNyA2ZS01LDI4LjY3NSA2ZS01LDE4LjUgeiIKICAgICBpZD0icGF0aDMwMjIiCiAgICAgc3R5bGU9ImZpbGw6IzAwN2RjNztmaWxsLW9wYWNpdHk6MSIKICAgICAgLz48cGF0aAogICAgIGQ9Im0gMzEyLjAwMDAzLDY4Ny40MDM2NyBjIDQ5LjEwNzYxLC0yNi4zNjE4IDg5LjI1MzY0LC02NS4wNTg5IDEwNy40NzAzNCwtMTAzLjU5MTQxIDkuODg0NSwtMjAuOTA3OTggMTMuMDAzMjYsLTM1LjEwNzYzIDEyLjkxNzMyLC01OC44MTIyNiAtMC4wNTY4LC0xNS42NjE5OSAtMC4zNDMxNCwtMTguNTUwMjkgLTIuNzI2NDksLTI3LjUgLTQuODM3MTMsLTE4LjE2MzkzIC0xMi45NTE2OSwtMzIuNTY5MTcgLTI2LjA2NzYsLTQ2LjI3NjA1IC0xNy4xMDY4NCwtMTcuODc3NjQgLTM3LjgxMDI1LC0yOS40MTU1IC02NC45Njc0NSwtMzYuMjA1ODkgLTIyLjg1OTU2LC01LjcxNTggLTU5LjQ3Nzg1LC04LjU3MDU5IC0xNDEuMTI2MTIsLTExLjAwMjI3IEMgMTExLjcyMzQ3LDQwMS40NjExNiA5Ni4wNzMxMiw0MDAuNDQ4NzggODAuMTQwOSwzOTYuNDI0MDggNjMuMjQ0OTksMzkyLjE1NTk0IDUzLjAzODk5LDM4NC4zNTQxMSA0OS45NTg0NiwzNzMuMzUxNTQgNDcuNDkzMTYsMzY0LjU0NjMzIDUxLjkxNDk5LDM0OS42NDI5NyA2MS4xOTYzMywzMzUuNDc1MzggNjcuNDExOTcsMzI1Ljk4NzQ0IDg3Ljc2NzgsMzA1IDkwLjc1NDU2LDMwNSBjIDEuMTE2NjcsMCA3LjU5MTIyLDEuMzE0NzkgMTQuMzg3ODksMi45MjE3NSA0My4yNDg2OCwxMC4yMjU0NSA4OC4xMzQyNywxMC4wNzI0IDEyOS4wNjM2NSwtMC40NDAxIDI2LjI0ODIyLC02Ljc0MTcxIDUxLjg4MDUyLC0xOS42MTE1MiA3MS41MDk2NywtMzUuOTA0NTIgbCA2LjMwNjMxLC01LjIzNDQ5IDEyLjczODk3LC0yLjE3ODc3IGMgNDAuOTQxODMsLTcuMDAyMzQgNjAuMzczNjcsLTguNTk4MyAxMDQuMjM4OTgsLTguNTYxMjMgMzcuOTg4NjEsMC4wMzIxIDUyLjUyODk3LDAuOTc5MzEgODQsNS40NzIwMiA1My43ODA0OSw3LjY3NzU1IDEwMy42NDA4NiwyMi44OTUxOSAxNDYuMjUsNDQuNjM2MjcgbCAxNC43NSw3LjUyNjEgMCwxODkuMzgxNDggMCwxODkuMzgxNDYgLTE4NS4yNSwtMC4wMTcgLTE4NS4yNSwtMC4wMTcgOC41LC00LjU2MjkgeiBtIC0zMTIsLTIwNy4zODQwMyAwLC0yMi45ODAzNSAxMi43NSw4LjYyODI0IGMgNy4wMTI1LDQuNzQ1NTMgMTIuODk0NCw4Ljk5NDg4IDEzLjA3MDg4LDkuNDQzIEMgMjYuMTExNyw0NzUuODQ4ODcgMS4zNzI4NSw1MDMgMC40MDkzMiw1MDMgMC4xODQyMSw1MDMgM2UtNSw0OTIuNjU4ODQgM2UtNSw0ODAuMDE5NjQgeiBNIDAuMDE5NjMsMjk3LjgzNjA3IDAuMDM5MjMsMjQyLjUgMy43NTI1NCwyNDcgYyAxMi4yMjM3MywxNC44MTM0MyAyNy4zMzA3MywyNy43MTg4NiA0My45Mjk1OCwzNy41Mjc2NiA1Ljk0OTg4LDMuNTE1OTggMTEuNjU2NjksNi45ODYxNCAxMi42ODE4LDcuNzExNDggMS43MTA1MywxLjIxMDMyIDAuNTUwNzgsMi40ODQ4NiAtMTQuMDk5OTcsMTUuNDk1NTggLTguNzgwMDksNy43OTcyNCAtMjIuNzgxMzEsMjEuMjEwNDMgLTMxLjExMzgzLDI5LjgwNzExIEwgOWUtNSwzNTMuMTcyMTQgMC4wMTk2OSwyOTcuODM2MDcgeiBtIDE1NC40ODA0MywtMTIuMzU5NSBDIDEyNC45MjcyMSwyNzguOTU3NjggMTAyLjAzMzIyLDI1OS41NTQ4IDg1LjE1NzM3LDIyNi43MDc5OCA3Ni4wNjE4NiwyMDkuMDA0NjQgNjkuODA4NzMsMTg4LjMyNTAyIDY1LjgzMTg1LDE2Mi43OTY4NiA2Mi44MzMwMSwxNDMuNTQ2ODMgNjIuNTMxNyw5NS40MTA4NSA2NS4zMTA0Niw3OS41IDcxLjU3MDE1LDQzLjY1NzYyIDgzLjQwNDE2LDIxLjI5MjYzIDEwNS4zMzk4NiwzLjg0ODc0IEwgMTEwLjE3OTY2LDAgbCA0OS44MjA0LDAgNDkuODIwNCwwIDQuODM5OCwzLjg0MiBjIDE3LjU5NzM4LDEzLjk2OTQzIDMzLjMyMzYzLDM3LjgzNjMyIDQyLjY1NzA0LDY0LjczODM1IDE3LjYxODcxLDUwLjc4MzA1IDE4LjE2NTAzLDEyMy41Mjc1NiAxLjIyMjE4LDE2Mi43MzgxOSAtNS4yODQwNywxMi4yMjg4NyAtOS4zNzM2NCwxOC40MDc2MyAtMTguNTI3MDEsMjcuOTkxNjcgLTEzLjYxODMyLDE0LjI1OTA2IC0yNy45MDY2LDIyLjMyNzk2IC00Ni4yMjAyNSwyNi4xMDE1NiAtOS4zNzM5NiwxLjkzMTU0IC0zMC42NjQ0MywxLjk2NjY1IC0zOS4yOTIxNiwwLjA2NDggeiBNIDZlLTUsMTguNSA2ZS01LDAgMTguMjEwNjksMCAzNi40MjEzMiwwIDI5LjAwMzI1LDYuNzUgQyAxOS45MjI2NiwxNS4wMTI3OSAxMC41NzA0MywyNC43NTYwMSA1LjAwNjQ4LDMxLjc1IDIuNzA5MzcsMzQuNjM3NSAwLjY0MzIxLDM3IDAuNDE0OTksMzcgMC4xODY3OCwzNyA2ZS01LDI4LjY3NSA2ZS01LDE4LjUgeiIKICAgICBpZD0icGF0aDMwMjAiCiAgICAgc3R5bGU9ImZpbGw6IzA2YTk0ZTtmaWxsLW9wYWNpdHk6MSIKICAgICAgLz48L3N2Zz4=";
-    const UGF_FAVICON_2009 = "data:image/svg+xml;base64,PHN2ZwogICB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iCiAgIHhtbG5zOmNjPSJodHRwOi8vY3JlYXRpdmVjb21tb25zLm9yZy9ucyMiCiAgIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyIKICAgeG1sbnM6c3ZnPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIKICAgd2lkdGg9IjUwIgogICBoZWlnaHQ9IjUwIgogICBpZD0ic3ZnMiIKICAgdmVyc2lvbj0iMS4xIgogICBzdHlsZT0iZGlzcGxheTppbmxpbmUiPjxkZWZzCiAgICAgaWQ9ImRlZnM0Ij48bGluZWFyR3JhZGllbnQKICAgICAgIGlkPSJsaW5lYXJHcmFkaWVudDMwNTkiPjxzdG9wCiAgICAgICAgIHN0eWxlPSJzdG9wLWNvbG9yOiMwMjhBMzg7c3RvcC1vcGFjaXR5OjEiCiAgICAgICAgIG9mZnNldD0iMCIKICAgICAgICAgaWQ9InN0b3AzMDYxIiAvPjxzdG9wCiAgICAgICAgIHN0eWxlPSJzdG9wLWNvbG9yOiMwMzc5MzI7c3RvcC1vcGFjaXR5OjEiCiAgICAgICAgIG9mZnNldD0iMSIKICAgICAgICAgaWQ9InN0b3AzMDYzIiAvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50CiAgICAgICBpZD0ibGluZWFyR3JhZGllbnQzMDUxIj48c3RvcAogICAgICAgICBzdHlsZT0ic3RvcC1jb2xvcjojYjIwNTA1O3N0b3Atb3BhY2l0eToxIgogICAgICAgICBvZmZzZXQ9IjAiCiAgICAgICAgIGlkPSJzdG9wMzA1MyIgLz48c3RvcAogICAgICAgICBzdHlsZT0ic3RvcC1jb2xvcjojZTcwMDAwO3N0b3Atb3BhY2l0eToxIgogICAgICAgICBvZmZzZXQ9IjEiCiAgICAgICAgIGlkPSJzdG9wMzA1NSIgLz48L2xpbmVhckdyYWRpZW50PjxsaW5lYXJHcmFkaWVudAogICAgICAgaWQ9ImxpbmVhckdyYWRpZW50NzY3MyI+PHN0b3AKICAgICAgICAgc3R5bGU9InN0b3AtY29sb3I6I2ZmZmZmZjtzdG9wLW9wYWNpdHk6MSIKICAgICAgICAgb2Zmc2V0PSIwIgogICAgICAgICBpZD0ic3RvcDc2NzUiIC8+PHN0b3AKICAgICAgICAgc3R5bGU9InN0b3AtY29sb3I6I2ZmZmZmZjtzdG9wLW9wYWNpdHk6MTsiCiAgICAgICAgIG9mZnNldD0iMSIKICAgICAgICAgaWQ9InN0b3A3Njc3IiAvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50CiAgICAgICBpZD0ibGluZWFyR3JhZGllbnQzNjc0Ij48c3RvcAogICAgICAgICBzdHlsZT0ic3RvcC1jb2xvcjojZmZmZmZmO3N0b3Atb3BhY2l0eToxOyIKICAgICAgICAgb2Zmc2V0PSIwIgogICAgICAgICBpZD0ic3RvcDM2NzYiIC8+PHN0b3AKICAgICAgICAgc3R5bGU9InN0b3AtY29sb3I6IzAwMDAwMDtzdG9wLW9wYWNpdHk6MDsiCiAgICAgICAgIG9mZnNldD0iMSIKICAgICAgICAgaWQ9InN0b3AzNjc4IiAvPjwvbGluZWFyR3JhZGllbnQ+PGxpbmVhckdyYWRpZW50CiAgICAgICBpZD0ibGluZWFyR3JhZGllbnQzNjQ1Ij48c3RvcAogICAgICAgICBzdHlsZT0ic3RvcC1jb2xvcjojZmZmZmZmO3N0b3Atb3BhY2l0eToxOyIKICAgICAgICAgb2Zmc2V0PSIwIgogICAgICAgICBpZD0ic3RvcDM2NDciIC8+PHN0b3AKICAgICAgICAgc3R5bGU9InN0b3AtY29sb3I6IzAwMDAwMDtzdG9wLW9wYWNpdHk6MC45NDczNjg0MiIKICAgICAgICAgb2Zmc2V0PSIxIgogICAgICAgICBpZD0ic3RvcDM2NDkiIC8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQKICAgICAgIHhsaW5rOmhyZWY9IiNsaW5lYXJHcmFkaWVudDMwNTEiCiAgICAgICBpZD0ibGluZWFyR3JhZGllbnQzMDU3IgogICAgICAgeDE9IjQ2NS4yMTY4IgogICAgICAgeTE9Ijc4Ny45NjcwNCIKICAgICAgIHgyPSI0NDIuMzQxOCIKICAgICAgIHkyPSI4MDIuOTY3MDQiCiAgICAgICBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgLz48bGluZWFyR3JhZGllbnQKICAgICAgIHhsaW5rOmhyZWY9IiNsaW5lYXJHcmFkaWVudDMwNTkiCiAgICAgICBpZD0ibGluZWFyR3JhZGllbnQzMDY1IgogICAgICAgeDE9IjQ1Mi40NjY4IgogICAgICAgeTE9IjgwMS40NjcwNCIKICAgICAgIHgyPSI0NTkuNzE2OCIKICAgICAgIHkyPSI4NDEuMjE3MDQiCiAgICAgICBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgLz48bGluZWFyR3JhZGllbnQKICAgICAgIHhsaW5rOmhyZWY9IiNsaW5lYXJHcmFkaWVudDMwNTEiCiAgICAgICBpZD0ibGluZWFyR3JhZGllbnQzMDc0IgogICAgICAgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICB4MT0iNDY1LjIxNjgiCiAgICAgICB5MT0iNzg3Ljk2NzA0IgogICAgICAgeDI9IjQ0Mi4zNDE4IgogICAgICAgeTI9IjgwMi45NjcwNCIgLz48bGluZWFyR3JhZGllbnQKICAgICAgIHhsaW5rOmhyZWY9IiNsaW5lYXJHcmFkaWVudDMwNTkiCiAgICAgICBpZD0ibGluZWFyR3JhZGllbnQzMDc2IgogICAgICAgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiCiAgICAgICB4MT0iNDUyLjQ2NjgiCiAgICAgICB5MT0iODAxLjQ2NzA0IgogICAgICAgeDI9IjQ1OS43MTY4IgogICAgICAgeTI9Ijg0MS4yMTcwNCIgLz48L2RlZnM+PGcKICAgICBpZD0ibGF5ZXIxMSIKICAgICBzdHlsZT0iZGlzcGxheTppbmxpbmUiCiAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTQzNi44MDAwMywtNDQ3LjU0OTg3KSIgLz48ZwogICAgIGlkPSJsYXllcjEiCiAgICAgc3R5bGU9ImRpc3BsYXk6aW5saW5lIgogICAgIHRyYW5zZm9ybT0idHJhbnNsYXRlKC00MTMuOTkxNzksLTc5MS41NjcwOSkiPjxnCiAgICAgICBpZD0iZzMwNjciCiAgICAgICB0cmFuc2Zvcm09Im1hdHJpeCgwLjkzOTYyMjY0LDAsMCwwLjkzOTYyMjY0LDI1LjAwMTc2OCw1MC44MDU1NikiPjxwYXRoCiAgICAgICAgIGlkPSJwYXRoMzA0NyIKICAgICAgICAgZD0ibSA0MjEuOTY2NzksNzg4LjQ2NzA5IGMgLTEuNDE0MzEsMS40MzYxIC0yLjUxOTY3LDQuMjA2NTMgLTEuNDY4NzUsMTAuNTYyNSAxLjczNzQ5LDEwLjUwODY2IDExLjE4NzUsOS4wNjI1IDExLjE4NzUsOS4wNjI1IDAsMCA4LjI1MTIyLC0xLjgwODY0IDQuMzEyNSwtMTMuNjI1IC0wLjk1NzcsLTIuODczMDYgLTIuMTgxMDYsLTQuNzU1MjEgLTMuNDY4NzUsLTYgbCAtMTAuNTYyNSwwIHoiCiAgICAgICAgIHN0eWxlPSJmaWxsOiMwMDYwYzM7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOmV2ZW5vZGQ7c3Ryb2tlOm5vbmUiIC8+PHBhdGgKICAgICAgICAgaWQ9InBhdGgzMDQ1IgogICAgICAgICBkPSJtIDQ0MC42NTQyOSw3ODguNDY3MDkgYyAwLjY5MzMxLDAuNzk1NTggMS40NDc5MywxLjc5NTkgMi4wMzEyNSwyLjk2ODc1IDAuNzgyNSwxLjU3Mjg4IDEuMjUwMDcsMy40NDc5NiAxLjI1LDUuNDA2MjUgMCwwLjkwNTggMC4wNTk1LDEuODcyNzggLTAuMjUsMi44MTI1IC0wLjUxMzQzLDEuNTU5ODEgLTAuOTA2MzYsMi41OTQ4NCAtMS40MDYyNSwzLjMxMjUgLTAuMTUyNTQsMC4yMTg5IC0wLjMxMjU3LDAuNDMwMDIgLTAuNDUxMTcsMC42MDcwMiAtMS4zNzcyNiwxLjc1ODg0IDEwLjIzODIsMi44NTczNiA3LjcyOTM5LDUuNzYzMTEgbCAxNy41MzQyOCwtNC45MTA2MyAwLC0xMC45NTk1IGMgMCwtMi43NzAwMSAtMi4yMjk5OSwtNSAtNSwtNSB6IgogICAgICAgICBzdHlsZT0iZmlsbDp1cmwoI2xpbmVhckdyYWRpZW50MzA3NCk7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOmV2ZW5vZGQ7c3Ryb2tlOm5vbmUiIC8+PHBhdGgKICAgICAgICAgaWQ9InBhdGgzMDQxIgogICAgICAgICBkPSJtIDQxNC4wOTE3OSw4MDMuNTI5NTkgMCwxOS4zNDM3NSBjIDUuOTI5MDQsLTQuNDEzMjMgMTUuNjU2MjUsLTQuMTg3NSAxNS42NTYyNSwtNC4xODc1IDAsMCAwLjQ1MzA1LC0wLjAzNCAtMC4xODc1LC0wLjc4MTI1IC0yLjY4Mjk0LC0zLjEzMDEyIC0xLjM0Mzc1LC03LjU2MjUgLTEuMzQzNzUsLTcuNTYyNSAwLDAgLTMuMzQ1MTgsMC40MTE4NiAtNi41LC0wLjQ2ODc1IC0xLjA0OTY0LC0wLjI5MzAyIC0zLjU5Mzc1LC0xLjc4MTI1IC0zLjU5Mzc1LC0xLjc4MTI1IDAsMCAtMi41Mzk1NCwtMS4zOTI3MiAtNC4wMzEyNSwtNC41NjI1IHoiCiAgICAgICAgIHN0eWxlPSJmaWxsOiMwMDYwYzM7ZmlsbC1vcGFjaXR5OjE7ZmlsbC1ydWxlOmV2ZW5vZGQ7c3Ryb2tlOm5vbmUiIC8+PHBhdGgKICAgICAgICAgaWQ9InJlY3QzMTI5IgogICAgICAgICBkPSJtIDQzMi41NjA1NCw4MjEuMDYwODQgYyAtMS42MzE3MSwwLjExMDE4IC0zLjI4NDI0LDAuMDE2IC00LjUzMTI1LDAuMTI1IC0zLjc0OTA5LDAuMzI2OTUgLTUuNzU1MzUsMC45NTIyNSAtNy43ODEyNSwyLjMxMjUgLTAuOTUyMDEsMC42MzkxNSAtMS45ODE3MSwxLjIxNDI3IC0yLjkwNjI1LDIuNDY4NzUgLTMuNjc1Niw0Ljk4NzAxIDEuMjkzNjgsMTAuNTM3NjggMi4xODc1LDExIDEuNzE5OTQsMC44ODkwOCA1LjIwNDYxLDIuNjc1MjUgOS44MTI1LDIuNjU2MjUgMS44NzQ4LC0wLjAwOCA0LjgzNTAyLC0wLjEwNzk5IDYuNTMxMjUsLTEgNS43NDU4MiwtMy4wMjE1MSA1LjY5OTIyLC01Ljc3NDI5IDQuOTA2MjUsLTkuNTYyNSAtMC43MDc3NSwtMy4zODExMyAtOC4yMTg3NSwtOCAtOC4yMTg3NSwtOCB6IgogICAgICAgICBzdHlsZT0iZmlsbDojZTRhYTBiO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpldmVub2RkO3N0cm9rZTpub25lIiAvPjxwYXRoCiAgICAgICAgIHN0eWxlPSJmaWxsOnVybCgjbGluZWFyR3JhZGllbnQzMDc2KTtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6ZXZlbm9kZDtzdHJva2U6bm9uZSIKICAgICAgICAgZD0ibSA0NDEuODM1OTksODAzLjU2ODM3IGMgLTEuMzcyNTMsMS43NDg3MSAtMi4xNzc2LDEuNjg1OTIgLTQuNjgxNyw0LjU4NjIyIC0xLjUxMzg5LDEuNzUzMTQgLTEuOTY4NCwyLjgyNDM4IC0yLDMuNjg3NSAtMC4wMjE2LDAuNjE4MDQgMC4wNzgxLDEuNDU0MiAwLjY4NzUsMi4wOTM3NSAwLjY0NTE4LDAuNjc3MDkgMS42NTQ2NSwxLjI2MDAzIDMuMDkzNzUsMi40Mzc1IDIuMzE2MDYsMS44OTQ5MiA0LjY4MTg0LDMuODM1NzYgNi4wNjI1LDYuMDkzNzUgMS40MTk5NiwyLjMyMTU4IDEuODExMzYsNC45Nzg5IDEuNDY4NzUsNy44MTI1IC0wLjQ3NDg4LDMuOTMwMjUgLTQuNDE4OTksOC43NTA0MiAtMTEuMDMxMjUsMTEuMTg3NSBsIDI2LjY1NjI1LDAgYyAyLjc3MDAxLDAgNSwtMi4yMjk5OSA1LC01IGwgMCwtMzMuMDM5MDIgYyAwLDAgLTcuMzEzODYsLTIuMDA5NzEgLTEyLjk2MTEzLC0yLjAwOTcxIC01Ljk4ODgsMCAtMTIuMjk0NjcsMi4xNTAwMSAtMTIuMjk0NjcsMi4xNTAwMSB6IgogICAgICAgICBpZD0icGF0aDMwNDkiIC8+PC9nPjwvZz48L3N2Zz4=";
-    const UGF_FAVICON_BLUE_G = "data:image/svg+xml;base64,PCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj48c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMzQxLjYgMzQxLjYiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDM0MS42IDM0MS42IiB4bWw6c3BhY2U9InByZXNlcnZlIj48bGluZWFyR3JhZGllbnQgaWQ9IlNWR0lEXzFfIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjcuNjU3OSIgeTE9IjQuOTI1NyIgeDI9IjMzNy43MjA3IiB5Mj0iMzQwLjUxNTkiPjxzdG9wICBvZmZzZXQ9IjAiIHN0eWxlPSJzdG9wLWNvbG9yOiM0NjhGRkMiLz48c3RvcCAgb2Zmc2V0PSIwLjIwOTEiIHN0eWxlPSJzdG9wLWNvbG9yOiMzQzg1RjUiLz48c3RvcCAgb2Zmc2V0PSIwLjY1IiBzdHlsZT0ic3RvcC1jb2xvcjojMkQ3NUVCIi8+PHN0b3AgIG9mZnNldD0iMSIgc3R5bGU9InN0b3AtY29sb3I6IzI4NzBFNyIvPjwvbGluZWFyR3JhZGllbnQ+PHBhdGggZmlsbD0idXJsKCNTVkdJRF8xXykiIGQ9Ik0wLDMyQzAsMTQuMywxNC4zLDAsMzIsMGgyNzcuN2MxNy43LDAsMzIsMTQuMywzMiwzMnYyNzcuN2MwLDE3LjctMTQuMywzMi0zMiwzMkgzMiBjLTE3LjcsMC0zMi0xNC4zLTMyLTMyVjMyeiIvPjxnPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0yNDEuNSw0OC44aC0yMi4yYzcuOSw2LjUsMjUuNSwyMC4xLDI1LjUsNDguOGMwLDI2LjItMTYuMSwzOS4xLTIzLjMsNDUuMmwtNi44LDUuN2MtNSw1LTEwLDkuNy0xMCwxNy42IGMwLDUuNCwyLjIsOSw5LjMsMTUuMWwxMi45LDEwYzMuNiwyLjksNy4yLDUuNywxMC40LDljMTIuOSwxMi4yLDE5LjcsMjMuNywxOS43LDQxLjZjMCw4LjMtMS44LDIxLjktMTQuNywzNyBjLTI2LjIsMzAuMS02OC41LDMwLjUtNzkuNywzMC41Yy01LjQsMC0zMi43LDAtNTIuOC0xMi4yYy02LjEtMy42LTI0LjQtMTYuMS0yNC40LTM5LjFjMC40LTE3LjIsMTAuNC0zMi4zLDI0LTQxLjYgYzE0LjctMTAuNCwzNC44LTE2LjUsNzIuMS0xOWMtMC43LTEuMS0xLjgtMi4yLTIuNS0zLjJjLTIuMi0yLjUtOC4zLTEwLjQtOC4zLTIxLjJjMC0zLjYsMC43LTYuOCwzLjItMTMuMyBjLTMuOSwwLjQtMTYuMSwxLjQtMjguMy0xLjhjLTI1LjEtNi41LTQyLjMtMjguMy00Mi4zLTU0LjVjMC0xOS40LDEwLjQtMzgsMjUuNS00OS45YzE5LTE0LjcsMzgtMTYuNSw2MC42LTE3LjZoNzUuNEwyNDEuNSw0OC44eiAgTTIwOS41LDIxOS43Yy01LjQtMy45LTEwLjQtNy45LTE1LjgtMTEuNWMtNi41LTAuNy0xMy4zLTAuNy0yNi4yLDAuN2MtMzcuMyw1LjQtNTAuNiwyMi42LTUwLjYsNDEuNmMwLDQuNywwLjcsMTMuMyw3LjksMjIuNiBjMTYuNSwyMS4yLDUwLjIsMjEuMiw1NS4zLDIxLjJjMTYuMSwwLDM2LjYtMy45LDQ2LjctMTljNS43LTguMyw2LjEtMTUuOCw2LjEtMTkuN2MwLTEzLjYtNy4yLTIxLjUtMTYuNS0zMC41TDIwOS41LDIxOS43eiAgTTIwMi43LDcyLjVjLTEwLjQtMTkuNy0yNS4xLTI0LjgtMzQuOC0yNC44Yy0zLjIsMC05LjcsMC43LTE2LjUsNC43Yy03LjUsNC4zLTE2LjUsMTMuNi0xNi41LDM0LjFjMCwxNy42LDcuOSw0Mi43LDIxLjksNTQuOSBjMy4yLDIuOSwxMS41LDguNiwyMy4zLDguNmM1LjcsMCwxMC44LTEuNCwxNi4xLTMuOWM3LjUtMy45LDE2LjUtMTEuOCwxNi45LTMwLjlDMjEzLjUsMTAxLjYsMjA5LjIsODQuNywyMDIuNyw3Mi41eiIvPjwvZz48L3N2Zz4=";
-    const UGF_FAVICON_FOUR_COLOUR = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0Ij48cGF0aCBkPSJNMjIuNTYgMTIuMjVjMC0uNzgtLjA3LTEuNTMtLjItMi4yNUgxMnY0LjI2aDUuOTJjLS4yNiAxLjM3LTEuMDQgMi41My0yLjIxIDMuMzF2Mi43N2gzLjU3YzIuMDgtMS45MiAzLjI4LTQuNzQgMy4yOC04LjA5eiIgZmlsbD0iIzQyODVGNCIvPjxwYXRoIGQ9Ik0xMiAyM2MyLjk3IDAgNS40Ni0uOTggNy4yOC0yLjY2bC0zLjU3LTIuNzdjLS45OC42Ni0yLjIzIDEuMDYtMy43MSAxLjA2LTIuODYgMC01LjI5LTEuOTMtNi4xNi00LjUzSDIuMTh2Mi44NEMzLjk5IDIwLjUzIDcuNyAyMyAxMiAyM3oiIGZpbGw9IiMzNEE4NTMiLz48cGF0aCBkPSJNNS44NCAxNC4wOWMtLjIyLS42Ni0uMzUtMS4zNi0uMzUtMi4wOXMuMTMtMS40My4zNS0yLjA5VjcuMDZIMi4xOEMxLjQzIDguNTUgMSAxMC4yMiAxIDEycy40MyAzLjQ1IDEuMTggNC45NGwyLjg1LTIuMjIuODEtLjYzeiIgZmlsbD0iI0ZCQkMwNSIvPjxwYXRoIGQ9Ik0xMiA1LjM4YzEuNjIgMCAzLjA2LjU2IDQuMjEgMS42NGwzLjE1LTMuMTVDMTcuNDUgMi4wOSAxNC45NyAxIDEyIDEgNy43IDEgMy45OSAzLjQ3IDIuMTggNy4wNmwzLjY2IDIuODRjLjg3LTIuNiAzLjMtNC41MiA2LjE2LTQuNTJ6IiBmaWxsPSIjRUE0MzM1Ii8+PC9zdmc+";
+    // Real 1999-2008 google.com favicon (16x16 .ico, from the Wayback Machine)
+    const UGF_FAVICON_1999 = "data:image/x-icon;base64,AAABAAEAEBAAAAAAAABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAwMDAAICAgAAAAP8AAP8AAAD//wD/AAAA/wD/AP//AAD///8A//3/AP39/wD6/f8A+P3/AP/8/wD9/P8A+vz/AP/7/wD/+v8A/vr/APz6/wD4+v8A+/n/APP5/wD/+P8A+vj/AO/4/wDm+P8A2fj/AP/3/wD/9v8A9vb/AP/1/wD69f8A9PT/AO30/wD/8/8A//L/APnx/wD28P8A///+APj//gD2//4A9P/+AOP//gD//f4A6f/9AP///AD2//wA8//8APf9/AD///sA/v/7AOD/+wD/+vsA9/X7APr/+gDv/voA///5AP/9+QD/+/kA+e35AP//+ADm//gA4f/4AP/9+AD0+/gA///3APv/9wDz//cA8f/3AO3/9wD/8fcA//32AP369gDr+vYA8f/1AOv/9QD/+/UA///0APP/9ADq//QA///zAP/18wD///IA/fzyAP//8QD///AA9//wAPjw8AD//+8A8//vAP//7gD9/+4A9v/uAP/u7gD//+0A9v/tAP7/6wD/+eoA///pAP//6AD2/+gA//nnAP/45wD38eYA/fblAP/25AD29uQA7N/hAPzm4AD/690AEhjdAAAa3AAaJdsA//LXAC8g1gANH9YA+dnTAP/n0gDh5dIADyjSABkk0gAdH9EABxDRAP/l0AAAJs4AGRTOAPPczQAAKs0AIi7MAA4UywD56soA8tPKANTSygD/18kA6NLHAAAjxwDj28QA/s7CAP/1wQDw3r8A/9e8APrSrwDCtqoAzamjANmPiQDQj4YA35mBAOmefgDHj3wA1qR6AO+sbwDpmm8A2IVlAKmEYgCvaFoAvHNXAEq2VgA5s1UAPbhQAFWtTwBStU0ARbNNAEGxTQA7tEwAObZIAEq5RwDKdEYAULhDANtuQgBEtTwA1ls3ALhgMQCxNzEA2FsvAEC3LQB0MCkAiyYoANZTJwDLWyYAtjMlALE6JACZNSMAuW4iANlgIgDoWCEAylwgAMUuIAD3Vh8A52gdALRCHQCxWhwAsEkcALU4HACMOBwA0V4bAMYyGgCPJRoA218ZAJM7FwC/PxYA0msVAM9jFQD2XBUAqioVAIAfFQDhYRQAujMTAMUxEwCgLBMAnxIPAMsqDgCkFgsA6GMHALE2BAC9JQAAliIAAFYTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8AsbGxsbGxsbGxsbGxsbGxd7IrMg8PDw8PDw8PUBQeJXjQYE9PcKPM2NfP2sWhcg+BzTE7dLjbmG03YWaV4JYye8MPbsLZlEouKRRCg9SXMoW/U53enGRAFzCRtNO7mTiAyliw30gRTg9VbJCKfYs0j9VmuscfLTFbIy8SOhA0Inq5Y77GNBMYIxQUJzM2Vxx2wEmfyCYWMRldXCg5MU0aicRUms58SUVeRkwjPBRSNIfBMkSgvWkyPxVHFIaMSx1/0S9nkq7WdWo1a43Jt2UqgtJERGJ5m6K8y92znpNWIYS1UQ89Mmg5cXNaX0EkGyyI3KSsp6mvpaqosaatq7axsQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+    // Real 2009-early 2010 google.com favicon (16x16 .ico, lowercase blue g)
+    const UGF_FAVICON_2009_G = "data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC1tbUFHBwcFQAAABoAAAAaAAAAFgAAAA8AAAAWBAAAGwIAABoAAAAXAAAAGQAAABkAAAAaAAAAGg0NDRiOjo4JJiYmDwAAABQAAAATAAAADQwCAR1YFRB4nCsqua0yLMSbLCyxYxoYfBgFAiwDAQAUAAAAEgAAABMAAAAUBwcHEhQUFA0AAAAOAAAACxMEARayLy/F7T9C/640K7FuJR1pZiMgYpczMZqeLSzBIAcFPQEBABAAAAANAAAADgAAAA4XFxcJAAAACgAAAABbKSNY/1ZO/3MdHY8AAAAAAAAAAAAAAAAAAAAAjzc2lHwdG7oDAAAVAAAACAAAAAoAAAAKFxcXBgAAAAcAAAAAVj43Tfx6df87BQFmAQIAAgAAAAQAAAAEAAAAAI0vJomvLCftCwEAHQAAAAQAAAAHAAAABxEREQQAAAAEAAAAAwYEAAi4bVm0uT8/4UwOC1wnBgMlFAQAEF4YGmnwQ0X8niQfxQEAAAgAAAADAAAABAAAAAQzMzMCHh4eAh8fHwMAAAAAKSglBJVbWGfQX16qxktJsLItKNTqP0X/5DxE8VklJTsAAAAAHx8fAh8fHwIfHx8C7+/vBO3t7QTt7e0E7e3tBOrr6wIAAAAAAAAAALWHgkH+VFD/xjI226J1dDYAAAAA7e7uBO3t7QTt7e0E7e3tBP///wn///8K////Cv///wv///8Eybi3HHw1LHeySkjC/nd2/34iIZ1rbGkJ8fHxCv///wr///8K////Cv///wr///8R////E////xP///8P9OTiHtFGSNHPKS//15KSeP7k4Evgb3DOXh4cjouJiCD9/f4R////E////xP///8T////Gf///xv///8b////Dvu3rnbrNCn/o1NTk9/r6wn///8C/9fXaqskJf9kTUxX7e/vGP///xr///8b////G////yH///8k////JP///xb/0MyT00JA/5Byblv7//8d////Fv7Ix3XUNjH/hFhVee/z8x3///8j////JP///yT///8o////Lf///yz///8j//DmZNphWv+Oa2ll4urpJPHy8iLwcWDF0zEn+7edm1f///8m////LP///yz///8s////MP///zX///80////M////y77u7KoxlhZyrV/f3XSc3Oy7z83/7w5NtymioZg5OHgOf///zP///80////Nf///yv///89////Ov///zr///84////M//T0m/3oaGk/bS0uv24ubPujouw2oqIoO3j40r///83////PP///zP///8K////Mf///z7///89////Pf///z3///80////Mf///zH///8x////Mf///zX///88////Pv///zf///8SAAAAAAAAAAAAAAAAI8AAACBAAAAAAAAAEAgAAAYQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==";
+    // Real 2010-2012 google.com favicon (16x16 .ico, white g on the four-colour tile)
+    const UGF_FAVICON_2010 = "data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA7PT7/3zF6/9Ptu//RbHx/0227/+Tzvb/9vv5/97h0f9JeBz/NHoA/z98Av9AfAD/PHsA/0F6AP8AAAAA/vz7/1+33/8Mp+z/FrHw/xWy8f8bs/T/Hqrx/3zE7v////7/t8qp/zF2A/87gwH/P4ID/z59AP8+egD/Q3kA/97s8v8botj/ELn3/wy58f8PtfL/D7Lw/xuz9P8vq+f/8/n///779v9KhR3/OYYA/0GFAv88hgD/QIAC/z17AP/0+/j/N6bM/wC07/8Cxf7/CsP7/wm+9v8Aqur/SrDb//7+/v///P7/VZEl/zSJAP87jQD/PYYA/0OBBf8+fQH///3//9Dp8/84sM7/CrDf/wC14/8CruL/KqnW/9ns8f/8/v//4OjX/z+GDf85kAD/PIwD/z2JAv8+hQD/PoEA/9C7pv/97uv////+/9Xw+v+w3ej/ls/e/+rz9///////+/z6/22mSf8qjQH/OJMA/zuQAP85iwL/PIgA/zyFAP+OSSL/nV44/7J+Vv/AkG7/7trP//7//f/9//7/6/Lr/2uoRv8tjQH/PJYA/zuTAP87kwD/PY8A/z2KAP89hAD/olkn/6RVHP+eSgj/mEgR//Ho3//+/v7/5Ozh/1GaJv8tlAD/OZcC/zuXAv84lAD/O5IC/z2PAf89iwL/OIkA/6hWFf+cTxD/pm9C/76ihP/8/v//+////8nav/8fdwL/NZsA/zeZAP83mgD/PJQB/zyUAf84jwD/PYsB/z6HAf+fXif/1r6s//79///58u//3r+g/+3i2v/+//3/mbiF/yyCAP87mgP/OpgD/zeWAP85lgD/OpEB/z+TAP9ChwH/7eHb/////v/28ej/tWwo/7tUAP+5XQ7/5M+5/////v+bsZn/IHAd/zeVAP89lgP/O5MA/zaJCf8tZTr/DyuK//3////9////0qmC/7lTAP/KZAT/vVgC/8iQWf/+//3///j//ygpx/8GGcL/ESax/xEgtv8FEMz/AALh/wAB1f///f7///z//758O//GXQL/yGYC/8RaAv/Ojlf/+/////////9QU93/BAD0/wAB//8DAP3/AAHz/wAA5f8DAtr///////v7+/+2bCT/yGMA/89mAP/BWQD/0q+D///+/////P7/Rkbg/wEA+f8AA/z/AQH5/wMA8P8AAev/AADf///7/P////7/uINQ/7lXAP/MYwL/vGIO//Lm3P/8/v//1dT2/woM5/8AAP3/AwH+/wAB/f8AAfb/BADs/wAC4P8AAAAA//z7/+LbzP+mXyD/oUwE/9Gshv/8//3/7/H5/zo/w/8AAdX/AgL6/wAA/f8CAP3/AAH2/wAA7v8AAAAAgAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAEAAA==";
+    // Real late 2012 - Sep 2015 google.com favicon (.ico with 16x16 and 32x32, white g on blue)
+    const UGF_FAVICON_2012 = "data:image/x-icon;base64,AAABAAIAEBAAAAEAIABoBAAAJgAAACAgAAABACAAqBAAAI4EAAAoAAAAEAAAACAAAAABACAAAAAAAAAEAAASCwAAEgsAAAAAAAAAAAAA9IVCSvSFQuf0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hULk9IVCSvSFQub0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQuf0hUL/9IVC//SFQv/0hUL/9Y1O//rIq//+7+f//eXX//vUvf/7z7X/96Fu//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//vYwv/97OH/9ZRZ//SFQv/0hUL/9IhG//zbx//3om7/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/97uX/+buW//SFQv/0hUL/9IVC//SFQv/5upT/+9O6//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/+b6b//zezP/0iEf/9IVC//SFQv/1klf//ezh//vPtP/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/3qXr/+siq//m8lv/5wqD//vTu//3t4//1klb/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0h0b//vbx//zi0//1j1H/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/2nmn/+bmS/////v/4sIX/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/5uJH///v5//eoef/1jU//+82y//afav/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL//vXw//vOs//0hUL/9IVC//ekcf/96+D/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//728v/4sIX/9IVC//SFQv/4s4n///v4//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/6yKn/+byX//SFQv/0hkT//eTV//vWv//0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IZE//m6lP/5u5b//OHQ///+/f/6y6//96d3//SFQv/0hUL/9IVC//SFQv/0hULm9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hULm9IVCSfSFQub0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hULm9IVCSQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoAAAAIAAAAEAAAAABACAAAAAAAAAQAAASCwAAEgsAAAAAAAAAAAAA9IVCAPSFQif0hUKt9IVC8vSFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQvL0hUKt9IVCJ/SFQgD0hUIo9IVC7/SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hULv9IVCKPSFQq30hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUKt9IVC8fSFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQvP0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9YtL//i2jv/828f//vLr///7+P///Pv//vTu//3n2v/6zbH/96Nw//SFQ//0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//ekcv/+8+z////////////+9fD/+9K5//m9mf/4to7/+buV//vSuf/++PT//OPT//aYYP/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/2l13///r3/////////fv/+b2Z//SIRv/0hUL/9IVC//SFQv/0hUL/9IVC//WNT//84M///vXv//aZYf/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//vPtP////////////i0i//0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//WQUv///Pr//OPU//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL//eTV///////+9O7/9IVD//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//3m2P//////9ppi//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/718H///////3s4f/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL//vDn///////4soj/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//erff////////38//WTWP/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//iziv////////////iwhf/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//rMsP///////eXW//WSVv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/4sYb///z7/////////Pv/9ZFV//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//ixhv/+8Of//vn1//rMsP/4rH//9plh//WQUv/1j1L/+s2x//////////////////m9mf/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SGQ//2nmn/+buW//vNsv/82sb//e3j/////////////////////v/5wZ//9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/83Mj////////////++fb/+K+C//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9ZRZ/////////////vTt//aaYv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/1lFr////////////6xqf/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//ehbf/70bj//end//3o2////v3///////3l1//0iEb/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/5wqD////////////96t7/96Z2//WOUP/2nWf//NvH//zcyP/1i0z/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/96l6/////////////vLr//WPUf/0hUL/9IVC//SFQv/0h0b//end//3k1f/0iUn/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/8387////////////4sYf/9IVC//SFQv/0hUL/9IVC//SFQv/6w6L///////nBn//0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC///69////////vj1//SIR//0hUL/9IVC//SFQv/0hUL/9IVC//m+mv///////e3j//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL///r3///////8387/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/+syw///////++fb/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/95NX///////vUvP/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/97OH///////7y6//0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//i2jv///////N/O//SFQv/0hUL/9IVC//SFQv/0hUL/96Nx////////////+s2x//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IdF//zh0P//+/j/9ZJW//SFQv/0hUL/9IVC//SKSv/96t7///////738v/1k1f/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9YxN//vUvf/96+D/96Z0//WNT//3om///ebY/////////Pv/+LKI//WVW//0h0X/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//agbP/7zbL//enc//749P////////////////////////////3r4P/3p3f/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hULx9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC8/SFQq30hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUKt9IVCJ/SFQu/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC7/SFQif0hUIA9IVCJfSFQq30hULx9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC8fSFQq30hUIl9IVCAIAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAB";
+    // Real Sep 2015 - 2024 google.com favicon (.ico with 16x16 and 32x32, four-colour G)
+    const UGF_FAVICON_2015 = "data:image/x-icon;base64,AAABAAIAEBAAAAEAIABoBAAAJgAAACAgAAABACAAqBAAAI4EAAAoAAAAEAAAACAAAAABACAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP///zD9/f2W/f392P39/fn9/f35/f391/39/ZT+/v4uAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/v7+Cf39/Zn///////////////////////////////////////////39/ZX///8IAAAAAAAAAAAAAAAA/v7+Cf39/cH/////+v35/7TZp/92ul3/WKs6/1iqOv9yuFn/rNWd//j79v///////f39v////wgAAAAAAAAAAP39/Zn/////7PXp/3G3WP9TqDT/U6g0/1OoNP9TqDT/U6g0/1OoNP+Or1j//vDo///////9/f2VAAAAAP///zD/////+vz5/3G3V/9TqDT/WKo6/6LQkf/U6cz/1urO/6rUm/+Zo0r/8IZB//adZ////v7///////7+/i79/f2Y/////4nWzf9Lqkj/Vqo4/9Xqzv///////////////////////ebY//SHRv/0hUL//NjD///////9/f2U/f392v////8sxPH/Ebzt/43RsP/////////////////////////////////4roL/9IVC//i1jf///////f391/39/fr/////Cr37/wW8+/+16/7/////////////////9IVC//SFQv/0hUL/9IVC//SFQv/3pnX///////39/fn9/f36/////wu++/8FvPv/tuz+//////////////////SFQv/0hUL/9IVC//SFQv/0hUL/96p7///////9/f35/f392/////81yfz/CrL5/2uk9v///////////////////////////////////////////////////////f392P39/Zn/////ks/7/zdS7P84Rur/0NT6///////////////////////9/f////////////////////////39/Zb+/v4y//////n5/v9WYu3/NUPq/ztJ6/+VnPT/z9L6/9HU+v+WnfT/Ul7t/+Hj/P////////////////////8wAAAAAP39/Z3/////6Or9/1hj7v81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v9sdvD////////////9/f2YAAAAAAAAAAD///8K/f39w//////5+f7/paz2/11p7v88Suv/Okfq/1pm7v+iqfX/+fn+///////9/f3B/v7+CQAAAAAAAAAAAAAAAP///wr9/f2d///////////////////////////////////////////9/f2Z/v7+CQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/jL9/f2Z/f392/39/fr9/f36/f392v39/Zj///8wAAAAAAAAAAAAAAAAAAAAAPAPAADAAwAAgAEAAIABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIABAACAAQAAwAMAAPAPAAAoAAAAIAAAAEAAAAABACAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/g3+/v5X/f39mf39/cj9/f3q/f39+f39/fn9/f3q/f39yP39/Zn+/v5W////DAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/iT9/f2c/f399f/////////////////////////////////////////////////////9/f31/f39mv7+/iMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/gn9/f2K/f39+////////////////////////////////////////////////////////////////////////////f39+v39/Yf///8IAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD+/v4k/f390v////////////////////////////////////////////////////////////////////////////////////////////////39/dD///8iAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA////MP39/er//////////////////////////+r05v+v16H/gsBs/2WxSf9Wqjj/Vqk3/2OwRv99vWX/pdKV/97u2P////////////////////////////39/ej+/v4vAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/iT9/f3q/////////////////////+v15/+Pxnv/VKk2/1OoNP9TqDT/U6g0/1OoNP9TqDT/U6g0/1OoNP9TqDT/U6g0/36+Z//d7tf///////////////////////39/ej///8iAAAAAAAAAAAAAAAAAAAAAAAAAAD///8K/f390//////////////////////E4bn/XKw+/1OoNP9TqDT/U6g0/1OoNP9TqDT/U6g0/1OoNP9TqDT/U6g0/1OoNP9TqDT/U6g0/1apN/+x0pv///////////////////////39/dD///8IAAAAAAAAAAAAAAAAAAAAAP39/Yv/////////////////////sdij/1OoNP9TqDT/U6g0/1OoNP9TqDT/U6g0/1OoNP9TqDT/U6g0/1OoNP9TqDT/U6g0/1OoNP9TqDT/YKU1/8qOPv/5wZ////////////////////////39/YcAAAAAAAAAAAAAAAD+/v4l/f39+////////////////8Lgt/9TqDT/U6g0/1OoNP9TqDT/U6g0/1OoNP9utlT/n86N/7faqv+426v/pdKV/3u8ZP9UqDX/U6g0/3egN//jiUH/9IVC//SFQv/82MP//////////////////f39+v7+/iMAAAAAAAAAAP39/Z3////////////////q9Ob/W6w+/1OoNP9TqDT/U6g0/1OoNP9nskz/zOXC/////////////////////////////////+Dv2v+osWP/8YVC//SFQv/0hUL/9IVC//WQVP/++fb//////////////////f39mgAAAAD+/v4O/f399v///////////////4LHj/9TqDT/U6g0/1OoNP9TqDT/dblc//L58P/////////////////////////////////////////////8+v/3p3f/9IVC//SFQv/0hUL/9IVC//rIqf/////////////////9/f31////DP7+/ln////////////////f9v7/Cbz2/zOwhv9TqDT/U6g0/2KwRv/v9+z///////////////////////////////////////////////////////738//1kFT/9IVC//SFQv/0hUL/9plg///////////////////////+/v5W/f39nP///////////////4jf/f8FvPv/Bbz7/yG1s/9QqDz/vN2w//////////////////////////////////////////////////////////////////rHqP/0hUL/9IVC//SFQv/0hUL//vDn//////////////////39/Zn9/f3L////////////////R878/wW8+/8FvPv/Bbz7/y7C5P/7/fr//////////////////////////////////////////////////////////////////ere//SFQv/0hUL/9IVC//SFQv/718H//////////////////f39yP39/ez///////////////8cwvv/Bbz7/wW8+/8FvPv/WNL8///////////////////////////////////////0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//rIqv/////////////////9/f3q/f39+v///////////////we9+/8FvPv/Bbz7/wW8+/993P3///////////////////////////////////////SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/+cGf//////////////////39/fn9/f36////////////////B737/wW8+/8FvPv/Bbz7/33c/f//////////////////////////////////////9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/6xaX//////////////////f39+f39/e3///////////////8cwvv/Bbz7/wW8+/8FvPv/WdP8///////////////////////////////////////0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//vVv//////////////////9/f3q/f39y////////////////0bN/P8FvPv/Bbz7/wW8+/8hrvn/+/v///////////////////////////////////////////////////////////////////////////////////////////////////////////////////39/cj9/f2c////////////////ht/9/wW8+/8FvPv/FZP1/zRJ6/+zuPf//////////////////////////////////////////////////////////////////////////////////////////////////////////////////f39mf7+/lr////////////////d9v7/B7n7/yB38f81Q+r/NUPq/0hV7P/u8P3////////////////////////////////////////////////////////////////////////////////////////////////////////////+/v5X////D/39/ff///////////////9tkPT/NUPq/zVD6v81Q+r/NUPq/2Fs7//y8v7////////////////////////////////////////////09f7//////////////////////////////////////////////////f399f7+/g0AAAAA/f39n////////////////+Tm/P89Suv/NUPq/zVD6v81Q+r/NUPq/1Bc7f/IzPn/////////////////////////////////x8v5/0xY7P+MlPP////////////////////////////////////////////9/f2cAAAAAAAAAAD+/v4n/f39/P///////////////7W69/81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v9ZZe7/k5v0/6609/+vtff/lJv0/1pm7v81Q+r/NUPq/zVD6v+GjvL//v7//////////////////////////////f39+/7+/iQAAAAAAAAAAAAAAAD9/f2N/////////////////////6Cn9f81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v+BivL////////////////////////////9/f2KAAAAAAAAAAAAAAAAAAAAAP7+/gv9/f3V/////////////////////7W69/8+S+v/NUPq/zVD6v81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v81Q+r/P0zr/7q/+P///////////////////////f390v7+/gkAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/ib9/f3r/////////////////////+Xn/P94gfH/NkTq/zVD6v81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v81Q+r/NkTq/3Z/8f/l5/z///////////////////////39/er+/v4kAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/jL9/f3r///////////////////////////k5vz/nqX1/2p08P9IVez/OEbq/zdF6v9GU+z/aHLv/5qh9f/i5Pz////////////////////////////9/f3q////MAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/ib9/f3V/////////////////////////////////////////////////////////////////////////////////////////////////f390v7+/iQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP///wr9/f2N/f39/P///////////////////////////////////////////////////////////////////////////f39+/39/Yv+/v4JAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD+/v4n/f39n/39/ff//////////////////////////////////////////////////////f399v39/Z3+/v4lAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/v7+Dv7+/lr9/f2c/f39y/39/e39/f36/f39+v39/ez9/f3L/f39nP7+/ln+/v4OAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/AA///AAD//AAAP/gAAB/wAAAP4AAAB8AAAAPAAAADgAAAAYAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAABgAAAAcAAAAPAAAAD4AAAB/AAAA/4AAAf/AAAP/8AAP//wAP/";
     function ugfFaviconForLayout() {
         const h = document.querySelector("html");
         const era = ugfRetroEra();
-        // 2009/2010 eras used the multicolour tile; everything older used the classic capital G
-        if (era === "gplex2009" || era === "gplex2010") {
-            return UGF_FAVICON_2009;
+        // 2009/2010 eras used the multicolour tile; 1997-2008 used the blue G with coloured edges
+        if (era === "gplex2009") {
+            return UGF_FAVICON_2009_G;
+        }
+        if (era === "gplex2010") {
+            return UGF_FAVICON_2010;
         }
         if (era && era !== "gplex2022") {
-            return UGF_FAVICON_CLASSIC;
+            return UGF_FAVICON_1999;
         }
         if (era === "gplex2022") {
-            return UGF_FAVICON_FOUR_COLOUR;
+            return UGF_FAVICON_2015;
         }
         const layout = h.getAttribute("layout") || "";
-        if (["2010", "2011", "2012", "2013", "2013L", "2014", "2015", "2015L"].indexOf(layout) > -1) {
-            return UGF_FAVICON_BLUE_G;
+        if (["2010", "2011", "2012"].indexOf(layout) > -1) {
+            return UGF_FAVICON_2010;
+        }
+        if (["2013", "2013L", "2014", "2015", "2015L"].indexOf(layout) > -1) {
+            return UGF_FAVICON_2012;
         }
         if (["2016", "2016C", "2016L", "2017", "2018", "2018M", "2019"].indexOf(layout) > -1) {
-            return UGF_FAVICON_FOUR_COLOUR;
+            return UGF_FAVICON_2015;
         }
         if (layout === "retro") {
-            return UGF_FAVICON_CLASSIC;
+            return UGF_FAVICON_1999;
         }
         return null;
     }
@@ -13925,6 +14707,10 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             link.setAttribute("rel", "icon");
             link.setAttribute("type", "image/svg+xml");
         }
+        const type = href.indexOf("data:image/x-icon") === 0 ? "image/x-icon" : (href.indexOf("data:image/png") === 0 ? "image/png" : "image/svg+xml");
+        if (link.getAttribute("type") !== type) {
+            link.setAttribute("type", type);
+        }
         if (link.getAttribute("href") !== href) {
             link.setAttribute("href", href);
         }
@@ -13934,6 +14720,9 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         }
     }
     function ugfSetFavicon() {
+        if (document.querySelector("html").hasAttribute("disabled")) {
+            return;
+        }
         const href = ugfFaviconForLayout();
         if (!href) {
             return;
@@ -14343,26 +15132,22 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         `;
         container.insertBefore(newElem, container.children[0]);
     }
+    let ugfPredictionIndex = -1;
+    let ugfTypedSearchValue = "";
     let searchPredictsAPI = [];
     function fetchPredicts(value) {
-        fetch("https://www.google.com/complete/search?q=" + value + "&cp=" + value + "&client=gws-wiz&xssi=t&gs_pcrt=undefined&hl=en-CA&authuser=0&dpr=1", {
-            "accept": "*/*",
-            "accept-encoding": "gzip, deflate, br",
-            "connection": "keep-alive",
-            "host": "www.google.com",
-            "referrer": "https://www.google.com/",
-            "referrerPolicy": "strict-origin-when-cross-origin",
-            "sec-fetch-dest": "empty",
-            "sec-fetch-mode": "cors",
-            "sec-fetch-site": "same-origin",
-            "method": "GET"
-        }).then(response => response.text()).then(data => {
+        fetch("https://www.google.com/complete/search?q=" + encodeURIComponent(value) + "&cp=" + encodeURIComponent(value) + "&client=gws-wiz&xssi=t&gs_pcrt=undefined&hl=en-CA&authuser=0&dpr=1", {
+            method: "GET"
+        }).then(response => {
+            if (!response.ok) throw new Error("Prediction network response not ok");
+            return response.text();
+        }).then(data => {
             var cutString1 = data.split(")]}'");
             var used = cutString1[1];
             data = JSON.parse(used);
             var list = data[0];
             parsePredicts(list);
-        });
+        }).catch(() => {});
     }
     function parsePredicts(list) {
         //API
@@ -14414,14 +15199,25 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         `;
         container.insertBefore(newElem, container.children[item.itemNo]);
         let a = newElem.textContent;
-        a = a.trim();
+        let encodedVal = encodeURIComponent(a.trim());
         if (location == "images" || ugfHomeVertical == "images") {
-            newElem.setAttribute("href","https://www.google.com/search?q=" + a + "&udm=2");
+            newElem.setAttribute("href","https://www.google.com/search?q=" + encodedVal + "&udm=2");
         } else if (location == "videos" || ugfHomeVertical == "videos") {
-            newElem.setAttribute("href","https://www.google.com/search?q=" + a + "&udm=7");
+            newElem.setAttribute("href","https://www.google.com/search?q=" + encodedVal + "&udm=7");
         } else {
-            newElem.setAttribute("href","https://www.google.com/search?q=" + a);
+            newElem.setAttribute("href","https://www.google.com/search?q=" + encodedVal);
         }
+        newElem.addEventListener("mouseenter", function() {
+            const allItems = document.querySelectorAll("#ugf-search-predictions-inner .ugf-search-prediction");
+            allItems.forEach(function(el, idx) {
+                if (el === newElem) {
+                    el.classList.add("ugf-prediction-selected");
+                    ugfPredictionIndex = idx;
+                } else {
+                    el.classList.remove("ugf-prediction-selected");
+                }
+            });
+        });
         /*newElem.addEventListener("click", function() {
             var value = newElem.textContent;
             if (location == "images") {
@@ -14590,20 +15386,21 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     document.querySelector("#ugf-any-time-tool").classList.add("active");
                     document.querySelector("#ugf-all-results-tool").classList.add("active");
             }
+            let encodedNavSearch = encodeURIComponent(searchValue);
             document.querySelector("#ugf-search-value").value = searchValue;
-            document.querySelector("#ugf-all-tab").href = "https://www.google.com/search?q=" + searchValue;
-            document.querySelector("#ugf-images-tab").href = "https://www.google.com/search?q=" + searchValue + "&udm=2";
+            document.querySelector("#ugf-all-tab").href = "https://www.google.com/search?q=" + encodedNavSearch;
+            document.querySelector("#ugf-images-tab").href = "https://www.google.com/search?q=" + encodedNavSearch + "&udm=2";
             if (document.querySelector("#gp-gbar-images") && searchValue) {
-                document.querySelector("#gp-gbar-images").href = "https://www.google.com/search?q=" + searchValue + "&udm=2";
+                document.querySelector("#gp-gbar-images").href = "https://www.google.com/search?q=" + encodedNavSearch + "&udm=2";
             }
-            document.querySelector("#ugf-videos-tab").href = "https://www.google.com/search?q=" + searchValue + "&udm=7";
-            document.querySelector("#ugf-news-tab").href = "https://www.google.com/search?q=" + searchValue + "&tbm=nws";
-            document.querySelector("#ugf-maps-tab").href = "https://maps.google.com/maps?q=" + searchValue;
-            document.querySelector("#ugf-all-item").href = "https://www.google.com/search?q=" + searchValue;
-            document.querySelector("#ugf-images-item").href = "https://www.google.com/search?q=" + searchValue + "&udm=2";
-            document.querySelector("#ugf-videos-item").href = "https://www.google.com/search?q=" + searchValue + "&udm=7";
-            document.querySelector("#ugf-news-item").href = "https://www.google.com/search?q=" + searchValue + "&tbm=nws";
-            document.querySelector("#ugf-maps-item").href = "https://maps.google.com/maps?q=" + searchValue;
+            document.querySelector("#ugf-videos-tab").href = "https://www.google.com/search?q=" + encodedNavSearch + "&udm=7";
+            document.querySelector("#ugf-news-tab").href = "https://www.google.com/search?q=" + encodedNavSearch + "&tbm=nws";
+            document.querySelector("#ugf-maps-tab").href = "https://maps.google.com/maps?q=" + encodedNavSearch;
+            document.querySelector("#ugf-all-item").href = "https://www.google.com/search?q=" + encodedNavSearch;
+            document.querySelector("#ugf-images-item").href = "https://www.google.com/search?q=" + encodedNavSearch + "&udm=2";
+            document.querySelector("#ugf-videos-item").href = "https://www.google.com/search?q=" + encodedNavSearch + "&udm=7";
+            document.querySelector("#ugf-news-item").href = "https://www.google.com/search?q=" + encodedNavSearch + "&tbm=nws";
+            document.querySelector("#ugf-maps-item").href = "https://maps.google.com/maps?q=" + encodedNavSearch;
             linkList.forEach(itemRoot => {
                 if (itemRoot.searchResult) {
                     createItem(itemRoot, "searchResult");
@@ -14661,21 +15458,14 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     document.querySelector("html").setAttribute("search-focus","soft");
                     document.querySelector("html").setAttribute("hide-results","false");
                 });
-                document.querySelector("#ugf-search-btn").addEventListener("click", function() {
-                    var value = document.querySelector("#ugf-search-value").value;
-                    value = value.replaceAll("(","%28");
-                    value = value.replaceAll(")","%29");
-                    value = value.replaceAll("+","%2B");
-                    value = value.replaceAll("-","%2D");
-                    value = value.replaceAll("/","%2F");
+                function performSearch(value) {
                     if (value == "StructuredHomepageOn") {
                         localStorage.setItem("UGF_STRUCTURED_HOMEPAGE","true");
                         window.location.replace("https://www.google.com/");
                     } else if (value == "StructuredHomepageOff") {
                         localStorage.setItem("UGF_STRUCTURED_HOMEPAGE","false");
                         window.location.replace("https://www.google.com/");
-                    }
-                    if (value == "CustomImagePageOn") {
+                    } else if (value == "CustomImagePageOn") {
                         localStorage.setItem("UGF_NOTON_IMAGES","false");
                         alert("Command accepted");
                         window.location.replace("https://www.google.com/");
@@ -14683,69 +15473,131 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                         localStorage.setItem("UGF_NOTON_IMAGES","true");
                         alert("Command accepted");
                         window.location.replace("https://www.google.com/");
-                    }
-                    else {
-                        window.location = "https://www.google.com/search?q=" + value;
-                        if (location == "images" || ugfHomeVertical == "images") {
-                            window.location = "https://www.google.com/search?q=" + value + "&udm=2";
-                        } else if (location == "videos" || ugfHomeVertical == "videos") {
-                            window.location = "https://www.google.com/search?q=" + value + "&udm=7";
-                        } else if (location == "news") {
-                            window.location = "https://www.google.com/search?q=" + value + "&tbm=nws";
-                        } else if (location == "maps") {
-                            window.location = "https://maps.google.com/maps?q=" + value;
-                        } else {
-                            window.location = "https://www.google.com/search?q=" + value;
-                        }
-                    }
-                });
-                document.querySelector("#ugf-search-value").addEventListener("keydown", function() {
-                    document.querySelector("html").setAttribute("hide-results","true");
-                    let key = event.key;
-                    if (key == "Enter") {
-                        var value = document.querySelector("#ugf-search-value").value;
-                        value = value.replaceAll("(","%28");
-                        value = value.replaceAll(")","%29");
-                        value = value.replaceAll("+","%2B");
-                        value = value.replaceAll("-","%2D");
-                        value = value.replaceAll("/","%2F");
-                        if (value == "StructuredHomepageOn") {
-                            localStorage.setItem("UGF_STRUCTURED_HOMEPAGE","true");
-                            window.location.replace("https://www.google.com/");
-                        } else if (value == "StructuredHomepageOff") {
-                            localStorage.setItem("UGF_STRUCTURED_HOMEPAGE","false");
-                            window.location.replace("https://www.google.com/");
-                        }
-                        if (value == "CustomImagePageOn") {
-                            localStorage.setItem("UGF_NOTON_IMAGES","false");
-                            alert("Command accepted");
-                            window.location.replace("https://www.google.com/");
-                        } else if (value == "CustomImagePageOff") {
-                            localStorage.setItem("UGF_NOTON_IMAGES","true");
-                            alert("Command accepted");
-                            window.location.replace("https://www.google.com/");
-                        }
-                        else {
-                            window.location = "https://www.google.com/search?q=" + value;
-                            if (location == "images" || ugfHomeVertical == "images") {
-                                window.location = "https://www.google.com/search?q=" + value + "&udm=2";
-                            } else if (location == "videos" || ugfHomeVertical == "videos") {
-                                window.location = "https://www.google.com/search?q=" + value + "&udm=7";
-                            } else if (location == "news") {
-                                window.location = "https://www.google.com/search?q=" + value + "&tbm=nws";
-                            } else if (location == "maps") {
-                                window.location = "https://maps.google.com/maps?q=" + value;
-                            } else {
-                                window.location = "https://www.google.com/search?q=" + value;
-                            }
-                        }
                     } else {
+                        let encodedValue = encodeURIComponent(value);
+                        if (location == "images" || ugfHomeVertical == "images") {
+                            window.location = "https://www.google.com/search?q=" + encodedValue + "&udm=2";
+                        } else if (location == "videos" || ugfHomeVertical == "videos") {
+                            window.location = "https://www.google.com/search?q=" + encodedValue + "&udm=7";
+                        } else if (location == "news") {
+                            window.location = "https://www.google.com/search?q=" + encodedValue + "&tbm=nws";
+                        } else if (location == "maps") {
+                            window.location = "https://maps.google.com/maps?q=" + encodedValue;
+                        } else {
+                            window.location = "https://www.google.com/search?q=" + encodedValue;
+                        }
+                    }
+                }
+                document.querySelector("#ugf-search-btn").addEventListener("click", function() {
+                    performSearch(document.querySelector("#ugf-search-value").value);
+                });
+                const searchInput = document.querySelector("#ugf-search-value");
+                searchInput.addEventListener("keydown", function(event) {
+                    const key = event ? event.key : (window.event ? window.event.key : "");
+
+                    // Navigate search predictions using ArrowDown and ArrowUp keys
+                    if (key === "ArrowDown" || key === "ArrowUp") {
+                        const items = document.querySelectorAll("#ugf-search-predictions-inner .ugf-search-prediction");
+                        if (items.length > 0) {
+                            event.preventDefault();
+
+                            // Save user typed text before starting arrow navigation
+                            if (ugfPredictionIndex === -1) {
+                                ugfTypedSearchValue = searchInput.value;
+                            }
+
+                            // Remove previous selection styling
+                            items.forEach(function(el) {
+                                el.classList.remove("ugf-prediction-selected");
+                            });
+
+                            if (key === "ArrowDown") {
+                                ugfPredictionIndex++;
+                                if (ugfPredictionIndex >= items.length) {
+                                    ugfPredictionIndex = -1;
+                                }
+                            } else {
+                                if (ugfPredictionIndex === -1) {
+                                    ugfPredictionIndex = items.length - 1;
+                                } else {
+                                    ugfPredictionIndex--;
+                                }
+                            }
+
+                            if (ugfPredictionIndex === -1) {
+                                searchInput.value = ugfTypedSearchValue;
+                            } else {
+                                const activeItem = items[ugfPredictionIndex];
+                                activeItem.classList.add("ugf-prediction-selected");
+                                if (typeof activeItem.scrollIntoView === "function") {
+                                    activeItem.scrollIntoView({ block: "nearest" });
+                                }
+
+                                const textEl = activeItem.querySelector(".ugf-search-prediction-right span");
+                                const selectedText = textEl ? textEl.textContent.trim() : activeItem.textContent.trim();
+                                searchInput.value = selectedText;
+                            }
+                            return;
+                        }
+                    }
+
+                    // Close predictions or blur search input on Escape
+                    if (key === "Escape") {
+                        const preds = document.querySelector("#ugf-search-predictions");
+                        if (preds) {
+                            preds.remove();
+                            document.querySelector("html").removeAttribute("search-focus");
+                            if (ugfPredictionIndex !== -1 && ugfTypedSearchValue) {
+                                searchInput.value = ugfTypedSearchValue;
+                            }
+                            ugfPredictionIndex = -1;
+                        } else {
+                            // Blur search input when predictions are closed, returning focus to page
+                            searchInput.blur();
+                        }
+                        return;
+                    }
+
+                    document.querySelector("html").setAttribute("hide-results","true");
+                    if (key == "Enter") {
+                        ugfPredictionIndex = -1;
+                        performSearch(searchInput.value);
+                    } else {
+                        ugfPredictionIndex = -1;
                         setTimeout(function() { // delay so it gets updated value
-                            var value = document.querySelector("#ugf-search-value").value;
+                            var value = searchInput.value;
                             fetchPredicts(value);
                         }, 50);
                     }
                 });
+
+                // Global shortcut: press '/' to focus search input like native Google
+                if (!window.__ugfSearchShortcutBound) {
+                    window.__ugfSearchShortcutBound = true;
+                    window.addEventListener("keydown", function(event) {
+                        if (event && event.key === "/" && !event.ctrlKey && !event.altKey && !event.metaKey && !event.isComposing && event.keyCode !== 229) {
+                            const activeEl = document.activeElement;
+                            const isEditable = activeEl && (
+                                activeEl.tagName === "INPUT" ||
+                                activeEl.tagName === "TEXTAREA" ||
+                                activeEl.tagName === "SELECT" ||
+                                activeEl.isContentEditable ||
+                                activeEl.getAttribute("contenteditable") === "true"
+                            );
+                            if (!isEditable) {
+                                const targetInput = document.querySelector("#ugf-search-value");
+                                if (targetInput) {
+                                    event.preventDefault();
+                                    targetInput.focus();
+                                    const len = targetInput.value.length;
+                                    if (typeof targetInput.setSelectionRange === "function") {
+                                        targetInput.setSelectionRange(len, len);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
     }
     function createItem(itemGet, itemType) {
         if (itemType == "newsResult") {
@@ -15266,7 +16118,11 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
     // 2006-2007: "Results 1 - 10 of about N for q. (0.29 seconds)"
     function ugfEraResultsLine() {
         const era = ugfRetroEra();
-        if (era !== "gplex2006" && era !== "gplex2007") {
+        if (ugfClassicEras().indexOf(era) > -1) {
+            ugfClassicResultsLine();
+            return;
+        }
+        if (era !== "gplex2005" && era !== "gplex2006" && era !== "gplex2007") {
             return;
         }
         const span = document.querySelector("#ugf-search-results-header span");
@@ -15377,6 +16233,56 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         });
         return html;
     }
+    // news thumbnail: the biggest non-favicon image in the card; Google hides the size in different places per build
+    function ugfNewsPickThumb(container, card) {
+        let best = null;
+        let bestScore = -1;
+        container.querySelectorAll("img").forEach(function(img) {
+            if (img.closest('[role="heading"]')) {
+                return;
+            }
+            const aw = parseInt(img.getAttribute("width") || "0", 10);
+            const ah = parseInt(img.getAttribute("height") || "0", 10);
+            const nw = img.naturalWidth || 0;
+            const st = (img.getAttribute("style") || "") + " " + (img.parentElement ? img.parentElement.getAttribute("style") || "" : "");
+            const sw = parseInt((st.match(/width:\s*(\d+)px/) || [0, 0])[1], 10);
+            const size = Math.max(aw, ah, nw > 1 ? nw : 0, sw);
+            if (size > 0 && size < 36) {
+                return; // favicon
+            }
+            const src = img.getAttribute("src") || "";
+            if (/favicon|faviconV2|\/s2\/favicons/.test(src)) {
+                return;
+            }
+            const afterHeading = card.heading.compareDocumentPosition(img) & Node.DOCUMENT_POSITION_FOLLOWING;
+            let score = size;
+            if (/^dimg_/.test(img.id || "")) {
+                score += 1000;
+            }
+            if (afterHeading) {
+                score += 500;
+            }
+            if (size === 0 && !afterHeading && !/^dimg_/.test(img.id || "")) {
+                score = 1; // unknown size before the headline: only if nothing better
+            }
+            if (score > bestScore) {
+                best = img;
+                bestScore = score;
+            }
+        });
+        return best;
+    }
+    function ugfNewsThumbSrc(img) {
+        const ok = function(v) {
+            return v && v.indexOf("data:image/gif") !== 0 && v.length >= 40 ? v : "";
+        };
+        return ok(img.getAttribute("src") || "") ||
+            ok(ugfGetDeferredImage(img.id)) ||
+            ok(img.getAttribute("data-src") || "") ||
+            ok(img.getAttribute("data-iurl") || "") ||
+            ok(((img.getAttribute("srcset") || img.getAttribute("data-srcset") || "").split(",")[0] || "").trim().split(" ")[0]) ||
+            ok(img.currentSrc || "");
+    }
     function ugfParseNews() {
         const cards = ugfFindNewsCards(document);
         let itemNo = 0;
@@ -15406,23 +16312,10 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     source = new URL(card.href).hostname.replace(/^www\./, "");
                 } catch (e) {}
             }
-            let imgEl = null;
-            container.querySelectorAll("img").forEach(function(img) {
-                if (imgEl) {
-                    return;
-                }
-                const w = parseInt(img.getAttribute("width") || img.width || 0, 10);
-                const afterHeading = card.heading.compareDocumentPosition(img) & Node.DOCUMENT_POSITION_FOLLOWING;
-                if (w >= 40 || (afterHeading && !img.closest('[role="heading"]'))) {
-                    imgEl = img;
-                }
-            });
-            let thumb = "";
-            if (imgEl) {
-                thumb = imgEl.getAttribute("src") || "";
-                if (!thumb || thumb.indexOf("data:image/gif") === 0 || thumb.length < 60) {
-                    thumb = ugfGetDeferredImage(imgEl.id) || imgEl.getAttribute("data-src") || "";
-                }
+            const imgEl = ugfNewsPickThumb(container, card);
+            const thumb = imgEl ? ugfNewsThumbSrc(imgEl) : "";
+            if (!imgEl && container.querySelector("img")) {
+                console.log("[Gplex] News: no thumbnail picked in card", card.href);
             }
             linkList.push({newsResult: {
                 itemNo: itemNo,
@@ -15463,13 +16356,13 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         container.insertBefore(el, container.children[item.itemNo] || null);
         if (!hasThumb && item.origImg) {
             let tries = 0;
+            try {
+                item.origImg.loading = "eager";
+            } catch (e) {}
             const t = setInterval(function() {
                 tries++;
-                let src = item.origImg.getAttribute("src") || "";
-                if (!src || src.indexOf("data:image/gif") === 0 || src.length < 60) {
-                    src = ugfGetDeferredImage(item.origImg.id) || "";
-                }
-                if (src && src.indexOf("data:image/gif") !== 0 && src.length >= 60) {
+                const src = ugfNewsThumbSrc(item.origImg);
+                if (src) {
                     clearInterval(t);
                     const a = document.createElement("a");
                     a.className = "ugf-news-result-thumb";
@@ -15478,11 +16371,255 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     img.src = src;
                     a.appendChild(img);
                     el.querySelector(".ugf-news-result-inner").appendChild(a);
-                } else if (tries >= 40) {
+                } else if (tries >= 100) {
                     clearInterval(t);
+                    console.log("[Gplex] News: no thumbnail found for", item.href, item.origImg.outerHTML.slice(0, 300));
                 }
             }, 150);
         }
+    }
+    // ---- 2000-2005 results pages, measured from Dec 2000 / Nov 2002 / Apr 2003 captures ----
+    function ugfClassicEras() {
+        return ["gplex2000", "gplex2001", "gplex2002", "gplex2003"];
+    }
+    function ugfClassicSerpActive() {
+        const h = document.querySelector("html");
+        const loc = h.getAttribute("location") || "";
+        return ugfClassicEras().indexOf(ugfRetroEra()) > -1 && loc !== "gplex" && !/home$/.test(loc);
+    }
+    function ugfClassicResultsLine() {
+        const span = document.querySelector("#ugf-search-results-header span");
+        if (!span || span.getAttribute("data-classic")) {
+            return;
+        }
+        const txt = span.textContent || "";
+        const nums = txt.match(/\d[\d.,   ]*\d|\d/g);
+        const count = nums && nums.length ? nums[0].trim() : "";
+        const secs = nums && nums.length > 1 ? nums[nums.length - 1].trim() : "";
+        let first = 0;
+        try {
+            first = parseInt(new URLSearchParams(window.location.search).get("start") || "0", 10) || 0;
+        } catch (e) {}
+        first = first + 1;
+        const q = ugfEscapeHtml(searchValue || "");
+        const onNews = document.querySelector("html").hasAttribute("news-results");
+        const onImagesPage = document.querySelector("html").getAttribute("location") === "images";
+        let right = "Results <b>" + first + "</b> - <b>" + (first + 9) + "</b>" + (count ? " of about <b>" + ugfEscapeHtml(count) + "</b>" : "") + ".";
+        if (secs) {
+            right += " Search took <b>" + ugfEscapeHtml(secs) + "</b> seconds.";
+        }
+        span.setAttribute("data-classic", "1");
+        span.innerHTML = trusted_policy.createHTML('<span class="ugf-classic-bar-left">Searched ' + (onNews ? "news" : (onImagesPage ? "images" : "the web")) + ' for <b><u>' + q + '</u></b>.</span><span class="ugf-classic-bar-right">' + right + '</span>');
+    }
+    function ugfClassicUrlLines(root) {
+        (root || document).querySelectorAll("#ugf-search-results-container .ugf-search-result:not([data-classic-url])").forEach(function(res) {
+            const link = res.querySelector(".ugf-search-result-link");
+            const inner = res.querySelector(".ugf-search-result-inner") || res;
+            if (!link) {
+                return;
+            }
+            res.setAttribute("data-classic-url", "1");
+            const href = link.getAttribute("href") || "";
+            let shown = href.replace(/^https?:\/\//, "");
+            if (shown.length > 60) {
+                shown = shown.slice(0, 57) + "...";
+            }
+            const line = document.createElement("div");
+            line.className = "ugf-classic-urlline";
+            const u = document.createElement("span");
+            u.className = "ugf-classic-url";
+            u.textContent = shown;
+            line.appendChild(u);
+            const add = function(label, url) {
+                line.appendChild(document.createTextNode(" - "));
+                const a = document.createElement("a");
+                a.className = "ugf-classic-sub";
+                a.href = url;
+                a.textContent = label;
+                line.appendChild(a);
+            };
+            add("Cached", "https://web.archive.org/web/2/" + href);
+            add("Similar pages", "https://www.google.com/search?q=" + encodeURIComponent("related:" + href.replace(/^https?:\/\//, "")));
+            inner.appendChild(line);
+        });
+    }
+    // 2000-2005 results footer, from the Apr 2003 capture: Result Page label, bottom search box,
+    // "Dissatisfied?" line, blue link bar and copyright.
+    function ugfClassicFooter() {
+        const h = document.querySelector("html");
+        if (h.getAttribute("location") === "images" || document.querySelector("#ugf-classic-bottom")) {
+            return;
+        }
+        const era = ugfRetroEra();
+        const year = { gplex2000: "2000", gplex2001: "2001", gplex2002: "2002", gplex2003: "2003", gplex2005: "2005" }[era] || "2003";
+        let q = "";
+        try {
+            q = new URLSearchParams(window.location.search).get("q") || "";
+        } catch (e) {}
+        ugf2009WaitFor("#ugf-footer", function(footer) {
+            if (document.querySelector("#ugf-classic-bottom")) {
+                return;
+            }
+            const box = document.createElement("div");
+            box.id = "ugf-classic-bottom";
+            const row = document.createElement("div");
+            row.className = "ugf-cb-search";
+            const input = document.createElement("input");
+            input.type = "text";
+            input.value = q;
+            const go = function(query) {
+                if (query.trim()) {
+                    window.location = "https://www.google.com/search?q=" + encodeURIComponent(query.trim());
+                }
+            };
+            input.addEventListener("keydown", function(ev) {
+                if (ev.key === "Enter") {
+                    go(input.value);
+                }
+            });
+            const btn = document.createElement("button");
+            btn.textContent = "Google Search";
+            btn.addEventListener("click", function() {
+                go(input.value);
+            });
+            const within = document.createElement("a");
+            within.href = "#";
+            within.textContent = "Search within results";
+            within.addEventListener("click", function(ev) {
+                ev.preventDefault();
+                const extra = input.value.trim() === q.trim() ? "" : input.value.trim();
+                go(extra ? q + " " + extra : q);
+            });
+            row.appendChild(input);
+            row.appendChild(btn);
+            row.appendChild(within);
+            const dis = document.createElement("div");
+            dis.className = "ugf-cb-dissatisfied";
+            dis.appendChild(document.createTextNode("Dissatisfied with your search results? "));
+            const help = document.createElement("a");
+            help.href = "https://support.google.com/websearch";
+            help.textContent = "Help us improve.";
+            dis.appendChild(help);
+            const bar = document.createElement("div");
+            bar.className = "ugf-cb-bar";
+            [["Google Home", "https://www.google.com/"], ["Advertise with Us", "https://ads.google.com/"], ["Business Solutions", "https://www.google.com/services/"], ["Services & Tools", "https://www.google.com/intl/en/options/"], ["Jobs, Press, & Help", "https://about.google/"]].forEach(function(l, i) {
+                if (i > 0) {
+                    bar.appendChild(document.createTextNode(" - "));
+                }
+                const a = document.createElement("a");
+                a.href = l[1];
+                a.textContent = l[0];
+                bar.appendChild(a);
+            });
+            const copy = document.createElement("div");
+            copy.className = "ugf-cb-copy";
+            copy.textContent = "©" + year + " Google";
+            box.appendChild(row);
+            box.appendChild(dis);
+            box.appendChild(bar);
+            box.appendChild(copy);
+            footer.appendChild(box);
+        });
+    }
+    function ugfClassicSerp() {
+        const loc0 = document.querySelector("html").getAttribute("location") || "";
+        if (ugfRetroEra() === "gplex2005" && loc0 !== "gplex" && loc0 !== "images" && !/home$/.test(loc0)) {
+            document.querySelector("html").setAttribute("era-urlline", "");
+            ugf2009WaitFor("#ugf-search-results-container", function(container) {
+                ugfClassicUrlLines(container);
+                new MutationObserver(function() {
+                    ugfClassicUrlLines(container);
+                }).observe(container, { childList: true });
+            });
+        }
+        if (!ugfClassicSerpActive()) {
+            return;
+        }
+        const era = ugfRetroEra();
+        const h = document.querySelector("html");
+        h.setAttribute("era-serp-classic", era === "gplex2000" || era === "gplex2001" ? "notabs" : "tabs");
+        const q = searchValue || (function() {
+            try {
+                return new URLSearchParams(window.location.search).get("q") || "";
+            } catch (e) {
+                return "";
+            }
+        })();
+        ugf2009WaitFor("#ugf-topbar #ugf-search", function(searchEl) {
+            const outer = searchEl.parentElement;
+            if (!outer.querySelector("#ugf-classic-links")) {
+                const row = document.createElement("div");
+                row.id = "ugf-classic-links";
+                const links = [["Advanced Search", "https://www.google.com/advanced_search?q=" + encodeURIComponent(q)], ["Preferences", "https://www.google.com/preferences"]];
+                if (h.getAttribute("era-serp-classic") === "tabs") {
+                    links.push(["Language Tools", "https://www.google.com/language_tools"]);
+                }
+                links.push(["Search Tips", "https://www.google.com/intl/en/help/basics.html"]);
+                links.forEach(function(l) {
+                    const a = document.createElement("a");
+                    a.href = l[1];
+                    a.textContent = l[0];
+                    row.appendChild(a);
+                });
+                outer.insertBefore(row, searchEl);
+            }
+        });
+        ugf2009WaitFor("#ugf-topbar #ugf-search .searchbtn-small", function(btn) {
+            btn.textContent = "Google Search";
+            if (h.getAttribute("era-serp-classic") === "notabs" && !btn.parentElement.querySelector(".ugf-classic-lucky")) {
+                const lucky = document.createElement("button");
+                lucky.className = "searchbtn-small ugf-classic-lucky";
+                lucky.textContent = "I'm Feeling Lucky";
+                lucky.addEventListener("click", function() {
+                    const v = document.querySelector("#ugf-search-value").value;
+                    window.location = "https://www.google.com/search?q=" + encodeURIComponent(v) + "&btnI=I%27m+Feeling+Lucky";
+                });
+                btn.parentElement.appendChild(lucky);
+            }
+        });
+        if (h.getAttribute("era-serp-classic") === "tabs") {
+            ugf2009WaitFor("#ugf-topbar .ugf-era-nav", function(nav) {
+                const header = document.querySelector("#ugf-search-results-header");
+                if (!header) {
+                    return;
+                }
+                nav.classList.add("ugf-classic-tabs");
+                const more = nav.querySelector("a.more");
+                if (more) {
+                    more.remove();
+                }
+                if (era === "gplex2002" && !Array.from(nav.querySelectorAll("a")).some(function(a) { return a.textContent.trim() === "News"; })) {
+                    const news = document.createElement("a");
+                    news.href = "https://www.google.com/search?q=" + encodeURIComponent(q) + "&tbm=nws";
+                    news.textContent = "News";
+                    news.className = "ugf-classic-wide";
+                    if (document.querySelector("html").hasAttribute("news-results")) {
+                        nav.querySelectorAll("a.active").forEach(function(a) { a.classList.remove("active"); });
+                        news.classList.add("active");
+                    }
+                    nav.appendChild(news);
+                }
+                const mainInner = document.querySelector("#ugf-main-inner");
+                if (mainInner) {
+                    mainInner.insertBefore(header, mainInner.firstChild);
+                }
+                header.parentElement.insertBefore(nav, header);
+            });
+        } else {
+            ugf2009WaitFor("#ugf-search-results-header", function(header) {
+                const mainInner = document.querySelector("#ugf-main-inner");
+                if (mainInner && header.parentElement !== mainInner) {
+                    mainInner.insertBefore(header, mainInner.firstChild);
+                }
+            });
+        }
+        ugfClassicFooter();
+        ugf2009WaitFor("#ugf-search-results-container", function(container) {
+            ugfClassicUrlLines(container);
+            new MutationObserver(function() {
+                ugfClassicUrlLines(container);
+            }).observe(container, { childList: true });
+        });
     }
     function ugfEscapeHtml(t) {
         return String(t == null ? "" : t)
@@ -15556,6 +16693,523 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         if (curPage >= maxPages) {
             h.setAttribute("era-last-page", "");
         }
+    }
+    // ---- Reverse image search (Google Lens) themed as "Search by image" (2011-2016) / "Google Lens" (2017+) ----
+    // Google's Lens page stays visible until enough visual matches are found; if parsing fails it is left untouched.
+    // ---- "Search by image" (2011-2016) and "Google Lens" (2017+) entry: camera icon + panel, no Google page needed ----
+    const UGF_CAMERA_SVG = '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M9 3 7.2 5H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3.2L15 3H9zm3 5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9zm0 2a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z"/></svg>';
+    function ugfSbiSearchUrl(u) {
+        u = (u || "").trim();
+        if (!/^https?:\/\//i.test(u)) {
+            return false;
+        }
+        window.location = "https://lens.google.com/uploadbyurl?url=" + encodeURIComponent(u);
+        return true;
+    }
+    function ugfSbiUploadForm() {
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.enctype = "multipart/form-data";
+        form.style.display = "none";
+        const file = document.createElement("input");
+        file.type = "file";
+        file.name = "encoded_image";
+        file.accept = "image/*";
+        form.appendChild(file);
+        const send = function() {
+            if (!file.files || !file.files.length) {
+                return;
+            }
+            form.action = "https://lens.google.com/v3/upload?hl=en&re=df&ep=gsbubb&st=" + Date.now();
+            form.submit();
+        };
+        file.addEventListener("change", send);
+        return { form: form, file: file, send: send };
+    }
+    function ugfSbiHandleDrop(ev, up) {
+        ev.preventDefault();
+        const dt = ev.dataTransfer;
+        if (!dt) {
+            return;
+        }
+        if (dt.files && dt.files.length) {
+            try {
+                up.file.files = dt.files;
+                up.send();
+                return;
+            } catch (e) {}
+        }
+        const uri = (dt.getData("text/uri-list") || dt.getData("text/plain") || "").split("\n")[0];
+        ugfSbiSearchUrl(uri);
+    }
+    function ugfSbiBuildPanel(style) {
+        const panel = document.createElement("div");
+        panel.id = "ugf-sbi-panel";
+        panel.className = "ugf-sbi-" + style;
+        const up = ugfSbiUploadForm();
+        panel.appendChild(up.form);
+        const close = document.createElement("a");
+        close.className = "ugf-sbi-close";
+        close.href = "#";
+        close.textContent = "×";
+        close.addEventListener("click", function(ev) {
+            ev.preventDefault();
+            panel.remove();
+        });
+        if (style === "sbi") {
+            const title = document.createElement("div");
+            title.className = "ugf-sbi-title";
+            title.textContent = "Search by image";
+            const desc = document.createElement("div");
+            desc.className = "ugf-sbi-desc";
+            desc.textContent = "Search Google with an image instead of text. Try dragging an image here.";
+            const tabs = document.createElement("div");
+            tabs.className = "ugf-sbi-tabs";
+            const tUrl = document.createElement("a");
+            tUrl.href = "#";
+            tUrl.textContent = "Paste image URL";
+            tUrl.className = "active";
+            const tUp = document.createElement("a");
+            tUp.href = "#";
+            tUp.textContent = "Upload an image";
+            tabs.appendChild(tUrl);
+            tabs.appendChild(tUp);
+            const bodyUrl = document.createElement("div");
+            bodyUrl.className = "ugf-sbi-body";
+            const inp = document.createElement("input");
+            inp.type = "text";
+            const btn = document.createElement("button");
+            btn.textContent = "Search by image";
+            btn.addEventListener("click", function() { ugfSbiSearchUrl(inp.value); });
+            inp.addEventListener("keydown", function(ev) {
+                if (ev.key === "Enter") {
+                    ugfSbiSearchUrl(inp.value);
+                }
+            });
+            bodyUrl.appendChild(inp);
+            bodyUrl.appendChild(btn);
+            const bodyUp = document.createElement("div");
+            bodyUp.className = "ugf-sbi-body";
+            bodyUp.style.display = "none";
+            const pick = document.createElement("button");
+            pick.className = "ugf-sbi-choose";
+            pick.textContent = "Choose File";
+            const none = document.createElement("span");
+            none.className = "ugf-sbi-none";
+            none.textContent = "No file chosen";
+            pick.addEventListener("click", function() { up.file.click(); });
+            up.file.addEventListener("change", function() {
+                if (up.file.files && up.file.files[0]) {
+                    none.textContent = up.file.files[0].name;
+                }
+            });
+            bodyUp.appendChild(pick);
+            bodyUp.appendChild(none);
+            tUrl.addEventListener("click", function(ev) {
+                ev.preventDefault();
+                tUrl.className = "active";
+                tUp.className = "";
+                bodyUrl.style.display = "";
+                bodyUp.style.display = "none";
+            });
+            tUp.addEventListener("click", function(ev) {
+                ev.preventDefault();
+                tUp.className = "active";
+                tUrl.className = "";
+                bodyUp.style.display = "";
+                bodyUrl.style.display = "none";
+            });
+            panel.appendChild(close);
+            panel.appendChild(title);
+            panel.appendChild(desc);
+            panel.appendChild(tabs);
+            panel.appendChild(bodyUrl);
+            panel.appendChild(bodyUp);
+            setTimeout(function() { inp.focus(); }, 0);
+        } else {
+            const title = document.createElement("div");
+            title.className = "ugf-sbi-title";
+            title.textContent = "Search any image with Google Lens";
+            const drop = document.createElement("div");
+            drop.className = "ugf-sbi-drop";
+            drop.innerHTML = trusted_policy.createHTML('<div class="ugf-sbi-drop-icon">' + UGF_CAMERA_SVG + '</div><div>Drag an image here or <a href="#" class="ugf-sbi-upload">upload a file</a></div>');
+            drop.querySelector(".ugf-sbi-upload").addEventListener("click", function(ev) {
+                ev.preventDefault();
+                up.file.click();
+            });
+            const or = document.createElement("div");
+            or.className = "ugf-sbi-or";
+            or.innerHTML = trusted_policy.createHTML("<span>OR</span>");
+            const row = document.createElement("div");
+            row.className = "ugf-sbi-body";
+            const inp = document.createElement("input");
+            inp.type = "text";
+            inp.placeholder = "Paste image link";
+            const btn = document.createElement("button");
+            btn.textContent = "Search";
+            btn.addEventListener("click", function() { ugfSbiSearchUrl(inp.value); });
+            inp.addEventListener("keydown", function(ev) {
+                if (ev.key === "Enter") {
+                    ugfSbiSearchUrl(inp.value);
+                }
+            });
+            row.appendChild(inp);
+            row.appendChild(btn);
+            panel.appendChild(close);
+            panel.appendChild(title);
+            panel.appendChild(drop);
+            panel.appendChild(or);
+            panel.appendChild(row);
+        }
+        panel.addEventListener("dragover", function(ev) {
+            ev.preventDefault();
+            panel.classList.add("ugf-sbi-dragging");
+        });
+        panel.addEventListener("dragleave", function() {
+            panel.classList.remove("ugf-sbi-dragging");
+        });
+        panel.addEventListener("drop", function(ev) {
+            panel.classList.remove("ugf-sbi-dragging");
+            ugfSbiHandleDrop(ev, up);
+        });
+        return panel;
+    }
+    function ugfSbiCamera() {
+        const style = ugfLensStyle();
+        if (!style) {
+            return;
+        }
+        const h = document.querySelector("html");
+        const loc = h.getAttribute("location") || "";
+        const onImages = loc === "images" || ugfHomeVertical === "images";
+        const lensEverywhere = h.hasAttribute("gplex2022") && /home$/.test(loc);
+        if (!onImages && !lensEverywhere && loc !== "lens") {
+            return;
+        }
+        const sel = /home$/.test(loc) ? "#ugf-hp-search #ugf-searchbar" : "#ugf-top #ugf-searchbar";
+        ugf2009WaitFor(sel, function(bar) {
+            if (bar.querySelector(".ugf-sbi-camera")) {
+                return;
+            }
+            h.setAttribute("sbi-camera", style);
+            const cam = document.createElement("a");
+            cam.href = "#";
+            cam.className = "ugf-sbi-camera";
+            cam.title = style === "lens" ? "Search by image (Google Lens)" : "Search by image";
+            cam.innerHTML = trusted_policy.createHTML(UGF_CAMERA_SVG);
+            cam.addEventListener("click", function(ev) {
+                ev.preventDefault();
+                const open = document.querySelector("#ugf-sbi-panel");
+                if (open) {
+                    open.remove();
+                    return;
+                }
+                const panel = ugfSbiBuildPanel(style);
+                bar.appendChild(panel);
+            });
+            bar.appendChild(cam);
+        });
+    }
+    function ugfLensStyle() {
+        const h = document.querySelector("html");
+        const era = ugfRetroEra();
+        if (era === "gplex2022") {
+            return "lens";
+        }
+        if (era) {
+            return null;
+        }
+        const layout = h.getAttribute("layout") || "";
+        if (["2017", "2018", "2018M", "2019"].indexOf(layout) > -1) {
+            return "lens";
+        }
+        if (["2011", "2012", "2013", "2013L", "2014", "2015", "2015L", "2016", "2016C", "2016L"].indexOf(layout) > -1) {
+            return "sbi";
+        }
+        return null;
+    }
+    function ugfLensDecodeHref(href) {
+        if (href.indexOf("/url?") === 0 || href.indexOf("https://www.google.com/url?") === 0) {
+            try {
+                const u = new URL(href, "https://www.google.com");
+                return u.searchParams.get("q") || u.searchParams.get("url") || href;
+            } catch (e) {}
+        }
+        return href;
+    }
+    function ugfLensImgSrc(img) {
+        let src = img.getAttribute("src") || "";
+        if (!src || src.indexOf("data:image/gif") === 0 || (src.indexOf("data:") === 0 && src.length < 100)) {
+            src = img.getAttribute("data-src") || ugfGetDeferredImage(img.id) || "";
+        }
+        return src;
+    }
+    function ugfFindLensCards() {
+        const out = [];
+        const seen = {};
+        document.querySelectorAll("a[href]").forEach(function(a) {
+            if (a.closest("#ugf")) {
+                return;
+            }
+            const href = ugfLensDecodeHref(a.getAttribute("href") || "");
+            if (!/^https?:\/\//.test(href) || seen[href]) {
+                return;
+            }
+            let host = "";
+            try {
+                host = new URL(href).hostname;
+            } catch (e) {
+                return;
+            }
+            if (/(^|\.)google\.[a-z.]+$/.test(host) || /gstatic\.com$|googleusercontent\.com$|googleadservices\.com$/.test(host)) {
+                return;
+            }
+            const img = a.querySelector("img");
+            if (!img) {
+                return;
+            }
+            const r = img.getBoundingClientRect();
+            const w = r.width || parseInt(img.getAttribute("width") || "0", 10);
+            if (w < 50) {
+                return;
+            }
+            const thumb = ugfLensImgSrc(img);
+            if (!thumb) {
+                return;
+            }
+            let title = (a.getAttribute("aria-label") || "").trim();
+            if (!title) {
+                const texts = [];
+                a.querySelectorAll("*").forEach(function(e) {
+                    if (!e.children.length) {
+                        const t = (e.textContent || "").replace(/\s+/g, " ").trim();
+                        if (t.length > 3 && t.indexOf(host.replace(/^www\./, "")) === -1) {
+                            texts.push(t);
+                        }
+                    }
+                });
+                texts.sort(function(x, y) { return y.length - x.length; });
+                title = texts[0] || img.getAttribute("alt") || host;
+            }
+            seen[href] = true;
+            out.push({ href: href, title: title, source: host.replace(/^www\./, ""), thumb: thumb });
+        });
+        return out;
+    }
+    function ugfFindLensQueryImage() {
+        let best = null;
+        let bestArea = 0;
+        document.querySelectorAll("img").forEach(function(img) {
+            if (img.closest("#ugf")) {
+                return;
+            }
+            const a = img.closest("a[href]");
+            if (a && /^https?:\/\//.test(ugfLensDecodeHref(a.getAttribute("href") || "")) && !/google\./.test(a.getAttribute("href") || "")) {
+                return;
+            }
+            const r = img.getBoundingClientRect();
+            const area = r.width * r.height;
+            if (r.width >= 80 && r.height >= 60 && area > bestArea && ugfLensImgSrc(img)) {
+                best = img;
+                bestArea = area;
+            }
+        });
+        return best;
+    }
+    function ugfLensTheme() {
+        const h = document.querySelector("html");
+        if (h.getAttribute("location") !== "lens") {
+            return;
+        }
+        const style = ugfLensStyle();
+        if (!style) {
+            return;
+        }
+        // show the themed shell straight away; Google's Lens page keeps rendering off-screen so it can be parsed
+        h.setAttribute("lens-page", style);
+        h.setAttribute("lens-loading", "");
+        h.removeAttribute("disabled");
+        ugfLensStartShell(style);
+        let polls = 0;
+        let lastCount = -1;
+        const timer = setInterval(function() {
+            polls++;
+            const cards = ugfFindLensCards();
+            const status = document.querySelector("#ugf-lens-loading");
+            if (status) {
+                status.textContent = "Loading... " + cards.length + " result" + (cards.length === 1 ? "" : "s") + " found";
+            }
+            const ready = (cards.length >= 4 && cards.length === lastCount) || (polls > 20 && cards.length >= 2);
+            lastCount = cards.length;
+            if (ready) {
+                clearInterval(timer);
+                ugfBuildLensPage(style, cards, ugfFindLensQueryImage());
+            } else if (polls > 40) {
+                clearInterval(timer);
+                console.log("[Gplex] Lens: only " + cards.length + " visual matches found; showing Google's page instead");
+                const shell = document.querySelector("#ugf");
+                if (shell) {
+                    shell.remove();
+                }
+                h.removeAttribute("lens-loading");
+                h.removeAttribute("lens-page");
+                h.setAttribute("disabled", "");
+            }
+        }, 300);
+    }
+    function ugfLensImagesTab() {
+    ["#ugf-all-tab", "#ugf-all-item", "#gp-gbar-search"].forEach(function(sel) {
+        const e = document.querySelector(sel);
+        if (e) {
+            e.classList.remove("active");
+        }
+    });
+    ["#ugf-images-tab", "#ugf-images-item", "#gp-gbar-images"].forEach(function(sel) {
+        const e = document.querySelector(sel);
+        if (e) {
+            e.classList.add("active");
+        }
+    });
+    }
+    function ugfLensStartShell(style) {
+        const ensure = function() {
+            if (!document.body) {
+                return false;
+            }
+            if (!document.querySelector("textarea") && !document.querySelector("input")) {
+                const ta = document.createElement("textarea");
+                ta.style.display = "none";
+                document.body.appendChild(ta);
+            }
+            if (!document.querySelector("#result-stats")) {
+                const rs = document.createElement("div");
+                rs.id = "result-stats";
+                rs.style.display = "none";
+                rs.innerHTML = trusted_policy.createHTML("<nobr></nobr>");
+                document.body.appendChild(rs);
+            }
+            return true;
+        };
+        ensure();
+        document.title = style === "lens" ? "Google Lens" : "Google Search by image";
+        createPageShell("lens");
+        ugf2009WaitFor("#ugf-search-results-container", function(container) {
+            if (container.querySelector("#ugf-lens")) {
+                return;
+            }
+            const load = document.createElement("div");
+            load.id = "ugf-lens-loading";
+            load.textContent = "Loading... 0 results found";
+            container.innerHTML = "";
+            container.appendChild(load);
+            ugfLensImagesTab();
+        });
+    }
+    function ugfBuildLensPage(style, cards, qImg) {
+        const h = document.querySelector("html");
+        const qSrc = qImg ? ugfLensImgSrc(qImg) : "";
+        const qW = qImg ? (qImg.naturalWidth || 0) : 0;
+        const qH = qImg ? (qImg.naturalHeight || 0) : 0;
+        h.removeAttribute("lens-loading");
+        ugf2009WaitFor("#ugf-top #ugf-searchbar", function(bar) {
+            if (bar.querySelector(".ugf-lens-chip")) {
+                return;
+            }
+            const chip = document.createElement("span");
+            chip.className = "ugf-lens-chip";
+            if (qSrc) {
+                const ci = document.createElement("img");
+                ci.src = qSrc;
+                chip.appendChild(ci);
+            }
+            const lab = document.createElement("span");
+            lab.textContent = style === "lens" ? "Google Lens" : "image";
+            chip.appendChild(lab);
+            const x = document.createElement("a");
+            x.href = "https://www.google.com/imghp";
+            x.textContent = "×";
+            x.title = "Remove image";
+            chip.appendChild(x);
+            bar.insertBefore(chip, bar.firstChild);
+            const input = bar.querySelector("#ugf-search-value");
+            if (input) {
+                input.value = "";
+                input.placeholder = "";
+            }
+        });
+        ugf2009WaitFor("#ugf-search-results-container", function(container) {
+            const loadingNote = container.querySelector("#ugf-lens-loading");
+            if (loadingNote) {
+                loadingNote.remove();
+            }
+            const box = document.createElement("div");
+            box.id = "ugf-lens";
+            const top = document.createElement("div");
+            top.className = "ugf-lens-top";
+            if (qSrc) {
+                const qi = document.createElement("img");
+                qi.className = "ugf-lens-query";
+                qi.src = qSrc;
+                top.appendChild(qi);
+            }
+            const info = document.createElement("div");
+            info.className = "ugf-lens-info";
+            if (style === "lens") {
+                info.innerHTML = trusted_policy.createHTML('<div class="ugf-lens-brand">Google Lens</div><div class="ugf-lens-sub">' + cards.length + ' visual matches</div>');
+            } else {
+                info.innerHTML = trusted_policy.createHTML('<div class="ugf-lens-brand">Search by image</div>' + (qW && qH ? '<div>Image size:</div><div class="ugf-lens-dim">' + qW + " × " + qH + "</div>" : "") + '<div class="ugf-lens-sub">' + cards.length + " matches found</div>");
+            }
+            top.appendChild(info);
+            box.appendChild(top);
+            const grid = document.createElement("div");
+            grid.className = "ugf-lens-grid";
+            const head1 = document.createElement("div");
+            head1.className = "ugf-lens-heading";
+            head1.textContent = style === "lens" ? "Visual matches" : "Visually similar images";
+            box.appendChild(head1);
+            cards.slice(0, style === "lens" ? 60 : 16).forEach(function(c) {
+                const a = document.createElement("a");
+                a.className = "ugf-lens-card";
+                a.href = c.href;
+                a.title = c.title;
+                const im = document.createElement("img");
+                im.src = c.thumb;
+                a.appendChild(im);
+                if (style === "lens") {
+                    const t = document.createElement("div");
+                    t.className = "ugf-lens-card-title";
+                    t.textContent = c.title;
+                    const so = document.createElement("div");
+                    so.className = "ugf-lens-card-source";
+                    so.textContent = c.source;
+                    a.appendChild(so);
+                    a.appendChild(t);
+                }
+                grid.appendChild(a);
+            });
+            box.appendChild(grid);
+            if (style === "sbi") {
+                const head2 = document.createElement("div");
+                head2.className = "ugf-lens-heading";
+                head2.textContent = "Pages that include matching images";
+                box.appendChild(head2);
+                cards.slice(0, 10).forEach(function(c) {
+                    const r = document.createElement("div");
+                    r.className = "ugf-search-result ugf-lens-page-result";
+                    r.innerHTML = trusted_policy.createHTML(
+                        '<a class="ugf-lens-page-thumb" href="' + ugfEscapeHtml(c.href) + '"><img src="' + ugfEscapeHtml(c.thumb) + '"></a>' +
+                        '<div class="ugf-search-result-inner">' +
+                            '<a class="ugf-search-result-title" href="' + ugfEscapeHtml(c.href) + '"><span>' + ugfEscapeHtml(c.title) + '</span></a>' +
+                            '<a class="ugf-search-result-link" href="' + ugfEscapeHtml(c.href) + '"><span>' + ugfEscapeHtml(c.href) + '</span></a>' +
+                        '</div>');
+                    box.appendChild(r);
+                });
+            }
+            container.innerHTML = "";
+            container.appendChild(box);
+            h.setAttribute("results-arrived", "");
+            ugfLensImagesTab();
+        });
     }
     function ugfContinuousScroll() {
         if (!document.querySelector("html").hasAttribute("gplex2022")) {
@@ -16157,6 +17811,9 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
     ugfEraHomeButtons();
     ugfVerticalHome();
     ugfEraPageLimit();
+    ugfClassicSerp();
+    ugfLensTheme();
+    ugfSbiCamera();
     ugfRetroChrome();
     ugfRetroFooter();
     ugfContinuousScroll();
