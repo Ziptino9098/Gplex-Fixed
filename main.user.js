@@ -27,8 +27,8 @@
 // @grant        unsafeWindow
 // @license      MIT
 // @run-at document-body
-// @downloadURL https://update.greasyfork.org/scripts/596098/Gplex%20Extended%20-%20Fixed%20and%20extended%20version%20of%20the%20legendary%20Gplex%20Old%20Google%20script.user.js
-// @updateURL https://update.greasyfork.org/scripts/596098/Gplex%20Extended%20-%20Fixed%20and%20extended%20version%20of%20the%20legendary%20Gplex%20Old%20Google%20script.meta.js
+// @downloadURL https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
+// @updateURL https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
 // ==/UserScript==
 function showMenu(){
     window.location = "https://www.google.com/gplex";
