@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      3.1.4
+// @version      3.2.0
 // @description  1997-2024 Old Google Frontend (Full public release)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -11684,6 +11684,10 @@ html[shopping-results] #ugf-center {
             }
         }
     }
+    const ugfBasicHtml = /[?&]gbv=1\b/.test(url);
+    if (ugfBasicHtml) {
+        document.querySelector("html").setAttribute("basic-html", "");
+    }
     if (ugfLensPage) {
         location = "lens";
         document.querySelector("html").setAttribute("location","lens");
@@ -13535,10 +13539,16 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 }, 10);
             }
             let shopTries = 0;
+            let basicTries = 0;
             let doInterval = setInterval(function() {
                 asArray = document.querySelectorAll("#rso span > a");
                 if (location == "news" && document.querySelector("html").hasAttribute("news-results")) {
                     if (ugfFindNewsCards(document).length >= 8) {
+                        parseHTMLNeo(location);
+                        clearInterval(doInterval);
+                    }
+                } else if (ugfBasicHtml && location !== "home" && location !== "structured-home" && location !== "gplex") {
+                    if (ugfFindBasicResults().length >= 5 || basicTries++ > 200) {
                         parseHTMLNeo(location);
                         clearInterval(doInterval);
                     }
@@ -13675,6 +13685,10 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             }
             if (location == "shopping") {
                 ugfParseShopping();
+                return;
+            }
+            if (ugfBasicHtml && location !== "home" && location !== "structured-home" && location !== "gplex") {
+                ugfParseBasic();
                 return;
             }
             if (location == "images") {
@@ -15031,6 +15045,9 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             } else {
                 newHref = itemRoot.getAttribute("href").replaceAll("TEMP_REPLACEME",encodedSearchValue);
             }
+            if (document.querySelector("html").hasAttribute("basic-html") && newHref.indexOf("gbv=1") === -1) {
+                newHref += "&gbv=1";
+            }
             itemRoot.setAttribute("href",newHref);
             PRcheck++;
         });
@@ -15043,6 +15060,9 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             pageSuffix = "&udm=7";
         } else if (location == "news" && document.querySelector("html").hasAttribute("news-results")) {
             pageSuffix = "&tbm=nws";
+        }
+        if (document.querySelector("html").hasAttribute("basic-html")) {
+            pageSuffix += "&gbv=1";
         }
         const pageBase = "https://www.google.com/search?q=" + encodedSearchValue + pageSuffix;
         const pageLinks = document.querySelectorAll("#gp-page-numbers .gp-pagination");
@@ -15902,6 +15922,10 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                         window.location.replace("https://www.google.com/");
                     } else {
                         let encodedValue = encodeURIComponent(value);
+                        if (document.querySelector("html").hasAttribute("basic-html")) {
+                            window.location = "https://www.google.com/search?q=" + encodedValue + "&gbv=1";
+                            return;
+                        }
                         if (location == "images" || ugfHomeVertical == "images") {
                             window.location = "https://www.google.com/search?q=" + encodedValue + "&udm=2";
                         } else if (location == "videos" || ugfHomeVertical == "videos") {
@@ -16986,6 +17010,84 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 origImg: img
             });
         });
+    }
+    // ---- google.com/...?gbv=1 : the no-JavaScript page, whose markup predates everything else we parse ----
+    function ugfBasicHref(a) {
+        let href = a.getAttribute("href") || "";
+        if (href.indexOf("/url?") === 0 || href.indexOf("https://www.google.com/url?") === 0) {
+            try {
+                const u = new URL(href, "https://www.google.com");
+                href = u.searchParams.get("q") || u.searchParams.get("url") || "";
+            } catch (e) {
+                href = "";
+            }
+        }
+        return /^https?:\/\//.test(href) ? href : "";
+    }
+    function ugfFindBasicResults() {
+        const scope = document.querySelector("#main") || document.querySelector("#center_col") || document.body;
+        if (!scope) {
+            return [];
+        }
+        const out = [];
+        const seen = {};
+        scope.querySelectorAll("a[href]").forEach(function(a) {
+            if (a.closest("#ugf")) {
+                return;
+            }
+            const href = ugfBasicHref(a);
+            if (!href || /^https?:\/\/(www\.)?google\.[^/]+\//.test(href) || seen[href]) {
+                return;
+            }
+            const heading = a.querySelector("h3") || a.querySelector("div, span");
+            const title = ((heading ? heading.textContent : a.textContent) || "").replace(/\s+/g, " ").trim();
+            if (!title || title.length < 3) {
+                return;
+            }
+            // climb only while this is still the one result in the container, so snippets don't bleed between results
+            let card = a.parentElement || a;
+            let guard = 0;
+            while (card.parentElement && guard++ < 5) {
+                const outer = card.parentElement;
+                if (outer.querySelectorAll('a[href^="/url?"], a[href*="/url?q="]').length !== 1) {
+                    break;
+                }
+                card = outer;
+            }
+            let description = "";
+            card.querySelectorAll("div, span, td").forEach(function(n) {
+                if (n.querySelector("a") || n.contains(a)) {
+                    return;
+                }
+                const t = (n.textContent || "").replace(/\s+/g, " ").trim();
+                if (t.length > description.length && t !== title && t.length > 20) {
+                    description = n.innerHTML;
+                }
+            });
+            seen[href] = true;
+            out.push({ href: href, title: title, description: description });
+        });
+        return out;
+    }
+    function ugfParseBasic() {
+        const results = ugfFindBasicResults();
+        let itemNo = 0;
+        results.forEach(function(r) {
+            linkList.push({searchResult: {
+                itemNo: itemNo,
+                type: "result",
+                href: r.href,
+                title: ugfNewsBold(r.title),
+                unmoddedTitle: r.title,
+                description: r.description || ""
+            }});
+            createItem(linkList[linkList.length - 1], "searchResult");
+            itemNo++;
+        });
+        if (itemNo > 0) {
+            document.querySelector("html").setAttribute("results-arrived", "");
+        }
+        return itemNo;
     }
     function ugfShopFallback(why) {
         const h = document.querySelector("html");
