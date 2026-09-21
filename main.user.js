@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      3.1.1
+// @version      3.1.4
 // @description  1997-2024 Old Google Frontend (Full public release)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -10234,10 +10234,13 @@ html[news-results] #ugf-search-results-container .ugf-news-result .ugf-news-resu
   content: "News" !important;
 }
 /* Shopping: era header label, forced row layout, wider grid */
+[shopping-results][gplex2003] #ugf-search-results-header:before,
 [shopping-results][gplex2005] #ugf-search-results-header:before,
-[shopping-results][gplex2006] #ugf-search-results-header:before,
-[shopping-results][gplex2007] #ugf-search-results-header:before {
+[shopping-results][gplex2006] #ugf-search-results-header:before {
   content: "Froogle" !important;
+}
+[shopping-results][gplex2007] #ugf-search-results-header:before {
+  content: "Product Search" !important;
 }
 [shopping-results][gplex2009] #ugf-search-results-header:before,
 [shopping-results][gplex2010] #ugf-search-results-header:before {
@@ -10268,6 +10271,13 @@ html:not([home-vertical]) #ugf-hp-vertical-label {
   font-size: 16px;
   color: #777;
   white-space: nowrap;
+}
+/* "Product Search" and "Froogle" are wider than "Images", so they clear the logo instead of sitting in its corner */
+[home-vertical="shopping"][legacy-gbar] #ugf-hp-vertical-label {
+  top: -12px !important;
+}
+[home-vertical="shopping"] #ugf-hp-vertical-label {
+  top: 0;
 }
 [home-vertical][legacy-gbar] #ugf-hp-vertical-label {
   top: -26px;
@@ -16473,6 +16483,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 ["Video", "https://www.google.com/videohp"],
                 ["News", "https://news.google.com"],
                 ["Maps", "https://maps.google.com"],
+                ["Product Search", "https://www.google.com/shopping"],
                 ["Gmail", "https://mail.google.com"]
             ],
             right: [
@@ -16525,6 +16536,12 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         if (h.hasAttribute("gplex2009")) { return "gplex2009"; }
         if (h.hasAttribute("gplex2010")) { return "gplex2010"; }
         return null;
+    }
+    function ugfIsShoppingLink(label) {
+        return label === "Shopping" || label === "Froogle" || label === "Product Search";
+    }
+    function ugfOnShopping() {
+        return (document.querySelector("html").getAttribute("location") === "shopping") || ugfHomeVertical === "shopping";
     }
     function ugfRetroGbarLink(label, href, active) {
         const a = document.createElement("a");
@@ -17069,7 +17086,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         // light up whichever era link stands for Shopping (Froogle before 2011)
         document.querySelectorAll("#ugf-era-nav a, .ugf-era-nav a, #ugf-top a, .ugf-tab").forEach(function(a) {
             const t = (a.textContent || "").trim();
-            if (t === "Froogle" || t === "Shopping" || t === ugfT("Froogle") || t === ugfT("Shopping")) {
+            if (ugfIsShoppingLink(t) || t === ugfT("Froogle") || t === ugfT("Shopping")) {
                 a.classList.add("active");
             } else if (t === "Web" || t === "All" || t === ugfT("Web") || t === ugfT("All")) {
                 a.classList.remove("active");
@@ -18423,6 +18440,8 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                             href = "https://www.google.com/search?q=" + encodeURIComponent(q) + "&tbm=nws";
                         } else if (item[0] === "Web") {
                             href = "https://www.google.com/search?q=" + encodeURIComponent(q);
+                        } else if (ugfIsShoppingLink(item[0])) {
+                            href = "https://www.google.com/search?q=" + encodeURIComponent(q) + "&udm=28";
                         }
                     }
                     const a = document.createElement("a");
@@ -18430,7 +18449,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     a.textContent = item[0];
                     const onNewsTab = document.querySelector("html").hasAttribute("news-results");
                     const onVideoTab = ugfHomeVertical === "videos";
-                    if ((onImages && item[0] === "Images") || (onNewsTab && item[0] === "News") || (onVideoTab && (item[0] === "Video" || item[0] === "Videos")) || (!onImages && !onNewsTab && !onVideoTab && item[0] === "Web")) {
+                    if ((onImages && item[0] === "Images") || (onNewsTab && item[0] === "News") || (onVideoTab && (item[0] === "Video" || item[0] === "Videos")) || (ugfOnShopping() && ugfIsShoppingLink(item[0])) || (!onImages && !onNewsTab && !onVideoTab && !ugfOnShopping() && item[0] === "Web")) {
                         a.className = "active";
                     }
                     nav.appendChild(a);
@@ -18495,7 +18514,8 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             }
             conf.left.forEach(function(item) {
                 const onNews = document.querySelector("html").hasAttribute("news-results");
-                const isActive = (onImages && item[0] === "Images") || (onNews && item[0] === "News") || (onVideoHome && (item[0] === "Video" || item[0] === "Videos")) || (!onImages && !onNews && !onVideoHome && item[0] === "Web");
+                const onShopping = ugfOnShopping();
+                const isActive = (onImages && item[0] === "Images") || (onNews && item[0] === "News") || (onVideoHome && (item[0] === "Video" || item[0] === "Videos")) || (onShopping && ugfIsShoppingLink(item[0])) || (!onImages && !onNews && !onVideoHome && !onShopping && item[0] === "Web");
                 let href = item[1];
                 if (q) {
                     if (item[0] === "Images") {
@@ -18506,6 +18526,8 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                         href = "https://www.google.com/search?q=" + encodeURIComponent(q) + "&tbm=nws";
                     } else if (item[0] === "Web") {
                         href = "https://www.google.com/search?q=" + encodeURIComponent(q);
+                    } else if (ugfIsShoppingLink(item[0])) {
+                        href = "https://www.google.com/search?q=" + encodeURIComponent(q) + "&udm=28";
                     }
                 }
                 const link = ugfRetroGbarLink(item[0], href, isActive);
@@ -18585,22 +18607,25 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         }
         const isImages = ugfHomeVertical === "images";
         const isShopping = ugfHomeVertical === "shopping";
-        const froogle = ["gplex2003", "gplex2005", "gplex2006", "gplex2007"].indexOf(ugfRetroEra()) > -1;
-        document.title = isShopping ? (froogle ? "Froogle" : "Google Shopping") : (isImages ? "Google Images" : "Google Videos");
+        const shopEra = ugfRetroEra();
+        const froogle = ["gplex2003", "gplex2005", "gplex2006"].indexOf(shopEra) > -1;
+        const productSearch = shopEra === "gplex2007";
+        const shopName = froogle ? "Froogle" : (productSearch ? "Product Search" : "Shopping");
+        document.title = isShopping ? (froogle ? "Froogle" : (productSearch ? "Google Product Search" : "Google Shopping")) : (isImages ? "Google Images" : "Google Videos");
         ugf2009WaitFor("#ugf-hp-logo-companion", function(comp) {
             if (!comp.querySelector("#ugf-hp-vertical-label")) {
                 const lab = document.createElement("div");
                 lab.id = "ugf-hp-vertical-label";
                 const old = document.querySelector("html").hasAttribute("legacy-gbar");
                 if (isShopping) {
-                    lab.textContent = froogle ? "Froogle" : (old ? "Shopping" : "shopping");
+                    lab.textContent = (froogle || productSearch) ? shopName : (old ? "Shopping" : "shopping");
                 } else {
                     lab.textContent = isImages ? (old ? "Images" : "images") : (old ? "Video" : "videos");
                 }
                 comp.appendChild(lab);
             }
         });
-        const label = isShopping ? (froogle ? "Search Froogle" : "Search Shopping") : (isImages ? "Search Images" : "Search Video");
+        const label = isShopping ? (productSearch ? "Search Products" : "Search " + shopName) : (isImages ? "Search Images" : "Search Video");
         ugf2009WaitFor("#ugf-hp-buttons", function(row) {
             const relabel = function() {
                 const retro = row.querySelectorAll("button.searchbtn");
