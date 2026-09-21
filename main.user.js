@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      3.1
+// @version      3.1.1
 // @description  1997-2024 Old Google Frontend (Full public release)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -14979,13 +14979,15 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         createTop();
     }
     function fixSidebar() {
+        let encodedSearchValue = encodeURIComponent(searchValue);
         let sidebarTools = document.querySelectorAll(".ugf-sidebar-tool-inner");
         sidebarTools.forEach(itemRoot => {
-            let newHref = itemRoot.getAttribute("href").replaceAll("TEMP_REPLACEME",searchValue);
+            let newHref = itemRoot.getAttribute("href").replaceAll("TEMP_REPLACEME",encodedSearchValue);
             itemRoot.setAttribute("href",newHref);
         });
     }
     function fixPagination() {
+        let encodedSearchValue = encodeURIComponent(searchValue);
         let pages = document.querySelectorAll(".gp-pagination");
         let PRcheck = 0;
         /*if (loggedIn == true) {
@@ -15011,13 +15013,13 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         pages.forEach(itemRoot => {
             let newHref;
             if (location == "images") {
-                newHref = itemRoot.getAttribute("href").replaceAll("TEMP_REPLACEME",searchValue + "&udm=2");
+                newHref = itemRoot.getAttribute("href").replaceAll("TEMP_REPLACEME",encodedSearchValue + "&udm=2");
             } else if (location == "videos") {
-                newHref = itemRoot.getAttribute("href").replaceAll("TEMP_REPLACEME",searchValue + "&udm=7");
+                newHref = itemRoot.getAttribute("href").replaceAll("TEMP_REPLACEME",encodedSearchValue + "&udm=7");
             } else if (location == "news" && document.querySelector("html").hasAttribute("news-results")) {
-                newHref = itemRoot.getAttribute("href").replaceAll("TEMP_REPLACEME",searchValue + "&tbm=nws");
+                newHref = itemRoot.getAttribute("href").replaceAll("TEMP_REPLACEME",encodedSearchValue + "&tbm=nws");
             } else {
-                newHref = itemRoot.getAttribute("href").replaceAll("TEMP_REPLACEME",searchValue);
+                newHref = itemRoot.getAttribute("href").replaceAll("TEMP_REPLACEME",encodedSearchValue);
             }
             itemRoot.setAttribute("href",newHref);
             PRcheck++;
@@ -15032,7 +15034,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         } else if (location == "news" && document.querySelector("html").hasAttribute("news-results")) {
             pageSuffix = "&tbm=nws";
         }
-        const pageBase = "https://www.google.com/search?q=" + searchValue + pageSuffix;
+        const pageBase = "https://www.google.com/search?q=" + encodedSearchValue + pageSuffix;
         const pageLinks = document.querySelectorAll("#gp-page-numbers .gp-pagination");
         const blockStart = Math.floor((page - 1) / 10) * 10 + 1;
         pageLinks.forEach(function(link, i) {
@@ -16644,16 +16646,155 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         }
         return blocks;
     }
+    function ugfGetSearchTerms(query, lang) {
+        if (!query || !query.trim()) return [];
+        lang = lang || (typeof UGF_LANG !== "undefined" ? UGF_LANG : "") || document.documentElement.lang || navigator.language || "en";
+        const terms = new Set();
+        const isCjk = function(s) { return /[\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]/.test(s); };
+
+        // 1. Whitespace tokens
+        query.trim().split(/\s+/).forEach(function(w) {
+            const clean = w.replace(/^["'+]+|["'+]+$/g, "").trim();
+            if (!clean) return;
+            if (isCjk(clean) ? clean.length >= 1 : clean.length >= 3) {
+                terms.add(clean);
+            }
+        });
+
+        // 2. Native Intl.Segmenter for fine-grained multi-language word segmentation
+        if (typeof Intl !== "undefined" && Intl.Segmenter) {
+            try {
+                const segmenter = new Intl.Segmenter(lang, { granularity: "word" });
+                const segments = segmenter.segment(query);
+                for (const item of segments) {
+                    if (item.isWordLike) {
+                        const trimmed = item.segment.trim();
+                        if (isCjk(trimmed) ? trimmed.length >= 1 : trimmed.length >= 3) {
+                            terms.add(trimmed);
+                        }
+                    }
+                }
+            } catch (e) {}
+        }
+
+        return Array.from(terms);
+    }
     function ugfNewsBold(text) {
-        let html = ugfEscapeHtml(text);
-        const words = (searchValue || "").split(/\s+/).filter(function(w) {
-            return w.length >= 3;
+        if (!text) return "";
+        const terms = ugfGetSearchTerms(searchValue || (new URLSearchParams(window.location.search).get("q") || ""));
+        if (!terms.length) {
+            return ugfEscapeHtml(text);
+        }
+
+        const intervals = [];
+        const isCjk = function(s) { return /[\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]/.test(s); };
+
+        terms.forEach(function(term) {
+            const safe = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            let re;
+            if (isCjk(term)) {
+                re = new RegExp(safe, "gi");
+                let match;
+                while ((match = re.exec(text)) !== null) {
+                    intervals.push({ start: match.index, end: match.index + match[0].length });
+                }
+            } else {
+                // Unicode letter/digit boundary for Latin / Cyrillic / European words
+                re = new RegExp("(?:^|[^\\p{L}\\p{N}])(" + safe + ")(?=[^\\p{L}\\p{N}]|$)", "giu");
+                let match;
+                while ((match = re.exec(text)) !== null) {
+                    const fullMatch = match[0];
+                    const group1 = match[1];
+                    const offset = fullMatch.indexOf(group1);
+                    const start = match.index + offset;
+                    intervals.push({ start: start, end: start + group1.length });
+                    if (re.lastIndex === match.index) re.lastIndex++;
+                }
+            }
         });
-        words.forEach(function(w) {
-            const safe = ugfEscapeHtml(w).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-            html = html.replace(new RegExp("(^|[^\\w>])(" + safe + ")(?=[^\\w<]|$)", "gi"), "$1<b>$2</b>");
+
+        if (!intervals.length) {
+            return ugfEscapeHtml(text);
+        }
+
+        // Sort intervals by start ascending, then end descending
+        intervals.sort(function(a, b) {
+            return a.start - b.start || b.end - a.end;
         });
-        return html;
+
+        // Merge overlapping or adjacent intervals
+        const merged = [intervals[0]];
+        for (let i = 1; i < intervals.length; i++) {
+            const last = merged[merged.length - 1];
+            const curr = intervals[i];
+            if (curr.start <= last.end) {
+                last.end = Math.max(last.end, curr.end);
+            } else {
+                merged.push(curr);
+            }
+        }
+
+        // Build safe HTML string from raw slices to prevent HTML tag collisions
+        let result = "";
+        let lastIndex = 0;
+        merged.forEach(function(interval) {
+            result += ugfEscapeHtml(text.slice(lastIndex, interval.start));
+            result += "<b>" + ugfEscapeHtml(text.slice(interval.start, interval.end)) + "</b>";
+            lastIndex = interval.end;
+        });
+        result += ugfEscapeHtml(text.slice(lastIndex));
+
+        return result;
+    }
+    // news thumbnail: the biggest non-favicon image in the card; Google hides the size in different places per build
+    function ugfNewsPickThumb(container, card) {
+        let best = null;
+        let bestScore = -1;
+        container.querySelectorAll("img").forEach(function(img) {
+            if (img.closest('[role="heading"]')) {
+                return;
+            }
+            const aw = parseInt(img.getAttribute("width") || "0", 10);
+            const ah = parseInt(img.getAttribute("height") || "0", 10);
+            const nw = img.naturalWidth || 0;
+            const st = (img.getAttribute("style") || "") + " " + (img.parentElement ? img.parentElement.getAttribute("style") || "" : "");
+            const sw = parseInt((st.match(/width:\s*(\d+)px/) || [0, 0])[1], 10);
+            const size = Math.max(aw, ah, nw > 1 ? nw : 0, sw);
+            if (size > 0 && size < 36) {
+                return; // favicon
+            }
+            const src = img.getAttribute("src") || "";
+            if (/favicon|faviconV2|\/s2\/favicons/.test(src)) {
+                return;
+            }
+            const afterHeading = card.heading.compareDocumentPosition(img) & Node.DOCUMENT_POSITION_FOLLOWING;
+            let score = size;
+            if (/^dimg_/.test(img.id || "")) {
+                score += 1000;
+            }
+            if (afterHeading) {
+                score += 500;
+            }
+            if (size === 0 && !afterHeading && !/^dimg_/.test(img.id || "")) {
+                score = 1; // unknown size before the headline: only if nothing better
+            }
+            if (score > bestScore) {
+                best = img;
+                bestScore = score;
+            }
+        });
+        return best;
+    }
+    function ugfNewsThumbSrc(img) {
+        const ok = function(v) {
+            return v && v.indexOf("data:image/gif") !== 0 && v.length >= 40 ? v : "";
+        };
+        return ok(img.getAttribute("src") || "") ||
+            ok(ugfGetDeferredImage(img.id)) ||
+            ok(img.getAttribute("data-src") || "") ||
+            ok(img.getAttribute("data-iurl") || "") ||
+            ok(((img.getAttribute("srcset") || img.getAttribute("data-srcset") || "").split(",")[0] || "").trim().split(" ")[0]) ||
+            ok(img.currentSrc || "");
     }
     // news thumbnail: the biggest non-favicon image in the card; Google hides the size in different places per build
     // ---- Shopping results (Froogle on the older layouts, Google Shopping from 2012) ----
