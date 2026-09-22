@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      4.0-ALPHA
+// @version      4.0.1-ALPHA
 // @description  1997-2024 Old Google Frontend (Full public release)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -11635,6 +11635,17 @@ html[shopping-results] #ugf-center {
         localStorage.setItem("UGF_NAME_EMAIL","name");
         nameEmail = "name";
     }
+    // the display-name choice has to cross origins too, for Gmail's header
+    try {
+        if (ugfOnGmail && typeof GM_getValue === "function") {
+            const sharedNE = GM_getValue("UGF_NAME_EMAIL", null);
+            if (sharedNE !== null && sharedNE !== undefined) {
+                nameEmail = String(sharedNE);
+            }
+        } else if (typeof GM_setValue === "function") {
+            GM_setValue("UGF_NAME_EMAIL", nameEmail);
+        }
+    } catch (e) {}
     if (settingsDisplay == null) {
         localStorage.setItem("UGF_SETTINGS_DISPLAY","topbar");
         settingsDisplay = "topbar";
@@ -14844,6 +14855,11 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     itemRoot.addEventListener("click",function() {
                         let value = itemRoot.getAttribute("value");
                         localStorage.setItem("UGF_NAME_EMAIL",value);
+                        try {
+                            if (typeof GM_setValue === "function") {
+                                GM_setValue("UGF_NAME_EMAIL", value);
+                            }
+                        } catch (e) {}
                         nameEmail = value;
                         doGplexDropdowns("name-email");
                         document.querySelector("html").removeAttribute("name-email-dd-open");
@@ -15883,6 +15899,13 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     email = email[1];
                     email = email.split(")");
                     email = email[0];
+                    try {
+                        if (typeof GM_setValue === "function") {
+                            GM_setValue("UGF_USERNAME", username);
+                            GM_setValue("UGF_EMAIL", email);
+                            GM_setValue("UGF_PFP", pfp96 || pfp || "");
+                        }
+                    } catch (e) {}
                     document.querySelector("#gp-gbar-account span").textContent = firstName;
                     document.querySelector("#gp-gbar-email span").textContent = email;
                     document.querySelector("#ugf-account-username span").textContent = username;
@@ -18621,7 +18644,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
   line-height: 32px;
 }
 
-/* ---------- the Google bar ---------- */
+/* ---------- the Google bar, one variant per era ---------- */
 #ugf-gmail-gbar {
   display: flex;
   align-items: center;
@@ -18632,36 +18655,75 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
 #ugf-gmail-gbar .right {
   display: flex;
   align-items: center;
-  gap: 14px;
 }
-/* 2004-2010: a plain line of blue links */
-#ugf-gmail[chrome="classic"] #ugf-gmail-gbar {
-  padding: 4px 10px 6px 10px;
-  font-size: 11px;
+#ugf-gmail-gbar .sepr {
+  color: #ccc;
+  margin: 0 8px;
 }
-#ugf-gmail[chrome="classic"] #ugf-gmail-gbar a {
+/* 2007-2009: plain blue links on white */
+#ugf-gmail-gbar.plain {
+  background: #fff;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 3px 10px 5px 10px;
+  font-size: 13px;
+}
+#ugf-gmail-gbar.plain .left {
+  gap: 11px;
+}
+#ugf-gmail-gbar.plain a {
   color: #00c;
-  font-size: 11px;
+  text-decoration: underline;
 }
-#ugf-gmail[chrome="classic"] #ugf-gmail-gbar a.here {
+#ugf-gmail-gbar.plain a.here,
+#ugf-gmail-gbar.g2010 a.here {
   color: #000;
   font-weight: bold;
   text-decoration: none;
 }
-#ugf-gmail[chrome="classic"] #ugf-gmail-gbar .who {
-  color: #000;
+#ugf-gmail-gbar.plain .who,
+#ugf-gmail-gbar.g2010 .who {
+  color: #00c;
   font-weight: bold;
 }
-/* Nov 2011: the dark strip, with the current app underlined in red */
+/* 2010: the white bar with the blue rule over the current product */
+#ugf-gmail-gbar.g2010 {
+  background: linear-gradient(#fff, #fafafa);
+  border-bottom: 1px solid #e5e5e5;
+  padding: 0 10px;
+  height: 29px;
+}
+#ugf-gmail-gbar.g2010 .left {
+  gap: 13px;
+  height: 29px;
+}
+#ugf-gmail-gbar.g2010 a {
+  color: #00c;
+  line-height: 29px;
+  height: 29px;
+  border-top: 3px solid transparent;
+  box-sizing: border-box;
+}
+#ugf-gmail-gbar.g2010 a.here {
+  border-top-color: #4d90fe;
+}
+#ugf-gmail-gbar.g2010 .gear svg,
+#ugf-gmail-gbar.plain .gear svg {
+  fill: #444;
+  display: block;
+  margin-left: 8px;
+}
+/* Nov 2011 onward: the dark strip */
 #ugf-gmail #ugf-gmail-gbar.dark {
-  background: #4c4c4c;
+  background: #282828;
   height: 29px;
   padding: 0 14px;
   color: #ccc;
+  justify-content: space-between;
 }
 #ugf-gmail #ugf-gmail-gbar.dark .left {
-  gap: 16px;
+  gap: 13px;
   height: 29px;
+  overflow: hidden;
 }
 #ugf-gmail #ugf-gmail-gbar.dark a {
   color: #ccc;
@@ -18670,6 +18732,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
   height: 29px;
   border-top: 3px solid transparent;
   box-sizing: border-box;
+  white-space: nowrap;
 }
 #ugf-gmail #ugf-gmail-gbar.dark a:hover {
   color: #fff;
@@ -18680,10 +18743,21 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
   font-weight: bold;
   border-top-color: #dd4b39;
 }
+#ugf-gmail #ugf-gmail-gbar.dark a.plus {
+  color: #fff;
+}
 #ugf-gmail #ugf-gmail-gbar.dark .right {
   color: #fff;
   font-size: 13px;
-  gap: 12px;
+  gap: 10px;
+}
+#ugf-gmail #ugf-gmail-gbar.dark .who {
+  font-weight: bold;
+  cursor: pointer;
+}
+#ugf-gmail #ugf-gmail-gbar.dark .gear {
+  cursor: pointer;
+  display: inline-flex;
 }
 #ugf-gmail #ugf-gmail-gbar.dark .gear svg {
   fill: #ccc;
@@ -19291,8 +19365,263 @@ html[gplex-gmail] body {
   cursor: default;
 }
 
+/* ---------- the account cluster in the header ---------- */
+#ugf-gmail-account {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-end;
+}
+#ugf-gmail-account .pfp {
+  width: 28px;
+  height: 28px;
+  border-radius: 2px;
+  display: block;
+  object-fit: cover;
+}
+#ugf-gmail-account .pfp.letter {
+  background: #c62828;
+  color: #fff;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+}
+/* 2012-2014: +Name, a count box, Share, then the photo with a caret */
+#ugf-gmail-account .plusname {
+  color: #666;
+  font-size: 13px;
+}
+#ugf-gmail-account .nbox {
+  min-width: 26px;
+  height: 26px;
+  border: 1px solid #dcdcdc;
+  border-radius: 2px;
+  background: linear-gradient(#f5f5f5, #f1f1f1);
+  color: #777;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+}
+#ugf-gmail-account .sharebtn {
+  height: 26px;
+  border: 1px solid #dcdcdc;
+  border-radius: 2px;
+  background: linear-gradient(#f5f5f5, #f1f1f1);
+  color: #444;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 10px;
+  cursor: pointer;
+}
+#ugf-gmail-account .sharebtn b {
+  font-size: 14px;
+  font-weight: normal;
+  color: #777;
+}
+#ugf-gmail-account .pfpwrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  border: 1px solid #dcdcdc;
+  border-radius: 2px;
+  padding: 1px 4px 1px 1px;
+  background: #fff;
+  cursor: pointer;
+}
+#ugf-gmail-account .pfpwrap .car {
+  font-style: normal;
+  color: #777;
+  font-size: 9px;
+}
+/* 2015+: the links, the app grid, the round photo */
+#ugf-gmail-account .ic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+}
+#ugf-gmail-account .ic:hover {
+  background: rgba(0,0,0,.05);
+}
+#ugf-gmail-account .ic svg {
+  fill: #5f6368;
+}
+#ugf-gmail-account .ic.bell .n {
+  position: absolute;
+  top: 2px;
+  right: 1px;
+  background: #d93025;
+  color: #fff;
+  font-style: normal;
+  font-size: 10px;
+  line-height: 14px;
+  min-width: 14px;
+  text-align: center;
+  border-radius: 7px;
+}
+#ugf-gmail[chrome="m2013"] #ugf-gmail-account a {
+  color: #444;
+  font-size: 13px;
+}
+#ugf-gmail-account.grid .pfp {
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+}
+#ugf-gmail-account.g\+ .pfp {
+  border-radius: 1px;
+  width: 24px;
+  height: 24px;
+}
+#ugf-gmail[chrome="kennedy"] #ugf-gmail-account,
+#ugf-gmail[chrome="m2013"] #ugf-gmail-account {
+  flex: 1 1 auto;
+  padding-right: 14px;
+}
+
+#ugf-gmail-gmark img {
+  height: 26px;
+  width: auto;
+  display: block;
+}
+#ugf-gmail[chrome="m2013"] #ugf-gmail-logo img.gmail-mark {
+  height: 40px;
+}
+
+/* ---------- account dropdown ---------- */
+#ugf-gmail-accfence {
+  position: fixed;
+  inset: 0;
+  z-index: 1400;
+}
+#ugf-gmail-accmenu {
+  position: absolute;
+  width: 300px;
+  z-index: 1401;
+  background: #fff;
+  font: 13px arial, sans-serif;
+  color: #222;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 10px rgba(0,0,0,.2);
+}
+#ugf-gmail-accmenu[chrome="m2018"] {
+  border: 0;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.2), 0 0 0 1px rgba(0,0,0,.05);
+  font-family: "Google Sans", Roboto, arial, sans-serif;
+  overflow: hidden;
+}
+#ugf-gmail-accmenu[chrome="m2013"] {
+  border-color: #ccc;
+  border-radius: 2px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.2);
+}
+#ugf-gmail-accmenu .head {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid #eee;
+  align-items: flex-start;
+}
+#ugf-gmail-accmenu .head img,
+#ugf-gmail-accmenu .head .letter {
+  width: 64px;
+  height: 64px;
+  border-radius: 2px;
+  flex: 0 0 64px;
+  object-fit: cover;
+  display: block;
+}
+#ugf-gmail-accmenu[chrome="m2018"] .head img,
+#ugf-gmail-accmenu[chrome="m2018"] .head .letter,
+#ugf-gmail-accmenu[chrome="m2013"] .head img,
+#ugf-gmail-accmenu[chrome="m2013"] .head .letter {
+  border-radius: 50%;
+}
+#ugf-gmail-accmenu .head .letter {
+  background: #c62828;
+  color: #fff;
+  font-size: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+}
+#ugf-gmail-accmenu .meta {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+#ugf-gmail-accmenu .meta b {
+  font-size: 14px;
+}
+#ugf-gmail-accmenu .meta span {
+  color: #777;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#ugf-gmail-accmenu .meta a {
+  font-size: 12px;
+  margin-top: 6px;
+  color: #1a73e8;
+}
+#ugf-gmail-accmenu .acts {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #fafafa;
+  border-bottom: 1px solid #eee;
+}
+#ugf-gmail-accmenu .acts a {
+  flex: 1 1 auto;
+  text-align: center;
+  border: 1px solid #dcdcdc;
+  border-radius: 2px;
+  background: linear-gradient(#f5f5f5, #f1f1f1);
+  color: #444;
+  font: bold 11px arial, sans-serif;
+  line-height: 25px;
+  text-decoration: none;
+}
+#ugf-gmail-accmenu .acts a:hover {
+  border-color: #c6c6c6;
+  text-decoration: none;
+}
+#ugf-gmail-accmenu[chrome="m2018"] .acts a {
+  border-radius: 18px;
+  font: 500 13px "Google Sans", Roboto, arial, sans-serif;
+  line-height: 32px;
+  background: #fff;
+}
+#ugf-gmail-accmenu .foot {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  padding: 10px 16px;
+  font-size: 11px;
+}
+#ugf-gmail-accmenu .foot a {
+  color: #777;
+}
+#ugf-gmail[skin="g2004"] ~ #ugf-gmail-accmenu,
+#ugf-gmail-accmenu[chrome="classic"] {
+  border-radius: 0;
+}
+
 /* ---------- take over the page ---------- */
-html[gplex-gmail] body > *:not(#ugf-gmail):not(#ugf-gmail-notice-scrim):not(#ugf-gmail-styles):not(script):not(style) {
+html[gplex-gmail] body > *:not(#ugf-gmail):not(#ugf-gmail-notice-scrim):not(#ugf-gmail-accmenu):not(#ugf-gmail-accfence):not(#ugf-gmail-styles):not(script):not(style) {
   display: none !important;
 }
 html[gplex-gmail],
@@ -20421,52 +20750,207 @@ html[gplex-gmail] body {
     }
     // The Google bar: plain blue links on the 2004-2010 skins, the dark strip from
     // Nov 2011, and nothing from 2013 on, when the app launcher replaced it.
-    function ugfGmailGbar(era, chrome, account) {
-        // the bar only turned up in 2007; 2018 replaced it with the app launcher
+    // The name shown on the bar follows the "Display name" option in Gplex settings.
+    function ugfGmailShared(key) {
+        try {
+            if (typeof GM_getValue === "function") {
+                const v = GM_getValue(key, "");
+                return v ? String(v) : "";
+            }
+        } catch (e) {}
+        return "";
+    }
+    function ugfGmailIdentity() {
+        if (ugfGmailIdentity.c) {
+            return ugfGmailIdentity.c;
+        }
+        let name = "";
+        let mail = "";
+        let photo = "";
+        const a = document.querySelector('a[aria-label*="Google Account"], a[aria-label*="@"], [aria-label*="Account Information"]');
+        const label = a ? (a.getAttribute("aria-label") || a.getAttribute("title") || "") : "";
+        const m = label.match(/[\w.+-]+@[\w.-]+/);
+        if (m) {
+            mail = m[0];
+        }
+        const parts = label.split(": ");
+        if (parts.length > 1) {
+            name = parts[1].split("\n")[0].split("(")[0].trim();
+        }
+        const img = document.querySelector("[aria-label*='Google Account'] img, a[aria-label*='@'] img, img.gb_p, img[alt*='Profile']");
+        if (img && img.getAttribute("src")) {
+            photo = img.getAttribute("src");
+        }
+        // whatever Gmail did not give us, take from what google.com parsed
+        name = name || ugfGmailShared("UGF_USERNAME");
+        mail = mail || ugfGmailShared("UGF_EMAIL");
+        photo = photo || ugfGmailShared("UGF_PFP");
+        const out = { name: name, first: name.split(" ")[0] || "", email: mail, photo: photo };
+        if (name || mail) {
+            ugfGmailIdentity.c = out;
+        }
+        return out;
+    }
+    // the +You control never said "+account"; with the name hidden it just said "You"
+    function ugfGmailPlusName() {
+        const n = ugfGmailDisplayName();
+        return n === "account" ? "You" : n;
+    }
+    function ugfGmailNameMode() {
+        // re-read each time: the choice may have been changed on google.com since load
+        const shared = ugfGmailShared("UGF_NAME_EMAIL");
+        return shared || nameEmail || "name";
+    }
+    function ugfGmailDisplayName() {
+        const id = ugfGmailIdentity();
+        const mode = ugfGmailNameMode();
+        if (mode === "email") {
+            return id.email || "account";
+        }
+        if (mode === "none") {
+            return "account";
+        }
+        return id.first || id.email || "account";
+    }
+    // One bar per era, matching the ones Gplex already draws on google.com:
+    // 2007-2009 plain white links, 2010 the white bar with the blue rule,
+    // 2011 the dark bar, 2012 onward the dark bar with +Name.
+    function ugfGmailGbar(era, chrome) {
+        // the bar arrived in 2007 and was dropped in late 2013, when the app
+        // launcher took over - so 2014 onward has none
         if (chrome === "m2018" || era === "g2004" || era === "g2006") {
             return "";
         }
+        if (era === "g2013" && !ugfGmailPre2014()) {
+            return "";
+        }
         const esc = ugfEscapeHtml;
+        const who = ugfGmailDisplayName();
         const href = {
-            Gmail: "https://mail.google.com/", Mail: "https://mail.google.com/",
-            Calendar: "https://calendar.google.com/", Documents: "https://docs.google.com/",
-            Docs: "https://docs.google.com/", Drive: "https://drive.google.com/",
-            Photos: "https://photos.google.com/", Reader: "https://www.google.com/reader/",
-            Groups: "https://groups.google.com/", Web: "https://www.google.com/",
-            Search: "https://www.google.com/", Images: "https://www.google.com/imghp",
-            Maps: "https://www.google.com/maps", Play: "https://play.google.com/",
-            YouTube: "https://www.youtube.com/", News: "https://news.google.com/",
-            "+You": gPlusLink || "https://plus.google.com/"
+            Web: "https://www.google.com/", Search: "https://www.google.com/",
+            Images: "https://www.google.com/imghp", Video: "https://www.google.com/videohp",
+            Videos: "https://www.google.com/videohp", Maps: "https://www.google.com/maps",
+            News: "https://news.google.com/", Shopping: "https://www.google.com/shopping",
+            Gmail: "https://mail.google.com/", Play: "https://play.google.com/",
+            YouTube: "https://www.youtube.com/", Drive: "https://drive.google.com/",
+            Calendar: "https://calendar.google.com/"
         };
-        // the dark bar Google shipped in Nov 2011 carried the whole product list
         const dark = era === "g2011" || era === "g2013";
+        const l = String(layout || "");
+        // +You arrived in 2012, and it only ever carried a name - with the display
+        // name set to Email or None there is nothing for it to say, so it goes
+        const plus = dark && era !== "g2011" && ["2010", "2011"].indexOf(l) === -1 &&
+            ugfGmailNameMode() === "name";
         const apps = dark
-            ? ["+You", "Search", "Images", "Maps", "Play", "YouTube", "News", "Gmail", "Drive", "Calendar"]
-            : (era === "g2010" || era === "g2009"
-                ? ["Mail", "Calendar", "Documents", "Photos", "Reader", "Web"]
-                : ["Mail", "Calendar", "Documents", "Photos", "Groups", "Web"]);
-        let links = "";
+            ? ["Search", "Images", "Maps", "Play", "YouTube", "News", "Gmail", "Drive", "Calendar"]
+            : (era === "g2010"
+                ? ["Web", "Images", "Videos", "Maps", "News", "Shopping", "Gmail"]
+                : ["Web", "Images", "Video", "Maps", "News", "Shopping", "Gmail"]);
+        let links = plus
+            ? '<a class="plus" href="' + esc(gPlusLink || "https://plus.google.com/") + '">+' + esc(ugfGmailPlusName()) + "</a>"
+            : "";
         apps.forEach(function(name) {
-            const here = name === "Gmail" || name === "Mail";
             links += '<a href="' + esc(href[name] || "https://www.google.com/") + '"' +
-                (here ? ' class="here"' : "") + (name === "+You" ? ' class="plus"' : "") + ">" + esc(name) + "</a>";
+                (name === "Gmail" ? ' class="here"' : "") + ">" + esc(name) + "</a>";
         });
-        links += '<a href="https://www.google.com/intl/en/about/products/" class="more">More ' +
-            (dark ? "&#8964;" : "&#9662;") + "</a>";
+        links += '<a href="https://www.google.com/intl/en/about/products/" class="more">' +
+            (dark ? "More" : "more") + " &#9662;</a>";
         const right = dark
-            ? '<span class="who">' + esc(account || "Account") + " &#9662;</span>" +
-              '<span class="gbtn">Share</span>' +
-              '<span class="gbell">' + ugfGmailIcon("bell", 15) + '<i class="n">1</i></span>' +
+            ? '<span class="who">' + esc(who) + "</span>" +
               '<span class="gear" id="ugf-gmail-gbar-settings">' + ugfGmailIcon("gear", 16) + "</span>"
-            : '<span class="who">' + esc(account) + "</span>" +
-              '<a href="#" id="ugf-gmail-gbar-settings">Settings</a>' +
-              '<a href="https://support.google.com/mail">Help</a>' +
-              '<a href="https://accounts.google.com/Logout">Sign out</a>';
-        return '<div id="ugf-gmail-gbar"' + (dark ? ' class="dark"' : "") + '><div class="left">' + links + "</div>" +
+            : '<a href="https://www.google.com/ig">iGoogle</a><span class="sepr">|</span>' +
+              '<a href="#" id="ugf-gmail-gbar-settings">Search settings</a><span class="sepr">|</span>' +
+              '<span class="who">' + esc(who) + "</span>" +
+              (era === "g2010" ? '<span class="gear">' + ugfGmailIcon("gear", 15) + "</span>" : "");
+        return '<div id="ugf-gmail-gbar" class="' + (dark ? "dark" : (era === "g2010" ? "g2010" : "plain")) +
+            '"><div class="left">' + links + "</div>" +
             '<div class="right">' + right + "</div></div>";
+    }
+    function ugfGmailEraGroup() {
+        const l = String(layout || "");
+        // the +You / Share / photo block only turned up in 2012
+        if (["2013", "2013L", "2014"].indexOf(l) > -1) {
+            return "g+";
+        }
+        if (["2015", "2015L", "2016", "2016C", "2016L", "2017", "2018", "2018M"].indexOf(l) > -1) {
+            return "grid";
+        }
+        return "";
+    }
+    function ugfGmailAvatar() {
+        const id = ugfGmailIdentity();
+        if (id.photo) {
+            return '<img class="pfp" src="' + ugfEscapeHtml(id.photo) + '" alt="' + ugfEscapeHtml(id.name) + '">';
+        }
+        return '<span class="pfp letter">' + ugfEscapeHtml((id.first || id.email || "?").charAt(0)) + "</span>";
     }
     function ugfGmailPre2014() {
         return ["2013", "2013L"].indexOf(String(layout || "")) > -1;
+    }
+    // The account dropdown, so the name and photo do something here the way they
+    // do on the search pages.
+    function ugfGmailCloseMenus() {
+        document.querySelectorAll("#ugf-gmail-accmenu, #ugf-gmail-accfence").forEach(function(el) {
+            el.remove();
+        });
+    }
+    function ugfGmailAccountMenu(anchor, chrome) {
+        if (document.querySelector("#ugf-gmail-accmenu")) {
+            ugfGmailCloseMenus();
+            return;
+        }
+        const esc = ugfEscapeHtml;
+        const id = ugfGmailIdentity();
+        const photo = id.photo
+            ? '<img src="' + esc(id.photo) + '" alt="">'
+            : '<span class="letter">' + esc((id.first || id.email || "?").charAt(0)) + "</span>";
+        const fence = document.createElement("div");
+        fence.id = "ugf-gmail-accfence";
+        const menu = document.createElement("div");
+        menu.id = "ugf-gmail-accmenu";
+        menu.setAttribute("chrome", chrome);
+        menu.innerHTML = trusted_policy.createHTML(
+            '<div class="head">' + photo +
+                '<div class="meta"><b>' + esc(id.name || id.first || "Account") + "</b>" +
+                '<span>' + esc(id.email) + "</span>" +
+                '<a href="https://myaccount.google.com/">Google Account settings</a></div></div>' +
+            '<div class="acts">' +
+                '<a href="https://accounts.google.com/AddSession">Add account</a>' +
+                '<a href="https://accounts.google.com/Logout">Sign out</a>' +
+            "</div>" +
+            '<div class="foot"><a href="https://policies.google.com/privacy">Privacy</a>' +
+                '<a href="https://policies.google.com/terms">Terms</a></div>');
+        document.body.appendChild(fence);
+        document.body.appendChild(menu);
+        const r = anchor.getBoundingClientRect();
+        const w = 300;
+        let left = r.right - w;
+        if (left < 8) {
+            left = 8;
+        }
+        if (left + w > window.innerWidth - 8) {
+            left = window.innerWidth - w - 8;
+        }
+        menu.style.left = left + "px";
+        menu.style.top = (r.bottom + window.scrollY + 4) + "px";
+        fence.addEventListener("click", ugfGmailCloseMenus);
+    }
+    function ugfGmailWireAccount(shell, chrome) {
+        const targets = [];
+        shell.querySelectorAll("#ugf-gmail-gbar .who, #ugf-gmail-gbar .gear + .who, " +
+            "#ugf-gmail-account .pfpwrap, #ugf-gmail-account .pfp, #ugf-gmail-account .plusname").forEach(function(el) {
+            if (targets.indexOf(el) === -1) {
+                targets.push(el);
+            }
+        });
+        targets.forEach(function(el) {
+            el.style.cursor = "pointer";
+            el.addEventListener("click", function(ev) {
+                ev.preventDefault();
+                ev.stopPropagation();
+                ugfGmailAccountMenu(el, chrome);
+            });
+        });
     }
     function ugfGmailLogoHTML(era, feat) {
         const esc = ugfEscapeHtml;
@@ -20475,15 +20959,10 @@ html[gplex-gmail] body {
         if (era === "g2018") {
             html = '<span class="hamburger"><i></i><i></i><i></i></span>' +
                 '<img class="gmail-mark" src="' + a.m2018 + '" alt="Gmail">';
-        } else if (era === "g2013") {
-            // the Google wordmark only joined Gmail's header late in 2013, so the
-            // Late 2012-2013 skin carries the red "Gmail" alone
-            html = ugfGmailPre2014()
-                ? '<span class="gmail-line"><span class="wordmark">Gmail</span><span class="caret">&#9662;</span></span>'
-                : '<img class="google-mark" src="' + esc(ugfGmailGoogleLogo()) + '" alt="Google">';
-        } else if (era === "g2004" || era === "g2006") {
-            // the earliest skins kept the plain wordmark with the BETA tag
-            html = '<span class="wordmark">Gmail</span>';
+        } else if (era === "g2013" && !ugfGmailPre2014()) {
+            // from 2014 the Google wordmark of the day sits here, with the Gmail
+            // mark down in the sidebar column
+            html = '<img class="google-mark" src="' + esc(ugfGmailGoogleLogo()) + '" alt="Google">';
         } else {
             html = '<img class="gmail-mark" src="' + a.byGoogle + '" alt="Gmail by Google">';
         }
@@ -20567,7 +21046,7 @@ html[gplex-gmail] body {
         let navHTML;
         if (chrome === "m2013") {
             navHTML = (ugfGmailPre2014() ? "" :
-                '<div id="ugf-gmail-gmark"><span class="wordmark">Gmail</span><span class="caret">&#9662;</span></div>') +
+                '<div id="ugf-gmail-gmark"><img src="' + A.byGoogle + '" alt="Gmail"><span class="caret">&#9662;</span></div>') +
                 '<a id="ugf-gmail-compose" class="shot" href="#"><img src="' + A.compose2014 + '" alt="Compose"></a>';
         } else if (chrome === "kennedy") {
             navHTML = '<div id="ugf-gmail-navtitle">Mail</div>' +
@@ -20666,7 +21145,7 @@ html[gplex-gmail] body {
                 '<button class="icon" data-act="labels" title="Labels">' + ugfGmailIcon("labels") + "</button>" +
                 '<button class="icon" data-act="more" title="More">' + ugfGmailIcon("more") + "</button></span>";
         }
-        const gbarHTML = ugfGmailGbar(era, chrome, account);
+        const gbarHTML = ugfGmailGbar(era, chrome);
         const cnt = ugfGmailCount();
         const from = cnt ? cnt.from : "1";
         const to = cnt ? cnt.to : String(rows.length);
@@ -20716,12 +21195,35 @@ html[gplex-gmail] body {
                 : '<div class="ugf-gmail-searchfield"><span class="box"><input type="text" id="ugf-gmail-q" placeholder="Search mail">' +
                   '<span class="opts" title="Show search options">&#9662;</span></span>' +
                   '<button id="ugf-gmail-search" title="Search mail">' + ugfGmailIcon("search", 20) + "</button></div>");
-        const accountHTML = chrome === "m2018"
-            ? ugfGmailIcon("apps", 20) + ugfGmailIcon("bell", 20) + "<span>" + esc(account) + "</span>"
-            : (gbarHTML ? "" : esc(account) +
+        const who = ugfGmailDisplayName();
+        const group = ugfGmailEraGroup();
+        let accountHTML;
+        if (chrome === "m2018") {
+            // 2019+ keeps the launcher, the notification bell and the avatar
+            accountHTML = '<span class="ic">' + ugfGmailIcon("apps", 20) + "</span>" +
+                '<span class="ic bell">' + ugfGmailIcon("bell", 20) + '<i class="n">1</i></span>' +
+                ugfGmailAvatar();
+        } else if (group === "grid") {
+            // 2015-2018: the links, then the app grid and the photo
+            accountHTML = '<a href="https://mail.google.com/">Gmail</a>' +
+                '<a href="https://www.google.com/imghp">Images</a>' +
+                '<span class="ic grid">' + ugfGmailIcon("apps", 20) + "</span>" +
+                ugfGmailAvatar();
+        } else if (group === "g+") {
+            // 2012-2014: +Name, the notification count, Share, then the photo
+            accountHTML = '<a class="plusname" href="' + esc(gPlusLink || "https://plus.google.com/") + '">' +
+                (ugfGmailNameMode() === "name" ? "+" + esc(ugfGmailPlusName()) : esc(who)) + "</a>" +
+                '<span class="nbox">0</span>' +
+                '<span class="sharebtn"><b>+</b> Share</span>' +
+                '<span class="pfpwrap">' + ugfGmailAvatar() + '<i class="car">&#9662;</i></span>';
+        } else if (gbarHTML) {
+            accountHTML = "";
+        } else {
+            accountHTML = esc(account) +
                 ' | <a href="#" id="ugf-gmail-settings-link">Settings</a>' +
                 ' | <a href="https://support.google.com/mail">Help</a>' +
-                ' | <a href="https://accounts.google.com/Logout">Sign out</a>');
+                ' | <a href="https://accounts.google.com/Logout">Sign out</a>';
+        }
         // the footer changed shape over the years: one centred line, then three columns
         let footerHTML;
         if (chrome === "m2013" || chrome === "kennedy") {
@@ -20747,7 +21249,7 @@ html[gplex-gmail] body {
             '<div id="ugf-gmail-top">' +
                 '<div id="ugf-gmail-logo">' + logoHTML + "</div>" +
                 '<div id="ugf-gmail-searchrow">' + searchHTML + "</div>" +
-                '<div id="ugf-gmail-account">' + accountHTML + "</div>" +
+                '<div id="ugf-gmail-account" class="' + (chrome === "m2018" ? "grid" : (group || "plain")) + '">' + accountHTML + "</div>" +
             "</div>" +
             '<div id="ugf-gmail-body">' +
                 '<div id="ugf-gmail-nav">' + navHTML + "</div>" +
@@ -20790,6 +21292,7 @@ html[gplex-gmail] body {
                 logoImg.remove();
             });
         }
+        ugfGmailWireAccount(shell, chrome);
         const gbarSet = shell.querySelector("#ugf-gmail-gbar-settings");
         if (gbarSet) {
             gbarSet.addEventListener("click", function(ev) {
@@ -21037,6 +21540,7 @@ html[gplex-gmail] body {
         if (scrim) {
             scrim.remove();
         }
+        ugfGmailCloseMenus();
         document.querySelector("html").removeAttribute("gplex-gmail");
     }
     function ugfGmailMain() {
