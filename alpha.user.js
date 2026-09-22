@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      3.8.0
+// @version      4.0-ALPHA
 // @description  1997-2024 Old Google Frontend (Full public release)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
