@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      4.0.0
+// @version      4.0.1
 // @description  1997-2024 Old Google Frontend, now with Gmail 2004-2024 (Full public release)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -9120,6 +9120,21 @@ html:not([layout^="2016C"]):not([layout^="2018"]):not([layout^="2019"]) .ugf-neu
 #ugf-right-neuro-playground .ugf-neuro-content div:not([class]):not([jscontroller]):not([data-ved]){
   max-width:260px
 }
+/* no way into AI Mode from a copied overview, whatever slips past the clean-up */
+.ugf-neuro-content textarea,
+.ugf-neuro-content input,
+.ugf-neuro-content select,
+.ugf-neuro-content form,
+.ugf-neuro-content [contenteditable],
+.ugf-neuro-content [role="textbox"],
+.ugf-neuro-content [role="combobox"],
+.ugf-neuro-content [role="searchbox"],
+.ugf-neuro-content [placeholder],
+.ugf-neuro-content [data-placeholder],
+.ugf-neuro-content [aria-placeholder],
+.ugf-neuro-content a[href*="udm=50"]{
+  display:none!important
+}
 .ugf-neuro-content > div{
   padding-bottom:0;
   margin-bottom:-15px
@@ -14063,80 +14078,207 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
     // follow-up box and "Dive deeper in AI Mode" links off the bottom; copied into
     // Gplex they are dead controls at best, and Gplex is not meant to be a door to a
     // full AI chat anyway.
-    function ugfNeuroClean(root) {
-        const textLen = function(el) {
-            return (el.textContent || "").replace(/\s+/g, "").length;
+    // The box is found by what it says, wherever Google puts the words: as text, in
+    // a placeholder or label attribute, or drawn in by a stylesheet (::before) - the
+    // last is why removing text boxes and matching plain text was not enough.
+    function ugfNeuroAskRe() {
+        // whole phrases only: an overview can quite properly contain a line that
+        // merely starts with "Ask" or mentions a mode
+        return /^(ask anything|ask a follow[- ]?up|ask follow[- ]?up|ask ai mode|dive deeper in ai mode|dive deeper$|continue in ai mode|start ai mode|ai mode$|pregunta lo que quieras|haz una pregunta de seguimiento|posez vos questions|posez une question de suivi|frag etwas|stelle eine frage|chiedi qualsiasi cosa|pergunte qualquer coisa|何でも質問|무엇이든 물어보세요|有问题，尽管问|提出任何问题|提出任何問題|問我任何問題|vraag iets|stel een vraag|zapytaj o cokolwiek|спросите что угодно|herhangi bir şey sor)/i;
+    }
+    function ugfNeuroAskHit(el, live) {
+        const re = ugfNeuroAskRe();
+        const attrs = ["placeholder", "aria-label", "data-placeholder", "aria-placeholder", "title",
+            "data-tooltip", "aria-description", "data-hint"];
+        for (let i = 0; i < attrs.length; i++) {
+            const v = el.getAttribute && el.getAttribute(attrs[i]);
+            if (v && re.test(v.trim())) {
+                return true;
+            }
+        }
+        if (!el.children.length) {
+            const t = (el.textContent || "").replace(/\s+/g, " ").trim();
+            if (t && t.length < 60 && re.test(t)) {
+                return true;
+            }
+        }
+        if (live) {
+            const pseudo = ["::before", "::after"];
+            for (let i = 0; i < pseudo.length; i++) {
+                let c = "";
+                try {
+                    c = getComputedStyle(el, pseudo[i]).content || "";
+                } catch (e) {}
+                if (c && c !== "none" && c !== "normal") {
+                    c = c.replace(/^["']|["']$/g, "").trim();
+                    if (c && re.test(c)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    // the small box drawn round a control (the "+" button, the send arrow) goes with
+    // it, but never anything that holds real text
+    function ugfNeuroAskBox(el, stop) {
+        const textLen = function(n) {
+            return (n.textContent || "").replace(/\s+/g, "").length;
         };
-        // each control goes along with the small box drawn round it (the "+" button,
-        // the send arrow), but never anything that holds real text
+        let top = el;
+        while (top.parentElement && top.parentElement !== stop && textLen(top.parentElement) <= 40) {
+            top = top.parentElement;
+        }
+        return top;
+    }
+    function ugfNeuroClean(root) {
         const drop = function(el) {
-            if (!root.contains(el)) {
+            if (!root.contains(el) || el === root) {
                 return;   // already gone with a box removed before it
             }
-            let top = el;
-            while (top.parentElement && top.parentElement !== root && textLen(top.parentElement) <= 30) {
-                top = top.parentElement;
-            }
+            const top = ugfNeuroAskBox(el, root);
             if (top !== root) {
                 top.remove();
             }
         };
-        root.querySelectorAll("script, style, noscript").forEach(function(el) {
+        root.querySelectorAll("script, style, noscript, template").forEach(function(el) {
             el.remove();
         });
         // anything that takes typing: the follow-up box, in whatever form Google draws it
         root.querySelectorAll('textarea, input, select, form, [contenteditable], [role="textbox"], ' +
-            '[role="combobox"], [role="searchbox"]').forEach(drop);
+            '[role="combobox"], [role="searchbox"], [placeholder], [data-placeholder], [aria-placeholder]').forEach(drop);
         // links and buttons into AI Mode (udm=50 is AI Mode's results page)
-        root.querySelectorAll('a[href*="udm=50"], [data-udm="50"]').forEach(drop);
-        const words = /^(ask anything|ask a follow[- ]?up|ask follow[- ]?up|dive deeper in ai mode|dive deeper|continue in ai mode|ai mode|show more in ai mode)$/i;
-        root.querySelectorAll("div, span, a, button").forEach(function(el) {
-            if (!root.contains(el)) {
-                return;
+        root.querySelectorAll('a[href*="udm=50"], [data-udm="50"], a[href*="aimode"], a[href*="/ai?"]').forEach(drop);
+        root.querySelectorAll("*").forEach(function(el) {
+            if (root.contains(el) && ugfNeuroAskHit(el, false)) {
+                drop(el);
             }
-            const t = (el.textContent || "").replace(/\s+/g, " ").trim();
-            if (t.length < 40 && words.test(t)) {
+        });
+        // Google's own buttons do nothing in a copy - the "+" beside the box among
+        // them - so the icon-only ones go too; anything with a name on it (a source
+        // chip) and all links stay
+        root.querySelectorAll('button, [role="button"]').forEach(function(el) {
+            if (root.contains(el) && (el.textContent || "").replace(/\s+/g, "").length <= 2 &&
+                    !el.querySelector("a[href]") && !el.closest("a[href]")) {
                 drop(el);
             }
         });
         return root;
     }
+    // A second pass on the copy once it is on the page, where Google's stylesheet
+    // applies and text drawn in by CSS can be seen - and a sweep for any follow-up box
+    // Google puts on the page outside the results it hides.
+    function ugfNeuroSweep() {
+        const hide = function(el, stop) {
+            const top = ugfNeuroAskBox(el, stop);
+            if (top && top !== stop && !top.hasAttribute("data-ugf-noask")) {
+                top.setAttribute("data-ugf-noask", "");
+                top.style.setProperty("display", "none", "important");
+            }
+        };
+        document.querySelectorAll("#ugf .ugf-neuro-content-inner").forEach(function(root) {
+            root.querySelectorAll("*").forEach(function(el) {
+                if (!el.closest("[data-ugf-noask]") && ugfNeuroAskHit(el, true)) {
+                    hide(el, root);
+                }
+            });
+        });
+        // Gplex hides Google's page; anything of Google's still showing is something
+        // it floated on top, which is where a follow-up box would end up
+        [].forEach.call(document.body ? document.body.children : [], function(top) {
+            if (/^(ugf|sZmt3b)/.test(top.id || "") || /^(SCRIPT|STYLE|LINK|META|NOSCRIPT|TEMPLATE)$/.test(top.tagName) ||
+                    !top.getClientRects().length) {
+                return;
+            }
+            const all = [top].concat([].slice.call(top.querySelectorAll("*")));
+            for (let i = 0; i < all.length && i < 4000; i++) {
+                if (all[i].closest("[data-ugf-noask]") || !all[i].getClientRects().length) {
+                    continue;
+                }
+                if (ugfNeuroAskHit(all[i], true) || /^(TEXTAREA|INPUT)$/.test(all[i].tagName) &&
+                        ugfNeuroAskHit(all[i], false)) {
+                    hide(all[i], document.body);
+                }
+            }
+        });
+    }
+    function ugfNeuroSweepStart() {
+        if (ugfNeuroSweepStart.on) {
+            return;
+        }
+        ugfNeuroSweepStart.on = true;
+        let n = 0;
+        const iv = setInterval(function() {
+            try {
+                ugfNeuroSweep();
+            } catch (e) {}
+            if (++n > 90) {
+                clearInterval(iv);   // 90 seconds is well past the overview finishing
+            }
+        }, 1000);
+    }
     // the overview's content as HTML, without Google's own heading, and its text length
     function ugfNeuroRead(src) {
-        if (src.head === null) {
-            const body = ugfNeuroClean((src.box.querySelector("[data-ve-view]") || src.box).cloneNode(true));
-            return { html: body.innerHTML, len: (body.textContent || "").replace(/\s+/g, "").length };
-        }
-        const copy = src.box.cloneNode(true);
-        // Drop Google's heading row from the copy - Gplex draws its own "AI Overview"
-        // title. The row is the widest wrapper round the heading that holds little else
-        // (a "Learn more" link, a menu button).
         const textLen = function(el) {
             return (el.textContent || "").replace(/\s+/g, "").length;
         };
-        let top = src.head;
-        const headLen = textLen(src.head);
-        while (top.parentElement && top.parentElement !== src.box && textLen(top.parentElement) <= headLen + 30) {
-            top = top.parentElement;
+        let root = src.box;
+        let head = src.head;
+        if (head === null) {
+            // The marked block: take the part holding most of the text. The first
+            // [data-ve-view] inside it was trusted blindly before, and it can be the
+            // follow-up box rather than the overview.
+            let best = null;
+            src.box.querySelectorAll("[data-ve-view]").forEach(function(v) {
+                if (!best || textLen(v) > textLen(best)) {
+                    best = v;
+                }
+            });
+            if (best && textLen(best) >= textLen(src.box) * 0.6) {
+                root = best;
+            }
+            const names = ugfNeuroNames().map(function(n) {
+                return n.toLowerCase();
+            });
+            root.querySelectorAll('h1, h2, [role="heading"]').forEach(function(h) {
+                const t = String(h.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
+                if (!head && names.indexOf(t) > -1) {
+                    head = h;
+                }
+            });
         }
-        const path = [];
-        for (let n = top; n && n !== src.box; n = n.parentElement) {
-            path.unshift([].indexOf.call(n.parentElement.children, n));
-        }
-        let h = copy;
-        path.forEach(function(i) {
-            h = h && h.children[i];
-        });
-        if (h && h !== copy) {
-            h.remove();
+        const copy = root.cloneNode(true);
+        if (head && root.contains(head)) {
+            // Drop Google's heading row from the copy - Gplex draws its own "AI Overview"
+            // title. The row is the widest wrapper round the heading that holds little
+            // else (a "Learn more" link, a menu button).
+            let top = head;
+            const headLen = textLen(head);
+            while (top.parentElement && top.parentElement !== root && textLen(top.parentElement) <= headLen + 30) {
+                top = top.parentElement;
+            }
+            const path = [];
+            for (let n = top; n && n !== root; n = n.parentElement) {
+                path.unshift([].indexOf.call(n.parentElement.children, n));
+            }
+            let h = copy;
+            path.forEach(function(i) {
+                h = h && h.children[i];
+            });
+            if (h && h !== copy) {
+                h.remove();
+            }
         }
         ugfNeuroClean(copy);
-        return { html: copy.innerHTML, len: (copy.textContent || "").replace(/\s+/g, "").length };
+        return { html: copy.innerHTML, len: textLen(copy) };
     }
     function ugfNeuroPut(html) {
         document.querySelectorAll("#ugf .ugf-neuro-content-inner").forEach(function(c) {
             c.innerHTML = trusted_policy.createHTML(html);
         });
+        try {
+            ugfNeuroSweep();
+        } catch (e) {}
     }
     function ugfNeuroWire() {
         if (ugfNeuroWire.done) {
@@ -14165,6 +14307,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             return;
         }
         ugfNeuroWatch.on = true;
+        ugfNeuroSweepStart();
         const html = document.querySelector("html");
         const started = Date.now();
         let src = null;
