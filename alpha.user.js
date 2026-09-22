@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      4.0.1-ALPHA
+// @version      4.0.2-ALPHA
 // @description  1997-2024 Old Google Frontend (Full public release)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -19620,9 +19620,347 @@ html[gplex-gmail] body {
   border-radius: 0;
 }
 
-/* ---------- take over the page ---------- */
-html[gplex-gmail] body > *:not(#ugf-gmail):not(#ugf-gmail-notice-scrim):not(#ugf-gmail-accmenu):not(#ugf-gmail-accfence):not(#ugf-gmail-styles):not(script):not(style) {
+/* ---------- the 2014/2015 header was clipping the logo's descender ---------- */
+#ugf-gmail[chrome="m2013"] #ugf-gmail-top,
+#ugf-gmail[chrome="m2013"] #ugf-gmail-logo {
+  overflow: visible;
+}
+#ugf-gmail[chrome="m2013"] #ugf-gmail-logo img.google-mark {
+  height: 31px;
+  width: 90px;
+  max-height: none;
+  align-self: center;
+}
+#ugf-gmail #ugf-gmail-logo img {
+  max-height: none;
+}
+
+/* ---------- 2018: the whole left column is grey, the pill drawn not cropped ---------- */
+#ugf-gmail[chrome="m2018"] #ugf-gmail-top {
+  background: #f1f3f4;
+}
+#ugf-gmail[chrome="m2018"] #ugf-gmail-logo {
+  background: #f1f3f4;
+}
+#ugf-gmail[chrome="m2018"] #ugf-gmail-body {
+  border-top: 0;
+}
+#ugf-gmail[chrome="m2018"] #ugf-gmail-nav {
+  background: #f1f3f4;
+  padding-top: 8px;
+}
+#ugf-gmail[chrome="m2018"] #ugf-gmail-main {
+  background: #fff;
+  border-left: 0;
+}
+#ugf-gmail[chrome="m2018"] #ugf-gmail-compose.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  height: 48px;
+  border-radius: 24px;
+  background: #fff;
+  color: #3c4043;
+  font: 500 14px "Google Sans", Roboto, arial, sans-serif;
+  box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+  padding: 0 24px 0 16px;
+  margin: 6px 0 14px 12px;
+  text-decoration: none;
+}
+#ugf-gmail[chrome="m2018"] #ugf-gmail-compose.pill:hover {
+  background: #fafafb;
+  box-shadow: 0 1px 3px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
+  text-decoration: none;
+}
+#ugf-gmail[chrome="m2018"] #ugf-gmail-compose.pill img.plus {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+/* ---------- compose buttons follow the era ---------- */
+#ugf-gmail[chrome="m2018"] #ugf-gmail-compose-actions button,
+#ugf-gmail[chrome="m2013"] #ugf-gmail-compose-actions button {
+  height: 36px;
+  padding: 0 20px;
+  border-radius: 4px;
+  border: 1px solid #dadce0;
+  background: #fff;
+  color: #3c4043;
+  font: 500 14px "Google Sans", Roboto, arial, sans-serif;
+  cursor: pointer;
+}
+#ugf-gmail[chrome="m2013"] #ugf-gmail-compose-actions button {
+  border-radius: 2px;
+  font: bold 11px arial, sans-serif;
+  height: 29px;
+  background: linear-gradient(#f5f5f5, #f1f1f1);
+}
+#ugf-gmail[chrome="m2018"] #ugf-gmail-compose-actions button:hover,
+#ugf-gmail[chrome="m2013"] #ugf-gmail-compose-actions button:hover {
+  background: #f1f3f4;
+}
+#ugf-gmail[chrome="kennedy"] #ugf-gmail-compose-actions button {
+  font: bold 11px arial, sans-serif;
+  color: #444;
+  background: linear-gradient(#f5f5f5, #f1f1f1);
+  border: 1px solid #dcdcdc;
+  border-radius: 2px;
+  height: 27px;
+  padding: 0 12px;
+  cursor: pointer;
+}
+
+/* ---------- the app launcher, ported from the google.com grid ---------- */
+#ugf-gmail-appsmenu {
+  position: absolute;
+  z-index: 1401;
+  font: 13px arial, sans-serif;
+}
+#ugf-gmail-appsmenu #gp-apps-dd-card {
+  scrollbar-width: none;
+  background: #fff;
+  padding: 28px 28px 12px 28px;
+  border: 1px solid rgba(0,0,0,.2);
+  box-shadow: 0 2px 10px rgba(0,0,0,.2);
+  cursor: auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  width: 296px;
+  max-height: 442px;
+  box-sizing: content-box;
+}
+#ugf-gmail-appsmenu #gp-apps-dd-card::-webkit-scrollbar {
+  width: 0;
+}
+#ugf-gmail-appsmenu[chrome="m2018"] #gp-apps-dd-card {
+  border-radius: 8px;
+}
+.sector {
+  display: flex;
+  flex-wrap: wrap;
+}
+.sector:nth-child(1) {
+  padding-bottom: 28px;
+  border-bottom: 1px solid #ebebeb;
+}
+.sector:nth-child(2),
+.sector:nth-child(3) {
+  padding-top: 28px;
+}
+#even-more {
+  color: #737373 !important;
+  font-size: 13px;
+  font-family: arial, sans-serif !important;
+  text-decoration: none !important;
+  margin: 0 auto;
+}
+#even-more:hover {
+  text-decoration: underline !important;
+}
+.gp-app {
+  width: 86px;
+  height: 100px;
+  font-size: 13px;
+  font-family: arial, sans-serif !important;
+  padding: 1px;
+}
+.gp-app-inner {
+  text-decoration: none !important;
+  margin: 7px 0;
+  height: 86px;
+  display: block;
+  border: 1px solid transparent;
+  border-radius: 2px;
+}
+.gp-app:hover .gp-app-inner {
+  border: 1px solid #e5e5e5;
+  background: rgba(255,255,255,.9);
+}
+.gp-app-icon {
+   background-image: url(https://ssl.gstatic.com/gb/images/v1_76783e20.png);
+   -webkit-background-size: 92px 2541px;
+  background-size: 92px 2541px;
+}
+#myaccount .gp-app-icon {
+  background-position: 0 -1451px;
+}
+#google-search .gp-app-icon {
+  background-position: -17px -207px;
+}
+#maps .gp-app-icon {
+  background-position: 0 -450px;
+}
+#youtube .gp-app-icon {
+  background-position: 0 0;
+}
+#play .gp-app-icon {
+  background-position: 0 -1779px;
+}
+#news .gp-app-icon {
+  background-position: 0 -1990px;
+}
+#envelope .gp-app-icon {
+  background-position: 0 -1710px;
+}
+#drive .gp-app-icon {
+  background-position: 0 -138px;
+}
+#calendar .gp-app-icon {
+  background-position: 0 -2059px;
+}
+#plus .gp-app-icon {
+  background-position: 0 -938px;
+}
+#translate .gp-app-icon {
+  background-position: 0 -693px;
+}
+#photos .gp-app-icon {
+  background-position: 0 -1145px;
+}
+#shopping .gp-app-icon {
+  background-position: 0 -1352px;
+}
+#wallet .gp-app-icon,
+#finance .gp-app-icon {
+  background-image: url(https://ssl.gstatic.com/gb/images/p1_a4541be8.png);
+  -webkit-background-size: 64px 2065px;
+  background-size: 64px 2065px;
+  background-position: 0 -966px;
+}
+#finance .gp-app-icon {
+  background-position: 0 -1725px;
+}
+#docs .gp-app-icon {
+  background-position: 0 -1214px;
+}
+#books .gp-app-icon {
+  background-position: 0 -554px;
+}
+#blogger .gp-app-icon {
+  background-position: 0 -1007px;
+}
+#contacts .gp-app-icon {
+  background-position: 0 -69px;
+}
+#hangouts .gp-app-icon {
+  background-position: 0 -2335px;
+}
+#chrome .gp-app-icon {
+  background-image: url("${UGF_CHROME_ICON_2011}");
+  background-size: 56px 56px;
+  margin-top: 8px;
+  width: 56px !important;
+  height: 56px !important;
+}
+[layout^="2016"] #chrome .gp-app-icon,
+[layout^="2018"] #chrome .gp-app-icon,
+[layout="2019"] #chrome .gp-app-icon,
+[layout="2022"] #chrome .gp-app-icon {
+  background-image: url("${UGF_CHROME_ICON_2014}");
+}
+.gp-app-icon {
+  margin: 0 auto;
+  height: 64px;
+  width: 64px;
+}
+.gp-app-title {
+  width: fit-content;
+  margin: 0 auto;
+  color: #404040 !important;
+  text-decoration: none !important;
+}
+#ugf-gmail-appsmenu .gp-app-title {
+  width: fit-content;
+  margin: 0 auto;
+  color: #404040 !important;
+  text-decoration: none !important;
+  text-align: center;
+}
+#ugf-gmail-appsmenu .gp-app-icon {
+  margin: 0 auto;
+  height: 64px;
+  width: 64px;
+}
+
+/* late 2012-2013: no name on the bar, text centred, and selection is just the
+   highlight - the red rule over the current product belongs to the 2011 bar */
+#ugf-gmail #ugf-gmail-gbar.dark.late a {
+  border-top: 0;
+  line-height: 29px;
+  display: inline-flex;
+  align-items: center;
+  height: 29px;
+}
+#ugf-gmail #ugf-gmail-gbar.dark.late a.here {
+  border-top-color: transparent;
+  color: #fff;
+  font-weight: bold;
+}
+#ugf-gmail #ugf-gmail-gbar.dark.late .left {
+  align-items: center;
+}
+
+.ugf-gmail-empty td {
+  color: #777;
+  padding: 18px 8px !important;
+  font-style: normal;
+  white-space: normal !important;
+}
+
+/* ---------- the holding screen ---------- */
+html[gplex-gmail-loading] body > *:not(#ugf-gmail-loading):not(#ugf-gmail):not(#ugf-gmail-styles):not(script):not(style) {
   display: none !important;
+}
+html[gplex-gmail-loading],
+html[gplex-gmail-loading] body {
+  background: #fff !important;
+}
+#ugf-gmail-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2147483000;
+}
+#ugf-gmail-loading i {
+  width: 28px;
+  height: 28px;
+  border: 3px solid #e8eaed;
+  border-top-color: #9aa0a6;
+  border-radius: 50%;
+  display: block;
+  animation: ugfGmailSpin .8s linear infinite;
+}
+@keyframes ugfGmailSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- take over the page ---------- */
+html[gplex-gmail] body > *:not(#ugf-gmail):not(#ugf-gmail-notice-scrim):not(#ugf-gmail-accmenu):not(#ugf-gmail-appsmenu):not(#ugf-gmail-accfence):not(#ugf-gmail-styles):not(script):not(style) {
+  visibility: hidden !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+  margin: 0 !important;
+}
+#ugf-gmail {
+  position: relative;
+  z-index: 2;
+  background: #fff;
+  min-height: 100vh;
 }
 html[gplex-gmail],
 html[gplex-gmail] body {
@@ -19647,16 +19985,39 @@ html[gplex-gmail] body {
             ugfGmailAssets.a = {
                 byGoogle: "data:image/png;base64,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",
                 m2018: "data:image/png;base64,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",
+                m2020: "data:image/png;base64,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",
                 envelope: "data:image/png;base64,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",
+                plus2018: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAABRWlDQ1BJQ0MgUHJvZmlsZQAAeJxjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8XAySDKIAgkFROTiwscAwJ8gEoYYDQq+HaNgRFEX9YFmfU+/av7nKk22j1+68/dMUxWxFSPArhSUouTgfQfIE5PLigqYWBgTAGylctLCkDsDiBbpAjoKCB7DoidDmFvALGTIOwjYDUhQc5A9g0gWyA5IxFoBuMLIFsnCUk8HYkNtRcEeH3cFUJ9QoIcwz1dXAm4l2RQklpRAqKd8wsqizLTM0oUHIGhlKrgmZesp6NgZGBkxsAACnOI6s83wGHJKMaBECsQY2CwmAEUfIgQiwf6YbscAwN/H0JMDehfAS8GhoP7ChKLEuEOYPzGUpxmbARhc29nYGCd9v//53AGBnZNBoa/1////739//+/yxgYmG8xMBz4BgBgYGEo74CVhAAAAMBQTFRFAAAA3VxZ9Pf5Vq1o6/DszTMw46Ei+t+VSnTmLmLnmLL12mhoM5hM+uOo8vX7ZY7ul9Gj6q1W2m1r8/b7ndKlsrz0+cti2mxsaK53Xq1trNj4Ios1rcf42VY27KF8plpkpK2lscjwYbBwus719uKx9OCqZrCP4JySbWylm86mc7iWmc2kca75I2P/O6dsv29vimOOKa0ldbqEeMOHn5Wkaa2NZsxmvy83v38/no9om6/v4IaDAA5xBD3cNImTTXffTvXbbgAAAEB0Uk5TAPgO+PX/9vn7/PcK/Qtc+Pb7paQOBv9XDKAM/vL+Df4LplZcWqb3F/5aEaYLBAUG/xJb//GqBQUE/5xcA/f9q/0MvqUAAAJmSURBVHjarZQJd6IwEIBHwKoICBVaxAPUXTxKL4/t6rb6///VzmSCHOLqe93vPZm8ZL4kEwMATLvdpjD7c19D6nV63j+2eeg3nPNtYXirAFKoXxNeWRg9VgivH/9dGP5LGEnaIzBNsyx4yAzA85IkwWagKJRFzEYz81wAEqIo8hjMzwmjTMhqCBAUAoFClE+3KMB1vifckP9xfQUzrRp/inm6SyzMqFQPQFHSmhX4UQQczhe3D2BKWFPGIuBnkZOAS8BmP87TJaBRJCeEG10fDAY6Ih76QEOqBJEfhjlBvyw4jrgYdQjDt42eo9ORwkMRxxkOOX8+75QQBtzdOSkyfyjzm3larVZTGCgUQWFYw/3MRVKBJpVRJdTCt/P8ry8UqleoienFJqQk4iXhDvczL22eQ4trkOVyzRR2vP9UEOcjW0Io/Q8Pzm4Hc7yUlHY8Qkf8B3DsiAbeDtCKNBo7VTUOh0Mcx1v09jipvseoa9pgjPevLGj2BgUkjtUe3muL+qZJMqVo0fU+E2KRryK9dwCrq2ldfPMVihZ9ArpFBkLo9w0pKFZX5KURpygyRkFNBaB3zbLo25JGauUJFls1EyZy2EzTKl7xSY92nwo+d34+P3MjOXdYMFhYLT+59yR4wQXB4BXKAn5rS/n+apsX/IpNp+W6Lj0jIRjGqQYaicjz8EREBad8IbirnjwlIxPcLC0nRLzCRAr9TIj8XxXH+kK9AMuyQEMv7xWlpMJpS+oVwWfBXTzFa1JUPlYeqhKWvisF27Ype72OnxaunKxCiKKcgGusMUjBXV4V7Di2bxQCFphK4S+JCGJYbiZdrwAAAABJRU5ErkJggg==",
                 compose2011: "data:image/png;base64,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",
                 compose2014: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAO4AAAA6CAMAAACAn5UpAAABIFBMVEXbZpry3d3jopjxoWPcXCvKWmbWptHFPoz60ZDZSDDURi7+/v7EQSvx4/n/+tvygyrwtq3FQzDu5fr+5bj4wXzkSTD6493kRi/peyXZe7nMZVTjueD82ajop5z+6sbYR3ToaSznjILqnpLjrKPt2PXyfCvZR1rlmKLkrdXjttjZt93pyur3uXT52cn//OjEQHfVRWzcdWPxnnHxqZ71uGv22Nz45OvGPpvZRaXXXEnZhLriXkrmc2PphWvihJPhlG7iqcvs0O3ztpbwu7P1y6fxxMv817TDP37Ehr/aRojaRZTUiIragK/Xk5bZmMHWpb7dq9ndt8vpfFfljKHtlFDjnMruqXvvxNjv8//wayzyjVf0rXz5w4n0xJv2w7b+4q9oE2SSAAADdUlEQVR42u2b+1fTMBTHuw3QPNqtG3vgVhiOjZcMxpCHvBQEn/hABRXU//+/MLlJ2nStP+E5LWsuZ6U3yTcnn97kJt05swiYN0BjbQNPcFpw3UNjb3sB7hBlwIY+7n4WcA98XJQJM7gG1+AaXINrcA2uwTW4BtfgGlyDe2fcxae1Wu13w/e/nLGCtU1VWyqVTgv8zjpltydVKGFlJe8wXoFQLw9dtpVeWSF5XMsW3wOR8yr476VLnJ/gQ7XD615AcREpASH9YpwCPSdal0FrQiqJ4z4LBjPLmT5oo5v2cUmXhcyO4EJ5RPEt8Fspw30jxmGrwb4V/jaRaGq4Wwjtkhjcyr8UtW35OPTWraRxV3kHN5Su22LKLnD/F6X0I8Tbx634U1TgNiidXABJRDHHizHrUjxB2RrMTRh3AyJHKaI7fKx1CPYT5mP6WgZL4KonoeHSB7zciig4Lrli/gqvCeEmnZlnIBL8DueP2cMPfITLYnrLyVjcIDpuV4mtiKIn2q2dtAGQt76ZBztMA67MH5iPbYn5f2TdSgh3elcuUIGbn188g6jHKD6ppVq7ckOpyqmnBxeMDz4n75s+bp99KrzqOpKqHsYo8KpffR7GraYMd1nzA1yHjd/Jsc/yKO6sG6PA1MqpBrdpje5RYQR/NcCVO2lraQT3JY1T8HVB8zlbZHT+7+sjsImk1y7oYRQ8n6614dDxA6kCllhRWaVfQgpTgFuWALCzRBV8wyrwPDwF87ccZGY3adyev/nzSdmvzqndVh4Z2yK6VYHbboY2IthYooqmjDfegfmr8ngqXhEgi85eTl5L7hVYY5voyFYPgke3DmvRQU0/ukW/h4hiBrahS7RoAzdvffJY2GHSuL2ylmZZLDe+a36/LnGrUwIlDjeiwHqXt0j37pKr/gsuXg+Gs8X9V4HvwDshRHdX1MfhRhU72pHaTRcuy6LL8kzQcIX/2U+7ULDAowtvQw1Y4F04TXb1HkYUeF3tQy2K1NkzJbh817joePkJdaJl/ruO1zlWiRTDDYbEpF9DPYQUrGDyotPJD3wlTckrghouMzzi08Bz467RHuioT/X71OCar+bSjItRFv5MdE10TXTve3QzwWuia6Jronvfo5sJy2p0Taoa51S1l4Uz5MDH9bKA6wU/rMnAby/2td8RkeHBeMMeDAXnX/8mKx/ISphIAAAAAElFTkSuQmCC",
                 compose2018: "data:image/png;base64,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",
-                google2013: "data:image/png;base64,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",
+                google2013: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAA+CAMAAAC1OMG+AAABgFBMVEXx8fEHZu/aRSn/uAAAmFLTPCAAo1vm5ur+wQFHie+Tt++yye8YcPPiUzwueu/L2e92pe9kmu8AX+rs19TcUjrgTDM6gfDotq7jh3hWk/HaWkXmlorpw73v6+LnpJr324/y58vry8XPOR/keWjnraT14rHiWUTcZlThZVH51G37zEz9xyyCrfDehnkstHr70Vbh6uYAp2AlpGrcemzV4PDljoD6zmL23qKgv/Kz2Me70PFXtYik073C3tLD4dQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADlr7aOAAAAgHRSTlMA////////Ov////////////////////////////////////////////////////9G//////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJlBkk4AAAYFSURBVHja1Zppd6JKEIZF47SAYRHjhhtxN5rJTLaZucv//1m3F7qp7i4ymHOPh6lPCWLXQ1HL22CjYdqLfxq7A4ea67onz2/U3sIocAzrjj1yJe9Pj9++fRH2WPlLv8aSlAYZgsfhtZhz6MenqlEed7sUMDjJjAi9uHtN7Mcv0iozR11qzljPYeKpdPGukiEC+t9qJxOXMQdI2Z1krK8IXTE1BozZRSsuvCLzJdBhwJjHJV2CXI/5AugZbxVuaWe7HvMF0LzTBS+ln1+PuTq097vucD3mytCEd7WgHiO5KnTEA/3jj4Imog2TukDfUKuY0eOaKLabm0rQwSeH9DRd7be3/f4qHeInbA7HDrPjYYO12R+Rq8vJQQl0sl7tb2/721Wa6PPOuVA2kzkFZtZntrexZ4eOtFar1VmYoj0yFbAzICh0km4LT6sEZodzGfOaXvo2HWZZlm77/WazuU/0ExaM9uuG2oFBt1oPSy0lqTSLfN8v5FjObEHPKfFqnWXD1z53JMITXw5NRvTCR0T+02TWh8GefWXIM/kPp4bBZoJS3FoSQ2IbOqXM6zzke+6I+3GLfKrKvKLMgHHeLFYTmA+UGTAuOHVrAZlVDRnUOvQr9ZSpRJlwP4mqQ/cCaMacwgN5rFWGMOYDPEHEupVnyC+mgYsOy7ejToRBz6mnebHMkPtZcTF04TxkK221rk5ECHb5v7wEZ1pVirzu5JRMUBYf+oIgtKET01NThtq5MKeTO2qpfkyEoCmSb9kxA60niO/A7FAJGtvQI+ppBIMj3KSXQ7OV7jLjoAj1ROZCp2N2ZhDqyBwLHqwqAG2Eh8y5l9FUXWflPs1XujNnfl6LbL0lx5s10FBvpA72bB1hQc+ZJ1neU144kzkBN6fyRBR41qUI6FeFZ54gLqV1kJWvqQYXh16xJfk9JcO9CjLQeJW1xwqFbuzY0TYrxSMKnefHg6z8wJaZFvSWrUmbRzJiU2WSEjOjnC7ekgfapA3ylWzoV4pMTdFZJxxa8rjosS/mfj+woEXViSCvhsheG88Pk5nIrmPp2GG7nUO30JxuvCto13J3wrtHU9okTexda9l4QZgbRcXpks+AtnTdRkF7Vn7EoBPY0CtMRObi46P+Adq/WGhunWJAL6wTFPSLdWcDUFMW9Bol8stDrUODlUY4dF/BHcuh87oLQlhVAaI99iWuwPD/KNQAeg/GiAX9zIQHnNgm9APIum5O7XeLv+2WhxS9FmqHVIBOxUoZCj0v2sQShV7AWumeKGoYa8pUGy4f5YecL+UJAqAzPD8SDp0UY+SITpf8Uoi+b4nxPWI+sSZ4LEPnNw9G4ZydoE1vKLNDNmqz6b3rVxJGRWdyyza2+2LOlm7Iy6kh9FpJLWhnynyfQJlh6LwjljORXUsQeto0txfIt0up+Uc9OLHFBgKIRgp9lnsAJKtn7Mgbnpel0NKVXUF6swadyIDu9XRxtNP0KmVWuZdntdZA3tAx6X6cHtSVaP9tbS4kUyvWTkQw6F5PSW5x19qgFteQWU2/o6FMZ/jTWjpYiq/+I6B/6oO23d4p0OwZePKdcmzO7ICNilgokftxnVkJjU6eITM8zoVPdXufvgvo73//lBUksfuj9XS6Pk/uNU8kLrDdyM8/Cv0oDnqMGWxusp1YaDScTqk6pzV4Nhpc3kKO75vN5g3NZz0rPY1ZgAtX/XZh99SejYiGsYMaQw4irV7WcK32s6XCZA/J7bi0+6wXw8dinBoy/6UefTQBch/pJOANXIEM4g4sS3d8tcl5jXf/5SGf6MeFlRm+HZ4Ptk7D844j787TskcxfjR2g/ytbRx5/v//1lNEZhDztVUt1folfMhnYaRiQVwg12tqfPoOQmS0efWNM/bk0Lv40dx1LUA1sPeJx81XTo64RB3XFXpc0if8OkOXNTdSe2gP/8CtNfQYbyperZuHE6K7kNoOlwgffiEVZfUd4yG6P2LMcaO+5tm/PiMRVZJ1ZgY7/4AqSGriZXPUqLf5QbG56Ik9kVv/34bSnUavp4BppvwBP2cVe63I5RZ96ge4/wG5omZZ3suczgAAAABJRU5ErkJggg==",
                 favicon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAABgFBMVEXi2trf3Nfc4+TkmJLmpZ7i6+vhenX2YV3/v3/igHzkp57jtK///wAAAAD+/v7X1dfKNzTa2drJaWXT1NXr6OjMSETOU0/Kysu1tbbSurl/f3+1ODO6Gxfi5eW5ZGHUnZnP1dbk5uWrIh3i4+Tu+vvY19jU1NPZ2dnQ1tbb5er/AACwKiXMQT7Oy8vRzM24XVm4lpHGKCXJcm/IiYR///+6R0OqqqrOYV7GmZXStrTTycfMyMnS4+XO/Pz/f3/yenXup6Pvt7Li2tm2Yl24eXO4qaa0tLjRqabWubnxlZHxzMzp1dR/f/+5bmm/v7+7vLqq///MmZnSl5PLqKTf3+Pa4+XS4+bR/P/nX1vxjIf/qqrtwb3h2dnm6ubo9/i/Pz+5WlayZFy5enS+gHu3gXq/jIizr6+4yMy8ycrBIRzPXFrNYl7PbWjRfXjegH3Cg37bjIrSkI3Co53eo57AoZ7aoZ3NqabJurTawrzQwL7GxL/Uz8/azMzYzs/d3ejb2+KE+Q+SAAAAgHRSTlPgK1ip1KGr/wT+Ol0BAAaM+3D48A/9/vZB/gL+/ITV9dUv/kwqDTRRtHQB/vwH0/r89vr6Av4D+0ZqLlBMFgP/7+9R1/76P/0P+w2YAv0E+AMHbFRJkKws//sDnTBqdATJ/TDN/DxAQfv/wtC8oaf/wJZcn8T0YrIqfvR3g7gXJFf7xQQAAAJQSURBVHjajZMHU9tAEIXPBtJvpZPvJGyRYCHJEnLFFRwb24TeIfSW3nvvyV/PSuAEPAzJG2nvRu+bt3szOkL/IUKp58HpHngeAoG5gxUA6OHiCzej7YR0etnmgdJwtOHctnl6uVwGIPXVc109dToLYC9CGjgH7pfQNK3PvewaoWSucL7R2q1TepgIi9TGNrco3Xs3s9V4bROiDMli5k3Iop59NGx5hVLj0ouGPCQ/NYmmyEKk1BYJ0ekyXMGMHRiFKpmRfV1bJ9GKrgpZqBe7E5RewIzZWUrD3YpAW9dvXCVRJVkqiZQsGs/nDqg3veLR/d1nWxgvSnoyAJ6I8YKaErLabI3557/c3EZbVvqzyUOgT0xpuawQQlaaH6ufV7dVtMXCUmQhmbwWAGq/G4/eFynsk281K/5w2VxkY0TRB9qAtK5puTs4l6pUsJZeRV334AQQ/hF/PDGuiuBslZxGpO/hL8eBQUnKRJZyagq75yfiG0xi1omEQcakjKZNjAu18NWVJMaYNdyREBDaVFRzcXsagMpocdft8d1aeMy62dkCjW+SXyU2VjP2YLgTYAYHH5OY45hGAh4cA1x/BoP/BMNBxDSdNcPpTHAMg9sG8DXGTF9/ZtAQ+MCsULr9L3PL8v9aTu8qet/tfZLJ98n9klX9ZSQCVROO41xHhd5mB/R7JjHf5/NTkXgmjopE8MUaiGiFbOGTQYDhFy3QkdNekXENTihs1h71ntQkPpMPe2vhTbw4sbOvJmBCrFgchSJADDU/H/uron8DyX/c7rP1G+NCeLHqDWQRAAAAAElFTkSuQmCC",
                 faviconClassic: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAABgFBMVEXippje3NLe3eHgt6jdqKXfcWXgoY7k09Xy3tDeh3brlnvfzb7Lyb3/f1XufmL2dlbatm3Uyb8AAADn5dba19X+/v34+e/TNirvaE7MKibm28v/f3/0dVfX1sri4eHGGRXYRjblWUWyAQPDCw63t7jrk4nLIxy8MTPZk5HjSTboqZbmhXDvybrryLjx9+y6urrap5L608/u7eDVhnPcmovwxrf0+/O1FhbANjbWVEXTeGnc5dPpUzr//3+1tbW5yszddWTWmInYtKXzspv0uqn/1Kro8N33/PT4+fHXaFvXZ1jGiHLZoZLZybTY2Nb8gmbmuKji3t7t6Nq6LC7RWU/LfXXLiITatrbMzMTL1dbleWTiiIX1s5bvs532uLjnva7tyrjvyLfj49/k5OTx7uLx7eLs9+h/AACRAAC+IB++NzG2bUi4aGi/d2+5i4u2kZGurq61r6y/v7+ysrK1v8C22tq60tTBHRzAIRzUKirSS0PeUT7abUjabW3Ta2vBcmBZUk1dAAAAgHRSTlMY1CJg8niUR6l4/3TsBrjbBxgA/UsC+/39/f0C/f5C+/7+9f7S6v7WB/v70Zf9c+z+Cfj9/M6P/NX//P76AqbP03j6/f0G/FnN0/8id/4v/sNBidbSIP8HLYb/xgp0C5sOukEKcLO6Agf//wf/IAsHm7EMndQH0LxzBvn/BwfVHZkiIqcAAAI9SURBVHjajZNpV9pAFIYngIpLNwZmMzETrKmJDUVQlKXQAgVqcW3rvi/d933vX++dIGL7ofqcnDMf7nPfmzs5QZEzQGcLsUHgpmLwXx4PxkBAmxd+Xl5ZGVfcAdDoMa+ff/0xeo4RsaFgV+9W//Vjdna6m83bQG8z2PWlqyeA0GRVn69gsTepWFhY8IQQnucJz7VstvEKjV6c15le2ULbm7u72+PjVx4RgnGK1JLfTNP8jNDqmM6AS1omFokcNhoNjLHI12ZzHOrD0z0oOqYDTO+rhmORJQLtAoyJrG2a8ExHQWBMKQU20p2pH0I9hb00NW3Ozanha0rwRzCdFeZFOJCBiPIMtylMmJoanm4Jlu5LBcfdQw2clpxSm9NnHUFPJtctwHGYW81RgJtyIv00bh4LrJKfTVsFy5KSZVXdNte7gyM83noHZjEX52f7so60JPXrPIcTT9rCLVZgrsB5IzkjqZSScjtbwSRzryM4lgur43w5J/32mTLcZqIjWCAILOB+BmABLtNYWz0iiYenhO9+AhaGkcxKF9cMLXUq4a5FZVIJhiEI9rz+DME1TBIvTwSnJQgDQjAhS2GSgrMzQgkTKl/VfQW+Nmzxuy08cCgFwcBtUkSRQEq4rwRqK0GcCH596SAY4vE4CIENy1RCp/+onqjXAxGVwH9F0ZxWzS2XDUMz2gy8LxbfFItvQ8svQqE59G5NK5VKV09zo8WH0idtLYAiHwOLi0N/0bMfVcfifnTu4Fz/5n85O+EPU6OLo3WxZJYAAAAASUVORK5CYII="
             };
         }
         return ugfGmailAssets.a;
+    }
+    function ugfGmailCategoriesOn() {
+        let v = null;
+        try {
+            v = window.localStorage.getItem("UGF_GMAIL_CATS");
+        } catch (e) {}
+        if (v === null || v === undefined) {
+            v = ugfGmailShared("UGF_GMAIL_CATS") || null;
+        }
+        return String(v) === "true";
+    }
+    function ugfGmailSetCategories(on) {
+        const v = on ? "true" : "false";
+        try {
+            window.localStorage.setItem("UGF_GMAIL_CATS", v);
+        } catch (e) {}
+        try {
+            if (typeof GM_setValue === "function") {
+                GM_setValue("UGF_GMAIL_CATS", v);
+            }
+        } catch (e) {}
     }
     function ugfGmailEnabled() {
         let v = null;
@@ -19848,8 +20209,34 @@ html[gplex-gmail] body {
         };
         return ugfGmailIcon(map[name] || "tag", 20);
     }
+    // Gmail does not throw away the mailbox you just left, or the compose window you
+    // just closed - it parks them with display:none and builds a fresh one. Gplex hides
+    // Gmail with visibility:hidden, which keeps layout boxes, so "has a box" separates
+    // what is live from what is parked. Without this, querySelector kept handing back
+    // the parked copy: the old mailbox's mail under the new mailbox's name, and a dead
+    // compose window that swallowed the message.
+    function ugfGmailShown(el) {
+        return !!(el && el.getClientRects && el.getClientRects().length);
+    }
+    function ugfGmailPick(sel) {
+        const all = document.querySelectorAll(sel);
+        let fallback = null;
+        for (let i = 0; i < all.length; i++) {
+            if (all[i].closest("#ugf-gmail")) {
+                continue;
+            }
+            if (ugfGmailShown(all[i])) {
+                return all[i];
+            }
+            if (!fallback) {
+                fallback = all[i];
+            }
+        }
+        return fallback;
+    }
     function ugfGmailRows() {
         const out = [];
+        const panes = new Map();
         document.querySelectorAll("tr.zA").forEach(function(tr) {
             if (tr.closest("#ugf-gmail")) {
                 return;
@@ -19862,6 +20249,7 @@ html[gplex-gmail] body {
             const holder = tr.querySelector("[data-legacy-thread-id], [data-thread-id]") || tr;
             out.push({
                 row: tr,
+                pane: tr.closest(".ae4, .Cp, div[role=\"main\"]") || tr.parentElement || tr,
                 tid: holder.getAttribute("data-legacy-thread-id") || holder.getAttribute("data-thread-id") || "",
                 rowId: tr.id || "",
                 from: from ? (from.getAttribute("name") || from.textContent || "").trim() : "",
@@ -19872,7 +20260,26 @@ html[gplex-gmail] body {
                 starred: !!(star && star.classList.contains("T-KT-Jp"))
             });
         });
-        return out;
+        const live = out.filter(function(it) {
+            let v = panes.get(it.pane);
+            if (v === undefined) {
+                v = ugfGmailShown(it.pane);
+                panes.set(it.pane, v);
+            }
+            return v;
+        });
+        if (live.length) {
+            return live;
+        }
+        // nothing live: only report empty if we can see a live list pane at all,
+        // otherwise fall back rather than guess
+        let mainShown = false;
+        document.querySelectorAll('div[role="main"]').forEach(function(m) {
+            if (ugfGmailShown(m)) {
+                mainShown = true;
+            }
+        });
+        return mainShown ? live : out;
     }
     // Gmail rebuilds its list as it syncs, so a captured <tr> goes stale within seconds.
     // Everything that acts on a row looks it up again first.
@@ -19906,10 +20313,44 @@ html[gplex-gmail] body {
         if (!el) {
             return false;
         }
-        ["mouseover", "mousedown", "mouseup", "click"].forEach(function(type) {
-            el.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, view: window, button: 0 }));
+        // A userscript sandbox hands out a wrapped window, and Firefox rejects that as
+        // a MouseEvent "view" with a TypeError - which threw out of every click Gplex
+        // made, so nothing it asked Gmail to do ever happened. The member is optional;
+        // leaving it out is both correct and portable. Each dispatch is guarded so one
+        // unsupported event type cannot take the rest down with it.
+        let sent = 0;
+        try {
+            if (el.focus) {
+                el.focus();
+            }
+        } catch (e) {}
+        [
+            ["mouseover", "MouseEvent"],
+            ["pointerdown", "PointerEvent"],
+            ["mousedown", "MouseEvent"],
+            ["pointerup", "PointerEvent"],
+            ["mouseup", "MouseEvent"],
+            ["click", "MouseEvent"]
+        ].forEach(function(pair) {
+            const Ctor = window[pair[1]];
+            if (typeof Ctor !== "function") {
+                return;
+            }
+            try {
+                el.dispatchEvent(new Ctor(pair[0], {
+                    bubbles: true, cancelable: true, composed: true, button: 0
+                }));
+                sent++;
+            } catch (e) {}
         });
-        return true;
+        if (!sent) {
+            // last resort if the constructors are unusable in this sandbox
+            try {
+                el.click();
+                sent++;
+            } catch (e) {}
+        }
+        return sent > 0;
     }
     function ugfGmailOpenRow(item) {
         // the reliable route is Gmail's own URL for the conversation
@@ -19956,6 +20397,31 @@ html[gplex-gmail] body {
         };
         return map[String(name || "").toLowerCase().trim()] || "";
     }
+    // https://mail.google.com/mail/u/0/#inbox and friends - keeping the account index
+    // the person is actually on rather than assuming 0
+    // Gmail puts the mailbox in the page title, which is how we can tell an arrival
+    // from a switch that quietly did not happen.
+    function ugfGmailArrived(target) {
+        // deliberately generous: failing to confirm costs nothing, while a wrong
+        // answer here costs a page load
+        const names = {
+            "#inbox": ["inbox"], "#starred": ["starred"], "#snoozed": ["snoozed"],
+            "#sent": ["sent"], "#drafts": ["draft"], "#imp": ["important", "imp"],
+            "#all": ["all mail", "all"], "#spam": ["spam"], "#trash": ["trash", "bin"]
+        };
+        const want = names[String(target || "").split("/")[0]];
+        const title = (document.title || "").toLowerCase();
+        if (!want || !title || title.indexOf("gmail") === -1) {
+            return true;  // cannot tell - never second-guess it
+        }
+        return want.some(function(w) {
+            return title.indexOf(w) > -1;
+        });
+    }
+    function ugfGmailMailUrl(hash) {
+        const m = (window.location.pathname || "").match(/^\/mail\/u\/(\d+)\//);
+        return "https://mail.google.com/mail/u/" + (m ? m[1] : "0") + "/" + (hash || "#inbox");
+    }
     function ugfGmailAccount() {
         const a = document.querySelector('a[aria-label*="@"], [aria-label*="Google Account"]');
         const label = a ? (a.getAttribute("aria-label") || "") : "";
@@ -19965,39 +20431,219 @@ html[gplex-gmail] body {
     // Gmail keeps the real range and total in its pager; use that rather than
     // counting the rows we happen to have scraped.
     function ugfGmailCount() {
-        const el = document.querySelector(".Dj, .ts, [aria-label*='of']");
+        // the parked pane keeps its own counter, so take the live one
+        const el = ugfGmailPick(".Dj, .ts, [aria-label*='of']");
         // any dash-like separator, and any flavour of space, between the two numbers
         const txt = el ? (el.textContent || "").replace(/[\s\u00a0]+/g, " ").trim() : "";
         const m = txt.match(/([\d,.]+)\s*[^\d\s]{1,3}\s*([\d,.]+)\s+of\s+(?:about\s+)?([\d,.]+)/i);
         if (m) {
             return { from: m[1], to: m[2], total: m[3], text: txt };
         }
+        // On a big mailbox Gmail does not count at all - it says "1-50 of many".
+        // Reporting the rows we happen to have loaded instead ("43") is a lie, and it
+        // also capped paging at one page.
+        const many = txt.match(/([\d,.]+)\s*[^\d\s]{1,3}\s*([\d,.]+)\s+of\s+many/i);
+        if (many) {
+            return { from: many[1], to: many[2], total: "many", unknown: true, text: txt };
+        }
         return null;
     }
-    function ugfGmailPagerBtn(which) {
-        const sel = which === "older"
-            ? '[aria-label="Older"], [data-tooltip="Older"], [aria-label="Next page"], [data-tooltip="Next page"]'
-            : '[aria-label="Newer"], [data-tooltip="Newer"], [aria-label="Previous page"], [data-tooltip="Previous page"]';
-        const el = document.querySelector(sel);
-        if (!el || el.closest("#ugf-gmail")) {
+    // Gmail prints the true figures in its footer; use those instead of a per-era guess
+    function ugfGmailStorage() {
+        // Gmail has worded this several ways over the years - "Using 4.1 GB of your
+        // 15 GB", "4.53 GB of 15 GB used", "0.28 GB of 15 GB" - and only the oldest of
+        // those used to match, which is why the era's placeholder figure kept showing.
+        const pat = /([\d.,]+)\s*(B|KB|MB|GB|TB)\b\s*(?:\(\s*([\d.,]+)\s*%\s*\))?\s*(?:of|\/)\s*(?:your\s+)?([\d.,]+)\s*(B|KB|MB|GB|TB)\b/i;
+        let txt = "";
+        const look = function(v, best) {
+            if (!v) {
+                return best;
+            }
+            const t = String(v).replace(/[\s\u00a0]+/g, " ").trim();
+            if (t.length > 160 || !/\b(used|using|storage|quota)\b/i.test(t) || !pat.test(t)) {
+                return best;
+            }
+            return (!best || t.length < best.length) ? t : best;
+        };
+        document.querySelectorAll("div, span, a, td, p").forEach(function(el) {
+            if (el.closest("#ugf-gmail") || el.children.length > 4) {
+                return;
+            }
+            let hit = look(el.textContent, "");
+            hit = look(el.getAttribute("aria-label"), hit);
+            hit = look(el.getAttribute("title"), hit);
+            if (!hit) {
+                return;
+            }
+            // Only worth checking once something matched: a message that happens to
+            // mention "200 GB of 400 GB used" is not the storage footer, whether the
+            // text is the row itself or a container holding it.
+            if (el.closest("tr.zA, .ii, .adn") || el.querySelector("tr.zA, .ii")) {
+                return;
+            }
+            // the tightest element wrapping the figure, not an outer container
+            if (!txt || hit.length < txt.length) {
+                txt = hit;
+            }
+        });
+        if (!txt) {
             return null;
         }
-        const off = el.getAttribute("aria-disabled") === "true" || el.classList.contains("aoM");
-        return off ? null : el;
+        const m = txt.match(pat);
+        if (!m) {
+            return null;
+        }
+        const num = function(v, unit) {
+            let raw = String(v);
+            // "4,53 GB" is a decimal comma; "1,024" is a thousands separator
+            raw = /^\d{1,3},\d{1,2}$/.test(raw) ? raw.replace(",", ".") : raw.replace(/,/g, "");
+            const f = parseFloat(raw);
+            const mult = { B: 1 / (1024 * 1024), KB: 1 / 1024, MB: 1, GB: 1024, TB: 1024 * 1024 };
+            return f * (mult[String(unit).toUpperCase()] || 1);
+        };
+        const usedMB = num(m[1], m[2]);
+        const totalMB = num(m[4], m[5]);
+        // work the share out from the real figures rather than trusting a printed one
+        let pct = isFinite(usedMB) && totalMB > 0 ? (usedMB / totalMB) * 100 : parseFloat(m[3] || "0");
+        if (!isFinite(pct) || pct < 0) {
+            pct = 0;
+        }
+        const tidy = function(n, u) {
+            return String(n).trim() + " " + String(u).toUpperCase();
+        };
+        return {
+            used: tidy(m[1], m[2]),
+            total: tidy(m[4], m[5]),
+            pct: Math.min(100, pct),
+            text: txt
+        };
+    }
+    // Gmail pages through the URL: #all/p3, #inbox/p2, #search/foo/p4. Driving that
+    // is far more dependable than clicking its pager, which lives in hidden markup.
+    function ugfGmailPageInfo() {
+        const h = window.location.hash || "#inbox";
+        const m = h.match(/^(.*?)\/p(\d+)$/);
+        if (m) {
+            return { base: m[1], page: parseInt(m[2], 10) || 1 };
+        }
+        return { base: h, page: 1 };
+    }
+    function ugfGmailPageSize() {
+        const c = ugfGmailCount();
+        if (!c) {
+            return 50;
+        }
+        const from = parseInt(String(c.from).replace(/[^\d]/g, ""), 10);
+        const to = parseInt(String(c.to).replace(/[^\d]/g, ""), 10);
+        const n = (to - from) + 1;
+        return n > 0 ? n : 50;
+    }
+    function ugfGmailLastPage() {
+        const c = ugfGmailCount();
+        if (!c || c.unknown) {
+            return 0;  // unknown total: never claim there is no next page
+        }
+        const total = parseInt(String(c.total).replace(/[^\d]/g, ""), 10);
+        if (!total) {
+            return 0;
+        }
+        return Math.max(1, Math.ceil(total / ugfGmailPageSize()));
+    }
+    // Gmail's own router sometimes never answers. Rather than sit there waiting,
+    // put the URL where it should be and let the browser load it for real. The
+    // cooldown is what stops that turning into a reload loop.
+    function ugfGmailHardNav(target) {
+        if (!target) {
+            return false;
+        }
+        const now = Date.now();
+        let prev = { t: 0, h: "" };
+        try {
+            prev = JSON.parse(sessionStorage.getItem("UGF_GMAIL_HARDNAV") || '{"t":0,"h":""}');
+        } catch (e) {}
+        // only the same destination is rate limited - reloading for inbox must not
+        // stop a load for spam a second later
+        if (prev.h === target && (now - prev.t) < 20000) {
+            console.log("[Gplex] Gmail: already forced a load of " + target + " just now");
+            return false;
+        }
+        try {
+            sessionStorage.setItem("UGF_GMAIL_HARDNAV", JSON.stringify({ t: now, h: target }));
+        } catch (e) {}
+        if (window.location.hash !== target) {
+            window.location.hash = target;
+        }
+        console.log("[Gplex] Gmail: router stalled, loading " + target + " directly");
+        window.location.reload();
+        return true;
+    }
+    function ugfGmailGoPage(n) {
+        const info = ugfGmailPageInfo();
+        const page = Math.max(1, n);
+        const target = page <= 1 ? info.base : info.base + "/p" + page;
+        if (window.location.hash === target) {
+            return false;
+        }
+        const before = ugfGmailStamp();
+        window.location.hash = target;
+        ugfGmailAfterNav(before, function() {
+            if (!ugfGmailHardNav(target)) {
+                ugfGmailRender();
+            }
+        });
+        return true;
+    }
+    function ugfGmailPagerBtn(which) {
+        const want = which === "older" ? /^(older|next page|next)$/i : /^(newer|previous page|previous)$/i;
+        let found = null;
+        document.querySelectorAll('[aria-label], [data-tooltip], [title]').forEach(function(el) {
+            if (found || el.closest("#ugf-gmail")) {
+                return;
+            }
+            const lab = (el.getAttribute("aria-label") || el.getAttribute("data-tooltip") || el.getAttribute("title") || "").trim();
+            if (!want.test(lab)) {
+                return;
+            }
+            // no visibility test here: Gplex has already hidden Gmail's own chrome,
+            // so every real control measures as zero-sized
+            if (el.getAttribute("aria-disabled") === "true" || el.classList.contains("aoM") ||
+                    el.hasAttribute("disabled")) {
+                return;
+            }
+            found = el;
+        });
+        return found;
     }
     function ugfGmailPage(which) {
-        const btn = ugfGmailPagerBtn(which);
-        if (btn) {
-            ugfGmailRealClick(btn);
-            setTimeout(ugfGmailRender, 900);
-            setTimeout(ugfGmailRender, 2000);
-            return true;
+        const info = ugfGmailPageInfo();
+        if (which === "older") {
+            return ugfGmailGoPage(info.page + 1);
+        }
+        if (which === "newer") {
+            return info.page > 1 ? ugfGmailGoPage(info.page - 1) : false;
+        }
+        if (which === "newest") {
+            return ugfGmailGoPage(1);
+        }
+        if (which === "oldest") {
+            const last = ugfGmailLastPage();
+            return last ? ugfGmailGoPage(last) : false;
         }
         return false;
     }
     function ugfGmailThreadOpen() {
         const h = window.location.hash || "";
-        return /#[^/]+\/[^/]+/.test(h) && !/^#search\//.test(h) && !/^#label\/[^/]+$/.test(h);
+        // "#all/p3" is page three, not a conversation - it only looks like one
+        if (/\/p\d+$/.test(h)) {
+            return false;
+        }
+        if (/^#label\/[^/]+$/.test(h)) {
+            return false;
+        }
+        if (/^#search\/[^/]+$/.test(h)) {
+            return false;
+        }
+        return /#[^/]+\/[^/]+/.test(h);
     }
     function ugfGmailState() {
         if (!ugfGmailState.s) {
@@ -20009,12 +20655,19 @@ html[gplex-gmail] body {
         return /^#ugfsettings/.test(window.location.hash || "") || ugfGmailState().settings;
     }
     function ugfGmailClickReal(sel) {
-        const el = document.querySelector(sel);
-        if (el) {
+        const el = ugfGmailPick(sel);
+        if (!el) {
+            return false;
+        }
+        try {
             el.click();
             return true;
+        } catch (e) {
+            // never let a click throw out of here: callers may have Gmail's layer
+            // armed, and an escaping error would leave it on screen
+            console.log("[Gplex] Gmail: click on " + sel + " failed - " + e);
+            return ugfGmailRealClick(el);
         }
-        return false;
     }
     function ugfGmailSetField(el, value) {
         if (!el) {
@@ -20022,7 +20675,15 @@ html[gplex-gmail] body {
         }
         if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
             el.focus();
-            el.value = value;
+            // Gmail watches the native value setter, so assigning .value directly can go
+            // unnoticed - poke the prototype setter it actually listens to.
+            const proto = el.tagName === "INPUT" ? window.HTMLInputElement : window.HTMLTextAreaElement;
+            const desc = Object.getOwnPropertyDescriptor(proto.prototype, "value");
+            if (desc && desc.set) {
+                desc.set.call(el, value);
+            } else {
+                el.value = value;
+            }
             el.dispatchEvent(new Event("input", { bubbles: true }));
             el.dispatchEvent(new Event("change", { bubbles: true }));
         } else {
@@ -20031,41 +20692,230 @@ html[gplex-gmail] body {
             el.dispatchEvent(new Event("input", { bubbles: true }));
         }
     }
+    // A typed address only becomes a recipient once Gmail turns it into a chip, which
+    // it does on Enter/Tab/comma or on blur. Skipping this is why Send did nothing.
+    function ugfGmailCommitTo(el) {
+        if (!el) {
+            return;
+        }
+        [
+            { key: "Enter", code: "Enter", keyCode: 13 },
+            { key: "Tab", code: "Tab", keyCode: 9 }
+        ].forEach(function(k) {
+            ["keydown", "keypress", "keyup"].forEach(function(type) {
+                el.dispatchEvent(new KeyboardEvent(type, {
+                    key: k.key, code: k.code, keyCode: k.keyCode, which: k.keyCode,
+                    bubbles: true, cancelable: true
+                }));
+            });
+        });
+        el.dispatchEvent(new Event("blur", { bubbles: false }));
+        if (el.blur) {
+            el.blur();
+        }
+    }
+    // Gplex hides Gmail with visibility:hidden, and a hidden element cannot take
+    // focus and is not hit-tested. Gmail's compose needs focus for the recipient
+    // chip, for the message body and for Ctrl+Enter, so every send quietly turned
+    // into a draft; its toolbar buttons ignored clicks for the same reason.
+    // So: while we drive Gmail, put its layer back to being real - parked far
+    // off-screen, where nothing of it can be seen - and undo that straight after.
+    // Inline !important is deliberate; it is the only thing that outranks the
+    // takeover rule.
+    function ugfGmailArm() {
+        const props = {
+            visibility: "visible", "pointer-events": "auto",
+            left: "-30000px", top: "0px", width: "1280px", height: "900px",
+            overflow: "visible", "z-index": "1"
+        };
+        const hosts = [];
+        [].forEach.call(document.body.children, function(n) {
+            if (!n.tagName || n.tagName === "SCRIPT" || n.tagName === "STYLE") {
+                return;
+            }
+            if (n.id && n.id.indexOf("ugf-gmail") === 0) {
+                return;
+            }
+            Object.keys(props).forEach(function(k) {
+                n.style.setProperty(k, props[k], "important");
+            });
+            hosts.push(n);
+        });
+        // nothing should be able to scroll to where we parked it
+        document.body.style.setProperty("overflow", "hidden", "important");
+        let done = false;
+        const off = function() {
+            if (done) {
+                return;
+            }
+            done = true;
+            hosts.forEach(function(n) {
+                Object.keys(props).forEach(function(k) {
+                    n.style.removeProperty(k);
+                });
+            });
+            document.body.style.removeProperty("overflow");
+        };
+        setTimeout(off, 20000);  // never leave Gmail armed
+        return off;
+    }
+    // Gmail announces what it did in a small notice - "Message sent" against
+    // "Draft saved". That is the only honest way to tell a send from a draft.
+    function ugfGmailToast() {
+        let txt = "";
+        document.querySelectorAll('.bAq, .vh, [role="alert"], .b8, .aT').forEach(function(el) {
+            if (txt || el.closest("#ugf-gmail") || el.children.length > 3) {
+                return;
+            }
+            const t = (el.textContent || "").replace(/\s+/g, " ").trim();
+            if (t && t.length < 120 && /(message sent|sending|draft saved|saved to drafts)/i.test(t)) {
+                txt = t;
+            }
+        });
+        return txt;
+    }
+    // Gmail's own send shortcut. Its Send button does not always take a synthetic
+    // click, and when it does not Gmail just files the message as a draft.
+    function ugfGmailSendKey(el) {
+        const t = el || document.body;
+        if (t.focus) {
+            t.focus();
+        }
+        [{ ctrlKey: true }, { metaKey: true }].forEach(function(mod) {
+            ["keydown", "keypress", "keyup"].forEach(function(type) {
+                const init = {
+                    key: "Enter", code: "Enter", keyCode: 13, which: 13,
+                    bubbles: true, cancelable: true
+                };
+                if (mod.ctrlKey) { init.ctrlKey = true; }
+                if (mod.metaKey) { init.metaKey = true; }
+                t.dispatchEvent(new KeyboardEvent(type, init));
+            });
+        });
+    }
     // Sending drives Gmail's own compose window, so the mail really is sent by Gmail.
     function ugfGmailSend(data, status) {
+        // make Gmail real before opening compose, so the window can hold focus
+        const disarm = ugfGmailArm();
         if (!ugfGmailClickReal('div[role="button"][gh="cm"], .T-I.T-I-KE')) {
+            disarm();
             status("Could not open Gmail's compose window.");
             return;
         }
+        const failSafe = function(e, msg) {
+            disarm();
+            console.log("[Gplex] Gmail: " + msg + " - " + e);
+            status(msg);
+        };
+        const toSel = 'textarea[name="to"], input[name="to"], input[peoplekit-id]';
+        const subjSel = 'input[name="subjectbox"]';
+        const bodySel = 'div[aria-label="Message Body"], div[g_editable="true"]';
+        const sendSel = 'div[role="button"][data-tooltip^="Send"], div[aria-label^="Send"], ' +
+            'div[role="button"][data-tooltip-contains="Send"]';
         let tries = 0;
         const iv = setInterval(function() {
-            tries++;
-            const to = document.querySelector('textarea[name="to"], input[name="to"], input[peoplekit-id]');
-            const subject = document.querySelector('input[name="subjectbox"]');
-            const body = document.querySelector('div[aria-label="Message Body"], div[g_editable="true"]');
-            const send = document.querySelector('div[role="button"][data-tooltip^="Send"], div[aria-label^="Send"]');
-            if (to && subject && body && send) {
+            try {
+                step();
+            } catch (e) {
                 clearInterval(iv);
-                ugfGmailSetField(to, data.to);
-                ugfGmailSetField(subject, data.subject);
-                ugfGmailSetField(body, data.body);
-                status("Sending...");
-                setTimeout(function() {
-                    send.click();
-                    status("Message sent.");
-                    setTimeout(function() {
-                        const form = document.querySelector("#ugf-gmail-compose-form");
-                        if (form) {
-                            form.remove();
-                        }
-                        ugfGmailRender();
-                    }, 1200);
-                }, 400);
-            } else if (tries > 40) {
-                clearInterval(iv);
-                status("Gmail's compose window did not open in time.");
+                failSafe(e, "Could not drive Gmail's compose window.");
             }
         }, 250);
+        function step() {
+            tries++;
+            const to = ugfGmailPick(toSel);
+            const subject = ugfGmailPick(subjSel);
+            const body = ugfGmailPick(bodySel);
+            const send = ugfGmailPick(sendSel);
+            // wait for the window Gmail just opened, not one it parked earlier
+            if (to && subject && body && send && ugfGmailShown(send)) {
+                clearInterval(iv);
+                try {
+                    ugfGmailSetField(to, data.to);
+                    ugfGmailCommitTo(to);
+                    ugfGmailSetField(subject, data.subject);
+                    ugfGmailSetField(body, data.body);
+                } catch (e) {
+                    disarm();
+                    console.log("[Gplex] Gmail: could not fill the compose window - " + e);
+                    status("Could not fill Gmail's compose window.");
+                    return;
+                }
+                status("Sending\u2026");
+                setTimeout(function() {
+                    ugfGmailRealClick(send);
+                    let waited = 0;
+                    let nudged = false;
+                    const finish = function(msg) {
+                        disarm();
+                        status(msg);
+                        setTimeout(function() {
+                            const form = document.querySelector("#ugf-gmail-compose-form");
+                            if (form) {
+                                form.remove();
+                            }
+                            ugfGmailRender();
+                        }, 900);
+                    };
+                    const check = setInterval(function() {
+                        waited++;
+                        try {
+                            tick();
+                        } catch (e) {
+                            clearInterval(check);
+                            disarm();
+                            console.log("[Gplex] Gmail: send check failed - " + e);
+                            status("Gmail did not accept the message.");
+                        }
+                    }, 300);
+                    function tick() {
+                        const toast = ugfGmailToast();
+                        if (/message sent|sending/i.test(toast)) {
+                            clearInterval(check);
+                            finish("Message sent.");
+                            return;
+                        }
+                        if (/draft/i.test(toast)) {
+                            clearInterval(check);
+                            disarm();
+                            console.log("[Gplex] Gmail: the message was filed as a draft, not sent");
+                            status("Gmail saved it as a draft instead of sending it.");
+                            return;
+                        }
+                        const still = ugfGmailPick(subjSel);
+                        const open = still && ugfGmailShown(still);
+                        if (open && !nudged && waited >= 3) {
+                            // the click did not take - use Gmail's own send shortcut
+                            nudged = true;
+                            console.log("[Gplex] Gmail: Send button did not respond, using Ctrl+Enter");
+                            ugfGmailSendKey(ugfGmailPick(bodySel) || still);
+                            return;
+                        }
+                        if (!open) {
+                            // compose gone and no notice yet - give the notice a moment,
+                            // since a silent close is how a draft save looks
+                            if (waited >= 10) {
+                                clearInterval(check);
+                                finish("Message sent.");
+                            }
+                            return;
+                        }
+                        if (waited > 26) {
+                            clearInterval(check);
+                            disarm();
+                            const alert = ugfGmailPick('div[role="alertdialog"], .Kj-JD-Jz');
+                            const why = alert && ugfGmailShown(alert) && (alert.textContent || "").trim().slice(0, 120);
+                            console.log("[Gplex] Gmail: send did not complete" + (why ? " - " + why : ""));
+                            status(why || "Gmail did not accept the message. Its compose window is still open.");
+                        }
+                    }
+                }, 500);
+            } else if (tries > 40) {
+                clearInterval(iv);
+                disarm();
+                status("Gmail's compose window did not open in time.");
+            }
+        }
     }
     function ugfGmailCompose(prefill) {
         const shell = document.querySelector("#ugf-gmail");
@@ -20590,7 +21440,14 @@ html[gplex-gmail] body {
             ugfGmailGeneralRows(era).forEach(function(r) {
                 body += '<div class="ugf-gmail-setting"><div class="name">' + esc(r[0]) + ':</div><div class="value">' + r[1] + "</div></div>";
             });
-            body += '<div class="ugf-gmail-setting"><div class="name">Gplex for Gmail:</div><div class="value">' +
+            body += '<div class="ugf-gmail-setting"><div class="name">Categories:</div><div class="value">' +
+                '<label><input type="radio" name="ugfcats" value="false"' + (ugfGmailCategoriesOn() ? "" : " checked") +
+                    "> Off</label>" +
+                '<label><input type="radio" name="ugfcats" value="true"' + (ugfGmailCategoriesOn() ? " checked" : "") +
+                    "> On</label>" +
+                '<span class="note">Very buggy, not recommended. The category tabs often do not match what Gmail ' +
+                "actually shows, so they are off unless you turn them on here.</span></div></div>" +
+                '<div class="ugf-gmail-setting"><div class="name">Gplex for Gmail:</div><div class="value">' +
                 '<label><input type="radio" name="ugfgplex" value="true"' + (ugfGmailEnabled() ? " checked" : "") +
                     '> On &ndash; show Gmail in the <b>' + esc(String(layout || "")) + "</b> layout</label>" +
                 '<label><input type="radio" name="ugfgplex" value="false"' + (ugfGmailEnabled() ? "" : " checked") +
@@ -20613,6 +21470,12 @@ html[gplex-gmail] body {
             a.addEventListener("click", function(ev) {
                 ev.preventDefault();
                 ugfGmailState().tab = a.getAttribute("data-tab");
+                ugfGmailRender();
+            });
+        });
+        main.querySelectorAll('input[name="ugfcats"]').forEach(function(r) {
+            r.addEventListener("change", function() {
+                ugfGmailSetCategories(r.value === "true");
                 ugfGmailRender();
             });
         });
@@ -20836,11 +21699,9 @@ html[gplex-gmail] body {
             Calendar: "https://calendar.google.com/"
         };
         const dark = era === "g2011" || era === "g2013";
-        const l = String(layout || "");
-        // +You arrived in 2012, and it only ever carried a name - with the display
-        // name set to Email or None there is nothing for it to say, so it goes
-        const plus = dark && era !== "g2011" && ["2010", "2011"].indexOf(l) === -1 &&
-            ugfGmailNameMode() === "name";
+        // +You arrived in 2012; the legacy 2010/2011 values predate it. It always
+        // carried the name, whatever the display-name option says for the right side.
+        const plus = dark && ugfGmailPlusEra();
         const apps = dark
             ? ["Search", "Images", "Maps", "Play", "YouTube", "News", "Gmail", "Drive", "Calendar"]
             : (era === "g2010"
@@ -20855,21 +21716,28 @@ html[gplex-gmail] body {
         });
         links += '<a href="https://www.google.com/intl/en/about/products/" class="more">' +
             (dark ? "More" : "more") + " &#9662;</a>";
+        const late = era === "g2013";
         const right = dark
-            ? '<span class="who">' + esc(who) + "</span>" +
+            ? (late ? "" : '<span class="who">' + esc(who) + "</span>") +
               '<span class="gear" id="ugf-gmail-gbar-settings">' + ugfGmailIcon("gear", 16) + "</span>"
             : '<a href="https://www.google.com/ig">iGoogle</a><span class="sepr">|</span>' +
               '<a href="#" id="ugf-gmail-gbar-settings">Search settings</a><span class="sepr">|</span>' +
               '<span class="who">' + esc(who) + "</span>" +
               (era === "g2010" ? '<span class="gear">' + ugfGmailIcon("gear", 15) + "</span>" : "");
-        return '<div id="ugf-gmail-gbar" class="' + (dark ? "dark" : (era === "g2010" ? "g2010" : "plain")) +
+        return '<div id="ugf-gmail-gbar" class="' + (dark ? (late ? "dark late" : "dark") : (era === "g2010" ? "g2010" : "plain")) +
             '"><div class="left">' + links + "</div>" +
             '<div class="right">' + right + "</div></div>";
     }
+    // 2012 and 2013 are the +You years: the dark bar carries +Name and the header
+    // carries the name / count / Share / photo block. 2014 on has the app launcher.
+    function ugfGmailPlusEra() {
+        // "Late 2012-2013" is layout 2013; layout 2012 is "Late 2011-Early 2012"
+        return ["2013", "2013L"].indexOf(String(layout || "")) > -1;
+    }
     function ugfGmailEraGroup() {
         const l = String(layout || "");
-        // the +You / Share / photo block only turned up in 2012
-        if (["2013", "2013L", "2014"].indexOf(l) > -1) {
+        // 2014 kept the name / count / Share / photo block even after the dark bar went
+        if (ugfGmailPlusEra() || l === "2014") {
             return "g+";
         }
         if (["2015", "2015L", "2016", "2016C", "2016L", "2017", "2018", "2018M"].indexOf(l) > -1) {
@@ -20890,7 +21758,7 @@ html[gplex-gmail] body {
     // The account dropdown, so the name and photo do something here the way they
     // do on the search pages.
     function ugfGmailCloseMenus() {
-        document.querySelectorAll("#ugf-gmail-accmenu, #ugf-gmail-accfence").forEach(function(el) {
+        document.querySelectorAll("#ugf-gmail-accmenu, #ugf-gmail-appsmenu, #ugf-gmail-accfence").forEach(function(el) {
             el.remove();
         });
     }
@@ -20935,7 +21803,79 @@ html[gplex-gmail] body {
         menu.style.top = (r.bottom + window.scrollY + 4) + "px";
         fence.addEventListener("click", ugfGmailCloseMenus);
     }
+    // the app launcher, with the same set google.com's grid offers
+    // The launcher is the same grid google.com gets, ported across with its ids so
+    // the sprite icons and sector layout come along unchanged.
+    function ugfGmailAppsList() {
+        return [
+            [["myaccount", "https://www.myaccount.google.com", "My Account"],
+             ["google-search", "https://www.google.com", "Search"],
+             ["maps", "https://maps.google.com", "Maps"],
+             ["youtube", "https://youtube.com", "YouTube"],
+             ["play", "https://play.google.com", "Play"],
+             ["news", "https://news.google.com", "News"],
+             ["envelope", "https://mail.google.com", "Gmail"],
+             ["drive", "https://drive.google.com", "Drive"],
+             ["calendar", "https://google.com/calendar", "Calendar"],
+             ["plus", gPlusLink || "https://plus.google.com/", "Google+"],
+             ["translate", "https://translate.google.com", "Translate"],
+             ["photos", "https://photos.google.com", "Photos"]],
+            [["shopping", "https://www.google.com/shopping", "Shopping"],
+             ["wallet", "https://wallet.google.com", "Wallet"],
+             ["finance", "https://www.google.com/finance", "Finance"],
+             ["docs", "https://docs.google.com", "Docs"],
+             ["books", "https://books.google.com", "Books"],
+             ["blogger", "https://www.blogger.com", "Blogger"],
+             ["contacts", "https://www.google.com/contacts", "Contacts"],
+             ["hangouts", "https://hangouts.google.com", "Hangouts"],
+             ["chrome", "https://www.google.com/chrome/", "Chrome"]]
+        ];
+    }
+    function ugfGmailAppsMenu(anchor, chrome) {
+        if (document.querySelector("#ugf-gmail-appsmenu")) {
+            ugfGmailCloseMenus();
+            return;
+        }
+        const esc = ugfEscapeHtml;
+        let html = "";
+        ugfGmailAppsList().forEach(function(sector) {
+            html += '<div class="sector">';
+            sector.forEach(function(a) {
+                html += '<div class="gp-app" id="' + esc(a[0]) + '">' +
+                    '<a class="gp-app-inner" href="' + esc(a[1]) + '">' +
+                    '<div class="gp-app-icon"></div>' +
+                    '<div class="gp-app-title">' + esc(a[2]) + "</div></a></div>";
+            });
+            html += "</div>";
+        });
+        html += '<div class="sector"><a id="even-more" href="https://www.google.com/intl/en/options">' +
+            "Even more from Google</a></div>";
+        const fence = document.createElement("div");
+        fence.id = "ugf-gmail-accfence";
+        const menu = document.createElement("div");
+        menu.id = "ugf-gmail-appsmenu";
+        menu.setAttribute("chrome", chrome);
+        menu.innerHTML = trusted_policy.createHTML('<div id="gp-apps-dd-card"><div id="gp-apps-dd-inner">' + html + "</div></div>");
+        document.body.appendChild(fence);
+        document.body.appendChild(menu);
+        const r = anchor.getBoundingClientRect();
+        let left = r.right - 322;
+        if (left < 8) {
+            left = 8;
+        }
+        menu.style.left = left + "px";
+        menu.style.top = (r.bottom + window.scrollY + 6) + "px";
+        fence.addEventListener("click", ugfGmailCloseMenus);
+    }
     function ugfGmailWireAccount(shell, chrome) {
+        const apps = shell.querySelector("#ugf-gmail-apps");
+        if (apps) {
+            apps.addEventListener("click", function(ev) {
+                ev.preventDefault();
+                ev.stopPropagation();
+                ugfGmailAppsMenu(apps, chrome);
+            });
+        }
         const targets = [];
         shell.querySelectorAll("#ugf-gmail-gbar .who, #ugf-gmail-gbar .gear + .who, " +
             "#ugf-gmail-account .pfpwrap, #ugf-gmail-account .pfp, #ugf-gmail-account .plusname").forEach(function(el) {
@@ -20957,8 +21897,12 @@ html[gplex-gmail] body {
         const a = ugfGmailAssets();
         let html = "";
         if (era === "g2018") {
+            // 2019 through 2021 keep the red envelope M; the four-colour lockup only
+            // arrives with 2022. Both are Gmail's own artwork, carried inline so the
+            // header does not depend on fetching anything.
+            const fourColour = String(layout || "") === "2022";
             html = '<span class="hamburger"><i></i><i></i><i></i></span>' +
-                '<img class="gmail-mark" src="' + a.m2018 + '" alt="Gmail">';
+                '<img class="gmail-mark" src="' + (fourColour ? a.m2020 : a.m2018) + '" alt="Gmail">';
         } else if (era === "g2013" && !ugfGmailPre2014()) {
             // from 2014 the Google wordmark of the day sits here, with the Gmail
             // mark down in the sidebar column
@@ -20991,8 +21935,15 @@ html[gplex-gmail] body {
         const settingsView = ugfGmailSettingsOpen();
         const threadView = !settingsView && ugfGmailThreadOpen();
         const rows = (threadView || settingsView) ? [] : ugfGmailRows();
-        if (!threadView && !settingsView && !rows.length) {
-            return false;
+        const hereHash = (window.location.hash || "#inbox").split("/")[0];
+        const shellNow = document.querySelector("#ugf-gmail");
+        if (!threadView && !settingsView && !rows.length && !ugfGmailListSettled()) {
+            // Only hold off while the first list is still arriving. Once a shell is up
+            // and the view has moved on, showing the previous mailbox would be a lie -
+            // render the empty state instead.
+            if (!shellNow || shellNow.getAttribute("data-view") === hereHash) {
+                return false;
+            }
         }
         // Gmail fills a thread in asynchronously. Until its messages are readable,
         // leave the page as it is rather than swapping in an empty shell, and give up
@@ -21013,9 +21964,13 @@ html[gplex-gmail] body {
             shell.id = "ugf-gmail";
             document.body.insertBefore(shell, document.body.firstChild);
         }
+        ugfGmailLoadingDone();
+        shell.setAttribute("data-view", hereHash);
         shell.setAttribute("skin", era);
         shell.setAttribute("chrome", chrome);
         h.setAttribute("gplex-gmail", era);
+        // the ported grid styles key off [layout], which only google.com was setting
+        h.setAttribute("layout", String(layout || ""));
         const realLabels = ugfGmailLabels();
         const account = ugfGmailAccount();
         const unread = rows.filter(function(r) {
@@ -21046,13 +22001,13 @@ html[gplex-gmail] body {
         let navHTML;
         if (chrome === "m2013") {
             navHTML = (ugfGmailPre2014() ? "" :
-                '<div id="ugf-gmail-gmark"><img src="' + A.byGoogle + '" alt="Gmail"><span class="caret">&#9662;</span></div>') +
+                '<div id="ugf-gmail-gmark"><span class="wordmark">Gmail</span><span class="caret">&#9662;</span></div>') +
                 '<a id="ugf-gmail-compose" class="shot" href="#"><img src="' + A.compose2014 + '" alt="Compose"></a>';
         } else if (chrome === "kennedy") {
             navHTML = '<div id="ugf-gmail-navtitle">Mail</div>' +
                 '<a id="ugf-gmail-compose" class="shot" href="#"><img src="' + A.compose2011 + '" alt="Compose Mail"></a>';
         } else if (chrome === "m2018") {
-            navHTML = '<a id="ugf-gmail-compose" class="shot" href="#"><img src="' + A.compose2018 + '" alt="Compose"></a>';
+            navHTML = '<a id="ugf-gmail-compose" class="pill" href="#"><img class="plus" src="' + A.plus2018 + '" alt="">Compose</a>';
         } else {
             navHTML = '<a id="ugf-gmail-compose" href="#">Compose Mail</a>';
         }
@@ -21092,7 +22047,8 @@ html[gplex-gmail] body {
             const here = (window.location.hash || "#inbox").split("/")[0];
             const active = here === hash.split("/")[0];
             const count = n.name === "Inbox" && unread ? unread : 0;
-            navHTML += '<a data-n="' + i + '" href="' + esc(hash) + '"' + (active ? ' class="active"' : "") + ">" +
+            navHTML += '<a data-n="' + i + '" data-hash="' + esc(hash) + '" href="' + esc(ugfGmailMailUrl(hash)) + '"' +
+                (active ? ' class="active"' : "") + ">" +
                 (feat.navIcons ? ugfGmailNavIcon(n.name) : "") +
                 "<span>" + esc(n.name) + (count && !feat.navIcons ? " (" + count + ")" : "") + "</span>" +
                 (count && feat.navIcons ? '<span class="navcount">' + count + "</span>" : "") + "</a>";
@@ -21146,12 +22102,18 @@ html[gplex-gmail] body {
                 '<button class="icon" data-act="more" title="More">' + ugfGmailIcon("more") + "</button></span>";
         }
         const gbarHTML = ugfGmailGbar(era, chrome);
+        const store = ugfGmailStorage();
+        const used = store ? store.used + " (" + Math.round(store.pct) + "%)" : feat.used;
+        const quota = store ? store.total : feat.storage;
+        const pct = store ? store.pct : feat.pct;
         const cnt = ugfGmailCount();
-        const from = cnt ? cnt.from : "1";
+        const from = cnt ? cnt.from : (rows.length ? "1" : "0");
         const to = cnt ? cnt.to : String(rows.length);
         const total = cnt ? cnt.total : String(rows.length);
-        const canOlder = !!ugfGmailPagerBtn("older");
-        const canNewer = !!ugfGmailPagerBtn("newer");
+        const pinfo = ugfGmailPageInfo();
+        const lastPage = ugfGmailLastPage();
+        const canOlder = !lastPage || pinfo.page < lastPage;
+        const canNewer = pinfo.page > 1;
         let countHTML;
         if (chrome === "classic") {
             countHTML = "<b>" + esc(from) + "</b> - <b>" + esc(to) + "</b> of <b>" + esc(total) + "</b>" +
@@ -21172,7 +22134,7 @@ html[gplex-gmail] body {
               '<a href="#" data-sel="starred">Starred</a>, <a href="#" data-sel="unstarred">Unstarred</a></div>'
             : "";
         let tabsHTML = "";
-        if (feat.tabs) {
+        if (feat.tabs && ugfGmailCategoriesOn()) {
             const tabs = [["Primary", "inbox"], ["Social", "people"], ["Promotions", "tag"], ["Updates", "info"], ["Forums", "forum"]];
             tabsHTML = '<div id="ugf-gmail-tabs">';
             tabs.forEach(function(t, i) {
@@ -21200,19 +22162,20 @@ html[gplex-gmail] body {
         let accountHTML;
         if (chrome === "m2018") {
             // 2019+ keeps the launcher, the notification bell and the avatar
-            accountHTML = '<span class="ic">' + ugfGmailIcon("apps", 20) + "</span>" +
+            accountHTML = '<span class="ic" id="ugf-gmail-apps">' + ugfGmailIcon("apps", 20) + "</span>" +
                 '<span class="ic bell">' + ugfGmailIcon("bell", 20) + '<i class="n">1</i></span>' +
                 ugfGmailAvatar();
         } else if (group === "grid") {
-            // 2015-2018: the links, then the app grid and the photo
-            accountHTML = '<a href="https://mail.google.com/">Gmail</a>' +
-                '<a href="https://www.google.com/imghp">Images</a>' +
-                '<span class="ic grid">' + ugfGmailIcon("apps", 20) + "</span>" +
+            // Gmail and Images belong to the google.com header, not to Gmail's own
+            accountHTML = '<span class="ic grid" id="ugf-gmail-apps">' + ugfGmailIcon("apps", 20) + "</span>" +
                 ugfGmailAvatar();
         } else if (group === "g+") {
             // 2012-2014: +Name, the notification count, Share, then the photo
             accountHTML = '<a class="plusname" href="' + esc(gPlusLink || "https://plus.google.com/") + '">' +
                 (ugfGmailNameMode() === "name" ? "+" + esc(ugfGmailPlusName()) : esc(who)) + "</a>" +
+                (String(layout || "") === "2014"
+                    ? '<span class="ic grid" id="ugf-gmail-apps">' + ugfGmailIcon("apps", 20) + "</span>"
+                    : "") +
                 '<span class="nbox">0</span>' +
                 '<span class="sharebtn"><b>+</b> Share</span>' +
                 '<span class="pfpwrap">' + ugfGmailAvatar() + '<i class="car">&#9662;</i></span>';
@@ -21228,16 +22191,16 @@ html[gplex-gmail] body {
         let footerHTML;
         if (chrome === "m2013" || chrome === "kennedy") {
             footerHTML = '<div id="ugf-gmail-footer">' +
-                '<div class="left"><b>' + esc(feat.used) + " of " + esc(feat.storage) + " used</b><br>" +
+                '<div class="left"><b>' + esc(used) + " of " + esc(quota) + " used</b><br>" +
                     '<a href="https://one.google.com/storage">Manage</a></div>' +
                 '<div class="mid">&copy;' + esc(feat.year) + " Google - " +
                     '<a href="https://policies.google.com/terms">Terms &amp; Privacy</a></div>' +
                 '<div class="right">Last account activity: 1 minute ago<br>' +
                     'Open in 1 other location <a href="#" data-act="details">Details</a></div></div>';
         } else {
-            footerHTML = '<div id="ugf-gmail-footer">You are currently using <b>' + esc(feat.used) + "</b> of your " + esc(feat.storage) + "." +
+            footerHTML = '<div id="ugf-gmail-footer">You are currently using <b>' + esc(used) + "</b> of your " + esc(quota) + "." +
                 (chrome === "m2018" ? ' &ndash; <a href="https://one.google.com/storage">Manage</a>' +
-                    '<div class="bar"><i style="width:' + feat.pct + '%"></i></div>' +
+                    '<div class="bar"><i style="width:' + pct + '%"></i></div>' +
                     '<div class="links">Last account activity: 22 minutes ago<br><a href="#">Details</a></div>' : "") +
                 '<div class="links"><a href="https://policies.google.com/terms">Terms of Use</a> - ' +
                 '<a href="https://policies.google.com/privacy">Privacy Policy</a> - ' +
@@ -21264,7 +22227,12 @@ html[gplex-gmail] body {
                             : "") +
                         (chrome === "classic" ? "" : '<button class="icon" data-act="settings" title="Settings">' + ugfGmailIcon("gear") + "</button>") +
                     "</div>" + selectHTML + tabsHTML +
-                    '<table id="ugf-gmail-list">' + listHTML + "</table>" +
+                    '<table id="ugf-gmail-list">' + (listHTML ||
+                        '<tr class="ugf-gmail-empty"><td colspan="6">' +
+                        (/^#search/.test(window.location.hash || "")
+                            ? (ugfGmailListSettled() ? "No conversations matched your search." : "Searching\u2026")
+                            : (ugfGmailListSettled() ? "0 Messages" : "Loading\u2026")) +
+                        "</td></tr>") + "</table>" +
                 "</div>" +
             "</div>" +
             footerHTML);
@@ -21283,6 +22251,12 @@ html[gplex-gmail] body {
         const logoImg = shell.querySelector("#ugf-gmail-logo img.gmail-mark");
         if (logoImg) {
             logoImg.addEventListener("error", function() {
+                const fb = logoImg.getAttribute("data-fallback");
+                if (fb) {
+                    logoImg.removeAttribute("data-fallback");
+                    logoImg.src = fb;
+                    return;
+                }
                 if (!logoImg.parentElement.querySelector(".wordmark")) {
                     const span = document.createElement("span");
                     span.className = "wordmark";
@@ -21354,20 +22328,7 @@ html[gplex-gmail] body {
         shell.querySelectorAll("[data-page]").forEach(function(b) {
             b.addEventListener("click", function(ev) {
                 ev.preventDefault();
-                const how = b.getAttribute("data-page");
-                if (how === "oldest" || how === "newest") {
-                    // step to the end of the list the way Gmail's own control does
-                    let n = 0;
-                    const run = function() {
-                        if (n++ > 40 || !ugfGmailPage(how === "oldest" ? "older" : "newer")) {
-                            return;
-                        }
-                        setTimeout(run, 700);
-                    };
-                    run();
-                    return;
-                }
-                ugfGmailPage(how);
+                ugfGmailPage(b.getAttribute("data-page"));
             });
         });
         shell.querySelectorAll("#ugf-gmail-list [data-row]").forEach(function(b) {
@@ -21403,24 +22364,47 @@ html[gplex-gmail] body {
                 if (!n) {
                     return;
                 }
-                const target = ugfGmailHashFor(n.name) || (n.real ? n.real.hash : "");
+                // ctrl/cmd/shift-click is the person asking for a new tab - the href is a
+                // real mailbox URL, so let the browser handle it
+                if (ev.ctrlKey || ev.metaKey || ev.shiftKey) {
+                    return;
+                }
+                const target = a.getAttribute("data-hash") || ugfGmailHashFor(n.name) ||
+                    (n.real ? n.real.hash : "");
                 if (!target) {
                     return;
                 }
                 ev.preventDefault();
-                if (window.location.hash === target) {
-                    // already there: nudge Gmail to reload the view
-                    if (n.real && n.real.el && n.real.el.isConnected) {
-                        ugfGmailRealClick(n.real.el);
-                    }
-                } else {
+                const before = ugfGmailStamp();
+                // Only the URL. Clicking Gmail's own nav link at the same time meant two
+                // navigations racing, and going back to a mailbox could hang between them.
+                if (window.location.hash !== target) {
                     window.location.hash = target;
+                } else {
+                    // already pointing there but showing something else - make it reload
+                    ugfGmailHardNav(target);
+                    return;
                 }
                 shell.querySelectorAll("#ugf-gmail-nav a[data-n]").forEach(function(o) {
                     o.classList.toggle("active", o === a);
                 });
-                setTimeout(ugfGmailRender, 700);
-                setTimeout(ugfGmailRender, 1800);
+                ugfGmailAfterNav(before, function() {
+                    if (!ugfGmailHardNav(target)) {
+                        ugfGmailRender();
+                    }
+                });
+                // The list changing is not proof we arrived: Gmail can swap in something
+                // that is not the mailbox asked for. Check the title shortly after and
+                // load the URL properly if we are still somewhere else.
+                setTimeout(function() {
+                    if ((window.location.hash || "#inbox").split("/")[0] !== target.split("/")[0]) {
+                        return;
+                    }
+                    if (!ugfGmailArrived(target)) {
+                        console.log("[Gplex] Gmail: " + target + " never actually opened");
+                        ugfGmailHardNav(target);
+                    }
+                }, 3000);
             });
         });
         shell.querySelector("#ugf-gmail-compose").addEventListener("click", function(ev) {
@@ -21428,9 +22412,19 @@ html[gplex-gmail] body {
             ugfGmailCompose({});
         });
         const doSearch = function() {
-            window.location.hash = "#search/" + encodeURIComponent(shell.querySelector("#ugf-gmail-q").value);
-            setTimeout(ugfGmailRender, 1500);
+            const q = String(shell.querySelector("#ugf-gmail-q").value || "").trim();
+            if (!q) {
+                return;
+            }
+            ugfGmailSearchGo(q);
         };
+        const hashNow = window.location.hash || "";
+        if (/^#search\//.test(hashNow)) {
+            try {
+                shell.querySelector("#ugf-gmail-q").value =
+                    decodeURIComponent(hashNow.slice(8).replace(/\+/g, " "));
+            } catch (e) {}
+        }
         shell.querySelector("#ugf-gmail-search").addEventListener("click", doSearch);
         shell.querySelector("#ugf-gmail-q").addEventListener("keydown", function(ev) {
             if (ev.key === "Enter") {
@@ -21447,7 +22441,11 @@ html[gplex-gmail] body {
         if (selAll) {
             selAll.addEventListener("change", function() {
                 shell.querySelectorAll("#ugf-gmail-list tr").forEach(function(tr) {
-                    tr.querySelector("input").checked = selAll.checked;
+                    const box = tr.querySelector("input");
+                    if (!box) {
+                        return;
+                    }
+                    box.checked = selAll.checked;
                     tr.classList.toggle("checked", selAll.checked);
                 });
                 ugfGmailSyncSel(shell);
@@ -21459,9 +22457,13 @@ html[gplex-gmail] body {
                 const how = a.getAttribute("data-sel");
                 shell.querySelectorAll("#ugf-gmail-list tr").forEach(function(tr) {
                     const r = rows[parseInt(tr.getAttribute("data-i"), 10)];
+                    const box = tr.querySelector("input");
+                    if (!r || !box) {
+                        return;
+                    }
                     const on = how === "all" || (how === "read" && !r.unread) || (how === "unread" && r.unread) ||
                         (how === "starred" && r.starred) || (how === "unstarred" && !r.starred);
-                    tr.querySelector("input").checked = on;
+                    box.checked = on;
                     tr.classList.toggle("checked", on);
                 });
                 ugfGmailSyncSel(shell);
@@ -21488,7 +22490,8 @@ html[gplex-gmail] body {
                 }
                 const picked = [];
                 shell.querySelectorAll("#ugf-gmail-list tr").forEach(function(tr) {
-                    if (tr.querySelector("input").checked) {
+                    const box = tr.querySelector("input");
+                    if (box && box.checked) {
                         picked.push(rows[parseInt(tr.getAttribute("data-i"), 10)]);
                     }
                 });
@@ -21499,30 +22502,100 @@ html[gplex-gmail] body {
                     }
                     return;
                 }
-                picked.forEach(function(p) {
-                    const live = ugfGmailLiveRow(p);
-                    const cb = live ? live.querySelector('div[role="checkbox"], .oZ-jc, [role="checkbox"]') : null;
-                    if (cb && cb.getAttribute("aria-checked") !== "true") {
-                        ugfGmailRealClick(cb);
-                    }
-                });
-                const map = {
-                    archive: '[data-tooltip="Archive"], [aria-label="Archive"]',
-                    spam: '[data-tooltip="Report spam"], [aria-label="Report spam"]',
-                    "delete": '[data-tooltip="Delete"], [aria-label="Delete"]',
-                    unread: '[data-tooltip="Mark as unread"], [aria-label="Mark as unread"]',
-                    snooze: '[data-tooltip="Snooze"], [aria-label="Snooze"]',
-                    move: '[data-tooltip="Move to"], [aria-label="Move to"]',
-                    labels: '[data-tooltip="Labels"], [aria-label="Labels"]',
-                    more: '[data-tooltip="More"], [aria-label="More"]'
+                // tick Gmail's own checkboxes, then wait for its toolbar to offer the
+                // action before clicking it - the old fixed 250ms wait was why Delete
+                // and friends often did nothing
+                let ticked = 0;
+                const disarm = ugfGmailArm();
+                try {
+                    picked.forEach(function(p) {
+                        const live = ugfGmailLiveRow(p);
+                        const cb = live ? live.querySelector('div[role="checkbox"], .oZ-jc, [role="checkbox"]') : null;
+                        if (cb) {
+                            if (cb.getAttribute("aria-checked") !== "true") {
+                                ugfGmailRealClick(cb);
+                            }
+                            ticked++;
+                        }
+                    });
+                } catch (e) {
+                    disarm();
+                    console.log("[Gplex] Gmail: could not select those conversations - " + e);
+                    return;
+                }
+                const labels = {
+                    archive: ["Archive"],
+                    spam: ["Report spam", "Report as spam"],
+                    "delete": ["Delete", "Delete forever", "Move to Trash"],
+                    unread: ["Mark as unread"],
+                    snooze: ["Snooze"],
+                    move: ["Move to"],
+                    labels: ["Labels", "Label as"],
+                    more: ["More", "More options"]
                 };
-                setTimeout(function() {
-                    if (!ugfGmailClickReal(map[act])) {
-                        ugfGmailHide();
+                const wanted = labels[act] || [act];
+                const findBtn = function() {
+                    let hit = null;
+                    let parked = null;
+                    document.querySelectorAll("[aria-label], [data-tooltip], [title]").forEach(function(el) {
+                        if (hit || el.closest("#ugf-gmail")) {
+                            return;
+                        }
+                        const raw = (el.getAttribute("data-tooltip") || el.getAttribute("aria-label") ||
+                            el.getAttribute("title") || "").trim();
+                        // Gmail appends the keyboard shortcut ("Delete (#)"), so compare on
+                        // the leading words rather than demanding an exact match
+                        const lab = raw.replace(/[\u202a-\u202e]/g, "").replace(/\s*[([].*$/, "").trim().toLowerCase();
+                        const want = wanted.some(function(w) {
+                            return lab === String(w).toLowerCase();
+                        });
+                        if (!want || el.getAttribute("aria-disabled") === "true") {
+                            return;
+                        }
+                        // the mailbox we left keeps its own toolbar; clicking that one does
+                        // nothing to the conversations selected here
+                        if (ugfGmailShown(el)) {
+                            hit = el;
+                        } else if (!parked) {
+                            parked = el;
+                        }
+                    });
+                    return hit || parked;
+                };
+                const before = ugfGmailStamp();
+                let waits = 0;
+                const go = setInterval(function() {
+                    waits++;
+                    let btn = null;
+                    try {
+                        btn = findBtn();
+                    } catch (e) {
+                        clearInterval(go);
+                        disarm();
+                        console.log("[Gplex] Gmail: could not reach that button - " + e);
                         return;
                     }
-                    setTimeout(ugfGmailRender, 1200);
-                }, 250);
+                    if (btn) {
+                        clearInterval(go);
+                        ugfGmailRealClick(btn);
+                        // give Gmail a moment to act on it before hiding it again
+                        setTimeout(disarm, 1200);
+                        ugfGmailAfterNav(before, function() {
+                            ugfGmailRender();
+                        });
+                        return;
+                    }
+                    if (waits > 16) {
+                        clearInterval(go);
+                        disarm();
+                        const count = shell.querySelector("#ugf-gmail-count");
+                        if (count) {
+                            count.textContent = ticked
+                                ? "Gmail did not offer that action"
+                                : "Could not select those conversations";
+                        }
+                    }
+                }, 150);
             });
         });
         if (!ugfGmailNoticeSeen() && !ugfGmailState().notice) {
@@ -21531,7 +22604,139 @@ html[gplex-gmail] body {
         }
         return true;
     }
+    // Gmail's own search box lives inside the markup Gplex hides, and its hashchange
+    // handler does not always fire for a script-set hash. So: drive the real box,
+    // set the canonical search hash, and if neither moved the list, reload at that
+    // URL, which Gmail always honours.
+    function ugfGmailSearchHash(q) {
+        return "#search/" + encodeURIComponent(q).replace(/%20/g, "+");
+    }
+    function ugfGmailSearchGo(q) {
+        const target = ugfGmailSearchHash(q);
+        // Setting the hash alone is not enough: Gmail's router often ignores a
+        // script-set hash, and its own search box is inside the markup we hide.
+        // Loading the search URL for real is the one route it always honours.
+        if (window.location.hash !== target) {
+            window.location.hash = target;
+        }
+        window.location.reload();
+    }
+    // An empty mailbox and a list that has not loaded yet look identical from the
+    // outside - both have no rows. Treating them the same is what made Gplex give
+    // up on empty mailboxes, so work out which one it is.
+    function ugfGmailSettleClock() {
+        const v = window.location.hash || "#inbox";
+        if (ugfGmailSettleClock.v !== v) {
+            ugfGmailSettleClock.v = v;
+            ugfGmailSettleClock.t = Date.now();
+        }
+        return ugfGmailSettleClock.t || Date.now();
+    }
+    function ugfGmailEmptyText() {
+        const scope = document.querySelector('div[role="main"]') || document.body;
+        if (!scope) {
+            return false;
+        }
+        let hit = false;
+        scope.querySelectorAll("td, div, span, p").forEach(function(el) {
+            if (hit || el.children.length || el.closest("#ugf-gmail")) {
+                return;
+            }
+            const t = (el.textContent || "").trim();
+            if (t.length < 80 && /no (new )?(mail|messages|conversations)|nothing in|is empty/i.test(t)) {
+                hit = true;
+            }
+        });
+        return hit;
+    }
+    function ugfGmailListSettled() {
+        if (ugfGmailRows().length) {
+            return true;
+        }
+        const c = ugfGmailCount();
+        if (c && String(c.total).replace(/[^\d]/g, "") === "0") {
+            return true;
+        }
+        if (ugfGmailEmptyText()) {
+            return true;
+        }
+        // otherwise call it settled once the view has held still for a moment
+        return !!document.querySelector('div[role="main"]') &&
+            (Date.now() - ugfGmailSettleClock()) > 6000;
+    }
+    function ugfGmailStamp() {
+        const list = ugfGmailRows();
+        const cnt = ugfGmailCount();
+        return list.length + "|" +
+            (list[0] ? list[0].subject + list[0].date : "") + "|" +
+            (list[list.length - 1] ? list[list.length - 1].subject : "") + "|" +
+            (cnt ? cnt.from + "-" + cnt.to + "/" + cnt.total : "");
+    }
+    // Waits for the view to actually become something else. An emptied list does
+    // not count as success - that was the flaw that let mailbox switches silently
+    // do nothing. onFail runs if nothing happened inside the window.
+    function ugfGmailAfterNav(before, onFail) {
+        let n = 0;
+        if (ugfGmailAfterNav.iv) {
+            clearInterval(ugfGmailAfterNav.iv);
+        }
+        ugfGmailAfterNav.iv = setInterval(function() {
+            n++;
+            const now = ugfGmailStamp();
+            if (now !== before && (ugfGmailRows().length || ugfGmailListSettled())) {
+                clearInterval(ugfGmailAfterNav.iv);
+                ugfGmailAfterNav.iv = null;
+                ugfGmailRender();
+                return;
+            }
+            // deliberately no repaint while waiting: repainting every poll wiped any
+            // selection the user had just made
+            if (n >= 9) {
+                clearInterval(ugfGmailAfterNav.iv);
+                ugfGmailAfterNav.iv = null;
+                if (typeof onFail === "function") {
+                    onFail();
+                }
+            }
+        }, 400);
+    }
+    // Gmail fetches asynchronously, so after a search, a mailbox switch or a page
+    // turn we repaint a few times rather than guessing one delay.
+    function ugfGmailRepaint() {
+        let n = 0;
+        if (ugfGmailRepaint.iv) {
+            clearInterval(ugfGmailRepaint.iv);
+        }
+        ugfGmailRepaint.iv = setInterval(function() {
+            ugfGmailRender();
+            if (++n > 8) {
+                clearInterval(ugfGmailRepaint.iv);
+                ugfGmailRepaint.iv = null;
+            }
+        }, 450);
+    }
+    // Until the skin is ready, cover Gmail with a plain white screen and a spinner.
+    // No branding of any kind on it - not Gmail's, not ours.
+    function ugfGmailLoadingStart() {
+        const h = document.querySelector("html");
+        h.setAttribute("gplex-gmail-loading", "");
+        if (document.querySelector("#ugf-gmail-loading")) {
+            return;
+        }
+        const veil = document.createElement("div");
+        veil.id = "ugf-gmail-loading";
+        veil.innerHTML = trusted_policy.createHTML('<i></i>');
+        (document.body || document.documentElement).appendChild(veil);
+    }
+    function ugfGmailLoadingDone() {
+        const veil = document.querySelector("#ugf-gmail-loading");
+        if (veil) {
+            veil.remove();
+        }
+        document.querySelector("html").removeAttribute("gplex-gmail-loading");
+    }
     function ugfGmailHide() {
+        ugfGmailLoadingDone();
         const shell = document.querySelector("#ugf-gmail");
         if (shell) {
             shell.remove();
@@ -21553,28 +22758,104 @@ html[gplex-gmail] body {
         styles.textContent = ugfGmailCss();
         (document.head || document.documentElement).appendChild(styles);
         ugfGmailSetFavicon();
+        ugfGmailLoadingStart();
+        // if the skin never comes up, give the real Gmail back rather than
+        // leaving the user on a spinner
+        setTimeout(function() {
+            if (!document.querySelector("#ugf-gmail")) {
+                ugfGmailLoadingDone();
+            }
+        }, 20000);
         let tries = 0;
         let lastKey = "";
+        let stale = 0;
         const tick = function() {
             if (document.querySelector("#ugf-gmail-compose-form") || ugfGmailState().settings) {
                 return;
             }
             const msgs = ugfGmailThreadOpen() ? ugfGmailThread().msgs.length : 0;
-            const key = (window.location.hash || "") + "|" + ugfGmailRows().length + "|" + msgs;
+            const list = ugfGmailRows();
+            const cnt = ugfGmailCount();
+            // fingerprint the contents, not just how many there are
+            const stamp = list.length + "|" +
+                (list[0] ? list[0].subject + list[0].date : "") + "|" +
+                (list[list.length - 1] ? list[list.length - 1].subject : "") + "|" +
+                (cnt ? cnt.from + "-" + cnt.to + "/" + cnt.total : "");
+            const store = ugfGmailStorage();
+            const key = (window.location.hash || "") + "|" + stamp + "|" + msgs +
+                "|" + (store ? store.used + "/" + store.total : "");
             if (ugfGmailThreadOpen() && !msgs) {
                 lastKey = "";
             }
+            const shellNow = document.querySelector("#ugf-gmail");
+            const here = (window.location.hash || "#inbox").split("/")[0];
+            // Self-heal: if what is on screen belongs to a different view than the
+            // one we are on, keep trying no matter what the key says.
+            if (shellNow && shellNow.getAttribute("data-view") !== here) {
+                stale++;
+                if (stale > 2) {
+                    lastKey = "";
+                }
+            } else {
+                stale = 0;
+            }
             if (key !== lastKey) {
-                lastKey = key;
-                ugfGmailRender();
+                let ok = false;
+                try {
+                    ok = ugfGmailRender();
+                } catch (e) {
+                    console.log("[Gplex] Gmail render failed: " + (e && e.message));
+                }
+                // Only remember the key once the render actually landed. Committing it
+                // first meant a single failed or skipped render froze the view for good,
+                // because the key never changed again.
+                if (ok) {
+                    lastKey = key;
+                }
             }
         };
-        const timer = setInterval(function() {
+        // Independent of the key logic above: if the list we painted no longer matches
+        // the list Gmail is holding, repaint. This recovers from any stuck state,
+        // including ones the fingerprint cannot see.
+        setInterval(function() {
+            const shell = document.querySelector("#ugf-gmail");
+            if (!shell || document.querySelector("#ugf-gmail-compose-form") ||
+                    ugfGmailState().settings || ugfGmailThreadOpen()) {
+                return;
+            }
+            const live = ugfGmailRows();
+            const here0 = (window.location.hash || "#inbox").split("/")[0];
+            if (!live.length) {
+                // an empty mailbox still has to be shown as the mailbox you picked
+                if (shell.getAttribute("data-view") !== here0 && ugfGmailListSettled()) {
+                    console.log("[Gplex] Gmail: empty view was out of step, repainting");
+                    lastKey = "";
+                    try {
+                        ugfGmailRender();
+                    } catch (e) {}
+                }
+                return;
+            }
+            const painted = shell.querySelector("#ugf-gmail-list .ugf-gmail-subject");
+            const shown = painted ? (painted.textContent || "").trim() : "";
+            const want = (live[0].subject || "").trim();
+            const here = (window.location.hash || "#inbox").split("/")[0];
+            if ((shown && want && shown.indexOf(want) !== 0) || shell.getAttribute("data-view") !== here) {
+                console.log("[Gplex] Gmail: view was out of step, repainting");
+                lastKey = "";
+                try {
+                    ugfGmailRender();
+                } catch (e) {}
+            }
+        }, 1500);
+        setInterval(function() {
             tries++;
             tick();
-            if (tries > 40 && !document.querySelector("#ugf-gmail")) {
-                clearInterval(timer);
-                console.log("[Gplex] Gmail: no message rows found; leaving Gmail as it is");
+            if (tries === 30 && !document.querySelector("#ugf-gmail")) {
+                // show Gmail rather than hold a spinner, but keep watching: giving up
+                // here is what left the page un-themed after a reload
+                ugfGmailLoadingDone();
+                console.log("[Gplex] Gmail: still waiting for the message list");
             }
         }, 500);
         window.addEventListener("hashchange", function() {
