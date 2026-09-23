@@ -16,7 +16,7 @@ NOTE: Do not have the original script installed while installing this. This has 
 
 I considered rebranding the entire repo to Gplex Extended, but I don't want to break the existing update URLs.
 
-After working on this since the day I fixed the image page, and after 2 weeks of development, it's finally HERE: Layouts for every google design ever!
+NEW: Gplex now themes the Gmail webapp UI to match the layout selected
 
 This script will always be adding new features back from old google layouts.
 I also will do many bug fixes.
