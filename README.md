@@ -5,6 +5,8 @@ https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
 Install Gplex Extended Alpha (WARNING: VERY BUGGY):
 https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/alpha.user.js
 
+v5.0 will include themes for Google Docs, Sheets and Slides
+
 
 To get any layout: Search Google in [year] so for example, you can get 1998 layout by searching "Google in 1998"
 
@@ -16,7 +18,7 @@ NOTE: Do not have the original script installed while installing this. This has 
 
 I considered rebranding the entire repo to Gplex Extended, but I don't want to break the existing update URLs.
 
-NEW: Gplex now themes the Gmail webapp UI to match the layout selected
+NEW: Gplex now themes Google News & Translate
 
 This script will always be adding new features back from old google layouts.
 I also will do many bug fixes.
