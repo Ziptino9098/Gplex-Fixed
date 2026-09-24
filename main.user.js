@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      4.5.2
+// @version      4.5.3
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News and Google Translate
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -10253,6 +10253,56 @@ html[gplex2010][location$="home"]:not([layout="2016C"]):not([layout="2017"]):not
   font: 13px arial, sans-serif !important;
   height: 25px !important;
   line-height: 25px !important;
+}
+/* 4.5.3: Late 2009 - Early 2010 and 2010 - Early 2011 homepages at the size of the
+   late-2009 capture: 541x27 box in 17px Arial, 15px buttons 27px tall, 6px below it */
+html[gplex2009l][location$="home"] #ugf-hp-search #ugf-search-outer,
+html[gplex2009l][location$="home"] #ugf-search #ugf-searchbar,
+html[gplex2009l][location$="home"] #ugf-search-predictions-container {
+  width: 541px !important;
+}
+html[gplex2009l][location$="home"] #ugf-search-value {
+  width: 541px !important;
+  height: 27px !important;
+  padding: 2px 4px !important;
+  font: 17px arial, sans-serif !important;
+}
+html[gplex2009l][location$="home"] #ugf-search-predictions-container {
+  top: 27px !important;
+}
+html[gplex2009l][location$="home"] #ugf-hp-search #ugf-search-outer button.searchbtn {
+  font: 15px arial, sans-serif !important;
+  height: 27px !important;
+  padding: 0 4px !important;
+  margin: 5px 0 4px 5px !important;
+}
+html[gplex2009l][location$="home"] #ugf-hp-search #ugf-search-outer button.searchbtn:first-of-type {
+  margin-left: 0 !important;
+}
+html[gplex2009l][location$="home"] #ugf-searchbar::after {
+  left: calc(100% + 5px) !important;
+  top: 1px !important;
+  font-size: 11px !important;
+  line-height: 14px !important;
+}
+html[gplex2010][location$="home"] #ugf-homepage #ugf-hp #ugf-search-outer,
+html[gplex2010][location$="home"]:not([layout="2016C"]):not([layout="2017"]):not([layout="2018"]):not([layout="2019"]) #ugf-homepage #ugf-searchbar,
+html[gplex2010][location$="home"] #ugf-search-predictions-container {
+  width: 541px !important;
+}
+html[gplex2010][location$="home"] #ugf-homepage #ugf-search-value {
+  height: 27px !important;
+  font-size: 17px !important;
+}
+html[gplex2010][location$="home"] #ugf-hp-buttons a {
+  height: 27px !important;
+  margin-top: 5px !important;
+}
+html[gplex2010][location$="home"] #ugf-hp-buttons a span {
+  font: 15px arial, sans-serif !important;
+  height: 25px !important;
+  line-height: 25px !important;
+  padding: 0 4px !important;
 }
 /* 2.5.13: 2002-2003 homepage tabs measured from the June 2003 capture */
 [gplex2002][location$="home"] .ugf-era-tabs {
