@@ -5,7 +5,7 @@ https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
 Install Gplex Extended Alpha (WARNING: VERY BUGGY):
 https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/alpha.user.js
 
-v5.0 will include themes for Google Docs, Sheets and Slides
+v5.0 will include themes for Google Docs, Sheets and Slides (This might take a while)
 
 
 To get any layout: Search Google in [year] so for example, you can get 1998 layout by searching "Google in 1998"
