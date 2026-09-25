@@ -27,10 +27,6 @@ So when Google updates something and breaks the script, expect me to fix it as s
 
 Recommended Addons:
 
-Gmail 2015 UI
-Recommended if you're using the 2015 theme. I don't have layouts for the other Gmail designs yet.
-
-https://raw.githubusercontent.com/Ziptino9098/Old-Gmail-UI-2015-/main/main.user.css
 
 Geckium (A Firefox theme that makes the browser look like every version of Chrome from 1-58, it is what I use daily and what is used in the screenshots)
 
