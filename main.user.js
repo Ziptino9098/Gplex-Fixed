@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      5.1.1
+// @version      5.2.0
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive and Google Photos
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -11765,6 +11765,7 @@ html[shopping-results] #ugf-center {
         "l2018M": "2017-2018 (Custom material version)",
         "l2018": "2017-2018",
         "l2016": "2016",
+        "l2015N": "Late 2015",
         "l2016C": "2016 (Cardified experiment)",
         "l2016L": "2016 (Legacy/old browser version)",
         "l2015": "2015",
@@ -11832,9 +11833,31 @@ html[shopping-results] #ugf-center {
     const ugfOnCalendar = window.location.host === "calendar.google.com";
     // news.google.com and translate.google.com: other origins, settings read from GM storage like Calendar
     const ugfOnNT = window.location.host === "news.google.com" || window.location.host === "translate.google.com" || window.location.host === "docs.google.com" || window.location.host === "drive.google.com" || window.location.host === "photos.google.com";
+    // "Late 2015" (saved as 2015N) runs as 2016 - Google's look from the new logo of
+    // 1 September 2015 was 2016's - with the few things that only changed in 2016 kept
+    // as they were: the old Forms (the new one became the default on 10 Feb 2016), the
+    // 2015 map and its menu (the lighter map came in July 2016), and 2015 in the small print.
+    let UGF_LATE2015 = false;
+    function ugfRuntimeLayout(value) {
+        UGF_LATE2015 = value === "2015N";
+        try {
+            if (UGF_LATE2015) {
+                document.documentElement.setAttribute("gplex2015n", "");
+            } else {
+                document.documentElement.removeAttribute("gplex2015n");
+            }
+        } catch (e) {}
+        return UGF_LATE2015 ? "2016" : value;
+    }
     // the layout lives in www.google.com's localStorage, which mail.google.com cannot read,
     // so every save is mirrored into the userscript manager's own shared storage
     function ugfSaveLayout(value) {
+        UGF_LATE2015 = value === "2015N";
+        if (!UGF_LATE2015) {
+            try {
+                document.documentElement.removeAttribute("gplex2015n");
+            } catch (e) {}
+        }
         try {
             window.localStorage.setItem("UGF_LAYOUT", value);
         } catch (e) {}
@@ -11899,6 +11922,7 @@ html[shopping-results] #ugf-center {
     if (layout === "2009L" && (window.location.host !== "www.google.com" || /^\/maps/.test(window.location.pathname))) {
         layout = "2009";
     }
+    layout = ugfRuntimeLayout(layout);
     let structuredHP = localStorage.getItem("UGF_STRUCTURED_HOMEPAGE");
     let notOnImages = localStorage.getItem("UGF_NOTON_IMAGES");
     let infoCards = localStorage.getItem("UGF_INFO_CARDS");
@@ -12563,6 +12587,9 @@ html[shopping-results] #ugf-center {
                                                 </a>
                                                 <a id="UGF_SET_LAYOUT_2016" class="ugf-dropdown-item" value="2016">
                                                     <span>${UImessages.l2016}</span>
+                                                </a>
+                                                <a id="UGF_SET_LAYOUT_2015N" class="ugf-dropdown-item" value="2015N">
+                                                    <span>${UImessages.l2015N}</span>
                                                 </a>
                                                 <a id="UGF_SET_LAYOUT_2015L" class="ugf-dropdown-item" value="2015L">
                                                     <span>${UImessages.l2015L}</span>
@@ -16080,11 +16107,13 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                             document.querySelector("html").setAttribute("legacy-gbar","");
                             document.querySelector("html").setAttribute("legacy-images","");
                             document.querySelector("html").setAttribute("legacy-footer","");
+                        } else if (value === "2015N") {
+                            document.querySelector("html").setAttribute("layout","2016");
                         } else {
                             document.querySelector("html").setAttribute("layout",value);
                         }
                         ugfSaveLayout(value);
-                        layout = value;
+                        layout = ugfRuntimeLayout(value);
                         doGplexDropdowns("layout");
                         document.querySelector("html").removeAttribute("layout-dd-open");
                     });
@@ -16296,7 +16325,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
     function doGplexDropdowns(setting) {
         if (setting == "layout" || setting == "all") {
             let layoutBtnSpan = document.querySelector("#ugf-option-layout .ugf-dropdown-button span");
-            switch (layout) {
+            switch (UGF_LATE2015 ? "2015N" : layout) {
                 case '2010':
                     layoutBtnSpan.textContent = UImessages.l2012;
                     break;
@@ -16359,6 +16388,9 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     break;
                 case '2015L':
                     layoutBtnSpan.textContent = UImessages.l2015L;
+                    break;
+                case "2015N":
+                    layoutBtnSpan.textContent = UImessages.l2015N;
                     break;
                 case '2016':
                     layoutBtnSpan.textContent = UImessages.l2016;
@@ -22452,6 +22484,9 @@ html[gplex-gmail] body {
     // The footer year is the layout's own year - 2014 on 2014, 2015 on 2015 - rather
     // than one year standing in for the whole era.
     function ugfGmailYear(feat) {
+        if (UGF_LATE2015) {
+            return "2015";
+        }
         const m = String(layout || "").match(/(\d{4})/);
         return m ? m[1] : ((feat && feat.year) || "");
     }
@@ -23986,7 +24021,7 @@ html[gplex-gmail] body {
                 return;
             }
             const value = k.slice(1);
-            opts += '<option value="' + esc(value) + '"' + (value === String(layout) ? " selected" : "") + ">" +
+            opts += '<option value="' + esc(value) + '"' + (value === (UGF_LATE2015 ? "2015N" : String(layout)) ? " selected" : "") + ">" +
                 esc(UImessages[k]) + "</option>";
         });
         const scrim = document.createElement("div");
@@ -24013,8 +24048,8 @@ html[gplex-gmail] body {
             ugfGmailSetEnabled(on);
         });
         scrim.querySelector("#ugf-gmail-notice-layout").addEventListener("change", function(ev) {
-            layout = ev.target.value;
-            ugfSaveLayout(layout);
+            ugfSaveLayout(ev.target.value);
+            layout = ugfRuntimeLayout(ev.target.value);
             ugfGmailRender();
             ugfGmailSetFavicon();
             const n = document.querySelector("#ugf-gmail-notice");
@@ -25924,9 +25959,19 @@ html[gplex-gmail] body {
             } else if (place === "editor") {
                 ugfFormsFullEditor(ugfFeKind());
             } else {
-                // there was no Forms list before 2016: the Drive list stands in for 2013-2015
+                // There was no Forms list before February 2016: forms lived in Drive. For
+                // 2014 to late 2015 that is the new Drive of 2014, which Gplex draws on
+                // drive.google.com, so go there with Drive's own "Forms" filter. (Drawing
+                // the list here gave the 2012 Drive under a 2015 header.) Late 2012-2013
+                // keeps the stand-in below, which is the Drive of that time.
                 const l = String(layout || "");
-                ugfDocsHome(era === "d2014" && ["2014", "2015", "2015L"].indexOf(l) > -1 ? "d2011" : era);
+                const newDrive = era === "d2014" && (["2014", "2015", "2015L"].indexOf(l) > -1 || UGF_LATE2015);
+                if (newDrive && ugfNtOn("UGF_DRIVE_ON")) {
+                    const au = ((window.location.pathname || "").match(/\/u\/(\d+)(\/|$)/) || ["", "0"])[1];
+                    window.location.replace("https://drive.google.com/drive/u/" + au + "/search?q=" + encodeURIComponent("type:form"));
+                    return;
+                }
+                ugfDocsHome(newDrive ? "d2011" : era);
             }
             return;
         }
@@ -27418,7 +27463,7 @@ html[gplex-gmail] body {
         const sheets = ugfDocsIsSheets();
         const slides = ugfDocsIsSlides();
         const forms = ugfDocsApp() === "forms";
-        const drive = era === "d2011" && (l === "2013" || l === "2013L" || (forms && ["2014", "2015", "2015L"].indexOf(l) > -1));
+        const drive = era === "d2011" && (l === "2013" || l === "2013L" || (forms && (["2014", "2015", "2015L"].indexOf(l) > -1 || UGF_LATE2015)));
         const material = era === "d2014" || era === "d2017" || era === "d2019";
         const base = ugfDocsBase();
         const q = new URLSearchParams(window.location.search).get("q") || "";
@@ -27507,7 +27552,8 @@ html[gplex-gmail] body {
             const item = function(n, label, href, on) {
                 return '<a class="di' + (on ? " on" : "") + '" href="' + esc(href) + '">' + pic(n) + "<span>" + label + "</span></a>";
             };
-            const formsShown = ["2014", "2015", "2015L"].indexOf(l) < 0;
+            // Forms joined the apps menu with the new Forms (the default from February 2016)
+            const formsShown = ["2014", "2015", "2015L"].indexOf(l) < 0 && !UGF_LATE2015;
             return '<div class="dfence"></div><div class="drawer"><div class="dhead"><img src="' + (["2014", "2015", "2015L"].indexOf(l) > -1 ? ugfGmailAssets().google2013 : ugfNtArt().glogo92) +
                 '" alt="Google"><span>' + W.app + '</span></div>' +
                 item("docs", "Docs", docsHome, !sheets && !slides && !forms) + item("sheets", "Sheets", sheetsHome, sheets) +
@@ -28758,7 +28804,9 @@ html[gplex-gmail] body {
     //   fm  the Material forms of 2016-2018: cards, the colour bar, SUBMIT
     //   fg  2019 on: Google's own, less its AI
     function ugfFormsEra() {
-        const l = String(layout || "2015");
+        // Late 2015 still had the old Forms: the new one was opt-in from September 2015
+        // and only became the default on 10 February 2016
+        const l = UGF_LATE2015 ? "2015" : String(layout || "2015");
         if (l === "2019" || l === "2022") {
             return "fg";
         }
@@ -44540,6 +44588,9 @@ html[gplex-gmail] body {
         return "m2005";
     }
     function ugfMapsYear() {
+        if (UGF_LATE2015) {
+            return "2015";
+        }
         const m = String(layout || "").match(/(\d{4})/);
         const y = m ? parseInt(m[1], 10) : 2015;
         return String(Math.max(2005, y));
@@ -44548,7 +44599,8 @@ html[gplex-gmail] body {
     // 2015 is sampled straight off the map in the UI kit; 2016-2018 is the lighter
     // map with yellow highways and wide white main roads.
     function ugfMapsPalette() {
-        const l = String(layout || "2015");
+        // late 2015 still had the 2015 map; the lighter one came in July 2016
+        const l = UGF_LATE2015 ? "2015" : String(layout || "2015");
         const set = function(rules) {
             return rules.join(",");
         };
@@ -47364,7 +47416,8 @@ html[gplex-gmail] body {
         const A = ugfMapsArt();
         const esc = ugfMapsEsc;
         const l = String(layout || "");
-        const v2015 = l === "2015";
+        // late 2015 keeps 2015's menu, but under the new logo of September 2015
+        const v2015 = l === "2015" || UGF_LATE2015;
         const v2022 = era === "m2022";
         const icon = function(n) {
             return '<i class="ic">' + (A.mi[n] || "") + "</i>";
@@ -47401,7 +47454,7 @@ html[gplex-gmail] body {
         const prefs = [["Language", "", "https://myaccount.google.com/language"],
             ["Search settings", "", "https://www.google.com/gplex"],
             [era === "m2015" && l !== "2018" && l !== "2018M" ? "History" : "Maps activity", "", "https://myactivity.google.com/product/maps"]];
-        const logo = v2015
+        const logo = v2015 && !UGF_LATE2015
             ? '<img src="' + A.google4 + '" width="70" height="25" alt="Google">'
             : '<img src="' + A.gl2016 + '" width="74" height="24" alt="Google">';
         const scrim = document.createElement("div");
