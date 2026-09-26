@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      5.1.0
+// @version      5.1.1
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive and Google Photos
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -22840,6 +22840,12 @@ html[gplex-gmail] body {
             console.log("[Gplex] Gmail: already forced a load of " + target + " just now");
             return false;
         }
+        // and never two loads back to back for different mailboxes either - a page
+        // that keeps reloading itself is worse than one that is slow to switch
+        if ((now - prev.t) < 10000) {
+            console.log("[Gplex] Gmail: not forcing another load so soon (" + (why || target) + ")");
+            return false;
+        }
         try {
             sessionStorage.setItem("UGF_GMAIL_HARDNAV", JSON.stringify({ t: now, h: target }));
             sessionStorage.setItem("UGF_GMAIL_RELOADED", JSON.stringify({
@@ -23408,6 +23414,15 @@ html[gplex-gmail] body {
             danger: danger ? (danger.textContent || "").replace(/\s+/g, " ").trim().slice(0, 240) : ""
         };
     }
+    // The list a conversation was opened from: its address minus the conversation id
+    function ugfGmailListHash() {
+        const parts = String(window.location.hash || "#inbox").split("/");
+        if (parts.length > 1 && /^[A-Za-z0-9_-]{16,}$/.test(parts[parts.length - 1])) {
+            parts.pop();
+        }
+        const h = parts.join("/");
+        return h && h !== "#" ? h : "#inbox";
+    }
     function ugfGmailThreadLabel() {
         const h = window.location.hash || "#inbox";
         const m = h.match(/^#(label\/)?([^/?]+)/);
@@ -23535,11 +23550,17 @@ html[gplex-gmail] body {
         html += "</div>";
         const main = shell.querySelector("#ugf-gmail-main");
         main.innerHTML = trusted_policy.createHTML(html);
+        // history.back() went nowhere when the conversation was opened straight from
+        // a link, and elsewhere when Gmail had put its own steps in the history. The
+        // mailbox is in the address itself: #trash/<id> -> #trash.
         const goBack = function(ev) {
             if (ev) {
                 ev.preventDefault();
             }
-            window.history.back();
+            const to = ugfGmailListHash();
+            if (window.location.hash !== to) {
+                window.location.hash = to;
+            }
             setTimeout(ugfGmailRender, 900);
         };
         main.querySelector("#ugf-gmail-back").addEventListener("click", goBack);
@@ -23581,6 +23602,33 @@ html[gplex-gmail] body {
                 }
                 if (act === "print") {
                     window.print();
+                    return;
+                }
+                if (act === "delete") {
+                    const inBin = /^#trash|^#spam/.test(window.location.hash || "");
+                    const disarm = ugfGmailArm();
+                    let btn = null;
+                    try {
+                        btn = ugfGmailActionBtn(inBin ? ["Delete forever", "Delete"]
+                            : ["Delete", "Move to Trash", "Delete forever"]);
+                    } catch (e) {}
+                    if (!btn) {
+                        disarm();
+                        console.log("[Gplex] Gmail: Gmail did not offer Delete on this conversation");
+                        return;
+                    }
+                    const listHash = ugfGmailListHash();
+                    ugfGmailRealClick(btn);
+                    ugfGmailConfirm(function() {
+                        setTimeout(disarm, 400);
+                        setTimeout(function() {
+                            if (/^#[^/]+\/.+/.test(window.location.hash || "") &&
+                                    window.location.hash !== listHash) {
+                                window.location.hash = listHash;
+                            }
+                            ugfGmailRender();
+                        }, 700);
+                    });
                     return;
                 }
                 // Gmail's own words for each, in whatever language Gmail is set to
@@ -24182,12 +24230,18 @@ html[gplex-gmail] body {
         let best = null;
         let bestRank = Infinity;
         let bestLive = false;
-        document.querySelectorAll("[aria-label], [data-tooltip], [title]").forEach(function(el) {
+        // Trash and Spam put "Delete forever" (and "Not spam") on text-only buttons
+        // with no label attribute at all, so the button's own words count too
+        document.querySelectorAll('[aria-label], [data-tooltip], [title], [role="button"], button').forEach(function(el) {
             if (ugfGmailOurs(el)) {
                 return;
             }
-            const raw = (el.getAttribute("data-tooltip") || el.getAttribute("aria-label") ||
+            let raw = (el.getAttribute("data-tooltip") || el.getAttribute("aria-label") ||
                 el.getAttribute("title") || "").trim();
+            if (!raw && (el.tagName === "BUTTON" || el.getAttribute("role") === "button")) {
+                const txt = (el.textContent || "").replace(/\s+/g, " ").trim();
+                raw = txt.length < 40 ? txt : "";
+            }
             const lab = raw.replace(/[\u202a-\u202e]/g, "").replace(/\s*[([\uff08].*$/, "").trim().toLowerCase();
             const rank = alts.indexOf(lab);
             if (rank === -1 || el.getAttribute("aria-disabled") === "true") {
@@ -25228,20 +25282,27 @@ html[gplex-gmail] body {
                 }
                 ev.preventDefault();
                 const before = ugfGmailStamp();
+                const titleBefore = document.title;
                 // Only the URL. Clicking Gmail's own nav link at the same time meant two
                 // navigations racing, and going back to a mailbox could hang between them.
                 if (window.location.hash !== target) {
                     window.location.hash = target;
                 } else {
-                    // already pointing there but showing something else - make it reload
-                    ugfGmailHardNav(target);
+                    // Clicking the mailbox you are already in just redraws it. Only a
+                    // title that plainly names another mailbox justifies a load.
+                    if (!ugfGmailArrived(target)) {
+                        ugfGmailHardNav(target, "the page was showing another mailbox");
+                    } else {
+                        ugfGmailRender();
+                    }
                     return;
                 }
                 shell.querySelectorAll("#ugf-gmail-nav a[data-n]").forEach(function(o) {
                     o.classList.toggle("active", o === a);
                 });
                 ugfGmailAfterNav(before, function() {
-                    if (!ugfGmailStuck(target, "the list did not change within 3.6s")) {
+                    if (ugfGmailLooksArrived(target, titleBefore) ||
+                            !ugfGmailStuck(target, "the list did not change within 3.6s")) {
                         ugfGmailRender();
                     }
                 });
@@ -25256,7 +25317,8 @@ html[gplex-gmail] body {
                     // after its mailbox (Important often shows the inbox's title), and a
                     // reload on that basis threw people out of Important. Only step in if
                     // the mail on screen is still exactly what was there before the click.
-                    if (!ugfGmailArrived(target) && ugfGmailStamp() === before) {
+                    if (!ugfGmailArrived(target) && ugfGmailStamp() === before &&
+                            !ugfGmailLooksArrived(target, titleBefore)) {
                         console.log("[Gplex] Gmail: " + target + " never actually opened");
                         ugfGmailStuck(target, "the list was still showing the previous mailbox");
                     }
@@ -25433,7 +25495,7 @@ html[gplex-gmail] body {
         }
         let hit = false;
         // English plus the languages actually in play - Gmail's and the browser's
-        const empty = ugfGmailWordRe("_empty", ["no (new )?(mail|messages|conversations)", "nothing in", "is empty"], true);
+        const empty = ugfGmailWordRe("_empty", ["no (new )?(mail|messages|conversations)", "no spam here", "nothing in", "is empty"], true);
         scope.querySelectorAll("td, div, span, p").forEach(function(el) {
             if (hit || el.children.length || ugfGmailOurs(el)) {
                 return;
@@ -25460,6 +25522,25 @@ html[gplex-gmail] body {
         // otherwise call it settled once the view has held still for a moment
         return !!document.querySelector('div[role="main"]') &&
             (Date.now() - ugfGmailSettleClock()) > 6000;
+    }
+    // Two empty mailboxes (Spam and Trash, say) look identical from the list, so an
+    // unchanged list is not proof the switch failed. Count it as arrived when the
+    // title moved to the mailbox asked for, or the mailbox says it is empty.
+    function ugfGmailLooksArrived(target, titleBefore) {
+        if ((window.location.hash || "#inbox").split("/")[0] !== String(target).split("/")[0]) {
+            return true;  // the person has gone somewhere else since - leave it alone
+        }
+        if (document.title !== titleBefore && ugfGmailArrived(target)) {
+            return true;
+        }
+        if (!ugfGmailRows().length) {
+            const c = ugfGmailCount();
+            if (ugfGmailEmptyText() || (c && (String(c.total).replace(/[^\d]/g, "") === "0" ||
+                    String(c.to).replace(/[^\d]/g, "") === "0"))) {
+                return true;
+            }
+        }
+        return false;
     }
     function ugfGmailStamp() {
         const list = ugfGmailRows();
