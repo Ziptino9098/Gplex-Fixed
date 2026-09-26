@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      5.6.11
+// @version      5.6.12
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive and Google Photos
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -28138,7 +28138,14 @@ html[gplex-gmail] body {
             add(".docs-main-toolbars .goog-toolbar-menu-button-dropdown, .docs-main-toolbars .goog-toolbar-combo-button-dropdown", "width: 9px !important; margin: 0 0 0 2px !important; padding: 0 !important; vertical-align: middle !important;");
             // the font size: a plain drop-down, not today's boxed number
             add("#fontSizeSelect .goog-toolbar-combo-button-input", "border: 0 !important; background: transparent !important; box-shadow: none !important; width: 26px !important; padding: 0 2px !important; text-align: left !important; font: " + (old || era === "d2010" ? "12px" : "11px") + " Arial, sans-serif !important; color: #333 !important; height: 18px !important;");
-            add("#fontSizeSelect .goog-toolbar-combo-button-caption", "display: inline-flex !important; align-items: center !important;");
+            add("#fontSizeSelect .goog-toolbar-combo-button-caption", "display: inline-flex !important; align-items: center !important; height: 18px !important; margin: 0 !important; padding: 0 !important; vertical-align: middle !important;");
+            // today's number box sits on a taller row with its own offsets, which left the
+            // number a few pixels below "Title" and "Arial": centre every layer of it instead
+            add("#fontSizeSelect#fontSizeSelect", "vertical-align: middle !important; margin-top: 0 !important; margin-bottom: 0 !important; height: auto !important;");
+            add("#fontSizeSelect .goog-toolbar-combo-button-outer-box, #fontSizeSelect .goog-toolbar-combo-button-inner-box",
+                "display: inline-flex !important; align-items: center !important; height: auto !important; margin: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; vertical-align: middle !important;");
+            add("#fontSizeSelect input.goog-toolbar-combo-button-input",
+                "line-height: 18px !important; margin: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; vertical-align: middle !important; box-sizing: border-box !important; top: 0 !important; position: static !important;");
             add("#fontSizeSelect .goog-toolbar-combo-button-caption::after", "content: ''; flex: 0 0 9px; width: 9px; height: 16px; background: url(" + (jfkArrow ? A.sprite_jfk : A.sprite_editortoolbar) + ") no-repeat " + (jfkArrow ? "-6px -66px" : "-387px 0") + ";");
             add("#fontSizeSelect#fontSizeSelect.goog-toolbar-combo-button, #fontSizeSelect#fontSizeSelect.goog-toolbar-combo-button-hover, #fontSizeSelect#fontSizeSelect.goog-toolbar-combo-button-open, #fontSizeSelect .goog-toolbar-combo-button-outer-box, #fontSizeSelect .goog-toolbar-combo-button-inner-box",
                 "border: 1px solid transparent !important; background: transparent !important; box-shadow: none !important; border-radius: " + (kennedy ? "2px" : "0") + " !important; width: auto !important;");
@@ -28184,9 +28191,15 @@ html[gplex-gmail] body {
             add("#docs-titlebar-share-client-button .jfk-button, #scb-quick-actions-menu-button, #docs-docos-commentsbutton",
                 "background: linear-gradient(#fff, #ddd) !important; border: 1px solid !important; border-color: #bbb #999 #999 #bbb !important; border-radius: 2px !important; color: #000 !important; height: 22px !important; min-width: 0 !important; padding: 0 8px !important; box-shadow: none !important; font: 13px Arial, sans-serif !important;");
             add("#docs-titlebar-share-client-button .scb-button-icon", "display: none !important;");
-            add("#scb-quick-actions-menu-button", "padding: 0 4px !important; margin-left: -1px !important;");
             add("#docs-docos-commentsbutton", "display: none !important;");
             add("#ugf-docs-acct.links", "font-size: 13px;");
+            // Share and the arrow beside it are one split button; today's arrow is placed for a
+            // 36px button, so in this short one it fell to the bottom edge - centre it
+            add("#docs-titlebar-share-client-button", "display: inline-flex !important; align-items: stretch !important; vertical-align: middle !important;");
+            add("#docs-titlebar-share-client-button .jfk-button", "border-top-right-radius: 0 !important; border-bottom-right-radius: 0 !important; display: inline-flex !important; align-items: center !important; line-height: normal !important; margin: 0 !important;");
+            add("#scb-quick-actions-menu-button", "position: relative !important; width: 18px !important; box-sizing: border-box !important; padding: 0 !important; margin: 0 0 0 -1px !important; border-top-left-radius: 0 !important; border-bottom-left-radius: 0 !important; line-height: normal !important;");
+            add("#scb-quick-actions-menu-button .goog-flat-menu-button-caption", "display: none !important;");
+            add("#scb-quick-actions-menu-button .goog-flat-menu-button-dropdown", "position: absolute !important; top: 50% !important; left: 50% !important; right: auto !important; bottom: auto !important; margin: -2px 0 0 -4px !important; width: 0 !important; height: 0 !important; border-style: solid !important; border-width: 4px 4px 0 !important; border-color: #444 transparent !important; background: none !important;");
         }
         if (era === "d2010") {
             // April 2010: the "Google docs" logo, the title and the save state on one row, the
@@ -28212,6 +28225,13 @@ html[gplex-gmail] body {
             add("#docs-titlebar-share-client-button .jfk-button:hover, #scb-quick-actions-menu-button:hover", "border-color: #000 !important;");
             add("#docs-docos-commentsbutton", "display: none !important;");
             add("#docs-titlebar-share-client-button .scb-button-icon", "display: none !important;");
+            // Share and the arrow beside it are one split button; today's arrow is placed for a
+            // 36px button, so in this short one it fell to the bottom edge - centre it
+            add("#docs-titlebar-share-client-button", "display: inline-flex !important; align-items: stretch !important; vertical-align: middle !important;");
+            add("#docs-titlebar-share-client-button .jfk-button", "border-top-right-radius: 0 !important; border-bottom-right-radius: 0 !important; display: inline-flex !important; align-items: center !important; line-height: normal !important; margin: 0 !important;");
+            add("#scb-quick-actions-menu-button", "position: relative !important; width: 18px !important; box-sizing: border-box !important; padding: 0 !important; margin: 0 0 0 -1px !important; border-top-left-radius: 0 !important; border-bottom-left-radius: 0 !important; line-height: normal !important;");
+            add("#scb-quick-actions-menu-button .goog-flat-menu-button-caption", "display: none !important;");
+            add("#scb-quick-actions-menu-button .goog-flat-menu-button-dropdown", "position: absolute !important; top: 50% !important; left: 50% !important; right: auto !important; bottom: auto !important; margin: -2px 0 0 -4px !important; width: 0 !important; height: 0 !important; border-style: solid !important; border-width: 4px 4px 0 !important; border-color: #444 transparent !important; background: none !important;");
             add(".kix-page-paginated, .kix-page", "box-shadow: 0 0 0 1px #d3d3d3 !important;");
         }
         if (kennedy) {
