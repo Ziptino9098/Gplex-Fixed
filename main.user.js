@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      6.0.1
+// @version      6.1.0
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos and Google Keep
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -32,6 +32,9 @@
 // @match        *://accounts.google.com/ServiceLogin*
 // @match        *://accounts.google.com/AccountChooser*
 // @match        *://accounts.google.com/InteractiveLogin*
+// @match        *://accounts.google.com/lifecycle/steps/signup/*
+// @match        *://accounts.google.com/signup*
+// @match        *://accounts.google.com/SignUp*
 // @match        *://myaccount.google.com/*
 // @match        *://keep.google.com/*
 // @match        *://www.google.com/gplex
@@ -168,7 +171,7 @@
             return;
         }
         const p = window.location.pathname || "";
-        if (!/^\/(v3\/signin\/|signin\/|ServiceLogin|AccountChooser|InteractiveLogin)/.test(p)) {
+        if (!/^\/(v3\/signin\/|signin\/|ServiceLogin|AccountChooser|InteractiveLogin|lifecycle\/steps\/signup\/|signup(\/|$)|SignUp)/.test(p)) {
             return;
         }
         const gv = function(k, d) {
@@ -192,6 +195,8 @@
             : ["2014", "2015", "2015L", "2015N", "2016", "2016C", "2016L", "2017", "2018", "2018M"].indexOf(L) > -1 ? "sg13"
             : ["2012", "2013", "2013L"].indexOf(L) > -1 ? "sg11" : "sg07";
         // the new logo (and the new app icons under the card) from September 2015
+        // (6.1) the sign-up pages too
+        const SIGNUP = /^\/(lifecycle\/steps\/signup\/|signup(\/|$)|SignUp)/.test(p);
         const newLogo = ["2015N", "2016", "2016C", "2016L", "2017", "2018", "2018M"].indexOf(L) > -1;
         const yearOf = function() {
             const m = L.match(/(\d{4})/);
@@ -208,7 +213,8 @@
         const MAIN = R + " #yDmH0d main";
         const INPUT = 'input:is([type="text"],[type="email"],[type="password"],[type="tel"],[type="number"]):not([aria-hidden="true"]):not([tabindex="-1"])';
         const FIELD = "div:has(> " + INPUT + ")";
-        const NEXT = '[id$="Next"] button';
+        // the button that goes ahead: "Next", and the filled one on steps without it ("I agree")
+        const NEXT = ':is([id$="Next"] button, button.VfPpkd-LgbsSe-OWXEXe-k8QpJ)';
         const css = [];
         const add = function(sel, body) {
             css.push(sel + " { " + body + " }");
@@ -286,6 +292,61 @@
             add(RW + " > [ugf-sg-cbtext][ugf-sg-cbtext] *", "margin: 0 !important; padding: 0 !important; text-align: left !important; line-height: 15px !important; min-height: 0 !important; height: auto !important;");
             // and its words in the page's plain type, not today's medium weight
             add(CARD + " :where(div:has(> div > input[type='checkbox']), div:has(> div > div > input[type='checkbox'])) :where(div, span, label):not(:has(input))", "font: 13px Arial, sans-serif !important; color: " + (era === "sg07" ? "#000" : "#404040") + " !important; letter-spacing: normal !important;");
+        }
+        // ---- (6.1.1) Google's colour palette swapped for the period's, so every box, choice,
+        // switch and pop-up Google draws from it (on sign-in and every sign-up step) takes the
+        // period's colours instead of today's
+        {
+            const T = {
+                sg07: { surf: "#fff", primary: "#00c", cont: "#e5ecf9", onCont: "#000", text: "#000", text2: "#666", outline: "#999", outline2: "#ccc", variant: "#f0f0f0" },
+                sg11: { surf: "#fff", primary: "#4d90fe", cont: "#eee", onCont: "#222", text: "#222", text2: "#666", outline: "#d9d9d9", outline2: "#e5e5e5", variant: "#f1f1f1" },
+                sg13: { surf: "#fff", primary: "#4d90fe", cont: "#eee", onCont: "#404040", text: "#404040", text2: "#777", outline: "#d9d9d9", outline2: "#e5e5e5", variant: "#f7f7f7" },
+                sg19: { surf: "#fff", primary: "#1a73e8", cont: "#e8f0fe", onCont: "#1967d2", text: "#202124", text2: "#5f6368", outline: "#dadce0", outline2: "#dadce0", variant: "#f1f3f4" }
+            };
+            const t = T[era] || T.sg19;
+            const v = {
+                "background": t.surf, "surface": t.surf, "surface-bright": t.surf, "surface-dim": t.variant, "surface-container-lowest": t.surf,
+                "surface-container-low": t.surf, "surface-container": t.surf, "surface-container-high": t.surf, "surface-container-highest": t.variant,
+                "surface-variant": t.variant, "on-background": t.text, "on-surface": t.text, "on-surface-variant": t.text2, "primary": t.primary,
+                "on-primary": "#fff", "inverse-primary": t.primary, "surface-tint": t.surf, "primary-container": t.cont, "on-primary-container": t.onCont,
+                "secondary": t.primary, "on-secondary": "#fff", "secondary-container": t.cont, "on-secondary-container": t.onCont,
+                "outline": t.outline, "outline-variant": t.outline2
+            };
+            add(R + " body, " + R + " body *", Object.keys(v).map(function(k) {
+                return "--gm3-sys-color-" + k + ": " + v[k] + " !important;";
+            }).join(" "));
+            // Google's pop-ups (Confirm settings? and the like), in the period's frame
+            const DLG = R + " :is([role='dialog'], [role='alertdialog'])";
+            const kennedy = era === "sg11" || era === "sg13";
+            add(DLG, era === "sg07" ? "background: #fff !important; border: 1px solid #36c !important; border-radius: 0 !important; box-shadow: 2px 2px 4px rgba(0,0,0,.3) !important;"
+                : kennedy ? "background: #fff !important; border: 1px solid rgba(0,0,0,.333) !important; border-radius: " + (era === "sg13" ? "2px" : "0") + " !important; box-shadow: 0 4px 16px rgba(0,0,0,.2) !important;"
+                : "background: #fff !important; border: 0 !important; border-radius: 8px !important; box-shadow: 0 1px 3px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15) !important;");
+            add(DLG + " *:not(button):not(img):not(svg):not(path)", "background-color: transparent !important; border-radius: 0 !important;");
+            add(DLG + " *:not(i):not([class*='material'])", era === "sg19" ? "font-family: Roboto, Arial, sans-serif !important; color: " + t.text2 + " !important;" : "font-family: Arial, sans-serif !important; color: " + t.text + " !important; letter-spacing: normal !important;");
+            add(DLG + " :is(h1, h2, [role='heading'])", era === "sg19" ? "font: 400 22px 'Google Sans', Roboto, Arial, sans-serif !important; color: #202124 !important;" : "font: " + (era === "sg07" ? "bold 16px" : "normal 16px") + " Arial, sans-serif !important; color: " + t.text + " !important;");
+            add(DLG + " p, " + DLG + " div:not(:has(*))", era === "sg19" ? "font-size: 14px !important; line-height: 20px !important;" : "font-size: 13px !important; line-height: 1.4 !important;");
+            add(DLG + " :has(> button + button), " + DLG + " :has(> div > button + div > button)", "gap: " + (era === "sg19" ? "8px" : "16px") + " !important;");
+            // their buttons: the period's grey ones, the last (the one that goes ahead) in the period's blue
+            const DB = DLG + " button";
+            add(DB + " > div, " + DB + "::before, " + DB + "::after", "display: none !important;");
+            add(DB + " span", "font: inherit !important; color: inherit !important; letter-spacing: normal !important; text-transform: inherit !important;");
+            if (era === "sg07") {
+                add(DB, "all: unset; box-sizing: border-box !important; display: inline-block !important; margin: 0 0 0 8px !important; padding: 2px 10px !important; background: linear-gradient(#fff, #ddd) !important; border: 1px solid !important; border-color: #bbb #999 #999 #bbb !important; font: 13px Arial, sans-serif !important; color: #000 !important; cursor: pointer !important;");
+            } else if (kennedy) {
+                add(DB, "all: unset; box-sizing: border-box !important; display: inline-block !important; margin: 0 0 0 16px !important; height: 29px !important; line-height: 27px !important; min-width: 72px !important; padding: 0 12px !important; text-align: center !important; background: linear-gradient(#f5f5f5, #f1f1f1) !important; border: 1px solid rgba(0,0,0,.1) !important; border-radius: 2px !important; font: bold 11px Arial, sans-serif !important; color: #444 !important; cursor: pointer !important;");
+                add(DB + ":hover", "border-color: #c6c6c6 !important; color: #222 !important; box-shadow: 0 1px 1px rgba(0,0,0,.1) !important;");
+                add(DB + ":last-of-type", "background: linear-gradient(#4d90fe, #4787ed) !important; border-color: #3079ed !important; color: #fff !important;");
+                add(DB + ":last-of-type:hover", "background: linear-gradient(#4d90fe, #357ae8) !important; border-color: #2f5bb7 !important; color: #fff !important;");
+            } else {
+                add(DB, "all: unset; box-sizing: border-box !important; display: inline-block !important; margin: 0 0 0 8px !important; height: 36px !important; line-height: 36px !important; padding: 0 8px !important; border-radius: 4px !important; font: 500 14px 'Google Sans', Roboto, Arial, sans-serif !important; color: #1a73e8 !important; cursor: pointer !important;");
+                add(DB + ":hover", "background: rgba(26,115,232,.04) !important;");
+            }
+            // the words on the card (the Privacy and Terms step and the like) in the period's type
+            if (era !== "sg19") {
+                add(CARD + " *:not(i):not([class*='material']):not(input)", "font-family: Arial, sans-serif !important; letter-spacing: normal !important;");
+                add(CARD + " :is(h1, h2, h3):not(#headingText):not(#headingText *)", "font: bold " + (era === "sg07" ? "13px" : "16px") + " Arial, sans-serif !important; color: " + t.text + " !important;");
+                add(CARD + " p, " + CARD + " li", "color: " + t.text + " !important;");
+            }
         }
         // ---- per period
         const decorations = {};
@@ -469,13 +530,135 @@
                 return [h("img", { src: A.logo15, alt: "Google" })];
             };
         }
+        // ---- (6.1) the sign-up pages: "Create an Account" and "Create your Google Account" as
+        // each period showed them, around Google's own steps (name, birthday, address, password
+        // ...), which stay Google's and work exactly as normal. What is typed is never read.
+        if (SIGNUP) {
+            const side = function() {
+                return [h("h3", {}, "One account is all you need"), h("p", {}, "A single username and password gets you into everything Google."),
+                    era === "sg13" ? h("img", { src: newLogo ? A.strip15 : A.strip14, alt: "" }) : null,
+                    h("h3", {}, "Take it all with you"), h("p", {}, "Switch between devices, and pick up wherever you left off.")].filter(Boolean);
+            };
+            const signIn = "https://accounts.google.com/ServiceLogin";
+            // the round choices ("Create your own Gmail address" and the like): the browser's
+            // own to 2011, Kennedy's grey ring from late 2011, 2019's blue from then on
+            if (era !== "sg19") {
+                const RB = CARD + " div:has(> input[type='radio'])";
+                add(RB, "position: relative !important; display: inline-block !important; flex: none !important; width: 16px !important; height: 16px !important; min-width: 0 !important; padding: 0 !important; margin: 0 8px 0 0 !important; background: transparent !important; box-shadow: none !important; vertical-align: middle !important;");
+                add(RB + " > :not(input), " + RB + "::before, " + RB + "::after", "display: none !important;");
+                add(RB + " > input[type='radio']", era === "sg07"
+                    ? "appearance: auto !important; -moz-appearance: radio !important; position: absolute !important; inset: 0 !important; width: 13px !important; height: 13px !important; margin: auto !important; opacity: 1 !important;"
+                    : "appearance: none !important; -moz-appearance: none !important; -webkit-appearance: none !important; position: absolute !important; inset: 0 !important; width: 15px !important; height: 15px !important; margin: auto !important; opacity: 1 !important; box-sizing: border-box !important; border: 1px solid #c6c6c6 !important; border-radius: 50% !important; background: #fff !important; cursor: pointer !important;");
+                if (era !== "sg07") {
+                    add(RB + " > input[type='radio']:checked", "background: radial-gradient(circle, #444 0 3.5px, #fff 4px) !important;");
+                    add(RB + " > input[type='radio']:focus", "border-color: #4d90fe !important; outline: none !important;");
+                }
+            }
+            // a step with other buttons beside the one that goes ahead (Privacy and Terms: More
+            // options, Cancel, I agree): the row in a line, the period's button its own width
+            const ROW = CARD + " main > div:has(" + NEXT + "):has(button:not(:is(" + NEXT + ")))";
+            add(ROW + ", " + ROW + " div:has(" + NEXT + ")", "display: flex !important; flex-direction: row !important; flex-wrap: wrap !important; align-items: center !important; justify-content: space-between !important; gap: 12px !important; width: 100% !important;");
+            add(ROW + " " + NEXT, "width: auto !important; display: inline-block !important; padding: 0 16px !important;");
+            add(ROW + " button:not(:is(" + NEXT + "))", "white-space: nowrap !important;");
+            // the words of each box, written beside or above it as the period did
+            add(CARD + " [data-ugf-label]::before", "content: attr(data-ugf-label);");
+            add(CARD + " select, " + CARD + " [role='combobox']", "letter-spacing: normal !important;");
+            if (era === "sg07") {
+                add(R + " #ugf-sg-banner", "width: 640px; max-width: calc(100% - 32px); margin: 0 auto 14px; font: 13px Arial, sans-serif;");
+                add(R + " #ugf-sg-banner h1", "font: bold 16px Arial, sans-serif; margin: 0 0 6px;");
+                add(R + " #ugf-sg-banner a", "color: #00c;");
+                add(CARD, "width: 640px !important; max-width: calc(100% - 32px) !important; padding: 0 0 14px !important; background: #fff !important; border: 0 !important; border-top: 1px solid #36c !important;");
+                add(R + " #ugf-sg-boxhead", "text-align: left; background: #e5ecf9; font: bold 13px Arial, sans-serif; padding: 3px 5px; margin: 0 0 12px;");
+                add(CARD + " main", "padding: 0 12px !important;");
+                add(CARD + " #headingText", "display: none !important;");
+                add(CARD + " #headingSubtext, " + CARD + " #headingSubtext *", "font: bold 13px Arial, sans-serif !important; margin: 0 0 10px !important;");
+                add(CARD + " " + FIELD + "::before", "flex: 0 0 170px !important;");
+                add(CARD + " " + INPUT, "width: 240px !important; flex: none !important;");
+                add(CARD + " select", "font: 13px Arial, sans-serif !important; height: auto !important; border: 1px solid #7c7c7c !important; background: #fff !important; appearance: auto !important; -moz-appearance: menulist !important; padding: 1px !important; border-radius: 0 !important;");
+                add(CARD + " main > div:has(" + NEXT + "), " + CARD + " [id$='Next']", "text-align: left !important;");
+                decorations.banner = function() {
+                    return [h("h1", {}, "Create an Account"), "Your Google Account gives you access to Gmail and other Google services. If you already have a Google Account, you can ",
+                        link(signIn, "sign in here"), "."];
+                };
+                decorations.boxhead = function() {
+                    return ["Required information for Google account"];
+                };
+                decorations.boxfoot = function() {
+                    return [];
+                };
+                decorations.below = function() {
+                    return [];
+                };
+                add(R + " #ugf-sg-below", "display: none;");
+            } else if (era === "sg11" || era === "sg13") {
+                // the heading over two columns: what one account gets you, and the form
+                const k13 = era === "sg13";
+                add(R + " #ugf-sg-banner", "width: 980px; max-width: calc(100% - 40px); margin: 0 auto 20px; text-align: left;");
+                add(R + " #ugf-sg-banner h1", k13 ? "font: 24px 'Open Sans', Arial, sans-serif; color: #555; font-weight: normal; margin: 0;" : "font: normal 25px Arial, sans-serif; color: #222; margin: 0;");
+                add(R + " #ugf-sg-banner h2", "display: none;");
+                add(R + " body div:has(> #ugf-sg-side):has(> #ugf-sg-side)", "display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: flex-start !important; width: 980px !important; max-width: calc(100% - 40px) !important; margin: 0 auto !important;");
+                add(R + " #ugf-sg-side", "flex: 0 1 520px; font: 13px Arial, sans-serif; color: " + (k13 ? "#555" : "#222") + ";");
+                add(R + " #ugf-sg-side h3", k13 ? "font: 18px 'Open Sans', Arial, sans-serif; color: #555; font-weight: normal; margin: 0 0 8px;" : "font: bold 16px Arial, sans-serif; color: #222; margin: 0 0 6px;");
+                add(R + " #ugf-sg-side p", "margin: 0 0 12px; line-height: 1.5;");
+                add(R + " #ugf-sg-side img", "display: block; width: 230px; height: auto; margin: 0 0 30px;");
+                add(CARD, "width: 340px !important; margin: 0 !important; flex: none !important;" + (k13 ? " padding: 20px 25px 25px !important;" : ""));
+                add(CARD + " #headingText", "display: none !important;");
+                add(CARD + " #headingSubtext, " + CARD + " #headingSubtext *", "font: bold 13px Arial, sans-serif !important; color: " + (k13 ? "#404040" : "#222") + " !important; text-align: left !important; margin: 0 0 10px !important;");
+                add(R + " #ugf-sg-boxhead", "display: none !important;");
+                if (!k13) {
+                    add(CARD + " " + FIELD + "::before", "display: block; font: bold 13px Arial, sans-serif; color: #222; margin: 0 0 .5em;");
+                }
+                add(CARD + " select, " + CARD + " [role='combobox']", "box-sizing: border-box !important; height: " + (k13 ? "40px" : "29px") + " !important; font: 13px Arial, sans-serif !important; border: 1px solid #d9d9d9 !important; border-top-color: #c0c0c0 !important; border-radius: 1px !important; background-color: #fff !important; color: #222 !important; padding: 0 8px !important;");
+                add(R + " #ugf-sg-top a.up", k13 ? "background: #4d90fe; border-color: #3079ed;" : "");
+                decorations.top = function() {
+                    return [h("div", { class: "in" }, h("img", { src: k13 ? (newLogo ? A.logo15 : A.logo13) : A.logo10, alt: "Google" }), h("a", { class: "up", href: signIn }, "Sign in"))];
+                };
+                if (k13) {
+                    add(R + " #ugf-sg-top", "height: 71px; background: #fff; border-bottom: 1px solid #e5e5e5; margin-bottom: 30px; padding: 0; width: auto; text-align: left;");
+                    add(R + " #ugf-sg-top .in", "width: 980px; max-width: calc(100% - 40px); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 71px;");
+                    add(R + " #ugf-sg-top a.up", "display: inline-flex; align-items: center; box-sizing: border-box; height: 29px; padding: 0 12px; border: 1px solid #3079ed; border-radius: 2px; color: #fff; font: bold 11px Arial, sans-serif; text-decoration: none;");
+                }
+                decorations.banner = function() {
+                    return [h("h1", {}, "Create your Google Account")];
+                };
+                decorations.boxhead = function() {
+                    return [];
+                };
+                decorations.boxfoot = function() {
+                    return [];
+                };
+                decorations.below = function() {
+                    return [];
+                };
+                decorations.side = side;
+                add(R + " #ugf-sg-below", "display: none;");
+            } else {
+                // 2019 on: the wide card, the form on the left and Google's picture on the right
+                add(CARD, "width: 748px !important; min-height: 0 !important; padding: 48px 40px 36px !important;");
+                add(CARD + " main", "width: calc(100% - 300px) !important; min-width: 0 !important;");
+                add(CARD + " #headingText, " + CARD + " #headingText *, " + CARD + " #headingSubtext, " + CARD + " #headingSubtext *", "text-align: left !important;");
+                add(CARD + " main > div:has(#headingText)", "text-align: left !important;");
+                add(R + " #ugf-sg-boxhead", "text-align: left !important;");
+                add(R + " #ugf-sg-art", "position: absolute; right: 40px; top: 50%; transform: translateY(-50%); width: 244px; text-align: center; font: 400 16px 'Google Sans', Roboto, Arial, sans-serif; color: #202124; line-height: 1.5;");
+                add(R + " #ugf-sg-art img", "width: 244px; height: 244px; display: block; margin: 0 0 16px;");
+                add(CARD + " select, " + CARD + " [role='combobox']", "border-radius: 4px !important;");
+                decorations.art = function() {
+                    const step = /birthday|basic/i.test(window.location.pathname) ? "personal" : "account";
+                    return [h("img", { src: "https://ssl.gstatic.com/accounts/signup/glif/" + step + ".svg", alt: "" }), h("div", {}, "One account. All of Google working for you.")];
+                };
+            }
+        }
         if (era === "sg07" || era === "sg11" || era === "sg13") {
             add(ROOT + " div:has(> c-wiz > footer), " + ROOT + " footer", "display: none !important;");
             // the way to a new account was outside the box then (Create an account now, SIGN UP,
             // Create account under the card), each a plain link to Google's sign-up page
-            add(CARD + " main > div:has(" + NEXT + ") button:not(:is(" + NEXT + "))", "display: none !important;");
-            // and its empty holder too, or it still takes room beside Next and pushes it off centre
-            add(CARD + " main > div:has(" + NEXT + ") :is(div:has(" + NEXT + ")) > div:not(:has(" + NEXT + ")):not([id$='Next'])", "display: none !important;");
+            // (on sign-in only: the sign-up steps' own buttons beside it, like "More options" and
+            // "Cancel" on Privacy and Terms, stay)
+            if (!SIGNUP) {
+                add(CARD + " main > div:has(" + NEXT + ") button:not(:is(" + NEXT + "))", "display: none !important;");
+                // and its empty holder too, or it still takes room beside Next and pushes it off centre
+                add(CARD + " main > div:has(" + NEXT + ") :is(div:has(" + NEXT + ")) > div:not(:has(" + NEXT + ")):not([id$='Next'])", "display: none !important;");
+            }
         }
         const st = document.createElement("style");
         st.id = "ugf-sg-styles";
@@ -531,6 +714,40 @@
             if (card) {
                 place("ugf-sg-boxhead", decorations.boxhead, card, true);
                 place("ugf-sg-boxfoot", decorations.boxfoot, card, false);
+                place("ugf-sg-art", decorations.art, card, false);
+                if (decorations.side && card.parentElement) {
+                    place("ugf-sg-side", decorations.side, card.parentElement, true);
+                }
+            }
+            // each sign-up box's words, from the box's own label (the hint only)
+            if (SIGNUP) {
+                document.querySelectorAll("#yDmH0d input:is([type='text'],[type='email'],[type='password'],[type='tel'],[type='number'])").forEach(function(inp) {
+                    const holder = inp.parentElement;
+                    let words = inp.getAttribute("aria-label") || "";
+                    if (!words && inp.id) {
+                        const lab = document.querySelector("label[for='" + inp.id + "']");
+                        words = lab ? String(lab.textContent || "").trim() : "";
+                    }
+                    if (!words) {
+                        const near = holder && holder.parentElement ? holder.parentElement.querySelector("label, [id$='label'], div[aria-hidden='true']") : null;
+                        words = near ? String(near.textContent || "").trim() : "";
+                    }
+                    if (!words) {
+                        return;
+                    }
+                    if (era === "sg07" || era === "sg11") {
+                        if (holder && holder.getAttribute("data-ugf-label") !== words) {
+                            holder.setAttribute("data-ugf-label", words + (era === "sg07" ? ":" : ""));
+                        }
+                    } else if (!inp.getAttribute("placeholder")) {
+                        inp.setAttribute("placeholder", words);
+                    }
+                });
+                // "Create your Google Account", the 2017-2022 wording
+                const ht = document.querySelector("#headingText span, #headingText");
+                if (era === "sg19" && ht && /^Create a Google Account$/.test(String(ht.textContent || "").trim())) {
+                    ht.textContent = "Create your Google Account";
+                }
             }
             // "Sign in to continue to Gmail" (2014-2016), from Google's own line
             const h2 = document.querySelector("#ugf-sg-banner h2");
@@ -16328,7 +16545,7 @@ html[shopping-results] #ugf-center {
                         <div class="ugf-gplex-section">
                             <div class="ugf-gplex-section-inner">
                                 <div class="ugf-gplex-section-title">
-                                    <span>Gplex for the Google sign-in page</span>
+                                    <span>Gplex for the Google sign-in and sign-up pages</span>
                                 </div>
                                 <div class="ugf-gplex-section-content">
                                     <div id="ugf-option-signinon" class="ugf-gplex-option flex" value="${signinOn}">
@@ -16336,7 +16553,7 @@ html[shopping-results] #ugf-center {
                                             <span>${UImessages.CLtrue}</span>
                                         </a>
                                         <div class="ugf-gplex-text">
-                                            <span>Choose whether or not the Google sign-in page is shown in the layout you picked above. Only its look changes: the email and password boxes and buttons are Google's own and work exactly as normal.</span>
+                                            <span>Choose whether or not the Google sign-in and sign-up pages are shown in the layout you picked above. Only its look changes: the email and password boxes and buttons are Google's own and work exactly as normal.</span>
                                         </div>
                                         <div class="ugf-dropdown" id="ugf-signinon-dd">
                                             <div class="ugf-dropdown-inner">
