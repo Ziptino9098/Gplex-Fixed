@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      6.2.0
+// @version      6.5.1
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos and Google Keep
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -19413,11 +19413,16 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
     function ugfNeuroMine(el) {
         return !!(el && el.closest && el.closest('#ugf, [id^="ugf-"]'));
     }
+    // (6.5) inside a "People also ask" question: Google answers those with AI now, and that is
+    // not the overview (and never to be shown)
+    function ugfNeuroInPaa(el) {
+        return !!(el && el.closest && el.closest(".related-question-pair, [data-initq], .wQiwMc"));
+    }
     // Google's own AI Overview block, or null while there is none (yet)
     function ugfNeuroSource() {
         let box = null;
         document.querySelectorAll("[data-mcpr]").forEach(function(el) {
-            if (!box && !ugfNeuroMine(el)) {
+            if (!box && !ugfNeuroMine(el) && !ugfNeuroInPaa(el)) {
                 box = el;
             }
         });
@@ -19429,7 +19434,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         });
         const wanted = function(el) {
             const t = String(el.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
-            return t.length > 0 && t.length < 60 && names.indexOf(t) > -1 && !ugfNeuroMine(el);
+            return t.length > 0 && t.length < 60 && names.indexOf(t) > -1 && !ugfNeuroMine(el) && !ugfNeuroInPaa(el);
         };
         let head = null;
         const heads = document.querySelectorAll('h1, h2, [role="heading"]');
@@ -20309,7 +20314,12 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     });
                     check++;
                 });
-                if (
+                ugfPaaBuild();
+                if (ugfKpParts().length) {
+                    // (6.5) today's knowledge panel: a head over the results and an overview beside them
+                    hasSidebar = true;
+                    doSidebar(3);
+                } else if (
                     document.querySelector('[role="complementary"]') &&
                     document.querySelector('body > div > div > div [data-attrid]')
                 ) {
@@ -20334,28 +20344,54 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 if (neuro == "true") {
                     ugfNeuroWatch();
                 }
-                if (document.querySelector("dynamic-visibility-control")) {
-                    if (
-                        document.querySelector("dynamic-visibility-control location-permission-button") ||
-                        document.querySelector("dynamic-visibility-control g-dialog")
-                    ) {
-                    } else if (document.querySelector("dynamic-visibility-control div") == null) {
-                        if (document.querySelectorAll("dynamic-visibility-control a")[1] == null) {
-                            hasCorrection = "type1legacy";
-                            correction = document.querySelector("dynamic-visibility-control a").outerHTML;
-                        } else {
-                            hasCorrection = "type2legacy";
-                            correction = document.querySelector("dynamic-visibility-control a").outerHTML;
-                            insteadLink = document.querySelectorAll("dynamic-visibility-control a")[1].outerHTML;
-                        }
-                    } else {
-                        if (document.querySelector("dynamic-visibility-control span span:nth-of-type(3)")) {
-                            hasCorrection = "type2";
-                            insteadLink = document.querySelector("dynamic-visibility-control span span:nth-of-type(3)").querySelector("a").getAttribute("href");
-                        } else {
+                // (6.5) today's "These are results for X / Search instead for Y" (#fprs): read as the
+                // period's "Showing results for" (or "Did you mean"); and whatever Google writes there,
+                // a spelling line it can't read never again stops the results from being drawn
+                const ugfFprs = document.querySelector("dynamic-visibility-control #fprs, #fprs");
+                if (ugfFprs && ugfFprs.querySelector("a[href]") && !ugfNeuroMine(ugfFprs)) {
+                    try {
+                        const links = ugfFprs.querySelectorAll("a[href]");
+                        const fixed = links[0];
+                        const href = ugfEscapeHtml(fixed.getAttribute("href") || "");
+                        if (/^\s*Did you mean/i.test(String(ugfFprs.textContent || ""))) {
                             hasCorrection = "type1";
+                            correction = '<span>Did you mean: </span><a href="' + href + '">' + fixed.innerHTML + "</a>";
+                        } else {
+                            hasCorrection = links[1] ? "type2" : "type1";
+                            correction = '<span>Showing results for </span><a href="' + href + '">' + fixed.innerHTML + "</a>";
+                            if (links[1]) {
+                                insteadLink = links[1].getAttribute("href") || "";
+                            }
                         }
-                        correction = document.querySelector("dynamic-visibility-control span span:nth-of-type(2)").innerHTML;
+                    } catch (e) {
+                        hasCorrection = null;
+                    }
+                } else if (document.querySelector("dynamic-visibility-control")) {
+                    try {
+                        if (
+                            document.querySelector("dynamic-visibility-control location-permission-button") ||
+                            document.querySelector("dynamic-visibility-control g-dialog")
+                        ) {
+                        } else if (document.querySelector("dynamic-visibility-control div") == null) {
+                            if (document.querySelectorAll("dynamic-visibility-control a")[1] == null) {
+                                hasCorrection = "type1legacy";
+                                correction = document.querySelector("dynamic-visibility-control a").outerHTML;
+                            } else {
+                                hasCorrection = "type2legacy";
+                                correction = document.querySelector("dynamic-visibility-control a").outerHTML;
+                                insteadLink = document.querySelectorAll("dynamic-visibility-control a")[1].outerHTML;
+                            }
+                        } else {
+                            if (document.querySelector("dynamic-visibility-control span span:nth-of-type(3)")) {
+                                hasCorrection = "type2";
+                                insteadLink = document.querySelector("dynamic-visibility-control span span:nth-of-type(3)").querySelector("a").getAttribute("href");
+                            } else {
+                                hasCorrection = "type1";
+                            }
+                            correction = document.querySelector("dynamic-visibility-control span span:nth-of-type(2)").innerHTML;
+                        }
+                    } catch (e) {
+                        hasCorrection = null;
                     }
                 }
                 if (document.querySelector('#rso .card-section')) {
@@ -20424,8 +20460,27 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             }
         }
     }
+    // the pieces of today's knowledge panel (the head over the results, the overview beside them)
+    function ugfKpParts() {
+        const parts = Array.prototype.filter.call(document.querySelectorAll(".kp-wholepage-osrp"), function(e) {
+            return !ugfNeuroMine(e) && !e.parentElement.closest(".kp-wholepage-osrp");
+        });
+        return parts.some(function(e) {
+            return e.querySelector('[data-attrid="title"]');
+        }) ? parts : [];
+    }
     function doSidebar(mode) {
-        if (
+        if (mode == 3) {
+            const list = [];
+            ugfKpParts().forEach(function(part) {
+                part.querySelectorAll("[data-attrid]").forEach(function(e) {
+                    if (list.indexOf(e) < 0 && !e.closest(".related-question-pair")) {
+                        list.push(e);
+                    }
+                });
+            });
+            tempSidebarList = list;
+        } else if (
             mode == 2 &&
             document.querySelectorAll('[role="complementary"]')[2]
         ) {
@@ -20451,19 +20506,32 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         let sbKc12 = "";
         tempSidebarList.forEach(itemRoot => {
             var itemId = itemRoot.getAttribute("data-attrid");
-            if (itemId == "title") {
-                sidebarTitle = itemRoot.innerHTML;
+            if (itemId == "title" && !sidebarTitle) {
+                sidebarTitle = mode == 3 ? ugfEscapeHtml(String(itemRoot.textContent || "").trim()) : itemRoot.innerHTML;
             }
-            if (itemId == "subtitle") {
-                sidebarSubtitle = itemRoot.innerHTML;
+            if (itemId == "subtitle" && !sidebarSubtitle) {
+                sidebarSubtitle = mode == 3 ? ugfEscapeHtml(String(itemRoot.textContent || "").trim()) : itemRoot.innerHTML;
             }
-            if (itemId == "image") {
-                sbImg = itemRoot.querySelector("img").getAttribute("src");
+            if ((itemId == "image" || itemId == "VisualDigestFirstImageResult") && !sbImg && itemRoot.querySelector("img")) {
+                const im = itemRoot.querySelector("img");
+                let src = im.getAttribute("src") || "";
+                if ((!src || /^data:image\/gif/.test(src) || src.length < 100 && /^data:/.test(src)) && im.id) {
+                    src = ugfGetDeferredImage(im.id) || im.getAttribute("data-src") || src;
+                }
+                sbImg = src;
             }
             if (
-                itemId == "description"
+                itemId == "description" && !sbDesc
             ) {
-                sbDesc = itemRoot.innerHTML;
+                if (mode == 3) {
+                    const d = itemRoot.cloneNode(true);
+                    d.querySelectorAll("h1, h2, h3, [role='heading']").forEach(function(h) {
+                        h.remove();
+                    });
+                    sbDesc = d.innerHTML;
+                } else {
+                    sbDesc = itemRoot.innerHTML;
+                }
             }
             /*if (
                 document.querySelector("[data-attrid='description']")
@@ -20515,7 +20583,18 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 }
             });
         }
-        if (sidebarTitle.includes("See results about")) {
+        // (today's picture strip sits outside the panel's parts)
+        if (mode == 3 && !sbImg) {
+            const im = document.querySelector('[data-attrid="VisualDigestFirstImageResult"] img, [data-attrid="image"] img');
+            if (im && !ugfNeuroMine(im)) {
+                let src = im.getAttribute("src") || "";
+                if ((!src || /^data:image\/gif/.test(src) || src.length < 100 && /^data:/.test(src)) && im.id) {
+                    src = ugfGetDeferredImage(im.id) || im.getAttribute("data-src") || src;
+                }
+                sbImg = src;
+            }
+        }
+        if (!sidebarTitle || sidebarTitle.includes("See results about")) {
 
         } else {
             SB = new SearchSidebarAPI(sidebarTitle, sidebarSubtitle, sbImg, sbDesc, sbKc1, sbKc2, sbKc3, sbKc4, sbKc5, sbKc6, sbKc7, sbKc8, sbKc9, sbKc10, sbKc11, sbKc12);
@@ -21858,6 +21937,337 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     </div>
 					`);
         container.insertBefore(newElem, container.children[0]);
+    }
+    // ---- (6.5) "People also ask" (from 2015): the questions Google lists, in the period's box,
+    // placed after the result they followed on Google's page. Opening one opens Google's own
+    // (hidden) copy, which fetches the answer; Gplex shows it the way the period did - the
+    // quoted passage, its page, and "Search for" the question. Google now often answers with
+    // AI instead: Gplex never shows that, only the "Search for" link.
+    function ugfPaaEra() {
+        const l = String(layout || "");
+        if (["2016", "2016C", "2016L"].indexOf(l) > -1) {
+            return "p16";
+        }
+        if (l === "2018" || l === "2018M") {
+            return "p18";
+        }
+        if (l === "2019" || l === "2022") {
+            return "p19";
+        }
+        return null;
+    }
+    // Google's answer is AI written: the AI Overview / AI Mode block, or its words
+    function ugfPaaIsAi(el) {
+        if (!el) {
+            return false;
+        }
+        if (el.querySelector('[data-subtree="aimc"], [data-mcpr], .bzXtMb, [data-scope-id="turn"]')) {
+            return true;
+        }
+        const t = String(el.textContent || "");
+        return /\bAI Mode\b|AI Mode replied|\bAI Overview\b/.test(t) || ugfNeuroNames().some(function(n) {
+            return t.indexOf(n) > -1;
+        });
+    }
+    // what Google's copy of a question holds once opened: a classic answer, AI, nothing yet or an error
+    function ugfPaaReadAnswer(pair) {
+        const box = pair.querySelector(".bCOlv") || pair.querySelector("[jsname='NRdf4c']");
+        if (!box) {
+            return { state: "wait" };
+        }
+        const text = String(box.textContent || "").replace(/\s+/g, " ").trim();
+        if (ugfPaaIsAi(box)) {
+            return { state: "ai" };
+        }
+        if (/^An error has occurred/i.test(text)) {
+            return { state: "error" };
+        }
+        let link = null;
+        box.querySelectorAll("a[href]").forEach(function(a) {
+            if (!link && a.querySelector("h3") && /^https?:/.test(a.getAttribute("href") || "")) {
+                link = a;
+            }
+        });
+        if (!link || text.length < 40) {
+            return { state: "wait" };
+        }
+        // the passage: Google's answer block, else the longest run of text outside the link
+        let snip = box.querySelector('[data-attrid="wa:/description"], .hgKElc, .LGOjhe, [data-tts="answers"]');
+        if (!snip) {
+            let best = null;
+            let bestLen = 0;
+            box.querySelectorAll("div, span").forEach(function(e) {
+                if (link.contains(e) || e.contains(link) || e.querySelector("div")) {
+                    return;
+                }
+                const n = String(e.textContent || "").trim().length;
+                if (n > bestLen) {
+                    best = e;
+                    bestLen = n;
+                }
+            });
+            snip = best;
+        }
+        const h3 = link.querySelector("h3");
+        return {
+            state: "ok",
+            snippet: snip ? String(snip.textContent || "").replace(/\s+/g, " ").trim() : "",
+            title: h3 ? String(h3.textContent || "").trim() : "",
+            href: link.getAttribute("href")
+        };
+    }
+    function ugfPaaCss(era) {
+        const q = era === "p19" ? "#202124" : "#222";
+        const line = era === "p19" ? "#dadce0" : "#ebebeb";
+        const sub = era === "p19" ? "#4d5156" : "#545454";
+        const url = era === "p19" ? "#202124" : "#006621";
+        return "#ugf-paa { clear: both; margin: 22px 0 8px; max-width: 600px; font-family: arial, sans-serif; }" +
+            "#ugf-paa .h { font-size: " + (era === "p19" ? "20px" : "18px") + "; color: " + q + "; margin: 0 0 10px; line-height: 1.3; }" +
+            "#ugf-paa .r { border-top: 1px solid " + line + "; } #ugf-paa .r:last-child { border-bottom: 1px solid " + line + "; }" +
+            "#ugf-paa .q { position: relative; display: block; padding: " + (era === "p16" ? "11px" : "13px") + " 36px " + (era === "p16" ? "11px" : "13px") + " 0; font-size: 16px; line-height: 1.375; color: " + q + "; cursor: pointer; user-select: none; }" +
+            // the chevron, drawn as the period's thin down-arrow (a CSS shape)
+            "#ugf-paa .q::after { content: ''; position: absolute; right: 10px; top: 50%; width: 7px; height: 7px; margin-top: -6px; border: solid " + (era === "p19" ? "#70757a" : "#777") + "; border-width: 0 2px 2px 0; transform: rotate(45deg); transition: transform .2s, margin-top .2s; }" +
+            "#ugf-paa .r.open .q::after { transform: rotate(-135deg); margin-top: -2px; }" +
+            "#ugf-paa .a { display: none; padding: 0 0 16px; font-size: 13px; line-height: 1.54; color: " + sub + "; }" +
+            "#ugf-paa .r.open .a { display: block; }" +
+            "#ugf-paa .a .snip { margin: 0 0 10px; }" +
+            "#ugf-paa .a .t { display: block; font-size: 18px; line-height: 1.33; color: #1a0dab; text-decoration: none; }" +
+            "#ugf-paa .a .t:hover { text-decoration: underline; }" +
+            "#ugf-paa .a .u { display: block; font-size: 14px; color: " + url + "; margin: 1px 0 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }" +
+            "#ugf-paa .a .sf { display: block; font-size: 13px; color: " + sub + "; }" +
+            "#ugf-paa .a .sf a { color: #1a0dab; text-decoration: none; } #ugf-paa .a .sf a:hover { text-decoration: underline; }" +
+            "#ugf-paa .a .wait { color: #777; }";
+    }
+    // A 2015 answer was a passage quoted from a web page. Where Google now writes its own (AI)
+    // answer instead, the question is searched with Google's plain "Web" results (udm=14, which
+    // carry no AI) and the top result's passage, page and address are shown, as the answer was.
+    function ugfPaaAnswerFromWeb(q, done) {
+        ugfPaaAnswerFromWeb.cache = ugfPaaAnswerFromWeb.cache || {};
+        if (ugfPaaAnswerFromWeb.cache[q]) {
+            done(ugfPaaAnswerFromWeb.cache[q]);
+            return;
+        }
+        let hl = "";
+        try {
+            hl = "&hl=" + encodeURIComponent(UGF_LANG_HL || "en");
+        } catch (e) {}
+        fetch("https://www.google.com/search?q=" + encodeURIComponent(q) + "&udm=14" + hl, { credentials: "same-origin" }).then(function(r) {
+            return r.ok ? r.text() : "";
+        }).then(function(t) {
+            if (!t) {
+                done(null);
+                return;
+            }
+            const doc = new DOMParser().parseFromString(ugfTT(t), "text/html");
+            // the first ordinary result that has Google's own snippet under it
+            let top = null;
+            doc.querySelectorAll("#rso h3, #search h3").forEach(function(h) {
+                if (top) {
+                    return;
+                }
+                const a = h.closest("a[href]");
+                if (!a || h.closest(".related-question-pair, [data-attrid], .EyBRub")) {
+                    return;
+                }
+                let href = a.getAttribute("href") || "";
+                if (href.indexOf("/url?") === 0) {
+                    try {
+                        href = new URLSearchParams(href.split("?")[1]).get("q") || href;
+                    } catch (e) {}
+                }
+                if (!/^https?:/.test(href) || /\/\/(www\.)?google\.[a-z.]+\//.test(href)) {
+                    return;
+                }
+                const block = h.closest(".MjjYud, div.g, [data-hveid][data-ved]") || a.parentElement;
+                const sn = block && block.querySelector('.VwiC3b, [data-sncf="1"], [data-sncf="2"], [style*="-webkit-line-clamp"]');
+                const text = sn ? String(sn.textContent || "").replace(/\s+/g, " ").trim() : "";
+                if (text.length > 40) {
+                    top = { title: String(h.textContent || "").trim(), href: href, desc: text };
+                }
+            });
+            const got = top ? { state: "ok", snippet: top.desc, title: top.title, href: top.href } : null;
+            if (got) {
+                ugfPaaAnswerFromWeb.cache[q] = got;
+            }
+            done(got);
+        }).catch(function() {
+            done(null);
+        });
+    }
+    function ugfPaaBuild() {
+        const era = ugfPaaEra();
+        if (!era || document.getElementById("ugf-paa")) {
+            return;
+        }
+        const pairs = Array.prototype.filter.call(document.querySelectorAll(".related-question-pair[data-q]"), function(p) {
+            return !ugfNeuroMine(p);
+        });
+        if (!pairs.length) {
+            return;
+        }
+        const container = document.querySelector("#ugf-search-results-container");
+        if (!container || !container.children.length) {
+            // the results are still being drawn: come back once they are
+            ugfPaaBuild.tries = (ugfPaaBuild.tries || 0) + 1;
+            if (ugfPaaBuild.tries < 40) {
+                setTimeout(ugfPaaBuild, 250);
+            }
+            return;
+        }
+        // where it stood on Google's page: after however many results came before it
+        const first = pairs[0];
+        let before = 0;
+        document.querySelectorAll("#rso h3, #search h3").forEach(function(h) {
+            if (!ugfNeuroMine(h) && !first.contains(h) && !h.closest(".related-question-pair, .EyBRub, [data-attrid]") &&
+                    (first.compareDocumentPosition(h) & Node.DOCUMENT_POSITION_PRECEDING) && h.closest("a[href]")) {
+                before++;
+            }
+        });
+        before = Math.max(1, Math.min(before, container.children.length));
+        if (!document.getElementById("ugf-paa-css")) {
+            const st = document.createElement("style");
+            st.id = "ugf-paa-css";
+            st.textContent = ugfPaaCss(era);
+            (document.head || document.documentElement).appendChild(st);
+        }
+        const box = document.createElement("div");
+        box.id = "ugf-paa";
+        const head = document.createElement("div");
+        head.className = "h";
+        head.textContent = "People also ask";
+        box.appendChild(head);
+        const list = document.createElement("div");
+        box.appendChild(list);
+        const seen = {};
+        const addRow = function(pair) {
+            const q = String(pair.getAttribute("data-q") || "").trim();
+            if (!q || seen[q]) {
+                return;
+            }
+            seen[q] = true;
+            const row = document.createElement("div");
+            row.className = "r";
+            const qa = document.createElement("div");
+            qa.className = "q";
+            qa.setAttribute("role", "button");
+            qa.setAttribute("tabindex", "0");
+            qa.textContent = q;
+            const ans = document.createElement("div");
+            ans.className = "a";
+            row.appendChild(qa);
+            row.appendChild(ans);
+            list.appendChild(row);
+            const searchFor = function() {
+                const p = document.createElement("div");
+                p.className = "sf";
+                p.appendChild(document.createTextNode("Search for: "));
+                const a = document.createElement("a");
+                a.href = "https://www.google.com/search?q=" + encodeURIComponent(q);
+                a.textContent = q;
+                p.appendChild(a);
+                return p;
+            };
+            const show = function(got) {
+                ans.textContent = "";
+                if (got.state === "ok") {
+                    if (got.snippet) {
+                        const s = document.createElement("div");
+                        s.className = "snip";
+                        s.textContent = got.snippet;
+                        ans.appendChild(s);
+                    }
+                    const t = document.createElement("a");
+                    t.className = "t";
+                    t.href = got.href;
+                    t.textContent = got.title || got.href;
+                    ans.appendChild(t);
+                    const u = document.createElement("div");
+                    u.className = "u";
+                    u.textContent = got.href;
+                    ans.appendChild(u);
+                } else if (got.state === "wait") {
+                    const w = document.createElement("div");
+                    w.className = "wait snip";
+                    w.textContent = "Loading...";
+                    ans.appendChild(w);
+                }
+                // (AI answers and errors: only the way on to a search for the question)
+                ans.appendChild(searchFor());
+            };
+            let asked = false;
+            const more = function() {
+                // Google adds more questions below the one opened: so does Gplex
+                document.querySelectorAll(".related-question-pair[data-q]").forEach(function(p) {
+                    if (!ugfNeuroMine(p)) {
+                        addRow(p);
+                    }
+                });
+            };
+            const toggle = function() {
+                const open = !row.classList.contains("open");
+                row.classList.toggle("open", open);
+                if (!open || asked) {
+                    return;
+                }
+                asked = true;
+                let done = false;
+                const finish = function(got) {
+                    if (!done) {
+                        done = true;
+                        show(got);
+                    }
+                };
+                let got = ugfPaaReadAnswer(pair);
+                if (got.state === "ok") {
+                    finish(got);
+                    return;
+                }
+                show({ state: "wait" });
+                // open Google's own copy (it fetches its answer, and adds more questions)
+                const btn = pair.querySelector('[role="button"][aria-expanded]');
+                if (btn && btn.getAttribute("aria-expanded") !== "true") {
+                    try {
+                        btn.click();
+                    } catch (e) {}
+                }
+                let fell = false;
+                const fallback = function() {
+                    if (fell || done) {
+                        return;
+                    }
+                    fell = true;
+                    ugfPaaAnswerFromWeb(q, function(r) {
+                        finish(r || { state: "none" });
+                    });
+                };
+                const t0 = Date.now();
+                const iv = setInterval(function() {
+                    got = ugfPaaReadAnswer(pair);
+                    if (got.state === "ok") {
+                        clearInterval(iv);
+                        finish(got);
+                        more();
+                    } else if (got.state !== "wait" || Date.now() - t0 > 3000) {
+                        // an AI answer, an error, or nothing yet: the page the answer would have come from
+                        fallback();
+                        if (Date.now() - t0 > 8000 || got.state !== "wait") {
+                            clearInterval(iv);
+                            more();
+                        }
+                    }
+                }, 400);
+            };
+            qa.addEventListener("click", toggle);
+            qa.addEventListener("keydown", function(ev) {
+                if (ev.key === "Enter" || ev.key === " ") {
+                    ev.preventDefault();
+                    toggle();
+                }
+            });
+        };
+        pairs.forEach(addRow);
+        // inside the result it follows (so the results list keeps its own numbering)
+        container.children[before - 1].appendChild(box);
     }
     function createSidebar() {
         let container = document.querySelector("#ugf-right-inner");
