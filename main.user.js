@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      6.5.1
+// @version      6.5.7
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos and Google Keep
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -104,6 +104,21 @@ function ugfTT(s) {
     }
 }
 // ---- end Gplex Trusted Types ----
+// (6.5.5) Signing out forgets the account Gplex kept for pages that don't show one
+(function() {
+    try {
+        document.addEventListener("click", function(ev) {
+            const a = ev.target && ev.target.closest ? ev.target.closest('a[href*="accounts.google.com/Logout"], a[href*="/accounts/Logout"]') : null;
+            if (a && typeof GM_deleteValue === "function") {
+                ["UGF_USERNAME", "UGF_EMAIL", "UGF_PFP"].forEach(function(k) {
+                    try {
+                        GM_deleteValue(k);
+                    } catch (e) {}
+                });
+            }
+        }, true);
+    } catch (e) {}
+})();
 // ---- (5.2.5) The very first thing, before the page is drawn ------------------------
 // Gplex starts at document-start so that, on the Docs/Sheets/Slides editors, the page
 // can be veiled (white, with the Gmail spinner) before any of Google's present-day
@@ -16055,6 +16070,17 @@ html[basic-html]:not([disabled]),
 html[basic-html]:not([disabled]) body {
   background: #fff !important;
 }
+/* (6.5.4) a video's thumbnail keeps its own height beside a long description, so the duration stays on the picture */
+.ugf-video-result-details > .ugf-video-result-thumbnail {
+  align-self: flex-start;
+}
+/* (6.5.3) Google's lightweight page (the one old browsers get) holds its body to a 652px column */
+html[basic-html]:not([disabled]) body {
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: none !important;
+  min-width: 0 !important;
+}
 /* the Shopping homepage: Google's app is a c-wiz tree (not a div), and its stylesheet greys the body */
 html[home-vertical="shopping"]:not([disabled]) body > *:not(#ugf):not(#ugf-styles):not(script):not(style) {
   display: none !important;
@@ -19165,7 +19191,9 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 window.location = "https://www.google.com/preferences#tabVal=1";*/
             }
             if (location == "images" && notOnImages == "true") {
-                parseHTMLNeo(location);
+                // (6.5.7) once Google's page has arrived: on a slow first visit the lightweight page's
+                // grid of thumbnails wasn't there yet, and the image page came up empty
+                ugfParseWhenLoaded(location);
             }
             else if (location == "images") {
                 let tries1 = 0;
@@ -19193,7 +19221,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                         parseHTMLNeo(location);
                         clearInterval(doInterval);
                     }
-                } else if (ugfBasicHtml && location !== "home" && location !== "structured-home" && location !== "gplex") {
+                } else if (ugfBasicHtml && location !== "home" && location !== "structured-home" && location !== "gplex" && location !== "images") {
                     if (ugfFindBasicResults().length >= 5 || basicTries++ > 200) {
                         parseHTMLNeo(location);
                         clearInterval(doInterval);
@@ -19206,15 +19234,17 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                         clearInterval(doInterval);
                     }
                 } else if (location != "images") {
+                    // (6.5.2) 10 links can be there before all the results are: the links of "People
+                    // also ask" and the knowledge panel count too. Read once Google's page has arrived.
                     if (asArray.length >= 10) {
-                        parseHTMLNeo(location);
+                        ugfParseWhenLoaded(location);
                         clearInterval(doInterval);
                     }
                     if (
                         asArray.length >= 8 &&
                         url.includes("barrel")
                     ) {
-                        parseHTMLNeo(location);
+                        ugfParseWhenLoaded(location);
                         clearInterval(doInterval);
                     }
                 } else if (location == "images") {
@@ -19223,7 +19253,12 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     let hasDeferred = (gWin && gWin.google && (gWin.google.pim || gWin.google.ldi)) ||
                                       (window.google && (window.google.pim || window.google.ldi)) ||
                                       document.querySelector('script[id="the-script"]');
-                    if ((imgCount >= 10 && (hasDeferred || document.readyState !== "loading")) || asArray.length >= 30) {
+                    // (6.5.4) or the lightweight page's table of thumbnails, once it has all arrived
+                    // (the thumbnails loaded, so their preview sizes can be shown)
+                    const liteImgs = document.querySelectorAll('table a[href^="/url?"] img');
+                    const liteGrid = document.readyState !== "loading" && liteImgs.length >= 4 &&
+                        Array.prototype.every.call(liteImgs, function(im) { return im.complete; });
+                    if ((imgCount >= 10 && (hasDeferred || document.readyState !== "loading")) || asArray.length >= 30 || liteGrid) {
                         parseHTMLNeo(location);
                         clearInterval(doInterval);
                     }
@@ -19265,7 +19300,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                         location !== "gplex" &&
                         location !== "shopping"
                     ) {
-                        parseHTMLNeo(location);
+                        ugfParseWhenLoaded(location);
                     }
                 }
             }, timeoutNumber);
@@ -19280,10 +19315,29 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     location !== "gplex" &&
                     location !== "shopping"
                 ) {
-                    parseHTMLNeo(location);
+                    ugfParseWhenLoaded(location);
                 }
             }, 5000);
         });
+    }
+    // (6.5.2) The fallback read of the results (fewer than 10 result links seen after 1.2s) used to
+    // read whatever part of Google's page had arrived by then, so a slow connection or computer
+    // got 3 or 7 results of 10. It now waits until the page has finished arriving.
+    function ugfParseWhenLoaded(location) {
+        if (started) {
+            return;
+        }
+        if (document.readyState === "loading") {
+            if (ugfParseWhenLoaded.waiting) {
+                return;
+            }
+            ugfParseWhenLoaded.waiting = true;
+            document.addEventListener("DOMContentLoaded", function() {
+                parseHTMLNeo(location);
+            }, { once: true });
+        } else {
+            parseHTMLNeo(location);
+        }
     }
     // Helper: Parse YouTube video ID from standard watch URLs, shorts, youtu.be, and Google redirect URLs
     function ugfExtractYtId(u) {
@@ -19779,17 +19833,26 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 ugfParseShopping();
                 return;
             }
-            if (ugfBasicHtml && location !== "home" && location !== "structured-home" && location !== "gplex") {
+            // ((6.5.7) not Images: its basic HTML page is a grid of thumbnails, read by the image page below)
+            if (ugfBasicHtml && location !== "home" && location !== "structured-home" && location !== "gplex" && location !== "images") {
                 ugfParseBasic();
                 return;
             }
             if (location == "images") {
                 let newImagesExp = false;
                 let modernImages = false;
+                let liteImages = false;
                 let tempImageList;
                 if (document.querySelector('#rso img[id^="dimg_"]')) {
                     modernImages = true;
                     tempImageList = document.querySelectorAll('#rso img[id^="dimg_"]');
+                } else if (document.querySelectorAll('table a[href^="/url?"] img').length >= 4) {
+                    // (6.5.4) the lightweight image page (old browsers, basic HTML): a table of thumbnails.
+                    // There is no Google image page here to show instead, so Gplex's own image page is used.
+                    liteImages = true;
+                    document.querySelector("html").removeAttribute("noton-images");
+                    document.querySelector("html").setAttribute("basic-html", "");
+                    tempImageList = document.querySelectorAll('table a[href^="/url?"] img');
                 } else if (document.querySelector("body > c-wiz")) {
                     newImagesExp = true;
                     tempImageList = document.querySelectorAll("a > div > img");
@@ -19799,6 +19862,77 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 let check = 0;
                 let itemNo = 0;
                 tempImageList.forEach(itemRoot => {
+                    if (liteImages) {
+                        const cellA = itemRoot.closest("a[href]");
+                        const cell = itemRoot.closest("td") && itemRoot.closest("td").parentElement ? (itemRoot.closest("table") || cellA) : cellA;
+                        const link = ugfBasicHref(cellA) || "";
+                        if (!link || !itemRoot.getAttribute("src")) {
+                            check++;
+                            return;
+                        }
+                        let capA = null;
+                        (cell ? cell.querySelectorAll("a[href]") : []).forEach(function(x) {
+                            if (!capA && x !== cellA && !x.querySelector("img")) {
+                                capA = x;
+                            }
+                        });
+                        const bits = [];
+                        (capA ? capA.querySelectorAll("span") : []).forEach(function(sp) {
+                            const t = (sp.textContent || "").replace(/\s+/g, " ").trim();
+                            if (t && !sp.querySelector("span") && bits.indexOf(t) < 0) {
+                                bits.push(t);
+                            }
+                        });
+                        const lw = itemRoot.naturalWidth || parseInt(itemRoot.getAttribute("width") || "0", 10) || 150;
+                        const lh = itemRoot.naturalHeight || parseInt(itemRoot.getAttribute("height") || "0", 10) || 150;
+                        itemRoot.classList.add("ugf-image-parse");
+                        linkList.push({imageResult: {
+                            itemNo: itemNo,
+                            type: "image",
+                            iframeUrl: link,
+                            width: lw,
+                            height: lh,
+                            refdocid: "",
+                            docid: "",
+                            link: link,
+                            title: bits[0] || (capA ? capA.textContent.trim() : ""),
+                            domain: bits[1] || ugfExtractDomain(link),
+                            bigSrc: "",
+                            origWidth: null,
+                            origHeight: null,
+                            src: itemRoot.getAttribute("src"),
+                            origImg: itemRoot,
+                            origImgId: itemRoot.getAttribute("id") || ""
+                        }});
+                        createItem(linkList[linkList.length - 1], "imageResult");
+                        // (6.5.7) the preview's real size once its thumbnail has loaded
+                        const made = document.querySelector("#ugf-image-results-container") ?
+                            document.querySelector("#ugf-image-results-container").children[itemNo] : null;
+                        if (made && !itemRoot.complete) {
+                            itemRoot.addEventListener("load", function() {
+                                const w = itemRoot.naturalWidth, hh = itemRoot.naturalHeight;
+                                if (!w || !hh) {
+                                    return;
+                                }
+                                made.setAttribute("img-w", w);
+                                made.setAttribute("img-h", hh);
+                                const mi = made.querySelector("img");
+                                if (mi) {
+                                    mi.setAttribute("width", w);
+                                    mi.setAttribute("height", hh);
+                                }
+                                made.querySelectorAll(".ugf-image-result-size-first, .ugf-image-result-size-second").forEach(function(sz) {
+                                    if (sz.children.length >= 3) {
+                                        sz.children[0].textContent = w;
+                                        sz.children[2].textContent = hh;
+                                    }
+                                });
+                            });
+                        }
+                        itemNo++;
+                        check++;
+                        return;
+                    }
                     let alt = itemRoot.getAttribute('alt');
                     itemRoot.classList.add("ugf-image-parse");
                     if (alt === null) {
@@ -20996,7 +21130,12 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 });
                 doGplexDropdowns("all");
             }
-            if (document.querySelector("textarea")) {
+            const qField = document.querySelector('textarea[name="q"]') || document.querySelector('input[name="q"]:not([type="hidden"])');
+            if (qField) {
+                // (6.5.3) the search box itself: lightweight pages have hidden fields before it
+                searchValue = qField.tagName === "TEXTAREA" ? qField.value : (qField.getAttribute("value") || qField.value || "");
+                document.querySelector("html").setAttribute("confirmed-sv","");
+            } else if (document.querySelector("textarea")) {
                 searchValue = document.querySelector("textarea").value;
                 document.querySelector("html").setAttribute("confirmed-sv","");
             } else if (document.querySelector("input")) {
@@ -21312,6 +21451,12 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         }
     }
     function doSearchValueStuff() {
+        if (!searchValue) {
+            // (6.5.3) the search box wasn't readable yet (lightweight pages): the address has the search
+            try {
+                searchValue = new URLSearchParams(window.location.search).get("q") || "";
+            } catch (e) {}
+        }
         if (
             location !== "home" &&
             location !== "gplex"
@@ -21330,6 +21475,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         });
     }
     function fixPagination() {
+        fixPagination.done = true;
         let encodedSearchValue = encodeURIComponent(searchValue);
         let pages = document.querySelectorAll(".gp-pagination");
         let PRcheck = 0;
@@ -22591,6 +22737,58 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 window.location = "https://www.google.com/search?q=" + value + "&btnI=I%27m+Feeling+Lucky&iflsig=ANes7DEAAAAAZhR3OR8bkupN1D63NUfgJj5erQigfDUN";
             });
         }
+        // (6.5.5) Google's lightweight pages (old browsers) have no account button to read: use the account
+        // Gplex saw elsewhere (google.com, Gmail) and kept, until signing out
+        if (document.querySelector("html").hasAttribute("basic-html") || location == "home") {
+            setTimeout(function() {
+                const h = document.querySelector("html");
+                // (their own "Sign in" link shows even when signed in, so only a real account button counts)
+                if (canGo == false || h.getAttribute("logged-in") === "true" || document.querySelector("[href^='https://accounts.google.com/SignOutOptions']")) {
+                    return;
+                }
+                if (location == "home" && !h.hasAttribute("legacy-lite-home") && !document.querySelector("body > center")) {
+                    return;   // today's home page has its own account button
+                }
+                let kName = "", kMail = "", kPfp = "";
+                try {
+                    kName = String(GM_getValue("UGF_USERNAME", "") || "");
+                    kMail = String(GM_getValue("UGF_EMAIL", "") || "");
+                    kPfp = String(GM_getValue("UGF_PFP", "") || "");
+                } catch (e) {}
+                if (!kName || !kMail) {
+                    return;
+                }
+                loggedIn = true;
+                h.setAttribute("logged-in", "true");
+                const first = kName.split(" ")[0];
+                const small = kPfp.replace(/=s\d+(-[a-z-]*)?$/, "=s32-c").replace(/\/s\d+(-c)?\//, "/s32-c/");
+                const big = kPfp.replace(/=s\d+(-[a-z-]*)?$/, "=s96-c").replace(/\/s\d+(-c)?\//, "/s96-c/");
+                [["#gp-gbar-account span", first], ["#gp-gbar-email span", kMail], ["#ugf-account-username span", kName],
+                    ["#ugf-account-email span", kMail], ["#ugf-username-button span", "+" + first], ["#ugf-email-button span", kMail],
+                    ["#gp-gbar-plusyou span", "+" + first]].forEach(function(x) {
+                    const el = document.querySelector(x[0]);
+                    if (el) {
+                        el.textContent = x[1];
+                    }
+                });
+                if (kPfp) {
+                    [["#ugf-account-button img", small], ["#ugf-account-pfp img", big], ["#ugf-account-normal-pfp img", big]].forEach(function(x) {
+                        const el = document.querySelector(x[0]);
+                        if (el) {
+                            el.src = x[1];
+                        }
+                    });
+                }
+            }, 2500);
+        }
+        // (6.5.7) the page numbers and tabs are filled in once the account is known; pages with no
+        // account links at all (Google's lightweight pages) fill them in after a moment anyway, or
+        // they kept their "TEMP_REPLACEME" placeholder and paging searched for that
+        setTimeout(function() {
+            if (canGo != false && !fixPagination.done) {
+                fixPagination();
+            }
+        }, 3000);
         var elm = "[href^='https://accounts.google.com/S']";
         waitForElement10(elm).then(function(elm) {
             if (canGo != false) {
@@ -27497,6 +27695,8 @@ html[gplex-gmail] body {
         return sent > 0;
     }
     function ugfGmailOpenRow(item) {
+        // (6.5.5) remembered, so a conversation that doesn't open that way can be clicked open instead
+        ugfGmailOpenRow.last = { item: item, at: Date.now(), clicked: false };
         // the reliable route is Gmail's own URL for the conversation
         if (item.tid) {
             const base = (window.location.hash || "#inbox").split("/")[0] || "#inbox";
@@ -28497,7 +28697,107 @@ html[gplex-gmail] body {
         box.querySelector("#ugf-gmail-to").focus();
     }
     // ---- the message viewer --------------------------------------------------
+    // (6.5.7) When Gmail can't open a conversation itself (it no longer works fully in old browsers such
+    // as Firefox 52), Gplex reads the conversation from Gmail's print view: an ordinary page of Gmail's,
+    // opened with the browser's normal session, that lists every message as plain HTML.
+    function ugfGmailPrintTid() {
+        const last = String(window.location.hash || "").split("/").pop();
+        if (/^[0-9a-f]{12,20}$/.test(last)) {
+            return last;
+        }
+        const o = ugfGmailOpenRow.last;
+        return o && o.item && /^[0-9a-f]{12,20}$/.test(o.item.tid || "") ? o.item.tid : "";
+    }
+    function ugfGmailIk() {
+        try {
+            const g = (typeof unsafeWindow !== "undefined" ? unsafeWindow : window).GLOBALS;
+            if (g && g[9] && /^[0-9a-f]{6,16}$/.test(String(g[9]))) {
+                return String(g[9]);
+            }
+        } catch (e) {}
+        let found = "";
+        document.querySelectorAll("script:not([src])").forEach(function(sc) {
+            if (found) {
+                return;
+            }
+            const m = /[?&]ik=([0-9a-f]{6,16})\b/.exec(sc.textContent || "") || /"ik"\s*:\s*"([0-9a-f]{6,16})"/.exec(sc.textContent || "");
+            if (m) {
+                found = m[1];
+            }
+        });
+        return found;
+    }
+    function ugfGmailPrintFetch(tid) {
+        ugfGmailPrintFetch.cache = ugfGmailPrintFetch.cache || {};
+        if (!tid || ugfGmailPrintFetch.cache[tid]) {
+            return;
+        }
+        ugfGmailPrintFetch.cache[tid] = { loading: true, msgs: [] };
+        const m = /^\/mail\/u\/\d+\//.exec(window.location.pathname || "");
+        const ik = ugfGmailIk();
+        const url = (m ? m[0] : "/mail/u/0/") + "?ui=2" + (ik ? "&ik=" + ik : "") + "&view=pt&search=all&th=" + tid;
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.onload = function() {
+            const out = { loading: false, msgs: [], subject: "", chips: [], counter: "", danger: "" };
+            try {
+                const doc = new DOMParser().parseFromString(ugfTT(xhr.responseText), "text/html");
+                const subj = doc.querySelector("font[size='+1'] b, .maincontent font b, h2, title");
+                out.subject = subj ? (subj.textContent || "").trim().replace(/^Gmail - /, "") : "";
+                doc.querySelectorAll("table.message").forEach(function(t) {
+                    const rows = t.rows || [];
+                    const head = rows[0] ? rows[0].cells : [];
+                    const who = head[0] ? (head[0].textContent || "").replace(/\s+/g, " ").trim() : "";
+                    const em = /<([^>]+@[^>]+)>/.exec(who);
+                    const date = head[1] ? (head[1].textContent || "").replace(/\s+/g, " ").trim() : "";
+                    const rcp = t.querySelector(".recipient");
+                    let body = null, bodyLen = -1;
+                    for (let i = 1; i < rows.length; i++) {
+                        rows[i].querySelectorAll("div, td").forEach(function(n) {
+                            if (n.classList && n.classList.contains("recipient")) {
+                                return;
+                            }
+                            if (n.closest && n.closest(".recipient")) {
+                                return;
+                            }
+                            const len = (n.textContent || "").length;
+                            // (the innermost of equal length: the message itself, not the tables around it)
+                            if (len >= bodyLen && len > 0 && !n.querySelector("table.message")) {
+                                body = n;
+                                bodyLen = len;
+                            }
+                        });
+                    }
+                    out.msgs.push({
+                        from: em ? who.slice(0, who.indexOf("<")).trim() : who,
+                        email: em ? em[1].trim() : "",
+                        to: rcp ? (rcp.textContent || "").replace(/\s+/g, " ").trim().replace(/^To:\s*/i, "") : ugfT("to me"),
+                        date: date,
+                        html: body ? body.innerHTML : ""
+                    });
+                });
+            } catch (e) {
+                console.log("[Gplex] Gmail print view could not be read", e);
+            }
+            ugfGmailPrintFetch.cache[tid] = out;
+            ugfGmailRender();
+        };
+        xhr.onerror = function() {
+            ugfGmailPrintFetch.cache[tid] = { loading: false, msgs: [] };
+        };
+        xhr.send();
+    }
     function ugfGmailThread() {
+        const t = ugfGmailThreadLive();
+        if (!t.msgs.length && ugfGmailPrintFetch.cache) {
+            const got = ugfGmailPrintFetch.cache[ugfGmailPrintTid()];
+            if (got && got.msgs && got.msgs.length) {
+                return { subject: got.subject || t.subject, msgs: got.msgs, chips: t.chips, counter: t.counter, danger: t.danger };
+            }
+        }
+        return t;
+    }
+    function ugfGmailThreadLive() {
         const subject = document.querySelector("h2.hP, h2[data-thread-perm-id], .ha h2, [data-legacy-thread-id] h2");
         const msgs = [];
         let scope = [].slice.call(document.querySelectorAll("div.adn, div.gs"));
@@ -29234,6 +29534,19 @@ html[gplex-gmail] body {
         const img = document.querySelector("[aria-label*='Google Account'] img, a[aria-label*='@'] img, img.gb_p, img[alt*='Profile']");
         if (img && img.getAttribute("src")) {
             photo = img.getAttribute("src");
+        }
+        // (6.5.5) keep what Gmail's own account button says, for Google pages that have none to read
+        // (the lightweight pages old browsers get)
+        if (name && mail) {
+            try {
+                if (typeof GM_setValue === "function") {
+                    GM_setValue("UGF_USERNAME", name);
+                    GM_setValue("UGF_EMAIL", mail);
+                    if (photo && !/^data:/.test(photo)) {
+                        GM_setValue("UGF_PFP", photo);
+                    }
+                }
+            } catch (e) {}
         }
         // whatever Gmail did not give us, take from what google.com parsed
         name = name || ugfGmailShared("UGF_USERNAME");
@@ -29984,14 +30297,46 @@ html[gplex-gmail] body {
         // Gmail fills a thread in asynchronously. Until its messages are readable,
         // leave the page as it is rather than swapping in an empty shell, and give up
         // altogether if they never arrive so the real message stays on screen.
+        // (6.5.5) On a slow computer or an old browser Gmail can take a good while to open a message: wait
+        // up to 30 seconds behind the loading screen (not Gmail's own page), and if Gmail hasn't opened
+        // it from the address after 6 seconds, click the conversation in Gmail's list as well.
         if (threadView && !ugfGmailThread().msgs.length) {
-            ugfGmailRender.misses = (ugfGmailRender.misses || 0) + 1;
-            if (ugfGmailRender.misses > 10) {
+            const now = Date.now();
+            if (!ugfGmailRender.waitSince) {
+                ugfGmailRender.waitSince = now;
+            }
+            ugfGmailLoadingStart();
+            const last = ugfGmailOpenRow.last;
+            if (last && !last.clicked && now - last.at > 6000) {
+                last.clicked = true;
+                const liveRow = ugfGmailLiveRow(last.item);
+                if (liveRow) {
+                    ugfGmailRealClick(liveRow.querySelector(".bog span") || liveRow.querySelector(".bog") ||
+                        liveRow.querySelector(".xT") || liveRow);
+                }
+            }
+            // still nothing after 8 seconds: read it from Gmail's print view instead
+            if (now - ugfGmailRender.waitSince > 8000) {
+                ugfGmailPrintFetch(ugfGmailPrintTid());
+            }
+            if (!ugfGmailRender.waitIv) {
+                ugfGmailRender.waitIv = setInterval(function() {
+                    ugfGmailRender();
+                }, 1000);
+            }
+            if (now - ugfGmailRender.waitSince > 30000) {
+                clearInterval(ugfGmailRender.waitIv);
+                ugfGmailRender.waitIv = null;
+                ugfGmailRender.waitSince = 0;
                 ugfGmailHide();
             }
             return false;
         }
-        ugfGmailRender.misses = 0;
+        ugfGmailRender.waitSince = 0;
+        if (ugfGmailRender.waitIv) {
+            clearInterval(ugfGmailRender.waitIv);
+            ugfGmailRender.waitIv = null;
+        }
         const esc = ugfEscapeHtml;
         const h = document.querySelector("html");
         let shell = document.querySelector("#ugf-gmail");
@@ -33539,6 +33884,23 @@ html[gplex-gmail] body {
             add(".goog-menu", "background: #fff !important; border: 0 !important; border-radius: " + (era === "d2019" ? "4px" : "0") + " !important; box-shadow: 0 2px 6px 2px rgba(60,64,67,.15) !important;");
             add(".goog-menu .goog-menuitem-highlight, .goog-menu .goog-menuitem-hover", "background: " + (era === "d2019" ? "#f1f3f4" : "#eee") + " !important; border-radius: 0 !important;");
             add(".goog-menu .goog-menuitem, .goog-menu .goog-menuitem-content", "font-size: 14px !important;");
+        }
+        // (6.5.6) Docs before 2019 was square everywhere: today's rounded menus, bubbles (the Edit / wrap
+        // bar over a selected drawing or image), dialogs, toolbars and chips are squared, keeping what
+        // was always round (radio buttons, switches, colour swatches, people's pictures). The "Premium",
+        // "New" and "Updated" pills and dots in the menus are today's, not the period's: hidden.
+        if (era !== "d2019") {
+            const keep = ':not([class*="radio"]):not([role="radio"]):not([class*="avatar"]):not([class*="Avatar"])' +
+                ':not(img):not([class*="switch"]):not([class*="Switch"]):not([class*="swatch"]):not([class*="palette-cell"])' +
+                ':not([class*="colormenuitems"]):not([class*="color-menu-cell"]):not([class*="presence"])';
+            const scopes = [".goog-menu", "[class*=\"ubble\"]", "[role=\"menu\"]", "[role=\"dialog\"]", "[role=\"toolbar\"]",
+                "[role=\"listbox\"]", ".modal-dialog", ".goog-modalpopup", ".docs-material-gm-dialog", ".jfk-bubble", ".docs-bubble"];
+            add(scopes.map(function(x) {
+                return x + keep + ", " + x + " *" + keep;
+            }).join(", ") + ", .jfk-button, .goog-toolbar-button, .goog-toolbar-menu-button, .goog-flat-menu-button, .docs-omnibox-input, .docs-gm3-button, [class*=\"FabView\"], [class*=\"chip\"]" + keep,
+                "border-radius: 0 !important;");
+            add(".docs-new-badge, .docs-premium-badge, .docs-default-badge, .docs-action-updated-dot, .goog-menu [class*=\"-badge\"]:not(.docs-action-badge)",
+                "display: none !important;");
         }
         // ---- the comments pane (and the comment boxes beside the page): square, flat, in
         // the period's type and buttons, as the comment stream of before 2019 was
@@ -53636,8 +53998,11 @@ html[gplex-gmail] body {
         }
         const out = [];
         const seen = {};
+        // (6.5.3) the results' titles are headings: once there are any, links without one (the page's
+        // own "Sign in", "Privacy", "Learn more"...) aren't results
+        const headed = !!scope.querySelector("a[href] h3");
         scope.querySelectorAll("a[href]").forEach(function(a) {
-            if (a.closest("#ugf")) {
+            if (a.closest("#ugf") || (headed && !a.querySelector("h3"))) {
                 return;
             }
             const href = ugfBasicHref(a);
@@ -53650,8 +54015,9 @@ html[gplex-gmail] body {
                 return;
             }
             // climb only while this is still the one result in the container, so snippets don't bleed between results
-            let card = a.parentElement || a;
-            let guard = 0;
+            // (Google's lightweight pages mark each result's box with "xpd": that box is the result)
+            let card = a.closest(".xpd") || a.parentElement || a;
+            let guard = a.closest(".xpd") ? 5 : 0;
             while (card.parentElement && guard++ < 5) {
                 const outer = card.parentElement;
                 if (outer.querySelectorAll('a[href^="/url?"], a[href*="/url?q="]').length !== 1) {
@@ -53661,7 +54027,8 @@ html[gplex-gmail] body {
             }
             let description = "";
             card.querySelectorAll("div, span, td").forEach(function(n) {
-                if (n.querySelector("a") || n.contains(a)) {
+                // (6.5.3) not the link itself: its title and address aren't the description
+                if (n.querySelector("a") || n.contains(a) || a.contains(n)) {
                     return;
                 }
                 const t = (n.textContent || "").replace(/\s+/g, " ").trim();
@@ -53669,8 +54036,23 @@ html[gplex-gmail] body {
                     description = n.innerHTML;
                 }
             });
+            // (6.5.4) video results: the thumbnail beside the result, and "Duration: 25:59" under it
+            let thumbImg = null;
+            card.querySelectorAll("img").forEach(function(im) {
+                const w = parseInt(im.getAttribute("width") || im.style.width || "0", 10);
+                if (!thumbImg && !a.contains(im) && (!w || w > 30)) {
+                    thumbImg = im;
+                }
+            });
+            const dur = /Duration:\s*([0-9]{1,2}(?::[0-9]{2}){1,2})/.exec(card.textContent || "");
+            if (dur) {
+                const cut = description.search(/(<br\s*\/?>\s*)?Duration:/i);
+                if (cut > 0) {
+                    description = description.slice(0, cut);
+                }
+            }
             seen[href] = true;
-            out.push({ href: href, title: title, description: description });
+            out.push({ href: href, title: title, description: description, thumbImg: thumbImg, duration: dur ? dur[1] : "" });
         });
         return out;
     }
@@ -53678,6 +54060,29 @@ html[gplex-gmail] body {
         const results = ugfFindBasicResults();
         let itemNo = 0;
         results.forEach(function(r) {
+            if (location === "videos" && r.thumbImg) {
+                // (6.5.4) the Videos tab of the lightweight page: video results with their thumbnails
+                let thumb = r.thumbImg.getAttribute("src") || "";
+                const yt = ugfExtractYtId(r.href);
+                if ((!thumb || thumb.indexOf("data:image/gif") > -1 || thumb.length < 100) && yt) {
+                    thumb = "https://i.ytimg.com/vi/" + yt + "/mqdefault.jpg";
+                }
+                linkList.push({videoResult: {
+                    itemNo: itemNo,
+                    type: "video",
+                    href: r.href,
+                    title: ugfNewsBold(r.title),
+                    unmoddedTitle: r.title,
+                    description: r.description || "",
+                    thumbnail: thumb,
+                    duration: r.duration || "",
+                    origImg: r.thumbImg,
+                    origImgId: r.thumbImg.id || ""
+                }});
+                createItem(linkList[linkList.length - 1], "videoResult");
+                itemNo++;
+                return;
+            }
             linkList.push({searchResult: {
                 itemNo: itemNo,
                 type: "result",
