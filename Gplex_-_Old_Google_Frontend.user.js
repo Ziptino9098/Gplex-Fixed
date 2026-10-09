@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      7.2.29
+// @version      7.2.30
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep and Google Play, plus YouTube (Gplex Extended for YouTube: StarTube by lightbeam24, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -1106,6 +1106,17 @@ function ugfDarkLabel() {
         }
     }, 100);
 })();
+// (7.2.30) Late 2013, Early 2014 and Late 2014 are saved as 2014 plus UGF_2014V ("2013N", "2014E" or
+// "2014N"), read where the layout itself is: www.google.com's own storage first, as for UGF_LAYOUT
+function ugf2014V(){
+	try{
+		var v=null;
+		if(window.location.host==="www.google.com"){ try{ v=window.localStorage.getItem("UGF_2014V"); }catch(e){} }
+		if(v===null||v===undefined){ v=typeof GM_getValue==="function"?GM_getValue("UGF_2014V",null):null; }
+		v=String(v||"");
+		return v==="2013N"||v==="2014E"||v==="2014N"?v:"";
+	}catch(e){ return ""; }
+}
 const ugfHasStarTube = true;
 // ---- StarTube ----
 // ---- Gplex Extended for YouTube: StarTube 2.7.0.10 by lightbeam24 (MIT license, https://github.com/lightbeam24/StarTube) ----
@@ -1144,7 +1155,7 @@ function ugfGplexVersion(){ try{ return "Gplex Extended "+GM_info.script.version
 function ugfLayoutFor(g){
 	var m={"1997":"cloudgazer2007_1","1998":"cloudgazer2007_1","1999":"cloudgazer2007_1","2000":"cloudgazer2007_1","2001":"cloudgazer2007_1","2002":"cloudgazer2007_1","2003":"cloudgazer2007_1","2005":"cloudgazer2007_1","2006":"cloudgazer2007_1",
 		"2007":"stargazer2008_1","2009":"stargazer2009_1","2009L":"stargazer2009_3","2010N":"aozora2010_1","2012":"cosmic2012_1","2013":"hh2013_2","2013L":"hh2013_2",
-		"2014":"hh2014","2015L":"hhE2015","2015":"hh2015","2015N":"hh2015","2016E":"hhE2016","2016L":"hhM2016","2016":"hhM2016","2016C":"hhM2016","2016N":"hh2016",
+		"2013N":"hh2013_3","2014E":"hh2013_3","2014":"hh2014","2014N":"hhE2015","2015L":"hhE2015","2015":"hh2015","2015N":"hh2015","2016E":"hhE2016","2016L":"hhM2016","2016":"hhM2016","2016C":"hhM2016","2016N":"hh2016",
 		"2018":"poly2017","2018M":"poly2018","2019":"poly2019","2022":"poly2022","retro":"cloudgazer2007_1"};
 	return m[g]||"hh2015";
 }
@@ -1167,6 +1178,7 @@ function ugfGplexLayout(){
 		var l=String(g("UGF_LAYOUT")||"2015");
 		if(l==="2016"&&String(g("UGF_EARLY2016"))==="true"){ l="2016E"; }
 		if(l==="2016"&&String(g("UGF_LATE2016"))==="true"){ l="2016N"; }
+		if(l==="2014"&&ugf2014V()){ l=ugf2014V(); }
 		return l;
 	}catch(e){ return "2015"; }
 }
@@ -41468,7 +41480,7 @@ const UGF_CHROME_ASSETS = {"logo08b": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAg
             : L === "2009" ? "c08"
             : (L === "2009L" || L === "2010N") ? "c10"
             : /^(2010|2011|2012)$/.test(L) ? "c11"
-            : /^(2013|2013L)$/.test(L) ? "c12"
+            : /^(2013|2013L)$/.test(L) || (L === "2014" && ugf2014V() === "2013N") ? "c12"
             : /^(2014|2015L)$/.test(L) ? "c14"
             : /^(2015|2015N|2016)/.test(L) ? "c15"
             : /^2018/.test(L) ? "c17"
@@ -46554,6 +46566,10 @@ function ugfIsErrorPage() {
         if (SITE === "keep" && era === "ma07") {
             era = "ma11";
         }
+        // (7.2.30) Keep went Material on the web on 17 November 2014: Late 2014 has the Keep of 2015
+        if (SITE === "keep" && era === "ma11" && L === "2014" && ugf2014V() === "2014N") {
+            era = "ma15";
+        }
         const newLogo = ["2015N", "2016", "2016C", "2016L", "2017", "2018", "2018M", "2019"].indexOf(L) > -1;
         const year = (function() {
             const m = L.match(/(\d{4})/);
@@ -50981,6 +50997,48 @@ html:not([search-focus]) #ugf-search-predictions-container {
   border-bottom-color: #af301f;
 }
 [layout="2013"] #ugf-sign-in:active {
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
+  background-image: linear-gradient(to bottom,#dd4b39,#b0281a);
+  border: 1px solid #992a1b;
+  border-top: 1px solid #992a1b;
+}
+/* (7.2.30) Late 2013 and Early 2014: the results as they stayed until the redesign of March 2014 -
+   underlined 16px titles in #12c, green addresses, the darker dates and bold words - and SIGN IN
+   still in Google's red (the blue Sign in is 2014's) */
+[layout="2014"][gplex2013n] .ugf-search-result-title,
+[layout="2014"][gplex2014e] .ugf-search-result-title {
+  color: #12c;
+  font-size: 16px;
+  text-decoration: underline;
+}
+[layout="2014"][gplex2013n] .ugf-search-result-link,
+[layout="2014"][gplex2014e] .ugf-search-result-link {
+  color: #093 !important;
+}
+[layout="2014"][gplex2013n] .ugf-search-result-desc div > span:nth-of-type(2),
+[layout="2014"][gplex2013n] .ugf-search-result-desc em,
+[layout="2014"][gplex2014e] .ugf-search-result-desc div > span:nth-of-type(2),
+[layout="2014"][gplex2014e] .ugf-search-result-desc em {
+  color: #222 !important;
+}
+[layout="2014"][gplex2013n] #ugf-sign-in,
+[layout="2014"][gplex2014e] #ugf-sign-in {
+  background: linear-gradient(to bottom,#dd4b39,#d14836);
+  text-transform: uppercase;
+  border-color: transparent;
+  font-size: 11px;
+  box-shadow: 0 1px rgba(0,0,0,0.1);
+  padding: 0 16px;
+}
+[layout="2014"][gplex2013n] #ugf-sign-in:hover,
+[layout="2014"][gplex2014e] #ugf-sign-in:hover {
+  box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+  background-image: linear-gradient(to bottom,#dd4b39,#c53727);
+  border: 1px solid #b0281a;
+  border-bottom-color: #af301f;
+}
+[layout="2014"][gplex2013n] #ugf-sign-in:active,
+[layout="2014"][gplex2014e] #ugf-sign-in:active {
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
   background-image: linear-gradient(to bottom,#dd4b39,#b0281a);
   border: 1px solid #992a1b;
@@ -57653,6 +57711,107 @@ html:not([layout="2013"]):not([layout="2014"]) .ugf-plus-buttons {
 html:not([layout="2013"]):not([layout="2014"]):not([layout="retro"]) #ugf-account-button img {
   border-radius: 50%;
 }
+/* (7.2.30) the corner of the bar Google brought in on 19 September 2013: +Name, the grid, an
+   outline bell, Share in a small grey speech bubble, and the photo with no border or arrow -
+   square until January 2014, round from then on. From October 2014 Share is an icon. */
+.ugf-plus-you {
+  display: none !important;
+}
+html[layout="2014"][gplex2013n]:not([logged-in="true"]) .ugf-plus-you,
+html[layout="2014"][gplex2014e]:not([logged-in="true"]) .ugf-plus-you {
+  display: flex !important;
+}
+html[layout="2014"] #ugf-fake-notifs-button {
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0 8px;
+  height: 30px;
+  align-items: center;
+}
+html[layout="2014"] #ugf-fake-notifs-button .ugf-plus-button-text {
+  display: none;
+}
+html[layout="2014"] #ugf-fake-notifs-button .ugf-plus-button-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  opacity: .55;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z'/%3E%3C/svg%3E") center / 20px 20px no-repeat;
+}
+html[layout="2014"] #ugf-fake-notifs-button:hover .ugf-plus-button-icon {
+  opacity: .8;
+}
+html[layout="2014"] #ugf-fake-share-button {
+  background: rgba(0,0,0,.04);
+  border: none;
+  width: 60px;
+  height: 30px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+  color: #404040;
+  box-shadow: none;
+  margin-left: 6px;
+}
+html[layout="2014"] #ugf-fake-share-button:hover {
+  background: rgba(0,0,0,.08);
+}
+html[layout="2014"] #ugf-fake-share-button::before {
+  display: none;
+}
+html[layout="2014"] #ugf-fake-share-button::after {
+  content: "";
+  background: none;
+  opacity: 1;
+  position: absolute;
+  right: 0;
+  top: 30px;
+  width: 0;
+  height: 0;
+  border-top: 6px solid rgba(0,0,0,.04);
+  border-left: 6px solid transparent;
+}
+html[layout="2014"] #ugf-fake-share-button:hover::after {
+  border-top-color: rgba(0,0,0,.08);
+}
+html[layout="2014"][gplex2014n] #ugf-fake-share-button {
+  background: none;
+  width: 30px;
+}
+html[layout="2014"][gplex2014n] #ugf-fake-share-button .ugf-plus-button-text {
+  display: none;
+}
+html[layout="2014"][gplex2014n] #ugf-fake-share-button::after {
+  border: none;
+  top: 5px;
+  right: 5px;
+  width: 20px;
+  height: 20px;
+  opacity: .7;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M2 2h16v14h-3v3l-3-3H2zm2 2v10h9l1 1v-1h2V4zm5 1h2v4h4v2h-4v4H9v-4H5V9h4z' fill-rule='evenodd'/%3E%3C/svg%3E") center / 20px 20px no-repeat;
+}
+html[layout="2014"][gplex2014n] #ugf-fake-share-button:hover::after {
+  opacity: 1;
+}
+html[layout="2014"] #ugf-account-button,
+html[layout="2014"] #ugf-account-button img {
+  width: 30px;
+  height: 30px;
+}
+html[layout="2014"] #ugf-account-button {
+  border: none;
+  border-radius: 0;
+  margin-left: 6px;
+}
+html[layout="2014"] #ugf-account-button::after {
+  display: none;
+}
+html[layout="2014"]:not([gplex2013n]) #ugf-account-button img {
+  border-radius: 50%;
+}
 #ugf-notifs-dd {
   position: absolute;
   top: var(--topbar-height-total);
@@ -61070,7 +61229,10 @@ html[shopping-results] #ugf-center {
         "l2016L": "2016 (Legacy/old browser version)",
         "l2015": "2015",
         "l2015L": "2014-2015 (Legacy/old browser version)",
+        "l2014N": "Late 2014 (September-December)",
         "l2014": "2014",
+        "l2014E": "Early 2014 (January-February)",
+        "l2013N": "Late 2013 (September-December)",
         "l2013": "Late 2012-2013",
         "l2013L": "2013 (Legacy/old browser version)",
         "l2012": "Late 2011-Early 2012",
@@ -61181,7 +61343,78 @@ html[shopping-results] #ugf-center {
             return "";
         }
     })();
+    // (7.2.30) Late 2013 (September-December 2013: the flat logo and the app grid, the old results),
+    // Early 2014 (January-February: round photos, classic Maps, the old YouTube) and Late 2014
+    // (September-December: the Share icon, Material Keep, YouTube's new buttons) run as 2014,
+    // with the few things that differ marked on the page (gplex2013n, gplex2014e, gplex2014n)
+    let UGF_2014V = ugf2014V();
+    function ugfMark2014V() {
+        try {
+            ["2013N", "2014E", "2014N"].forEach(function(v) {
+                if (UGF_2014V === v) {
+                    document.documentElement.setAttribute("gplex" + v.toLowerCase(), "");
+                } else {
+                    document.documentElement.removeAttribute("gplex" + v.toLowerCase());
+                }
+            });
+        } catch (e) {}
+    }
+    // which of 2014's periods this is: "2013N", "2014E", "2014N", or "" (2014 itself, or any other layout)
+    function ugf14() {
+        return String(layout || "") === "2014" ? UGF_2014V : "";
+    }
+    // (7.2.30) the right of the bar Google brought in on 19 September 2013 (to June 2015, when +Name went):
+    // after +Name and the grid, an outline bell, Share in a small grey speech bubble (an icon from October
+    // 2014) and the photo with no border or arrow - square until January 2014, round from then on. Gmail,
+    // Calendar, Maps and the other Google pages Gplex draws all put it together from these.
+    function ugfB13Css() {
+        if (document.getElementById("ugf-b13-css")) {
+            return;
+        }
+        const st = document.createElement("style");
+        st.id = "ugf-b13-css";
+        st.textContent = [
+            ".ugf-b13-bell { display: inline-flex !important; align-items: center; justify-content: center; width: 30px; height: 30px; color: #000 !important; opacity: .55; cursor: pointer; }",
+            ".ugf-b13-bell:hover { opacity: .8; }",
+            ".ugf-b13-bell svg, .ugf-b13-share svg { width: 20px; height: 20px; fill: currentColor; }",
+            ".ugf-b13-share { position: relative; display: inline-flex !important; align-items: center; justify-content: center; box-sizing: border-box; min-width: 60px; height: 30px; " +
+                "padding: 0 10px !important; margin: 0 !important; background: rgba(0,0,0,.04) !important; border: none !important; border-radius: 0 !important; color: #404040 !important; " +
+                "font: 13px arial, sans-serif !important; cursor: pointer; white-space: nowrap; }",
+            ".ugf-b13-share:hover { background: rgba(0,0,0,.08) !important; }",
+            '.ugf-b13-share::after { content: ""; position: absolute; right: 0; top: 30px; border-top: 6px solid rgba(0,0,0,.04); border-left: 6px solid transparent; }',
+            ".ugf-b13-share:hover::after { border-top-color: rgba(0,0,0,.08); }",
+            ".ugf-b13-share.icon { min-width: 30px; width: 30px; padding: 0 !important; background: none !important; color: #000 !important; opacity: .7; }",
+            ".ugf-b13-share.icon:hover { background: none !important; opacity: 1; }",
+            ".ugf-b13-share.icon::after { display: none; }",
+            ".ugf-b13-photo { display: inline-flex !important; align-items: center; border: none !important; padding: 0 !important; background: none !important; box-shadow: none !important; }",
+            ".ugf-b13-photo .car { display: none !important; }",
+            ".ugf-b13-photo .pfp { width: 30px !important; height: 30px !important; line-height: 30px !important; border: none !important; border-radius: 50% !important; }",
+            ".ugf-b13-photo.sq .pfp { border-radius: 0 !important; }"
+        ].join("\n");
+        (document.head || document.documentElement).appendChild(st);
+    }
+    function ugfB13Bits() {
+        ugfB13Css();
+        return '<span class="ugf-b13-bell" title="Notifications"><svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/></svg></span>' +
+            (ugf14() === "2014N" ? '<span class="ugf-b13-share icon" title="Google+ Share"><svg viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2 2h16v14h-3v3l-3-3H2zm2 2v10h9l1 1v-1h2V4zm5 1h2v4h4v2h-4v4H9v-4H5V9h4z"/></svg></span>'
+                : '<span class="ugf-b13-share">Share</span>');
+    }
+    function ugfB13PhotoClass() {
+        return "ugf-b13-photo" + (ugf14() === "2013N" ? " sq" : "");
+    }
+    // SIGN IN stayed red until the blue Sign in of 2014
+    function ugfB13RedSignIn() {
+        return ugf14() === "2013N" || ugf14() === "2014E";
+    }
     function ugfRuntimeLayout(value) {
+        if (value === "2013N" || value === "2014E" || value === "2014N") {
+            UGF_2014V = value;
+            value = "2014";
+        }
+        if (value !== "2014") {
+            UGF_2014V = "";
+        }
+        ugfMark2014V();
         if (value === "1998N" || value === "1998B") {
             UGF_1998V = value.slice(4);
             value = "1998";
@@ -61225,6 +61458,20 @@ html[shopping-results] #ugf-center {
                 GM_setValue("UGF_1998V", UGF_1998V);
             }
         } catch (e) {}
+        // (7.2.30) so are Late 2013, Early 2014 and Late 2014 as 2014
+        UGF_2014V = value === "2013N" || value === "2014E" || value === "2014N" ? value : "";
+        if (UGF_2014V) {
+            value = "2014";
+        }
+        try {
+            window.localStorage.setItem("UGF_2014V", UGF_2014V);
+        } catch (e) {}
+        try {
+            if (typeof GM_setValue === "function") {
+                GM_setValue("UGF_2014V", UGF_2014V);
+            }
+        } catch (e) {}
+        ugfMark2014V();
         // Early 2016 is kept as 2016 plus its own flag (any other layout clears the flag)
         UGF_EARLY2016 = value === "2016E";
         UGF_LATE2016 = value === "2016N";
@@ -62036,8 +62283,17 @@ html[shopping-results] #ugf-center {
                                                 <a id="UGF_SET_LAYOUT_2015" class="ugf-dropdown-item" value="2015">
                                                     <span>${UImessages.l2015}</span>
                                                 </a>
+                                                <a id="UGF_SET_LAYOUT_2014N" class="ugf-dropdown-item" value="2014N">
+                                                    <span>${UImessages.l2014N}</span>
+                                                </a>
                                                 <a id="UGF_SET_LAYOUT_2014" class="ugf-dropdown-item" value="2014">
                                                     <span>${UImessages.l2014}</span>
+                                                </a>
+                                                <a id="UGF_SET_LAYOUT_2014E" class="ugf-dropdown-item" value="2014E">
+                                                    <span>${UImessages.l2014E}</span>
+                                                </a>
+                                                <a id="UGF_SET_LAYOUT_2013N" class="ugf-dropdown-item" value="2013N">
+                                                    <span>${UImessages.l2013N}</span>
                                                 </a>
                                                 <a id="UGF_SET_LAYOUT_2013L" class="ugf-dropdown-item" value="2013L">
                                                     <span>${UImessages.l2013L}</span>
@@ -63701,6 +63957,9 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                                         </a>
                                     </div>
                                     <div id="ugf-homepage-links" class="flex-bar ugf-hide-on-legacy">
+                                        <a class="ugf-homepage-link ugf-plus-you" href="${ugfPlusLinkHtml()}">
+                                            <span>+You</span>
+                                        </a>
                                         <a class="ugf-homepage-link" href="https://mail.google.com">
                                             <span>Gmail</span>
                                         </a>
@@ -66017,6 +66276,8 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                             document.querySelector("html").setAttribute("legacy-gbar","");
                             document.querySelector("html").setAttribute("legacy-images","");
                             document.querySelector("html").setAttribute("legacy-footer","");
+                        } else if (value === "2013N" || value === "2014E" || value === "2014N") {
+                            document.querySelector("html").setAttribute("layout","2014");
                         } else if (value === "2015N" || value === "2016E") {
                             document.querySelector("html").setAttribute("layout","2016");
                         } else if (value === "2016N") {
@@ -66376,7 +66637,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     layoutBtnSpan.textContent = UImessages.l1997;
                     break;
                 case '2014':
-                    layoutBtnSpan.textContent = UImessages.l2014;
+                    layoutBtnSpan.textContent = UGF_2014V === "2013N" ? UImessages.l2013N : UGF_2014V === "2014E" ? UImessages.l2014E : UGF_2014V === "2014N" ? UImessages.l2014N : UImessages.l2014;
                     break;
                 case '2015':
                     layoutBtnSpan.textContent = UImessages.l2015;
@@ -67109,6 +67370,18 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 checkProperty("legacy-neuro",false);
             }, 1000);
             //document.querySelector("html").setAttribute("fake-spa","");
+        }
+        // (7.2.30) "Google in late 2013", "Google in early 2014", "Google in late 2014"
+        const ugfSearch14 = { "google in late 2013": "2013N", "google in early 2014": "2014E", "google in late 2014": "2014N" }[searchValue.toLowerCase()];
+        if (ugfSearch14) {
+            document.querySelector("html").setAttribute("layout","2014");
+            ugfSaveLayout(ugfSearch14);
+            layout = ugfRuntimeLayout(ugfSearch14);
+            setTimeout(function() {
+                checkProperty("legacy-gbar",false);
+                checkProperty("legacy-footer",false);
+                checkProperty("legacy-neuro",false);
+            }, 1000);
         }
         if (
             searchValue.toLowerCase()=="google in 2013"
@@ -74825,7 +75098,7 @@ html[gplex-gmail] body {
                 return;
             }
             const value = k.slice(1);
-            opts += '<option value="' + esc(value) + '"' + (value === (UGF_LATE2015 ? "2015N" : UGF_LATE2016 && (String(layout) === "2016" || String(layout) === "2018") ? "2016N" : (UGF_EARLY2016 && String(layout) === "2016") ? "2016E" : String(layout) === "1998" && UGF_1998V ? "1998" + UGF_1998V : String(layout)) ? " selected" : "") + ">" +
+            opts += '<option value="' + esc(value) + '"' + (value === (UGF_LATE2015 ? "2015N" : UGF_LATE2016 && (String(layout) === "2016" || String(layout) === "2018") ? "2016N" : (UGF_EARLY2016 && String(layout) === "2016") ? "2016E" : String(layout) === "1998" && UGF_1998V ? "1998" + UGF_1998V : String(layout) === "2014" && UGF_2014V ? UGF_2014V : String(layout)) ? " selected" : "") + ">" +
                 esc(UImessages[k]) + "</option>";
         });
         const scrim = document.createElement("div");
@@ -75962,11 +76235,12 @@ html[gplex-gmail] body {
             // 2012-2014: +Name, the notification count, Share, then the photo
             accountHTML = '<a class="plusname" href="' + esc(ugfPlusProfileLink()) + '">' +
                 "+" + esc(ugfGmailPlusName()) + "</a>" +
-                // 2014: the app grid joined the block, between the name and the count
-                (String(layout || "") === "2014" ? '<span class="ic grid" id="ugf-gmail-apps" title="Google apps">' + ugfGmailIcon("apps", 20) + "</span>" : "") +
-                '<span class="nbox">0</span>' +
-                '<span class="sharebtn"><b>+</b> Share</span>' +
-                '<span class="pfpwrap">' + ugfGmailAvatar() + '<i class="car">&#9662;</i></span>';
+                // 2014: the app grid joined the block, then the new bar's bell, Share and photo
+                (String(layout || "") === "2014" ? '<span class="ic grid" id="ugf-gmail-apps" title="Google apps">' + ugfGmailIcon("apps", 20) + "</span>" + ugfB13Bits() +
+                    '<span class="pfpwrap ' + ugfB13PhotoClass() + '">' + ugfGmailAvatar() + "</span>"
+                    : '<span class="nbox">0</span>' +
+                    '<span class="sharebtn"><b>+</b> Share</span>' +
+                    '<span class="pfpwrap">' + ugfGmailAvatar() + '<i class="car">&#9662;</i></span>');
         } else if (gbarHTML) {
             accountHTML = "";
         } else {
@@ -76924,7 +77198,8 @@ html[gplex-gmail] body {
         if (place === "editor") {
             ugfDocsEditor(era);
         } else {
-            ugfDocsHome(era);
+            // (7.2.30) the home screens came in July 2014: Late 2013 and Early 2014 have the Drive of the time
+            ugfDocsHome(era === "d2014" && (ugf14() === "2013N" || ugf14() === "2014E") ? "d2011" : era);
         }
     }
     // ---- the editor: Google's own, in the period's clothes --------------------------
@@ -78422,7 +78697,7 @@ html[gplex-gmail] body {
         const sheets = ugfDocsIsSheets();
         const slides = ugfDocsIsSlides();
         const forms = ugfDocsApp() === "forms";
-        const drive = era === "d2011" && (l === "2013" || l === "2013L" || (forms && (["2014", "2015", "2015L"].indexOf(l) > -1 || UGF_LATE2015)));
+        const drive = era === "d2011" && (l === "2013" || l === "2013L" || l === "2014" || (forms && (["2014", "2015", "2015L"].indexOf(l) > -1 || UGF_LATE2015)));
         const material = era === "d2014" || era === "d2017" || era === "d2019";
         const base = ugfDocsBase();
         const q = new URLSearchParams(window.location.search).get("q") || "";
@@ -78631,8 +78906,9 @@ html[gplex-gmail] body {
                     '<div class="main"><div class="mhead">' + (q ? "Search results" : "All items") + '</div><div class="acts blue"><span>Documents &#9662;</span><span>Images &amp; videos &#9662;</span><span>More options &#9662;</span></div>' +
                     '<div class="acts"><span class="gbtn">Actions &#9662;</span></div>' + table() + "</div></div>";
             } else if (era === "d2011") {
-                const bar = ugfNtGbar("dark", ugfDocsHere(), "2011");
-                h = bar + '<div class="khead"><a class="glogo" href="' + esc(base + "/") + '"><img src="' + A.google2011 + '" alt="Google"></a>' +
+                // (7.2.30) Late 2013 and Early 2014: no black bar, and the flat logo of September 2013
+                const bar = l === "2014" ? "" : ugfNtGbar("dark", ugfDocsHere(), "2011");
+                h = bar + '<div class="khead"><a class="glogo" href="' + esc(base + "/") + '"><img src="' + (l === "2014" ? ugfGmailAssets().google2013 : A.google2011) + '" alt="Google"></a>' +
                     searchBox("ksrch", "") + '<button type="submit" class="kbtn blue">' + ugfNtIcon("search", 18) + "</button></form>" + ugfNtHeadCorner() + "</div>" +
                     '<div class="ktool"><div class="app">' + (drive ? "Drive" : "Docs") + '</div><span class="kbtn">Actions &#9662;</span><span class="sp"></span>' +
                     (drive ? "" : '<span class="kbtn">Narrow by &#9662;</span>') + '<span class="kbtn">Sort &#9662;</span><span class="kbtn">&laquo;</span></div>' +
@@ -78647,8 +78923,8 @@ html[gplex-gmail] body {
                     searchBox("gsrch", "") + '<button type="submit" class="gbtn">' + ugfNtIcon("search", 20) + "</button></form>" +
                     '<span class="corner">' + (plusRow && signedIn ? '<a class="plusname" href="' + esc(ugfPlusProfileLink()) + '">+' + esc(ugfGmailPlusName()) + "</a>" : "") +
                     '<a href="#" class="ib apps" title="Google apps">' + ugfNtIcon("apps", 24) + "</a>" +
-                    (plusRow && signedIn ? '<span class="ib bell">' + ugfNtIcon("notifications", 24) + '</span><span class="sharebtn">Share</span>' : "") +
-                    (signedIn ? '<a href="#" class="me">' + ugfGmailAvatar() + "</a>" : '<a class="ksignin" href="https://accounts.google.com/ServiceLogin">Sign in</a>') + "</span></div>" +
+                    (plusRow && signedIn ? ugfB13Bits() : "") +
+                    (signedIn ? '<a href="#" class="me' + (plusRow ? " " + ugfB13PhotoClass() : "") + '">' + ugfGmailAvatar() + "</a>" : '<a class="ksignin" href="https://accounts.google.com/ServiceLogin">Sign in</a>') + "</span></div>" +
                     '<div class="appbar"><span class="ib ham">' + ugfNtIcon("menu", 24) + '</span><span class="name">' + W.app + '</span><span class="sp"></span>' +
                     viewIcons() + "</div>" + drawer() +
                     '<div class="content"><div class="rhead"><span class="rt">' + (q ? "Search results" : "Recent " + W.nouns) + "</span></div>" +
@@ -82747,6 +83023,10 @@ html[gplex-gmail] body {
         if (l === "2017" || l === "2018" || l === "2018M") {
             return "dv17";
         }
+        // (7.2.30) Late 2013 and Early 2014 still had the first Drive (red CREATE), under the new bar
+        if (l === "2014" && (ugf14() === "2013N" || ugf14() === "2014E")) {
+            return "dv12";
+        }
         if (["2014", "2015", "2015L", "2016", "2016C", "2016L"].indexOf(l) > -1) {
             return "dv14";
         }
@@ -84010,7 +84290,10 @@ html[gplex-gmail] body {
                     '<div class="main"><div class="mhead"></div><div class="acts tool"></div><div class="list"></div></div></div>';
             } else if (kennedy) {
                 const drive = era === "dv12";
-                h = ugfNtGbar("dark", drive ? "Drive" : "Documents", "2011") + '<div class="khead"><a class="glogo" href="' + esc(ugfDvBase()) + '/my-drive"><img src="' + A.google2011 + '" alt="Google"></a>' +
+                // (7.2.30) Late 2013 and Early 2014: no black bar, and the flat logo of September 2013
+                const bar14 = l === "2014";
+                h = (bar14 ? "" : ugfNtGbar("dark", drive ? "Drive" : "Documents", "2011")) + '<div class="khead"><a class="glogo" href="' + esc(ugfDvBase()) + '/my-drive"><img src="' +
+                    (bar14 ? ugfGmailAssets().google2013 : A.google2011) + '" alt="Google"></a>' +
                     searchForm("ksrch", drive ? "" : "", '<button type="submit" class="kbtn blue" title="Search">' + ic("search", 18) + "</button>") + ugfNtHeadCorner() + "</div>" +
                     '<div class="ktool"><div class="app">' + (drive ? "Drive" : "Docs") + '</div><div class="crumb"></div><span class="tool"></span><span class="sp"></span>' +
                     '<span class="kbtn dd" data-m="sort">Sort &#9662;</span>' + (drive ? '<span class="kbtn ico" data-a="grid" title="' + (state.grid ? "List" : "Grid") + '">' + ic(state.grid ? "view_list" : "view_module", 18) + "</span>" +
@@ -87980,11 +88263,13 @@ html[gplex-gmail] body {
         const who = ugfCalWho();
         if (l === "2013" || l === "2014") {
             if (!(who.name || who.email)) {
-                return '<div class="kcorner"><a class="' + (l === "2013" ? "ksignin red" : "ksignin") + '" href="https://accounts.google.com/ServiceLogin">' + (l === "2013" ? "SIGN IN" : "Sign in") + "</a></div>";
+                const red = l === "2013" || ugfB13RedSignIn();
+                return '<div class="kcorner"><a class="' + (red ? "ksignin red" : "ksignin") + '" href="https://accounts.google.com/ServiceLogin">' + (red ? "SIGN IN" : "Sign in") + "</a></div>";
             }
             return '<div class="kcorner gplus"><a class="plusname" href="' + ugfNtEsc(ugfPlusProfileLink()) + '">+' + ugfNtEsc(ugfGmailPlusName()) + "</a>" +
-                (l === "2014" ? '<a href="#" class="kic apps" title="Google apps">' + ugfNtIcon("apps", 24) + "</a>" : "") +
-                '<span class="nbox">0</span><span class="sharebtn"><b>+</b> Share</span><a href="#" class="pfpwrap me">' + ugfGmailAvatar() + '<i class="car">&#9662;</i></a></div>';
+                (l === "2014" ? '<a href="#" class="kic apps" title="Google apps">' + ugfNtIcon("apps", 24) + "</a>" + ugfB13Bits() +
+                    '<a href="#" class="pfpwrap me ' + ugfB13PhotoClass() + '">' + ugfGmailAvatar() + "</a></div>"
+                    : '<span class="nbox">0</span><span class="sharebtn"><b>+</b> Share</span><a href="#" class="pfpwrap me">' + ugfGmailAvatar() + '<i class="car">&#9662;</i></a></div>');
         }
         if (ugfNtHasGbar() && !ugfNtPlusBar()) {
             return "";
@@ -91904,6 +92189,11 @@ html[gplex-gmail] body {
             // prism (2012-2016) and "Google Play" in Product Sans (2017-2021); the favicon of 2017
             ugfPlayArt.c.logoP13 = "https://www.gstatic.com/android/market_images/web/play_logo_x2.png";
             ugfPlayArt.c.logoP17 = "https://www.gstatic.com/android/market_images/web/play_prism_hlock_2x.png";
+            // (7.2.30) Late 2012-2013: the triangle and "play" with the bevelled Google logo of 2010; Late 2015
+            // and 2016: the triangle with the "Google Play" of September 2015 (the 2016 icon came later).
+            // Both are put together from Google's own images (play_logo_x2.png, logo4w.png, play_prism_hlock_2x.png).
+            ugfPlayArt.c.logoP12 = "data:image/png;base64,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";
+            ugfPlayArt.c.logoP15 = "data:image/png;base64,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";
             ugfPlayArt.c.favP17 = "https://www.gstatic.com/android/market_images/web/favicon_v2.ico";
         }
         return ugfPlayArt.c;
@@ -92616,9 +92906,12 @@ html[gplex-gmail] body {
                 '<div class="gp-navsep"></div><div class="gp-navsub"><a' + (route.games ? ' class="on"' : "") + ' href="' + esc(withKeep("/store/games")) + '">Games</a>' +
                 (era === "p13" ? "" : '<a href="' + esc(catUrl("FAMILY")) + '">' + (era === "p19" ? "Kids" : "Family") + "</a>") +
                 '<a href="' + esc(appsHome) + '">Editors\' Choice</a></div>' + acct + "</div>";
-            const logo = era === "p13" || era === "p15" ? A.logoP13 : A.logoP17;
+            // the 2010 Google logo until the flat one of September 2013, its flat "Google play" to
+            // August 2015, the "Google Play" of September 2015, and the 2016 triangle from 2017
+            const logo = era === "p15" ? A.logoP15 : era === "p13" && (String(layout) === "2013" || String(layout) === "2013L") ? A.logoP12
+                : era === "p13" ? A.logoP13 : A.logoP17;
             return (ugfNtHasGbar() ? ugfNtGbar("dark", "Play") : "") +
-                '<div class="gp-head"><a class="logo" href="' + esc(appsHome) + '"><img src="' + esc(logo) + '" width="183" height="39" alt="Google Play"></a>' +
+                '<div class="gp-head"><a class="logo" href="' + esc(appsHome) + '"><img src="' + esc(logo) + '" width="' + (logo === A.logoP12 ? 182 : 183) + '" height="39" alt="Google Play"></a>' +
                 '<form class="gp-search ugf-play-search"><input type="text" name="q" value="' + esc(q0) + '" placeholder="Search" autocomplete="off">' +
                 '<button type="submit" title="Search">' + icon("search", 22) + "</button></form>" + gpCorner() + "</div>" +
                 '<div class="gp-body">' + nav + '<div class="gp-main">' + sub(route.page === "home" ? 0 : -1) + '<div class="gp-content">' + body + "</div></div></div>";
@@ -93435,6 +93728,10 @@ html[gplex-gmail] body {
         if (era === "c2022") {
             return A.fav2020[d - 1];
         }
+        // (7.2.30) until 4 November 2014 it was still the "31" of 2011, so Late 2014 is the first with it
+        if (era === "c2013" && String(layout || "") === "2014" && ugf14() !== "2014N") {
+            return A.fav2011;
+        }
         if (era === "c2013" || era === "c2017" || era === "c2019") {
             return A.fav2014[d - 1];
         }
@@ -93534,9 +93831,10 @@ html[gplex-gmail] body {
         if (l === "2013" || l === "2014") {
             return '<div id="ugf-cal-account" class="gplus"><a class="plusname" href="' + esc(ugfPlusProfileLink()) + '">+' +
                 esc(ugfGmailPlusName()) + "</a>" +
-                (l === "2014" ? '<a class="ic appsg" href="#" title="Google apps">' + ugfCalIcon("apps", 20) + "</a>" : "") +
-                '<span class="nbox">0</span><span class="sharebtn"><b>+</b> Share</span>' +
-                '<span class="pfpwrap">' + ugfGmailAvatar() + '<i class="car">&#9662;</i></span></div>';
+                (l === "2014" ? '<a class="ic appsg" href="#" title="Google apps">' + ugfCalIcon("apps", 20) + "</a>" + ugfB13Bits() +
+                    '<span class="pfpwrap ' + ugfB13PhotoClass() + '">' + ugfGmailAvatar() + "</span></div>"
+                    : '<span class="nbox">0</span><span class="sharebtn"><b>+</b> Share</span>' +
+                    '<span class="pfpwrap">' + ugfGmailAvatar() + '<i class="car">&#9662;</i></span></div>');
         }
         return '<div id="ugf-cal-account" class="mat"><a class="ic appsg" href="#" title="Apps">' + ugfCalIcon("apps", 20) + "</a>" +
             '<span class="ic bell">' + ugfCalIcon("notifications", 20) + "</span>" +
@@ -96784,8 +97082,10 @@ html[gplex-gmail] body {
         if (["2015", "2016", "2016C", "2018", "2018M"].indexOf(l) > -1) {
             return "m2015";
         }
+        // (7.2.30) the new Maps replaced classic Maps for everyone on 21 February 2014: Late 2013 and
+        // Early 2014 have classic Maps, with the flat logo and the new bar's corner instead of the black bar
         if (l === "2014") {
-            return "m2014";
+            return ugf14() === "2013N" || ugf14() === "2014E" ? "m2011" : "m2014";
         }
         if (["2012", "2013", "2013L", "2015L", "2016L"].indexOf(l) > -1) {
             return "m2011";
@@ -96804,6 +97104,9 @@ html[gplex-gmail] body {
     function ugfMapsYear() {
         if (UGF_LATE2015) {
             return "2015";
+        }
+        if (ugf14() === "2013N") {
+            return "2013";
         }
         const m = String(layout || "").match(/(\d{4})/);
         const y = m ? parseInt(m[1], 10) : 2015;
@@ -97805,7 +98108,8 @@ html[gplex-gmail] body {
         if (l === "2012") {
             return '<img class="l2012" src="' + A.logo2012 + '" alt="Google" width="114" height="41">';
         }
-        if (l === "2015L") {
+        // (7.2.30) and the flat logo of September 2013 on classic Maps in Late 2013 and Early 2014
+        if (l === "2015L" || l === "2014") {
             return '<img src="' + A.logo2015L + '" alt="Google" width="95" height="37">';
         }
         if (l === "2016L") {
@@ -98822,9 +99126,10 @@ html[gplex-gmail] body {
             '<a class="plusname" href="' + esc(ugfPlusProfileLink()) + '">' +
             "+" + esc(ugfGmailPlusName()) + "</a>" +
             (withApps ? '<a class="ic grid" href="https://www.google.com/intl/en/about/products/" title="Apps">' + ugfGmailIcon("apps", 20) + "</a>" : "") +
-            '<span class="nbox">0</span>' +
-            '<span class="sharebtn"><b>+</b> Share</span>' +
-            '<span class="pfpwrap">' + ugfGmailAvatar() + '<i class="car">&#9662;</i></span></div>';
+            (String(layout || "") === "2014" ? ugfB13Bits() + '<span class="pfpwrap ' + ugfB13PhotoClass() + '">' + ugfGmailAvatar() + "</span></div>"
+                : '<span class="nbox">0</span>' +
+                '<span class="sharebtn"><b>+</b> Share</span>' +
+                '<span class="pfpwrap">' + ugfGmailAvatar() + '<i class="car">&#9662;</i></span></div>');
     }
     function ugfMapsMain() {
         const era = ugfMapsEra();
@@ -98863,11 +99168,13 @@ html[gplex-gmail] body {
             const btn = era === "m2011"
                 ? '<button type="submit" class="blue" title="Search"><i></i></button>'
                 : '<input type="submit" value="Search Maps"' + (era === "m2010" ? ' class="grad"' : "") + ">";
-            html = ugfMapsGbar(era) +
-                '<div id="ugf-maps-head"><a href="https://www.google.com/maps" class="logo">' + logo + "</a>" +
+            // (Late 2013 and Early 2014: no black bar, the account and the grid in the header)
+            const bar14 = era === "m2011" && String(layout || "") === "2014";
+            html = (bar14 ? "" : ugfMapsGbar(era)) +
+                '<div id="ugf-maps-head"' + (bar14 ? ' class="bar14"' : "") + '><a href="https://www.google.com/maps" class="logo">' + logo + "</a>" +
                 '<form id="ugf-maps-form"><input id="ugf-maps-q" type="text" maxlength="2048" value="' + esc(searchVal) + '">' + btn +
                 (era === "m2011" ? "" : '<a href="#" class="opts">Show search options</a>') + "</form>" +
-                (era === "m2011" && String(layout || "") === "2013" ? ugfMapsAccount(false) : "") + "</div>" +
+                (era === "m2011" && String(layout || "") === "2013" ? ugfMapsAccount(false) : bar14 ? ugfMapsAccount(true) : "") + "</div>" +
                 '<div id="ugf-maps-body"><div id="ugf-maps-panel"></div><div id="ugf-maps-mapwrap">' +
                 (era === "m2011" ? "" : '<div id="ugf-maps-links"><a href="#" data-link="print">Print</a><a href="#" data-link="send">Send</a><a href="#" data-link="link">Link</a></div>') +
                 '<div id="ugf-maps-map"></div></div></div>';
