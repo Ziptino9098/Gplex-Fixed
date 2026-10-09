@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Gplex Legacy - Gplex Extended for old browsers (Firefox 52, Windows XP era)
 // @namespace    http://tampermonkey.net/
-// @version      7.2.28
-// @description  Gplex Extended 7.2.28 built for old browsers such as Firefox 52 ESR on Windows XP and Safari 9 on iOS 9: 1997-2024 Old Google Frontend, plus YouTube (with the V3 extension)
+// @version      7.2.29
+// @description  Gplex Extended 7.2.29 built for old browsers such as Firefox 52 ESR on Windows XP and Safari 9 on iOS 9: 1997-2024 Old Google Frontend, plus YouTube (with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
 // @match        *://www.google.com/
@@ -541,7 +541,8 @@ if (typeof globalThis === "undefined") {
     }
     try {
         var UP = W.URL && W.URL.prototype;
-        if (UP && !("searchParams" in UP) && typeof W.URL === "function") {
+        // (Safari 9's DOM constructors are "object" to typeof, not "function": URL among them)
+        if (UP && !("searchParams" in UP)) {
             Object.defineProperty(UP, "searchParams", { configurable: true, get: function() {
                 var p = new W.URLSearchParams(this.search);
                 p._url = this;
