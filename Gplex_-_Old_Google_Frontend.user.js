@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      7.2.30
-// @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep and Google Play, plus YouTube (Gplex Extended for YouTube: StarTube by lightbeam24, with the V3 extension)
+// @version      7.2.31
+// @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube: StarTube by lightbeam24, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
 // @match        *://www.google.com/
@@ -59,7 +59,6 @@
 // @exclude      *://accounts.google.com/_/*
 // @exclude      *://play.google.com/log*
 // @exclude      *://www.google.com/recaptcha
-// @exclude      *://www.google.com/finance
 // @exclude      *://*/*&gplex=false
 // @exclude      *://*/*?gplex=false
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=google.com
@@ -1117,6 +1116,18 @@ function ugf2014V(){
 		return v==="2013N"||v==="2014E"||v==="2014N"?v:"";
 	}catch(e){ return ""; }
 }
+// (7.2.31) Google's tab icons, out here so every part of Gplex can use them
+// Inlined favicon SVGs (no Wikimedia hotlinking / HTTP 429). Credit: StonedKhajiit
+// Real 1999-2008 google.com favicon (16x16 .ico, from the Wayback Machine)
+const UGF_FAVICON_1999 = "data:image/x-icon;base64,AAABAAEAEBAAAAAAAABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAwMDAAICAgAAAAP8AAP8AAAD//wD/AAAA/wD/AP//AAD///8A//3/AP39/wD6/f8A+P3/AP/8/wD9/P8A+vz/AP/7/wD/+v8A/vr/APz6/wD4+v8A+/n/APP5/wD/+P8A+vj/AO/4/wDm+P8A2fj/AP/3/wD/9v8A9vb/AP/1/wD69f8A9PT/AO30/wD/8/8A//L/APnx/wD28P8A///+APj//gD2//4A9P/+AOP//gD//f4A6f/9AP///AD2//wA8//8APf9/AD///sA/v/7AOD/+wD/+vsA9/X7APr/+gDv/voA///5AP/9+QD/+/kA+e35AP//+ADm//gA4f/4AP/9+AD0+/gA///3APv/9wDz//cA8f/3AO3/9wD/8fcA//32AP369gDr+vYA8f/1AOv/9QD/+/UA///0APP/9ADq//QA///zAP/18wD///IA/fzyAP//8QD///AA9//wAPjw8AD//+8A8//vAP//7gD9/+4A9v/uAP/u7gD//+0A9v/tAP7/6wD/+eoA///pAP//6AD2/+gA//nnAP/45wD38eYA/fblAP/25AD29uQA7N/hAPzm4AD/690AEhjdAAAa3AAaJdsA//LXAC8g1gANH9YA+dnTAP/n0gDh5dIADyjSABkk0gAdH9EABxDRAP/l0AAAJs4AGRTOAPPczQAAKs0AIi7MAA4UywD56soA8tPKANTSygD/18kA6NLHAAAjxwDj28QA/s7CAP/1wQDw3r8A/9e8APrSrwDCtqoAzamjANmPiQDQj4YA35mBAOmefgDHj3wA1qR6AO+sbwDpmm8A2IVlAKmEYgCvaFoAvHNXAEq2VgA5s1UAPbhQAFWtTwBStU0ARbNNAEGxTQA7tEwAObZIAEq5RwDKdEYAULhDANtuQgBEtTwA1ls3ALhgMQCxNzEA2FsvAEC3LQB0MCkAiyYoANZTJwDLWyYAtjMlALE6JACZNSMAuW4iANlgIgDoWCEAylwgAMUuIAD3Vh8A52gdALRCHQCxWhwAsEkcALU4HACMOBwA0V4bAMYyGgCPJRoA218ZAJM7FwC/PxYA0msVAM9jFQD2XBUAqioVAIAfFQDhYRQAujMTAMUxEwCgLBMAnxIPAMsqDgCkFgsA6GMHALE2BAC9JQAAliIAAFYTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8AsbGxsbGxsbGxsbGxsbGxd7IrMg8PDw8PDw8PUBQeJXjQYE9PcKPM2NfP2sWhcg+BzTE7dLjbmG03YWaV4JYye8MPbsLZlEouKRRCg9SXMoW/U53enGRAFzCRtNO7mTiAyliw30gRTg9VbJCKfYs0j9VmuscfLTFbIy8SOhA0Inq5Y77GNBMYIxQUJzM2Vxx2wEmfyCYWMRldXCg5MU0aicRUms58SUVeRkwjPBRSNIfBMkSgvWkyPxVHFIaMSx1/0S9nkq7WdWo1a43Jt2UqgtJERGJ5m6K8y92znpNWIYS1UQ89Mmg5cXNaX0EkGyyI3KSsp6mvpaqosaatq7axsQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+// Real 2009 google.com favicon (16x16 .ico, lowercase blue g)
+const UGF_FAVICON_2009_G = "data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC1tbUFHBwcFQAAABoAAAAaAAAAFgAAAA8AAAAWBAAAGwIAABoAAAAXAAAAGQAAABkAAAAaAAAAGg0NDRiOjo4JJiYmDwAAABQAAAATAAAADQwCAR1YFRB4nCsqua0yLMSbLCyxYxoYfBgFAiwDAQAUAAAAEgAAABMAAAAUBwcHEhQUFA0AAAAOAAAACxMEARayLy/F7T9C/640K7FuJR1pZiMgYpczMZqeLSzBIAcFPQEBABAAAAANAAAADgAAAA4XFxcJAAAACgAAAABbKSNY/1ZO/3MdHY8AAAAAAAAAAAAAAAAAAAAAjzc2lHwdG7oDAAAVAAAACAAAAAoAAAAKFxcXBgAAAAcAAAAAVj43Tfx6df87BQFmAQIAAgAAAAQAAAAEAAAAAI0vJomvLCftCwEAHQAAAAQAAAAHAAAABxEREQQAAAAEAAAAAwYEAAi4bVm0uT8/4UwOC1wnBgMlFAQAEF4YGmnwQ0X8niQfxQEAAAgAAAADAAAABAAAAAQzMzMCHh4eAh8fHwMAAAAAKSglBJVbWGfQX16qxktJsLItKNTqP0X/5DxE8VklJTsAAAAAHx8fAh8fHwIfHx8C7+/vBO3t7QTt7e0E7e3tBOrr6wIAAAAAAAAAALWHgkH+VFD/xjI226J1dDYAAAAA7e7uBO3t7QTt7e0E7e3tBP///wn///8K////Cv///wv///8Eybi3HHw1LHeySkjC/nd2/34iIZ1rbGkJ8fHxCv///wr///8K////Cv///wr///8R////E////xP///8P9OTiHtFGSNHPKS//15KSeP7k4Evgb3DOXh4cjouJiCD9/f4R////E////xP///8T////Gf///xv///8b////Dvu3rnbrNCn/o1NTk9/r6wn///8C/9fXaqskJf9kTUxX7e/vGP///xr///8b////G////yH///8k////JP///xb/0MyT00JA/5Byblv7//8d////Fv7Ix3XUNjH/hFhVee/z8x3///8j////JP///yT///8o////Lf///yz///8j//DmZNphWv+Oa2ll4urpJPHy8iLwcWDF0zEn+7edm1f///8m////LP///yz///8s////MP///zX///80////M////y77u7KoxlhZyrV/f3XSc3Oy7z83/7w5NtymioZg5OHgOf///zP///80////Nf///yv///89////Ov///zr///84////M//T0m/3oaGk/bS0uv24ubPujouw2oqIoO3j40r///83////PP///zP///8K////Mf///z7///89////Pf///z3///80////Mf///zH///8x////Mf///zX///88////Pv///zf///8SAAAAAAAAAAAAAAAAI8AAACBAAAAAAAAAEAgAAAYQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==";
+// Real 2010-2012 google.com favicon (16x16 .ico, white g on the four-colour tile)
+const UGF_FAVICON_2010 = "data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA7PT7/3zF6/9Ptu//RbHx/0227/+Tzvb/9vv5/97h0f9JeBz/NHoA/z98Av9AfAD/PHsA/0F6AP8AAAAA/vz7/1+33/8Mp+z/FrHw/xWy8f8bs/T/Hqrx/3zE7v////7/t8qp/zF2A/87gwH/P4ID/z59AP8+egD/Q3kA/97s8v8botj/ELn3/wy58f8PtfL/D7Lw/xuz9P8vq+f/8/n///779v9KhR3/OYYA/0GFAv88hgD/QIAC/z17AP/0+/j/N6bM/wC07/8Cxf7/CsP7/wm+9v8Aqur/SrDb//7+/v///P7/VZEl/zSJAP87jQD/PYYA/0OBBf8+fQH///3//9Dp8/84sM7/CrDf/wC14/8CruL/KqnW/9ns8f/8/v//4OjX/z+GDf85kAD/PIwD/z2JAv8+hQD/PoEA/9C7pv/97uv////+/9Xw+v+w3ej/ls/e/+rz9///////+/z6/22mSf8qjQH/OJMA/zuQAP85iwL/PIgA/zyFAP+OSSL/nV44/7J+Vv/AkG7/7trP//7//f/9//7/6/Lr/2uoRv8tjQH/PJYA/zuTAP87kwD/PY8A/z2KAP89hAD/olkn/6RVHP+eSgj/mEgR//Ho3//+/v7/5Ozh/1GaJv8tlAD/OZcC/zuXAv84lAD/O5IC/z2PAf89iwL/OIkA/6hWFf+cTxD/pm9C/76ihP/8/v//+////8nav/8fdwL/NZsA/zeZAP83mgD/PJQB/zyUAf84jwD/PYsB/z6HAf+fXif/1r6s//79///58u//3r+g/+3i2v/+//3/mbiF/yyCAP87mgP/OpgD/zeWAP85lgD/OpEB/z+TAP9ChwH/7eHb/////v/28ej/tWwo/7tUAP+5XQ7/5M+5/////v+bsZn/IHAd/zeVAP89lgP/O5MA/zaJCf8tZTr/DyuK//3////9////0qmC/7lTAP/KZAT/vVgC/8iQWf/+//3///j//ygpx/8GGcL/ESax/xEgtv8FEMz/AALh/wAB1f///f7///z//758O//GXQL/yGYC/8RaAv/Ojlf/+/////////9QU93/BAD0/wAB//8DAP3/AAHz/wAA5f8DAtr///////v7+/+2bCT/yGMA/89mAP/BWQD/0q+D///+/////P7/Rkbg/wEA+f8AA/z/AQH5/wMA8P8AAev/AADf///7/P////7/uINQ/7lXAP/MYwL/vGIO//Lm3P/8/v//1dT2/woM5/8AAP3/AwH+/wAB/f8AAfb/BADs/wAC4P8AAAAA//z7/+LbzP+mXyD/oUwE/9Gshv/8//3/7/H5/zo/w/8AAdX/AgL6/wAA/f8CAP3/AAH2/wAA7v8AAAAAgAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAEAAA==";
+// Real late 2012 - Sep 2015 google.com favicon (.ico with 16x16 and 32x32, white g on blue)
+const UGF_FAVICON_2012 = "data:image/x-icon;base64,AAABAAIAEBAAAAEAIABoBAAAJgAAACAgAAABACAAqBAAAI4EAAAoAAAAEAAAACAAAAABACAAAAAAAAAEAAASCwAAEgsAAAAAAAAAAAAA9IVCSvSFQuf0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hULk9IVCSvSFQub0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQuf0hUL/9IVC//SFQv/0hUL/9Y1O//rIq//+7+f//eXX//vUvf/7z7X/96Fu//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//vYwv/97OH/9ZRZ//SFQv/0hUL/9IhG//zbx//3om7/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/97uX/+buW//SFQv/0hUL/9IVC//SFQv/5upT/+9O6//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/+b6b//zezP/0iEf/9IVC//SFQv/1klf//ezh//vPtP/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/3qXr/+siq//m8lv/5wqD//vTu//3t4//1klb/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0h0b//vbx//zi0//1j1H/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/2nmn/+bmS/////v/4sIX/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/5uJH///v5//eoef/1jU//+82y//afav/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL//vXw//vOs//0hUL/9IVC//ekcf/96+D/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//728v/4sIX/9IVC//SFQv/4s4n///v4//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/6yKn/+byX//SFQv/0hkT//eTV//vWv//0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IZE//m6lP/5u5b//OHQ///+/f/6y6//96d3//SFQv/0hUL/9IVC//SFQv/0hULm9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hULm9IVCSfSFQub0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hULm9IVCSQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoAAAAIAAAAEAAAAABACAAAAAAAAAQAAASCwAAEgsAAAAAAAAAAAAA9IVCAPSFQif0hUKt9IVC8vSFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQvL0hUKt9IVCJ/SFQgD0hUIo9IVC7/SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hULv9IVCKPSFQq30hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUKt9IVC8fSFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQvP0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9YtL//i2jv/828f//vLr///7+P///Pv//vTu//3n2v/6zbH/96Nw//SFQ//0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//ekcv/+8+z////////////+9fD/+9K5//m9mf/4to7/+buV//vSuf/++PT//OPT//aYYP/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/2l13///r3/////////fv/+b2Z//SIRv/0hUL/9IVC//SFQv/0hUL/9IVC//WNT//84M///vXv//aZYf/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//vPtP////////////i0i//0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//WQUv///Pr//OPU//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL//eTV///////+9O7/9IVD//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//3m2P//////9ppi//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/718H///////3s4f/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL//vDn///////4soj/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//erff////////38//WTWP/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//iziv////////////iwhf/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//rMsP///////eXW//WSVv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/4sYb///z7/////////Pv/9ZFV//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//ixhv/+8Of//vn1//rMsP/4rH//9plh//WQUv/1j1L/+s2x//////////////////m9mf/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SGQ//2nmn/+buW//vNsv/82sb//e3j/////////////////////v/5wZ//9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/83Mj////////////++fb/+K+C//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9ZRZ/////////////vTt//aaYv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/1lFr////////////6xqf/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//ehbf/70bj//end//3o2////v3///////3l1//0iEb/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/5wqD////////////96t7/96Z2//WOUP/2nWf//NvH//zcyP/1i0z/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/96l6/////////////vLr//WPUf/0hUL/9IVC//SFQv/0h0b//end//3k1f/0iUn/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/8387////////////4sYf/9IVC//SFQv/0hUL/9IVC//SFQv/6w6L///////nBn//0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC///69////////vj1//SIR//0hUL/9IVC//SFQv/0hUL/9IVC//m+mv///////e3j//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL///r3///////8387/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/+syw///////++fb/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/95NX///////vUvP/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/97OH///////7y6//0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//i2jv///////N/O//SFQv/0hUL/9IVC//SFQv/0hUL/96Nx////////////+s2x//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IdF//zh0P//+/j/9ZJW//SFQv/0hUL/9IVC//SKSv/96t7///////738v/1k1f/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9YxN//vUvf/96+D/96Z0//WNT//3om///ebY/////////Pv/+LKI//WVW//0h0X/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//agbP/7zbL//enc//749P////////////////////////////3r4P/3p3f/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hULx9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC8/SFQq30hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUKt9IVCJ/SFQu/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC7/SFQif0hUIA9IVCJfSFQq30hULx9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC8fSFQq30hUIl9IVCAIAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAB";
+// Real Sep 2015 - 2024 google.com favicon (.ico with 16x16 and 32x32, four-colour G)
+const UGF_FAVICON_2015 = "data:image/x-icon;base64,AAABAAIAEBAAAAEAIABoBAAAJgAAACAgAAABACAAqBAAAI4EAAAoAAAAEAAAACAAAAABACAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP///zD9/f2W/f392P39/fn9/f35/f391/39/ZT+/v4uAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/v7+Cf39/Zn///////////////////////////////////////////39/ZX///8IAAAAAAAAAAAAAAAA/v7+Cf39/cH/////+v35/7TZp/92ul3/WKs6/1iqOv9yuFn/rNWd//j79v///////f39v////wgAAAAAAAAAAP39/Zn/////7PXp/3G3WP9TqDT/U6g0/1OoNP9TqDT/U6g0/1OoNP+Or1j//vDo///////9/f2VAAAAAP///zD/////+vz5/3G3V/9TqDT/WKo6/6LQkf/U6cz/1urO/6rUm/+Zo0r/8IZB//adZ////v7///////7+/i79/f2Y/////4nWzf9Lqkj/Vqo4/9Xqzv///////////////////////ebY//SHRv/0hUL//NjD///////9/f2U/f392v////8sxPH/Ebzt/43RsP/////////////////////////////////4roL/9IVC//i1jf///////f391/39/fr/////Cr37/wW8+/+16/7/////////////////9IVC//SFQv/0hUL/9IVC//SFQv/3pnX///////39/fn9/f36/////wu++/8FvPv/tuz+//////////////////SFQv/0hUL/9IVC//SFQv/0hUL/96p7///////9/f35/f392/////81yfz/CrL5/2uk9v///////////////////////////////////////////////////////f392P39/Zn/////ks/7/zdS7P84Rur/0NT6///////////////////////9/f////////////////////////39/Zb+/v4y//////n5/v9WYu3/NUPq/ztJ6/+VnPT/z9L6/9HU+v+WnfT/Ul7t/+Hj/P////////////////////8wAAAAAP39/Z3/////6Or9/1hj7v81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v9sdvD////////////9/f2YAAAAAAAAAAD///8K/f39w//////5+f7/paz2/11p7v88Suv/Okfq/1pm7v+iqfX/+fn+///////9/f3B/v7+CQAAAAAAAAAAAAAAAP///wr9/f2d///////////////////////////////////////////9/f2Z/v7+CQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/jL9/f2Z/f392/39/fr9/f36/f392v39/Zj///8wAAAAAAAAAAAAAAAAAAAAAPAPAADAAwAAgAEAAIABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIABAACAAQAAwAMAAPAPAAAoAAAAIAAAAEAAAAABACAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/g3+/v5X/f39mf39/cj9/f3q/f39+f39/fn9/f3q/f39yP39/Zn+/v5W////DAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/iT9/f2c/f399f/////////////////////////////////////////////////////9/f31/f39mv7+/iMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/gn9/f2K/f39+////////////////////////////////////////////////////////////////////////////f39+v39/Yf///8IAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD+/v4k/f390v////////////////////////////////////////////////////////////////////////////////////////////////39/dD///8iAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA////MP39/er//////////////////////////+r05v+v16H/gsBs/2WxSf9Wqjj/Vqk3/2OwRv99vWX/pdKV/97u2P////////////////////////////39/ej+/v4vAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/iT9/f3q/////////////////////+v15/+Pxnv/VKk2/1OoNP9TqDT/U6g0/1OoNP9TqDT/U6g0/1OoNP9TqDT/U6g0/36+Z//d7tf///////////////////////39/ej///8iAAAAAAAAAAAAAAAAAAAAAAAAAAD///8K/f390//////////////////////E4bn/XKw+/1OoNP9TqDT/U6g0/1OoNP9TqDT/U6g0/1OoNP9TqDT/U6g0/1OoNP9TqDT/U6g0/1apN/+x0pv///////////////////////39/dD///8IAAAAAAAAAAAAAAAAAAAAAP39/Yv/////////////////////sdij/1OoNP9TqDT/U6g0/1OoNP9TqDT/U6g0/1OoNP9TqDT/U6g0/1OoNP9TqDT/U6g0/1OoNP9TqDT/YKU1/8qOPv/5wZ////////////////////////39/YcAAAAAAAAAAAAAAAD+/v4l/f39+////////////////8Lgt/9TqDT/U6g0/1OoNP9TqDT/U6g0/1OoNP9utlT/n86N/7faqv+426v/pdKV/3u8ZP9UqDX/U6g0/3egN//jiUH/9IVC//SFQv/82MP//////////////////f39+v7+/iMAAAAAAAAAAP39/Z3////////////////q9Ob/W6w+/1OoNP9TqDT/U6g0/1OoNP9nskz/zOXC/////////////////////////////////+Dv2v+osWP/8YVC//SFQv/0hUL/9IVC//WQVP/++fb//////////////////f39mgAAAAD+/v4O/f399v///////////////4LHj/9TqDT/U6g0/1OoNP9TqDT/dblc//L58P/////////////////////////////////////////////8+v/3p3f/9IVC//SFQv/0hUL/9IVC//rIqf/////////////////9/f31////DP7+/ln////////////////f9v7/Cbz2/zOwhv9TqDT/U6g0/2KwRv/v9+z///////////////////////////////////////////////////////738//1kFT/9IVC//SFQv/0hUL/9plg///////////////////////+/v5W/f39nP///////////////4jf/f8FvPv/Bbz7/yG1s/9QqDz/vN2w//////////////////////////////////////////////////////////////////rHqP/0hUL/9IVC//SFQv/0hUL//vDn//////////////////39/Zn9/f3L////////////////R878/wW8+/8FvPv/Bbz7/y7C5P/7/fr//////////////////////////////////////////////////////////////////ere//SFQv/0hUL/9IVC//SFQv/718H//////////////////f39yP39/ez///////////////8cwvv/Bbz7/wW8+/8FvPv/WNL8///////////////////////////////////////0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//rIqv/////////////////9/f3q/f39+v///////////////we9+/8FvPv/Bbz7/wW8+/993P3///////////////////////////////////////SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/+cGf//////////////////39/fn9/f36////////////////B737/wW8+/8FvPv/Bbz7/33c/f//////////////////////////////////////9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/6xaX//////////////////f39+f39/e3///////////////8cwvv/Bbz7/wW8+/8FvPv/WdP8///////////////////////////////////////0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//vVv//////////////////9/f3q/f39y////////////////0bN/P8FvPv/Bbz7/wW8+/8hrvn/+/v///////////////////////////////////////////////////////////////////////////////////////////////////////////////////39/cj9/f2c////////////////ht/9/wW8+/8FvPv/FZP1/zRJ6/+zuPf//////////////////////////////////////////////////////////////////////////////////////////////////////////////////f39mf7+/lr////////////////d9v7/B7n7/yB38f81Q+r/NUPq/0hV7P/u8P3////////////////////////////////////////////////////////////////////////////////////////////////////////////+/v5X////D/39/ff///////////////9tkPT/NUPq/zVD6v81Q+r/NUPq/2Fs7//y8v7////////////////////////////////////////////09f7//////////////////////////////////////////////////f399f7+/g0AAAAA/f39n////////////////+Tm/P89Suv/NUPq/zVD6v81Q+r/NUPq/1Bc7f/IzPn/////////////////////////////////x8v5/0xY7P+MlPP////////////////////////////////////////////9/f2cAAAAAAAAAAD+/v4n/f39/P///////////////7W69/81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v9ZZe7/k5v0/6609/+vtff/lJv0/1pm7v81Q+r/NUPq/zVD6v+GjvL//v7//////////////////////////////f39+/7+/iQAAAAAAAAAAAAAAAD9/f2N/////////////////////6Cn9f81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v+BivL////////////////////////////9/f2KAAAAAAAAAAAAAAAAAAAAAP7+/gv9/f3V/////////////////////7W69/8+S+v/NUPq/zVD6v81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v81Q+r/P0zr/7q/+P///////////////////////f390v7+/gkAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/ib9/f3r/////////////////////+Xn/P94gfH/NkTq/zVD6v81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v81Q+r/NkTq/3Z/8f/l5/z///////////////////////39/er+/v4kAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/jL9/f3r///////////////////////////k5vz/nqX1/2p08P9IVez/OEbq/zdF6v9GU+z/aHLv/5qh9f/i5Pz////////////////////////////9/f3q////MAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/ib9/f3V/////////////////////////////////////////////////////////////////////////////////////////////////f390v7+/iQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP///wr9/f2N/f39/P///////////////////////////////////////////////////////////////////////////f39+/39/Yv+/v4JAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD+/v4n/f39n/39/ff//////////////////////////////////////////////////////f399v39/Z3+/v4lAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/v7+Dv7+/lr9/f2c/f39y/39/e39/f36/f39+v39/ez9/f3L/f39nP7+/ln+/v4OAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/AA///AAD//AAAP/gAAB/wAAAP4AAAB8AAAAPAAAADgAAAAYAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAABgAAAAcAAAAPAAAAD4AAAB/AAAA/4AAAf/AAAP/8AAP//wAP/";
 const ugfHasStarTube = true;
 // ---- StarTube ----
 // ---- Gplex Extended for YouTube: StarTube 2.7.0.10 by lightbeam24 (MIT license, https://github.com/lightbeam24/StarTube) ----
@@ -44119,6 +44130,55 @@ if (!ugfOnYouTube && !ugfOnGplexPlus) (function() {
         }, 10000);
     } catch (e) {}
 })();
+// (7.2.31) Finance: today's page is kept out of sight from the start too, until Gplex's is up
+(function ugfFinEarlyVeil() {
+    try {
+        if (window.location.host !== "www.google.com" || window.top !== window.self || /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "")) {
+            return;
+        }
+        // the pages Gplex draws (ugfFinRoute): the home page and a quote's page
+        const p = (window.location.pathname || "/").replace(/\/+$/, "");
+        if (p !== "/finance" && !/^\/finance\/quote\/[^/]+$/.test(p)) {
+            return;
+        }
+        const gv = function(k, d) {
+            try {
+                return String((typeof GM_getValue === "function" ? GM_getValue(k, null) : null) || d);
+            } catch (e) {
+                return d;
+            }
+        };
+        let lay = null;
+        try {
+            lay = window.localStorage.getItem("UGF_LAYOUT");
+        } catch (e) {}
+        if (gv("UGF_FINANCE_ON", "true") === "false" || String(lay || gv("UGF_LAYOUT", "2015")) === "2022") {
+            return;
+        }
+        const st = document.createElement("style");
+        st.id = "ugf-fin-veil";
+        st.textContent = "html { background: #fff !important; } body > *:not(#ugf-fin) { visibility: hidden !important; }";
+        const put = function() {
+            const at = document.head || document.documentElement;
+            if (!at) {
+                return false;
+            }
+            at.appendChild(st);
+            return true;
+        };
+        if (!put()) {
+            const wait = new MutationObserver(function() {
+                if (put()) {
+                    wait.disconnect();
+                }
+            });
+            wait.observe(document, { childList: true, subtree: true });
+        }
+        setTimeout(function() {
+            st.remove();
+        }, 10000);
+    } catch (e) {}
+})();
 // ---- Gplex error page ----
 // (6.1.2) Google's error page ("404. That's an error.", with the broken robot) on any
 // Google host, in the period's look: the robot page with the logo of the day from 2010
@@ -48516,7 +48576,7 @@ function ugfIsErrorPage() {
 // ---- end Gplex My Account page ----
 // (6.1.2) Gplex matches every google.com page so that Google's error page can be given the
 // period's look anywhere; the rest of Gplex still runs only on the pages it always has
-const UGF_OWN_PAGES = ["about.google/products*", "about.google/intl/*/products*", "www.google.com/search*", "www.google.com/", "www.google.com/?*", "www.google.com/#*", "www.google.com/webhp*", "www.google.com/imghp*", "www.google.com/videohp*", "www.google.com/shopping*", "www.google.com/advanced_search*", "www.google.com/preferences*", "mail.google.com/mail/*", "www.google.com/maps*", "maps.google.com/*", "calendar.google.com/calendar/*", "news.google.com/*", "translate.google.com/*", "docs.google.com/document/*", "docs.google.com/spreadsheets/*", "docs.google.com/presentation/*", "docs.google.com/forms/*", "docs.google.com/drawings/*", "drive.google.com/*", "photos.google.com/*", "accounts.google.com/v3/signin/*", "accounts.google.com/signin/*", "accounts.google.com/ServiceLogin*", "accounts.google.com/AccountChooser*", "accounts.google.com/InteractiveLogin*", "accounts.google.com/lifecycle/steps/signup/*", "accounts.google.com/signup*", "accounts.google.com/SignUp*", "myaccount.google.com/*", "keep.google.com/*", "play.google.com/store*", "www.google.com/gplex", "www.google.com/Gplex"];
+const UGF_OWN_PAGES = ["about.google/products*", "about.google/intl/*/products*", "www.google.com/search*", "www.google.com/", "www.google.com/?*", "www.google.com/#*", "www.google.com/webhp*", "www.google.com/imghp*", "www.google.com/videohp*", "www.google.com/shopping*", "www.google.com/advanced_search*", "www.google.com/preferences*", "mail.google.com/mail/*", "www.google.com/maps*", "maps.google.com/*", "calendar.google.com/calendar/*", "news.google.com/*", "translate.google.com/*", "docs.google.com/document/*", "docs.google.com/spreadsheets/*", "docs.google.com/presentation/*", "docs.google.com/forms/*", "docs.google.com/drawings/*", "drive.google.com/*", "photos.google.com/*", "accounts.google.com/v3/signin/*", "accounts.google.com/signin/*", "accounts.google.com/ServiceLogin*", "accounts.google.com/AccountChooser*", "accounts.google.com/InteractiveLogin*", "accounts.google.com/lifecycle/steps/signup/*", "accounts.google.com/signup*", "accounts.google.com/SignUp*", "myaccount.google.com/*", "keep.google.com/*", "play.google.com/store*", "www.google.com/finance*", "www.google.com/gplex", "www.google.com/Gplex"];
 function ugfOwnPage() {
     const u = window.location.host + window.location.pathname + window.location.search;
     return UGF_OWN_PAGES.some(function(m) {
@@ -57181,6 +57241,8 @@ html:not([photoson-dd-open]) #ugf-photoson-dd,
 html:not([photoson-dd-open]) #ugf-photoson-fence,
 html:not([playon-dd-open]) #ugf-playon-dd,
 html:not([playon-dd-open]) #ugf-playon-fence,
+html:not([finon-dd-open]) #ugf-finon-dd,
+html:not([finon-dd-open]) #ugf-finon-fence,
 html:not([ytclassicon-dd-open]) #ugf-ytclassicon-dd,
 html:not([ytclassicon-dd-open]) #ugf-ytclassicon-fence,
 html:not([startubeon-dd-open]) #ugf-startubeon-dd,
@@ -61428,7 +61490,7 @@ html[shopping-results] #ugf-center {
             value = "2016";
         }
         // Late 2016: the search pages (www.google.com, Maps aside) run as the 2017 search page
-        if (UGF_LATE2016 && value === "2016" && window.location.host === "www.google.com" && !/^\/maps/.test(window.location.pathname || "")) {
+        if (UGF_LATE2016 && value === "2016" && window.location.host === "www.google.com" && !/^\/(maps|finance)/.test(window.location.pathname || "")) {
             UGF_LATE2015 = false;
             return "2018";
         }
@@ -61592,6 +61654,7 @@ html[shopping-results] #ugf-center {
     let driveOn = "true";
     let photosOn = "true";
     let playOn = "true";
+    let finOn = "true";
     let startubeOn = "true";
     let ytClassicOn = "true";
     try {
@@ -61608,6 +61671,7 @@ html[shopping-results] #ugf-center {
         driveOn = String((typeof GM_getValue === "function" ? GM_getValue("UGF_DRIVE_ON", null) : null) || "true");
         photosOn = String((typeof GM_getValue === "function" ? GM_getValue("UGF_PHOTOS_ON", null) : null) || "true");
         playOn = String((typeof GM_getValue === "function" ? GM_getValue("UGF_PLAY_ON", null) : null) || "true");
+        finOn = String((typeof GM_getValue === "function" ? GM_getValue("UGF_FINANCE_ON", null) : null) || "true");
         startubeOn = String((typeof GM_getValue === "function" ? GM_getValue("UGF_STARTUBE_ON", null) : null) || "true");
         ytClassicOn = String((typeof GM_getValue === "function" ? GM_getValue("UGF_YT_CLASSIC_ON", null) : null) || "true");
     } catch (e) {}
@@ -62222,6 +62286,8 @@ html[shopping-results] #ugf-center {
             <div id="ugf-photoson-fence" class="ugf-fence">
             </div>
             <div id="ugf-playon-fence" class="ugf-fence">
+            </div>
+            <div id="ugf-finon-fence" class="ugf-fence">
             </div>
             <div id="ugf-ytclassicon-fence" class="ugf-fence">
             </div>
@@ -63021,6 +63087,33 @@ html[shopping-results] #ugf-center {
                                             <span>Choose whether or not the Google Play store (its front pages, categories, search and app pages) is shown in the layout you picked above. Before Google Play (2012) it is the Android Market web store of 2011.</span>
                                         </div>
                                         <div class="ugf-dropdown" id="ugf-playon-dd">
+                                            <div class="ugf-dropdown-inner">
+                                                <a id="" class="ugf-dropdown-item" value="true">
+                                                    <span>${UImessages.CLtrue}</span>
+                                                </a>
+                                                <a id="" class="ugf-dropdown-item" value="false">
+                                                    <span>${UImessages.CLfalse}</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ugf-gplex-section">
+                            <div class="ugf-gplex-section-inner">
+                                <div class="ugf-gplex-section-title">
+                                    <span>Gplex for Google Finance</span>
+                                </div>
+                                <div class="ugf-gplex-section-content">
+                                    <div id="ugf-option-finon" class="ugf-gplex-option flex" value="${finOn}">
+                                        <a class="ugf-dropdown-button" id="ugf-finon-dd-btn">
+                                            <span>${UImessages.CLtrue}</span>
+                                        </a>
+                                        <div class="ugf-gplex-text">
+                                            <span>Choose whether or not Google Finance (its home page and the quote pages, with today's prices, charts and news) is shown in the layout you picked above. From 2017 it is the Finance tab of Google Search.</span>
+                                        </div>
+                                        <div class="ugf-dropdown" id="ugf-finon-dd">
                                             <div class="ugf-dropdown-inner">
                                                 <a id="" class="ugf-dropdown-item" value="true">
                                                     <span>${UImessages.CLtrue}</span>
@@ -64425,6 +64518,16 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             ugfPlayMain();
         } else {
             ugfPlayFavOnly();
+        }
+        return;
+    }
+    // Google Finance: Gplex's own home page and quote pages; portfolios, lists and the
+    // rest stay Google's (with the period's tab icon)
+    if (window.location.host === "www.google.com" && /^\/finance(\/|$)/.test(window.location.pathname || "")) {
+        if (ugfFinWanted()) {
+            ugfFinMain();
+        } else {
+            ugfFinFavOnly();
         }
         return;
     }
@@ -66165,7 +66268,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 document.querySelector("#ugf-calon-fence").addEventListener("click",function() {
                     document.querySelector("html").removeAttribute("calon-dd-open");
                 });
-                ["newson", "tron", "docson", "sheetson", "slideson", "drawingson", "signinon", "accounton", "keepon", "formson", "driveon", "photoson", "playon", "startubeon", "ytclassicon"].forEach(function(k) {
+                ["newson", "tron", "docson", "sheetson", "slideson", "drawingson", "signinon", "accounton", "keepon", "formson", "driveon", "photoson", "playon", "finon", "startubeon", "ytclassicon"].forEach(function(k) {
                     document.querySelector("#ugf-" + k + "-dd-btn").addEventListener("click",function() {
                         document.querySelector("html").setAttribute(k + "-dd-open","");
                         document.title = "Gplex Settings";
@@ -66390,7 +66493,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                         document.querySelector("html").removeAttribute("neuro-dd-open");
                     });
                 });
-                [["newson", "UGF_NEWS_ON"], ["tron", "UGF_TRANSLATE_ON"], ["docson", "UGF_DOCS_ON"], ["sheetson", "UGF_SHEETS_ON"], ["slideson", "UGF_SLIDES_ON"], ["drawingson", "UGF_DRAWINGS_ON"], ["signinon", "UGF_SIGNIN_ON"], ["accounton", "UGF_ACCOUNT_ON"], ["keepon", "UGF_KEEP_ON"], ["formson", "UGF_FORMS_ON"], ["driveon", "UGF_DRIVE_ON"], ["photoson", "UGF_PHOTOS_ON"], ["playon", "UGF_PLAY_ON"], ["startubeon", "UGF_STARTUBE_ON"], ["ytclassicon", "UGF_YT_CLASSIC_ON"]].forEach(function(o) {
+                [["newson", "UGF_NEWS_ON"], ["tron", "UGF_TRANSLATE_ON"], ["docson", "UGF_DOCS_ON"], ["sheetson", "UGF_SHEETS_ON"], ["slideson", "UGF_SLIDES_ON"], ["drawingson", "UGF_DRAWINGS_ON"], ["signinon", "UGF_SIGNIN_ON"], ["accounton", "UGF_ACCOUNT_ON"], ["keepon", "UGF_KEEP_ON"], ["formson", "UGF_FORMS_ON"], ["driveon", "UGF_DRIVE_ON"], ["photoson", "UGF_PHOTOS_ON"], ["playon", "UGF_PLAY_ON"], ["finon", "UGF_FINANCE_ON"], ["startubeon", "UGF_STARTUBE_ON"], ["ytclassicon", "UGF_YT_CLASSIC_ON"]].forEach(function(o) {
                     document.querySelectorAll("#ugf-option-" + o[0] + " .ugf-dropdown-item").forEach(itemRoot => {
                         itemRoot.addEventListener("click",function() {
                             let value = itemRoot.getAttribute("value");
@@ -66423,6 +66526,8 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                                 photosOn = value;
                             } else if (o[0] === "playon") {
                                 playOn = value;
+                            } else if (o[0] === "finon") {
+                                finOn = value;
                             } else if (o[0] === "startubeon") {
                                 startubeOn = value;
                             } else if (o[0] === "ytclassicon") {
@@ -66784,6 +66889,12 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 sst.textContent = startubeOn === "false" ? UImessages.CLfalse : UImessages.CLtrue;
             }
         }
+        if (setting == "finon" || setting == "all") {
+            let sfi = document.querySelector("#ugf-option-finon .ugf-dropdown-button span");
+            if (sfi) {
+                sfi.textContent = finOn === "false" ? UImessages.CLfalse : UImessages.CLtrue;
+            }
+        }
         if (setting == "playon" || setting == "all") {
             let spl = document.querySelector("#ugf-option-playon .ugf-dropdown-button span");
             if (spl) {
@@ -66973,17 +67084,6 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             document.querySelector("#gp-pagination-prev").classList.add("has-prev");
         }
     }
-    // Inlined favicon SVGs (no Wikimedia hotlinking / HTTP 429). Credit: StonedKhajiit
-    // Real 1999-2008 google.com favicon (16x16 .ico, from the Wayback Machine)
-    const UGF_FAVICON_1999 = "data:image/x-icon;base64,AAABAAEAEBAAAAAAAABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAwMDAAICAgAAAAP8AAP8AAAD//wD/AAAA/wD/AP//AAD///8A//3/AP39/wD6/f8A+P3/AP/8/wD9/P8A+vz/AP/7/wD/+v8A/vr/APz6/wD4+v8A+/n/APP5/wD/+P8A+vj/AO/4/wDm+P8A2fj/AP/3/wD/9v8A9vb/AP/1/wD69f8A9PT/AO30/wD/8/8A//L/APnx/wD28P8A///+APj//gD2//4A9P/+AOP//gD//f4A6f/9AP///AD2//wA8//8APf9/AD///sA/v/7AOD/+wD/+vsA9/X7APr/+gDv/voA///5AP/9+QD/+/kA+e35AP//+ADm//gA4f/4AP/9+AD0+/gA///3APv/9wDz//cA8f/3AO3/9wD/8fcA//32AP369gDr+vYA8f/1AOv/9QD/+/UA///0APP/9ADq//QA///zAP/18wD///IA/fzyAP//8QD///AA9//wAPjw8AD//+8A8//vAP//7gD9/+4A9v/uAP/u7gD//+0A9v/tAP7/6wD/+eoA///pAP//6AD2/+gA//nnAP/45wD38eYA/fblAP/25AD29uQA7N/hAPzm4AD/690AEhjdAAAa3AAaJdsA//LXAC8g1gANH9YA+dnTAP/n0gDh5dIADyjSABkk0gAdH9EABxDRAP/l0AAAJs4AGRTOAPPczQAAKs0AIi7MAA4UywD56soA8tPKANTSygD/18kA6NLHAAAjxwDj28QA/s7CAP/1wQDw3r8A/9e8APrSrwDCtqoAzamjANmPiQDQj4YA35mBAOmefgDHj3wA1qR6AO+sbwDpmm8A2IVlAKmEYgCvaFoAvHNXAEq2VgA5s1UAPbhQAFWtTwBStU0ARbNNAEGxTQA7tEwAObZIAEq5RwDKdEYAULhDANtuQgBEtTwA1ls3ALhgMQCxNzEA2FsvAEC3LQB0MCkAiyYoANZTJwDLWyYAtjMlALE6JACZNSMAuW4iANlgIgDoWCEAylwgAMUuIAD3Vh8A52gdALRCHQCxWhwAsEkcALU4HACMOBwA0V4bAMYyGgCPJRoA218ZAJM7FwC/PxYA0msVAM9jFQD2XBUAqioVAIAfFQDhYRQAujMTAMUxEwCgLBMAnxIPAMsqDgCkFgsA6GMHALE2BAC9JQAAliIAAFYTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///8AsbGxsbGxsbGxsbGxsbGxd7IrMg8PDw8PDw8PUBQeJXjQYE9PcKPM2NfP2sWhcg+BzTE7dLjbmG03YWaV4JYye8MPbsLZlEouKRRCg9SXMoW/U53enGRAFzCRtNO7mTiAyliw30gRTg9VbJCKfYs0j9VmuscfLTFbIy8SOhA0Inq5Y77GNBMYIxQUJzM2Vxx2wEmfyCYWMRldXCg5MU0aicRUms58SUVeRkwjPBRSNIfBMkSgvWkyPxVHFIaMSx1/0S9nkq7WdWo1a43Jt2UqgtJERGJ5m6K8y92znpNWIYS1UQ89Mmg5cXNaX0EkGyyI3KSsp6mvpaqosaatq7axsQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
-    // Real 2009 google.com favicon (16x16 .ico, lowercase blue g)
-    const UGF_FAVICON_2009_G = "data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC1tbUFHBwcFQAAABoAAAAaAAAAFgAAAA8AAAAWBAAAGwIAABoAAAAXAAAAGQAAABkAAAAaAAAAGg0NDRiOjo4JJiYmDwAAABQAAAATAAAADQwCAR1YFRB4nCsqua0yLMSbLCyxYxoYfBgFAiwDAQAUAAAAEgAAABMAAAAUBwcHEhQUFA0AAAAOAAAACxMEARayLy/F7T9C/640K7FuJR1pZiMgYpczMZqeLSzBIAcFPQEBABAAAAANAAAADgAAAA4XFxcJAAAACgAAAABbKSNY/1ZO/3MdHY8AAAAAAAAAAAAAAAAAAAAAjzc2lHwdG7oDAAAVAAAACAAAAAoAAAAKFxcXBgAAAAcAAAAAVj43Tfx6df87BQFmAQIAAgAAAAQAAAAEAAAAAI0vJomvLCftCwEAHQAAAAQAAAAHAAAABxEREQQAAAAEAAAAAwYEAAi4bVm0uT8/4UwOC1wnBgMlFAQAEF4YGmnwQ0X8niQfxQEAAAgAAAADAAAABAAAAAQzMzMCHh4eAh8fHwMAAAAAKSglBJVbWGfQX16qxktJsLItKNTqP0X/5DxE8VklJTsAAAAAHx8fAh8fHwIfHx8C7+/vBO3t7QTt7e0E7e3tBOrr6wIAAAAAAAAAALWHgkH+VFD/xjI226J1dDYAAAAA7e7uBO3t7QTt7e0E7e3tBP///wn///8K////Cv///wv///8Eybi3HHw1LHeySkjC/nd2/34iIZ1rbGkJ8fHxCv///wr///8K////Cv///wr///8R////E////xP///8P9OTiHtFGSNHPKS//15KSeP7k4Evgb3DOXh4cjouJiCD9/f4R////E////xP///8T////Gf///xv///8b////Dvu3rnbrNCn/o1NTk9/r6wn///8C/9fXaqskJf9kTUxX7e/vGP///xr///8b////G////yH///8k////JP///xb/0MyT00JA/5Byblv7//8d////Fv7Ix3XUNjH/hFhVee/z8x3///8j////JP///yT///8o////Lf///yz///8j//DmZNphWv+Oa2ll4urpJPHy8iLwcWDF0zEn+7edm1f///8m////LP///yz///8s////MP///zX///80////M////y77u7KoxlhZyrV/f3XSc3Oy7z83/7w5NtymioZg5OHgOf///zP///80////Nf///yv///89////Ov///zr///84////M//T0m/3oaGk/bS0uv24ubPujouw2oqIoO3j40r///83////PP///zP///8K////Mf///z7///89////Pf///z3///80////Mf///zH///8x////Mf///zX///88////Pv///zf///8SAAAAAAAAAAAAAAAAI8AAACBAAAAAAAAAEAgAAAYQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==";
-    // Real 2010-2012 google.com favicon (16x16 .ico, white g on the four-colour tile)
-    const UGF_FAVICON_2010 = "data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA7PT7/3zF6/9Ptu//RbHx/0227/+Tzvb/9vv5/97h0f9JeBz/NHoA/z98Av9AfAD/PHsA/0F6AP8AAAAA/vz7/1+33/8Mp+z/FrHw/xWy8f8bs/T/Hqrx/3zE7v////7/t8qp/zF2A/87gwH/P4ID/z59AP8+egD/Q3kA/97s8v8botj/ELn3/wy58f8PtfL/D7Lw/xuz9P8vq+f/8/n///779v9KhR3/OYYA/0GFAv88hgD/QIAC/z17AP/0+/j/N6bM/wC07/8Cxf7/CsP7/wm+9v8Aqur/SrDb//7+/v///P7/VZEl/zSJAP87jQD/PYYA/0OBBf8+fQH///3//9Dp8/84sM7/CrDf/wC14/8CruL/KqnW/9ns8f/8/v//4OjX/z+GDf85kAD/PIwD/z2JAv8+hQD/PoEA/9C7pv/97uv////+/9Xw+v+w3ej/ls/e/+rz9///////+/z6/22mSf8qjQH/OJMA/zuQAP85iwL/PIgA/zyFAP+OSSL/nV44/7J+Vv/AkG7/7trP//7//f/9//7/6/Lr/2uoRv8tjQH/PJYA/zuTAP87kwD/PY8A/z2KAP89hAD/olkn/6RVHP+eSgj/mEgR//Ho3//+/v7/5Ozh/1GaJv8tlAD/OZcC/zuXAv84lAD/O5IC/z2PAf89iwL/OIkA/6hWFf+cTxD/pm9C/76ihP/8/v//+////8nav/8fdwL/NZsA/zeZAP83mgD/PJQB/zyUAf84jwD/PYsB/z6HAf+fXif/1r6s//79///58u//3r+g/+3i2v/+//3/mbiF/yyCAP87mgP/OpgD/zeWAP85lgD/OpEB/z+TAP9ChwH/7eHb/////v/28ej/tWwo/7tUAP+5XQ7/5M+5/////v+bsZn/IHAd/zeVAP89lgP/O5MA/zaJCf8tZTr/DyuK//3////9////0qmC/7lTAP/KZAT/vVgC/8iQWf/+//3///j//ygpx/8GGcL/ESax/xEgtv8FEMz/AALh/wAB1f///f7///z//758O//GXQL/yGYC/8RaAv/Ojlf/+/////////9QU93/BAD0/wAB//8DAP3/AAHz/wAA5f8DAtr///////v7+/+2bCT/yGMA/89mAP/BWQD/0q+D///+/////P7/Rkbg/wEA+f8AA/z/AQH5/wMA8P8AAev/AADf///7/P////7/uINQ/7lXAP/MYwL/vGIO//Lm3P/8/v//1dT2/woM5/8AAP3/AwH+/wAB/f8AAfb/BADs/wAC4P8AAAAA//z7/+LbzP+mXyD/oUwE/9Gshv/8//3/7/H5/zo/w/8AAdX/AgL6/wAA/f8CAP3/AAH2/wAA7v8AAAAAgAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAEAAA==";
-    // Real late 2012 - Sep 2015 google.com favicon (.ico with 16x16 and 32x32, white g on blue)
-    const UGF_FAVICON_2012 = "data:image/x-icon;base64,AAABAAIAEBAAAAEAIABoBAAAJgAAACAgAAABACAAqBAAAI4EAAAoAAAAEAAAACAAAAABACAAAAAAAAAEAAASCwAAEgsAAAAAAAAAAAAA9IVCSvSFQuf0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hULk9IVCSvSFQub0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQuf0hUL/9IVC//SFQv/0hUL/9Y1O//rIq//+7+f//eXX//vUvf/7z7X/96Fu//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//vYwv/97OH/9ZRZ//SFQv/0hUL/9IhG//zbx//3om7/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/97uX/+buW//SFQv/0hUL/9IVC//SFQv/5upT/+9O6//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/+b6b//zezP/0iEf/9IVC//SFQv/1klf//ezh//vPtP/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/3qXr/+siq//m8lv/5wqD//vTu//3t4//1klb/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0h0b//vbx//zi0//1j1H/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/2nmn/+bmS/////v/4sIX/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/5uJH///v5//eoef/1jU//+82y//afav/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL//vXw//vOs//0hUL/9IVC//ekcf/96+D/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//728v/4sIX/9IVC//SFQv/4s4n///v4//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/6yKn/+byX//SFQv/0hkT//eTV//vWv//0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IZE//m6lP/5u5b//OHQ///+/f/6y6//96d3//SFQv/0hUL/9IVC//SFQv/0hULm9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hULm9IVCSfSFQub0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hULm9IVCSQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoAAAAIAAAAEAAAAABACAAAAAAAAAQAAASCwAAEgsAAAAAAAAAAAAA9IVCAPSFQif0hUKt9IVC8vSFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQvL0hUKt9IVCJ/SFQgD0hUIo9IVC7/SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hULv9IVCKPSFQq30hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUKt9IVC8fSFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQvP0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9YtL//i2jv/828f//vLr///7+P///Pv//vTu//3n2v/6zbH/96Nw//SFQ//0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//ekcv/+8+z////////////+9fD/+9K5//m9mf/4to7/+buV//vSuf/++PT//OPT//aYYP/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/2l13///r3/////////fv/+b2Z//SIRv/0hUL/9IVC//SFQv/0hUL/9IVC//WNT//84M///vXv//aZYf/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//vPtP////////////i0i//0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//WQUv///Pr//OPU//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL//eTV///////+9O7/9IVD//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//3m2P//////9ppi//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/718H///////3s4f/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL//vDn///////4soj/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//erff////////38//WTWP/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//iziv////////////iwhf/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//rMsP///////eXW//WSVv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/4sYb///z7/////////Pv/9ZFV//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//ixhv/+8Of//vn1//rMsP/4rH//9plh//WQUv/1j1L/+s2x//////////////////m9mf/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SGQ//2nmn/+buW//vNsv/82sb//e3j/////////////////////v/5wZ//9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/83Mj////////////++fb/+K+C//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9ZRZ/////////////vTt//aaYv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/1lFr////////////6xqf/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//ehbf/70bj//end//3o2////v3///////3l1//0iEb/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/5wqD////////////96t7/96Z2//WOUP/2nWf//NvH//zcyP/1i0z/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/96l6/////////////vLr//WPUf/0hUL/9IVC//SFQv/0h0b//end//3k1f/0iUn/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/8387////////////4sYf/9IVC//SFQv/0hUL/9IVC//SFQv/6w6L///////nBn//0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC///69////////vj1//SIR//0hUL/9IVC//SFQv/0hUL/9IVC//m+mv///////e3j//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL///r3///////8387/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/+syw///////++fb/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/95NX///////vUvP/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/97OH///////7y6//0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//i2jv///////N/O//SFQv/0hUL/9IVC//SFQv/0hUL/96Nx////////////+s2x//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IdF//zh0P//+/j/9ZJW//SFQv/0hUL/9IVC//SKSv/96t7///////738v/1k1f/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9YxN//vUvf/96+D/96Z0//WNT//3om///ebY/////////Pv/+LKI//WVW//0h0X/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//agbP/7zbL//enc//749P////////////////////////////3r4P/3p3f/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hULx9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC8/SFQq30hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUKt9IVCJ/SFQu/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC7/SFQif0hUIA9IVCJfSFQq30hULx9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC8fSFQq30hUIl9IVCAIAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAB";
-    // Real Sep 2015 - 2024 google.com favicon (.ico with 16x16 and 32x32, four-colour G)
-    const UGF_FAVICON_2015 = "data:image/x-icon;base64,AAABAAIAEBAAAAEAIABoBAAAJgAAACAgAAABACAAqBAAAI4EAAAoAAAAEAAAACAAAAABACAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP///zD9/f2W/f392P39/fn9/f35/f391/39/ZT+/v4uAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/v7+Cf39/Zn///////////////////////////////////////////39/ZX///8IAAAAAAAAAAAAAAAA/v7+Cf39/cH/////+v35/7TZp/92ul3/WKs6/1iqOv9yuFn/rNWd//j79v///////f39v////wgAAAAAAAAAAP39/Zn/////7PXp/3G3WP9TqDT/U6g0/1OoNP9TqDT/U6g0/1OoNP+Or1j//vDo///////9/f2VAAAAAP///zD/////+vz5/3G3V/9TqDT/WKo6/6LQkf/U6cz/1urO/6rUm/+Zo0r/8IZB//adZ////v7///////7+/i79/f2Y/////4nWzf9Lqkj/Vqo4/9Xqzv///////////////////////ebY//SHRv/0hUL//NjD///////9/f2U/f392v////8sxPH/Ebzt/43RsP/////////////////////////////////4roL/9IVC//i1jf///////f391/39/fr/////Cr37/wW8+/+16/7/////////////////9IVC//SFQv/0hUL/9IVC//SFQv/3pnX///////39/fn9/f36/////wu++/8FvPv/tuz+//////////////////SFQv/0hUL/9IVC//SFQv/0hUL/96p7///////9/f35/f392/////81yfz/CrL5/2uk9v///////////////////////////////////////////////////////f392P39/Zn/////ks/7/zdS7P84Rur/0NT6///////////////////////9/f////////////////////////39/Zb+/v4y//////n5/v9WYu3/NUPq/ztJ6/+VnPT/z9L6/9HU+v+WnfT/Ul7t/+Hj/P////////////////////8wAAAAAP39/Z3/////6Or9/1hj7v81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v9sdvD////////////9/f2YAAAAAAAAAAD///8K/f39w//////5+f7/paz2/11p7v88Suv/Okfq/1pm7v+iqfX/+fn+///////9/f3B/v7+CQAAAAAAAAAAAAAAAP///wr9/f2d///////////////////////////////////////////9/f2Z/v7+CQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/jL9/f2Z/f392/39/fr9/f36/f392v39/Zj///8wAAAAAAAAAAAAAAAAAAAAAPAPAADAAwAAgAEAAIABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIABAACAAQAAwAMAAPAPAAAoAAAAIAAAAEAAAAABACAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/g3+/v5X/f39mf39/cj9/f3q/f39+f39/fn9/f3q/f39yP39/Zn+/v5W////DAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/iT9/f2c/f399f/////////////////////////////////////////////////////9/f31/f39mv7+/iMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/gn9/f2K/f39+////////////////////////////////////////////////////////////////////////////f39+v39/Yf///8IAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD+/v4k/f390v////////////////////////////////////////////////////////////////////////////////////////////////39/dD///8iAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA////MP39/er//////////////////////////+r05v+v16H/gsBs/2WxSf9Wqjj/Vqk3/2OwRv99vWX/pdKV/97u2P////////////////////////////39/ej+/v4vAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/iT9/f3q/////////////////////+v15/+Pxnv/VKk2/1OoNP9TqDT/U6g0/1OoNP9TqDT/U6g0/1OoNP9TqDT/U6g0/36+Z//d7tf///////////////////////39/ej///8iAAAAAAAAAAAAAAAAAAAAAAAAAAD///8K/f390//////////////////////E4bn/XKw+/1OoNP9TqDT/U6g0/1OoNP9TqDT/U6g0/1OoNP9TqDT/U6g0/1OoNP9TqDT/U6g0/1apN/+x0pv///////////////////////39/dD///8IAAAAAAAAAAAAAAAAAAAAAP39/Yv/////////////////////sdij/1OoNP9TqDT/U6g0/1OoNP9TqDT/U6g0/1OoNP9TqDT/U6g0/1OoNP9TqDT/U6g0/1OoNP9TqDT/YKU1/8qOPv/5wZ////////////////////////39/YcAAAAAAAAAAAAAAAD+/v4l/f39+////////////////8Lgt/9TqDT/U6g0/1OoNP9TqDT/U6g0/1OoNP9utlT/n86N/7faqv+426v/pdKV/3u8ZP9UqDX/U6g0/3egN//jiUH/9IVC//SFQv/82MP//////////////////f39+v7+/iMAAAAAAAAAAP39/Z3////////////////q9Ob/W6w+/1OoNP9TqDT/U6g0/1OoNP9nskz/zOXC/////////////////////////////////+Dv2v+osWP/8YVC//SFQv/0hUL/9IVC//WQVP/++fb//////////////////f39mgAAAAD+/v4O/f399v///////////////4LHj/9TqDT/U6g0/1OoNP9TqDT/dblc//L58P/////////////////////////////////////////////8+v/3p3f/9IVC//SFQv/0hUL/9IVC//rIqf/////////////////9/f31////DP7+/ln////////////////f9v7/Cbz2/zOwhv9TqDT/U6g0/2KwRv/v9+z///////////////////////////////////////////////////////738//1kFT/9IVC//SFQv/0hUL/9plg///////////////////////+/v5W/f39nP///////////////4jf/f8FvPv/Bbz7/yG1s/9QqDz/vN2w//////////////////////////////////////////////////////////////////rHqP/0hUL/9IVC//SFQv/0hUL//vDn//////////////////39/Zn9/f3L////////////////R878/wW8+/8FvPv/Bbz7/y7C5P/7/fr//////////////////////////////////////////////////////////////////ere//SFQv/0hUL/9IVC//SFQv/718H//////////////////f39yP39/ez///////////////8cwvv/Bbz7/wW8+/8FvPv/WNL8///////////////////////////////////////0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//rIqv/////////////////9/f3q/f39+v///////////////we9+/8FvPv/Bbz7/wW8+/993P3///////////////////////////////////////SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/+cGf//////////////////39/fn9/f36////////////////B737/wW8+/8FvPv/Bbz7/33c/f//////////////////////////////////////9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/6xaX//////////////////f39+f39/e3///////////////8cwvv/Bbz7/wW8+/8FvPv/WdP8///////////////////////////////////////0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//SFQv/0hUL/9IVC//vVv//////////////////9/f3q/f39y////////////////0bN/P8FvPv/Bbz7/wW8+/8hrvn/+/v///////////////////////////////////////////////////////////////////////////////////////////////////////////////////39/cj9/f2c////////////////ht/9/wW8+/8FvPv/FZP1/zRJ6/+zuPf//////////////////////////////////////////////////////////////////////////////////////////////////////////////////f39mf7+/lr////////////////d9v7/B7n7/yB38f81Q+r/NUPq/0hV7P/u8P3////////////////////////////////////////////////////////////////////////////////////////////////////////////+/v5X////D/39/ff///////////////9tkPT/NUPq/zVD6v81Q+r/NUPq/2Fs7//y8v7////////////////////////////////////////////09f7//////////////////////////////////////////////////f399f7+/g0AAAAA/f39n////////////////+Tm/P89Suv/NUPq/zVD6v81Q+r/NUPq/1Bc7f/IzPn/////////////////////////////////x8v5/0xY7P+MlPP////////////////////////////////////////////9/f2cAAAAAAAAAAD+/v4n/f39/P///////////////7W69/81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v9ZZe7/k5v0/6609/+vtff/lJv0/1pm7v81Q+r/NUPq/zVD6v+GjvL//v7//////////////////////////////f39+/7+/iQAAAAAAAAAAAAAAAD9/f2N/////////////////////6Cn9f81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v+BivL////////////////////////////9/f2KAAAAAAAAAAAAAAAAAAAAAP7+/gv9/f3V/////////////////////7W69/8+S+v/NUPq/zVD6v81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v81Q+r/P0zr/7q/+P///////////////////////f390v7+/gkAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/ib9/f3r/////////////////////+Xn/P94gfH/NkTq/zVD6v81Q+r/NUPq/zVD6v81Q+r/NUPq/zVD6v81Q+r/NkTq/3Z/8f/l5/z///////////////////////39/er+/v4kAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/jL9/f3r///////////////////////////k5vz/nqX1/2p08P9IVez/OEbq/zdF6v9GU+z/aHLv/5qh9f/i5Pz////////////////////////////9/f3q////MAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7+/ib9/f3V/////////////////////////////////////////////////////////////////////////////////////////////////f390v7+/iQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP///wr9/f2N/f39/P///////////////////////////////////////////////////////////////////////////f39+/39/Yv+/v4JAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD+/v4n/f39n/39/ff//////////////////////////////////////////////////////f399v39/Z3+/v4lAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/v7+Dv7+/lr9/f2c/f39y/39/e39/f36/f39+v39/ez9/f3L/f39nP7+/ln+/v4OAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/AA///AAD//AAAP/gAAB/wAAAP4AAAB8AAAAPAAAADgAAAAYAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAABgAAAAcAAAAPAAAAD4AAAB/AAAA/4AAAf/AAAP/8AAP//wAP/";
     function ugfFaviconForLayout() {
         const h = document.querySelector("html");
         const era = ugfRetroEra();
@@ -93336,6 +93436,1430 @@ html[gplex-gmail] body {
         return css;
     }
     // ---- end Gplex for Google Play ----
+    // ---- Gplex for Google Finance (7.2.31) ----------------------------------------------
+    // google.com/finance as it was in your layout's year, drawn from the screenshots Google's
+    // own Finance blog posted with each change (the launch of 21 March 2006, the new home page
+    // of 12 December 2006, "A Brand New Look and Feel" of 7 July 2009 and "a fresh coat of
+    // paint" of 29 November 2011), the Google Operating System blog, and Google's
+    // announcement of 28 November 2017, when Finance became a tab of Search:
+    //   fa06 - March to December 2006: green bars, "Finance" in green under the logo (layouts to 2006)
+    //   f06  - December 2006 to June 2009: blue bars, sector summary, top movers (2007-2008, Late 2008-2009)
+    //   f09  - July 2009 to November 2011: the left-hand navigation and "Google finance" (Late 2009 - Early 2011)
+    //   f11  - November 2011 to November 2017: Finance in Google's grey look (Late 2011 to 2016)
+    //   f17  - November 2017 to September 2020: a tab of Search, in cards (2017-2018, 2019)
+    // The 2022 layout keeps today's Google Finance. Prices, charts, news and company details are
+    // today's: read from Google's page, and from the two requests its own page makes (a chart's
+    // prices for a range, and the search for a stock). Portfolios and the rest stay Google's.
+    function ugfFinEra() {
+        const l = String(layout || "2015");
+        if (l === "2022") {
+            return null;
+        }
+        if (l === "2019" || l === "2018" || l === "2018M") {
+            return "f17";
+        }
+        if (/^(2011|2012|2013|2014|2015|2016|2017)/.test(l)) {
+            return "f11";
+        }
+        if (l === "2009L" || l === "2010" || l === "2010N") {
+            return "f09";
+        }
+        if (l === "2007" || l === "2009") {
+            return "f06";
+        }
+        return "fa06";
+    }
+    // the home page and a quote's page; the rest of /finance stays Google's
+    function ugfFinRoute() {
+        const p = (window.location.pathname || "/").replace(/\/+$/, "");
+        if (p === "/finance") {
+            return { page: "home" };
+        }
+        const m = p.match(/^\/finance\/quote\/([^/]+)$/);
+        if (m) {
+            return { page: "quote", sym: decodeURIComponent(m[1]) };
+        }
+        return null;
+    }
+    function ugfFinWanted() {
+        if (window.location.host !== "www.google.com" || !ugfNtTopFrame() || !ugfNtOn("UGF_FINANCE_ON")) {
+            return false;
+        }
+        if (/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "")) {
+            return false;
+        }
+        return !!(ugfFinEra() && ugfFinRoute());
+    }
+    // ---- reading Google's page --------------------------------------------------------
+    function ugfFinBlocks() {
+        const out = {};
+        document.querySelectorAll("script").forEach(function(s) {
+            const t = s.textContent || "";
+            if (t.indexOf("AF_initDataCallback") < 0) {
+                return;
+            }
+            const k = t.match(/key:\s*'(ds:\d+)'/);
+            const m = t.match(/data:([\s\S]*),\s*sideChannel:\s*\{\s*\}\s*\}\s*\)\s*;?\s*$/);
+            if (k && m) {
+                try {
+                    out[k[1]] = JSON.parse(m[1]);
+                } catch (e) {}
+            }
+        });
+        return out;
+    }
+    function ugfFinAt(o, path) {
+        for (let i = 0; i < path.length; i++) {
+            if (!o || typeof o !== "object") {
+                return undefined;
+            }
+            o = o[path[i]];
+        }
+        return o;
+    }
+    // a quote, as Google's page and its requests give it
+    function ugfFinQuote(e) {
+        if (!Array.isArray(e) || !Array.isArray(e[5])) {
+            return null;
+        }
+        const tk = Array.isArray(e[1]) ? e[1] : null;
+        const sym = String(e[21] || (tk ? tk[0] + ":" + tk[1] : ""));
+        const ah = Array.isArray(e[16]) ? { price: e[16][0], chg: e[16][1], pct: e[16][2], time: ugfFinAt(e, [17, 0]) } : null;
+        return {
+            mid: e[0], t: tk ? tk[0] : sym, x: tk ? tk[1] : "", sym: sym, name: String(e[2] || sym), type: e[3], cur: e[4] || "",
+            price: e[5][0], chg: e[5][1], pct: e[5][2], prev: e[7], time: ugfFinAt(e, [11, 0]), tz: e[12] || "America/New_York", off: e[13],
+            ah: ah, close: ugfFinAt(e, [18, 0]), open: ugfFinAt(e, [19, 0, 1]), shut: ugfFinAt(e, [19, 0, 2])
+        };
+    }
+    // the quote inside Google's wrappers ([[quote, ...]] and the like)
+    function ugfFinDig(x) {
+        while (Array.isArray(x) && Array.isArray(x[0])) {
+            x = x[0];
+        }
+        return x;
+    }
+    // a stock, an index or a pair, the way the chart request names it
+    function ugfFinSpec(sym) {
+        const m = String(sym).match(/^([A-Za-z]{3,5})-([A-Za-z]{3,5})$/);
+        if (m) {
+            return [null, null, [m[1].toUpperCase(), m[2].toUpperCase()]];
+        }
+        const i = String(sym).lastIndexOf(":");
+        return [null, [sym.slice(0, i), sym.slice(i + 1)]];
+    }
+    // Google's [y, m, d, h, min, s, , [utc offset]] as a time
+    function ugfFinTime(a) {
+        if (!Array.isArray(a)) {
+            return 0;
+        }
+        const off = Array.isArray(a[7]) && typeof a[7][0] === "number" ? a[7][0] : 0;
+        return Date.UTC(a[0], (a[1] || 1) - 1, a[2] || 1, a[3] || 0, a[4] || 0, a[5] || 0) - off * 1000;
+    }
+    // a chart's points: [[time, price, volume, change, % change]] (the changes from the previous close)
+    function ugfFinPoints(entry) {
+        const s = ugfFinAt(entry, [3, 0]);
+        if (!Array.isArray(s)) {
+            return { pts: [] };
+        }
+        const raw = Array.isArray(s[1]) ? s[1] : [];
+        const sess = Array.isArray(s[0]) ? s[0] : [];
+        return {
+            pts: raw.filter(function(p) {
+                return Array.isArray(p) && Array.isArray(p[1]) && typeof p[1][0] === "number";
+            }).map(function(p) {
+                return [ugfFinTime(p[0]), p[1][0], p[2] || 0, p[1][1], typeof p[1][2] === "number" ? p[1][2] * 100 : null];
+            }),
+            from: ugfFinTime(sess[1]), to: ugfFinTime(sess[2])
+        };
+    }
+    // Google Finance's own request (batchexecute): the chart for a range, or the stock search
+    function ugfFinRpc(id, args) {
+        const body = "f.req=" + encodeURIComponent(JSON.stringify([[[id, JSON.stringify(args), null, "generic"]]]));
+        const hl = new URLSearchParams(window.location.search).get("hl") || "en";
+        const url = "https://www.google.com/finance/_/FinHubUi/data/batchexecute?rpcids=" + id + "&source-path=" +
+            encodeURIComponent(window.location.pathname) + "&hl=" + encodeURIComponent(hl) + "&rt=c";
+        return fetch(url, { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" }, body: body })
+            .then(function(r) {
+                return r.text();
+            }).then(function(t) {
+                // the answer is one JSON line among the length lines; the payload is a JSON string in it
+                const line = t.split("\n").filter(function(l) {
+                    return l.indexOf('["wrb.fr","' + id + '"') > -1;
+                })[0];
+                if (!line) {
+                    throw new Error("no answer");
+                }
+                const row = JSON.parse(line).filter(function(r) {
+                    return Array.isArray(r) && r[0] === "wrb.fr" && r[1] === id;
+                })[0];
+                return row && row[2] ? JSON.parse(row[2]) : null;
+            });
+    }
+    // a chart's points for a range: 1 day, 5 days, 1 month, 6 months, YTD, 1 year, 5 years, all
+    function ugfFinSeries(syms, range) {
+        const W = { "1d": 1, "5d": 2, "1m": 3, "3m": 4, "6m": 4, "ytd": 5, "1y": 6, "5y": 7, "10y": 8, "all": 8 };
+        const ask = function(list) {
+            return ugfFinRpc("c2u4wc", [list.map(ugfFinSpec), W[range] || 1, null, null, null, null, null, 0]).then(function(d) {
+                return (d && d[0]) || [];
+            });
+        };
+        // Google answers a mixed request in its own order: stocks and indexes go together and are
+        // matched by their tickers, each pair goes on its own
+        const pair = function(s) {
+            return /^[A-Za-z]{3,5}-[A-Za-z]{3,5}$/.test(s);
+        };
+        const stocks = syms.filter(function(s) {
+            return !pair(s);
+        });
+        return Promise.all([stocks.length ? ask(stocks) : Promise.resolve([])].concat(syms.filter(pair).map(function(s) {
+            return ask([s]).catch(function() {
+                return [];
+            });
+        }))).then(function(got) {
+            const byTicker = {};
+            got[0].forEach(function(e) {
+                const tk = ugfFinAt(e, [0]);
+                if (Array.isArray(tk)) {
+                    byTicker[tk[0] + ":" + tk[1]] = e;
+                }
+            });
+            let k = 0;
+            const entries = syms.map(function(s) {
+                return pair(s) ? (got[++k] || [])[0] : byTicker[s];
+            });
+            return syms.map(function(sym, i) {
+                const got = ugfFinPoints(entries[i]);
+                // three months and ten years are cut from six months and from all of it
+                const keep = range === "3m" ? 92 : range === "10y" ? 3653 : 0;
+                if (keep && got.pts.length) {
+                    const end = got.pts[got.pts.length - 1][0];
+                    got.pts = got.pts.filter(function(p) {
+                        return p[0] >= end - keep * 864e5;
+                    });
+                }
+                return got;
+            });
+        });
+    }
+    function ugfFinSearch(q) {
+        return ugfFinRpc("XB3kn", [q, null, 1]).then(function(d) {
+            return ((d && d[0]) || []).map(function(r) {
+                return ugfFinQuote(r && r[3]);
+            }).filter(Boolean);
+        });
+    }
+    // ---- numbers ----------------------------------------------------------------------
+    function ugfFinNum(n, dec) {
+        if (typeof n !== "number" || isNaN(n)) {
+            return "-";
+        }
+        return n.toLocaleString("en-US", { minimumFractionDigits: dec, maximumFractionDigits: dec });
+    }
+    function ugfFinPrice(n) {
+        return ugfFinNum(n, typeof n === "number" && Math.abs(n) < 10 ? 4 : 2);
+    }
+    function ugfFinSigned(n, dec) {
+        if (typeof n !== "number" || isNaN(n)) {
+            return "-";
+        }
+        return (n > 0 ? "+" : n < 0 ? "-" : "") + ugfFinNum(Math.abs(n), dec === undefined ? (Math.abs(n) < 1 ? 3 : 2) : dec);
+    }
+    // a pair's change to four places, as Google gave it ("-0.0037")
+    function ugfFinDec(q) {
+        return q && typeof q.price === "number" && Math.abs(q.price) < 10 ? 4 : undefined;
+    }
+    function ugfFinPct(n) {
+        return typeof n === "number" ? ugfFinSigned(n, 2) + "%" : "-";
+    }
+    function ugfFinBig(n) {
+        if (typeof n !== "number" || !n) {
+            return "-";
+        }
+        const a = Math.abs(n);
+        return a >= 1e12 ? (n / 1e12).toFixed(2) + "T" : a >= 1e9 ? (n / 1e9).toFixed(2) + "B" : a >= 1e6 ? (n / 1e6).toFixed(2) + "M" : a >= 1e3 ? (n / 1e3).toFixed(2) + "K" : String(n);
+    }
+    function ugfFinCls(n) {
+        return n > 0 ? "up" : n < 0 ? "dn" : "";
+    }
+    // "Oct 9, 4:00PM EDT" in the exchange's own time
+    function ugfFinWhen(ms, tz, style) {
+        if (!ms) {
+            return "";
+        }
+        try {
+            const d = new Date(ms);
+            const part = function(o) {
+                return new Intl.DateTimeFormat("en-US", Object.assign({ timeZone: tz }, o)).format(d);
+            };
+            const zone = (part({ timeZoneName: "short" }).split(" ").pop() || "").replace(/^GMT$/, "GMT");
+            const hm = part({ hour: "numeric", minute: "2-digit", hour12: true });
+            return part({ month: "short", day: "numeric" }) + ", " + (style === "f17" ? hm : hm.replace(" ", "")) + " " + zone;
+        } catch (e) {
+            return new Date(ms).toLocaleString("en-US");
+        }
+    }
+    // ---- the chart --------------------------------------------------------------------
+    // sets: [{ pts, color }]; o: { w, h, era, range, pct (each line as a change from its start),
+    // base (the previous close, dotted), vol (volume bars), flags ([[time, letter]]), from, to,
+    // plain (the time under the chart without the blue band, as on the home pages), baseColor }
+    function ugfFinChart(sets, o) {
+        const W = o.w;
+        const material = o.era === "f17";
+        const axisW = material ? 0 : 52;
+        const left = material ? 46 : 0;
+        const plotW = W - axisW - left;
+        const volH = o.vol && !material && sets[0].pts.some(function(p) {
+            return p[2] > 0;
+        }) ? 62 : 0;
+        const bandH = material ? 22 : 18;
+        const plotH = o.h - bandH - volH;
+        const all = [];
+        sets.forEach(function(s) {
+            if (o.pct && s.pts.length) {
+                const b = s.base || s.pts[0][1];
+                s.v = s.pts.map(function(p) {
+                    return (p[1] / b - 1) * 100;
+                });
+            } else {
+                s.v = s.pts.map(function(p) {
+                    return p[1];
+                });
+            }
+            s.v.forEach(function(v) {
+                all.push(v);
+            });
+        });
+        if (!all.length) {
+            return '<div class="fc-empty" style="height:' + o.h + 'px">No data</div>';
+        }
+        if (typeof o.base === "number" && !o.pct) {
+            all.push(o.base);
+        }
+        if (o.pct) {
+            all.push(0);
+        }
+        let lo = Math.min.apply(null, all);
+        let hi = Math.max.apply(null, all);
+        if (hi === lo) {
+            hi += 1;
+            lo -= 1;
+        }
+        // round steps, four or five of them
+        const raw = (hi - lo) / 4;
+        const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+        const step = [1, 2, 2.5, 5, 10].map(function(f) {
+            return f * mag;
+        }).filter(function(s) {
+            return s >= raw;
+        })[0] || raw;
+        lo = Math.floor(lo / step) * step;
+        hi = Math.ceil(hi / step) * step;
+        const y = function(v) {
+            return 6 + (plotH - 12) * (1 - (v - lo) / (hi - lo));
+        };
+        // one day runs open to close by the clock; longer ranges go point by point, without
+        // nights and weekends, as the charts of the time did
+        const ref = sets[0].pts;
+        const byTime = o.range === "1d" && o.from && o.to && o.to > o.from;
+        const x = function(i, t) {
+            if (byTime) {
+                return left + plotW * Math.max(0, Math.min(1, (t - o.from) / (o.to - o.from)));
+            }
+            return left + plotW * (ref.length > 1 ? i / (ref.length - 1) : 0.5);
+        };
+        const tz = o.tz || "America/New_York";
+        const fmt = function(t, opt) {
+            try {
+                return new Intl.DateTimeFormat("en-US", Object.assign({ timeZone: tz }, opt)).format(new Date(t));
+            } catch (e) {
+                return "";
+            }
+        };
+        let svg = '<svg class="fchart" xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + o.h + '" viewBox="0 0 ' + W + " " + o.h + '">';
+        const grid = material ? "#e8eaed" : "#e0e0e0";
+        const ink = material ? "#70757a" : "#000";
+        // the price levels
+        for (let v = lo; v <= hi + step / 2; v += step) {
+            const yy = y(v).toFixed(1);
+            svg += '<line x1="' + left + '" x2="' + (left + plotW) + '" y1="' + yy + '" y2="' + yy + '" stroke="' + grid + '" stroke-width="1"' + (material ? "" : ' stroke-dasharray="1,2"') + "/>";
+            const lab = o.pct ? (v > 0 ? "+" : "") + v.toFixed(2) + "%" : ugfFinNum(v, Number.isInteger(+step.toFixed(6)) ? 0 : Math.min(4, (String(+step.toFixed(6)).split(".")[1] || "").length));
+            const col = o.pct ? (v > 0.0001 ? "#008000" : v < -0.0001 ? "#cc0000" : "#666") : ink;
+            svg += material ? '<text x="' + (left - 6) + '" y="' + (+yy + 4) + '" text-anchor="end" font-size="12" fill="' + ink + '">' + lab + "</text>"
+                : '<text x="' + (left + plotW + 5) + '" y="' + (+yy + 4) + '" font-size="11" fill="' + col + '">' + lab + "</text>";
+        }
+        // the time labels: hours, days, months or years
+        const labels = [];
+        let last = "";
+        ref.forEach(function(p, i) {
+            let key;
+            let text;
+            if (o.range === "1d") {
+                key = fmt(p[0], { hour: "numeric", hour12: false });
+                const h = parseInt(key, 10);
+                text = h === 12 ? "12pm" : h > 12 ? String(h - 12) : (labels.length ? String(h) : h + "am");
+            } else if (o.range === "5d") {
+                key = fmt(p[0], { day: "numeric" });
+                text = fmt(p[0], { weekday: "short", month: "short", day: "numeric" }).replace(",", "");
+            } else if (o.range === "1m") {
+                // each week, from its first trading day (weeks counted from a Monday)
+                key = String(Math.floor((p[0] / 864e5 + 3) / 7));
+                text = fmt(p[0], { month: "short", day: "numeric" });
+            } else if (["3m", "6m", "ytd", "1y"].indexOf(o.range) > -1) {
+                key = fmt(p[0], { month: "short" });
+                text = fmt(p[0], { month: "short" }) + (o.range === "1y" || o.era === "f17" ? "" : " " + fmt(p[0], { year: "numeric" }));
+            } else {
+                key = fmt(p[0], { year: "numeric" });
+                text = key;
+            }
+            if (key !== last && i > 0) {
+                labels.push([x(i, p[0]), text]);
+            }
+            last = key;
+        });
+        // every hour for a day's chart, starting from the open
+        if (byTime) {
+            labels.length = 0;
+            for (let t = Math.ceil(o.from / 36e5) * 36e5; t <= o.to; t += 36e5) {
+                const h = parseInt(fmt(t, { hour: "numeric", hour12: false }), 10);
+                labels.push([x(0, t), h === 12 ? "12pm" : h > 12 ? h - 12 + (t + 36e5 > o.to ? "pm" : "") : (labels.length ? String(h) : h + "am")]);
+            }
+            if (o.from % 36e5) {
+                const h0 = parseInt(fmt(o.from, { hour: "numeric", hour12: false }), 10);
+                labels.unshift([x(0, o.from), h0 + ":" + fmt(o.from, { minute: "2-digit" }).padStart(2, "0") + (h0 < 12 ? "am" : "pm")]);
+            }
+        }
+        const spaced = [];
+        labels.forEach(function(l) {
+            if (!spaced.length || l[0] - spaced[spaced.length - 1][0] > (material ? 70 : 52)) {
+                spaced.push(l);
+            }
+        });
+        const bandY = plotH;
+        if (!material && !o.plain) {
+            svg += '<rect x="' + left + '" y="' + bandY + '" width="' + plotW + '" height="' + bandH + '" fill="#d6e3f6"/>';
+        }
+        spaced.forEach(function(l) {
+            const xx = l[0].toFixed(1);
+            const lastOne = material && l[0] > left + plotW - 24;
+            if (!material) {
+                svg += '<line x1="' + xx + '" x2="' + xx + '" y1="0" y2="' + (plotH + bandH + volH) + '" stroke="#c9d3e3" stroke-width="1"/>';
+            }
+            svg += '<text x="' + (+xx + (material ? 0 : 4)) + '" y="' + (bandY + (material ? 16 : 13)) + '" font-size="' + (material ? 12 : 11) + '" fill="' + ink + '"' + (material ? ' text-anchor="' + (lastOne ? "end" : "middle") + '"' : "") + ">" + ugfNtEsc(l[1]) + "</text>";
+        });
+        // the previous close
+        if (typeof o.base === "number" && !o.pct && o.base >= lo && o.base <= hi) {
+            const yb = y(o.base).toFixed(1);
+            svg += '<line x1="' + left + '" x2="' + (left + plotW) + '" y1="' + yb + '" y2="' + yb + '" stroke="' + (material ? "#9aa0a6" : o.baseColor || "#cc0000") + '" stroke-width="1" stroke-dasharray="' + (material ? "2,3" : o.baseColor ? "0" : "4,3") + '"/>';
+            if (material) {
+                svg += '<text x="' + (left + plotW - 2) + '" y="' + (+yb - 4) + '" text-anchor="end" font-size="11" fill="#70757a">Previous close ' + ugfFinPrice(o.base) + "</text>";
+            }
+        }
+        // the lines (the first with the period's fill under it)
+        sets.forEach(function(s, k) {
+            if (!s.pts.length) {
+                return;
+            }
+            let d = "";
+            s.pts.forEach(function(p, i) {
+                d += (i ? "L" : "M") + x(i, p[0]).toFixed(1) + "," + y(s.v[i]).toFixed(1);
+            });
+            if (k === 0 && sets.length === 1 && s.fill) {
+                svg += '<path d="' + d + "L" + x(s.pts.length - 1, s.pts[s.pts.length - 1][0]).toFixed(1) + "," + plotH + "L" + x(0, s.pts[0][0]).toFixed(1) + "," + plotH + 'Z" fill="' + s.fill + '"/>';
+            }
+            svg += '<path d="' + d + '" fill="none" stroke="' + s.color + '" stroke-width="' + (material ? 2 : 1.4) + '" stroke-linejoin="round"/>';
+        });
+        // news, flagged where it came out
+        (o.flags || []).forEach(function(f) {
+            if (!ref.length || f[0] < ref[0][0] || f[0] > ref[ref.length - 1][0] + 864e5) {
+                return;
+            }
+            let i = 0;
+            while (i < ref.length - 1 && ref[i + 1][0] <= f[0]) {
+                i++;
+            }
+            const fx = Math.min(left + plotW - 14, x(i, ref[i][0]));
+            const fy = Math.max(2, y(sets[0].v[i]) - 26);
+            svg += '<g class="flag"><line x1="' + fx.toFixed(1) + '" x2="' + fx.toFixed(1) + '" y1="' + (fy + 14) + '" y2="' + y(sets[0].v[i]).toFixed(1) + '" stroke="#999"/>' +
+                '<rect x="' + (fx - 6).toFixed(1) + '" y="' + fy.toFixed(1) + '" width="13" height="14" fill="#fff" stroke="#666"/>' +
+                '<text x="' + (fx + 0.5).toFixed(1) + '" y="' + (fy + 11).toFixed(1) + '" text-anchor="middle" font-size="10" fill="#000">' + f[1] + "</text></g>";
+        });
+        // volume, under the chart
+        if (volH) {
+            const vs = ref.map(function(p) {
+                return p[2] || 0;
+            });
+            const vmax = Math.max.apply(null, vs.concat([1]));
+            const top = plotH + bandH;
+            svg += '<text x="4" y="' + (top + 12) + '" font-size="11" fill="#666">Volume</text>';
+            const bw = Math.max(1, plotW / Math.max(1, ref.length) - 1);
+            ref.forEach(function(p, i) {
+                const hgt = (volH - 16) * (vs[i] / vmax);
+                svg += '<rect x="' + (x(i, p[0]) - bw / 2).toFixed(1) + '" y="' + (top + volH - hgt).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + hgt.toFixed(1) + '" fill="#3366cc"/>';
+            });
+            svg += '<text x="' + (left + plotW + 5) + '" y="' + (top + 20) + '" font-size="11">' + ugfFinBig(vmax) + "</text>";
+        }
+        return svg + "</svg>";
+    }
+    // the overview under the chart: all of a stock's history, the range shown marked on it
+    function ugfFinStrip(pts, from, to, w, filled) {
+        if (!pts.length) {
+            return "";
+        }
+        const h = 34;
+        const t0 = pts[0][0];
+        const t1 = pts[pts.length - 1][0];
+        const vs = pts.map(function(p) {
+            return p[1];
+        });
+        const lo = Math.min.apply(null, vs);
+        const hi = Math.max.apply(null, vs) || 1;
+        const x = function(t) {
+            return w * (t - t0) / Math.max(1, t1 - t0);
+        };
+        let d = "";
+        pts.forEach(function(p, i) {
+            d += (i ? "L" : "M") + x(p[0]).toFixed(1) + "," + (h - 2 - (h - 6) * (p[1] - lo) / Math.max(1e-9, hi - lo)).toFixed(1);
+        });
+        let svg = '<svg class="fstrip" xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + (h + 14) + '"><rect width="' + w + '" height="' + h + '" fill="#f0f0f0"/>';
+        let year = new Date(t0).getUTCFullYear() + 1;
+        const every = [1, 2, 5, 10].filter(function(n) {
+            return w * n * 365.25 * 864e5 / Math.max(1, t1 - t0) >= 34;
+        })[0] || 10;
+        while (Date.UTC(year, 0, 1) < t1) {
+            const xx = x(Date.UTC(year, 0, 1));
+            if (year % every === 0) {
+                svg += '<line x1="' + xx.toFixed(1) + '" x2="' + xx.toFixed(1) + '" y1="0" y2="' + h + '" stroke="#d0d0d0"/><text x="' + (xx + 3).toFixed(1) + '" y="' + (h + 11) + '" font-size="10" fill="#666">' + year + "</text>";
+            }
+            year++;
+        }
+        svg += filled ? '<path d="' + d + "L" + w + "," + h + "L0," + h + 'Z" fill="#dcdcdc" stroke="#aaa" stroke-width="1"/>' : '<path d="' + d + '" fill="none" stroke="#999" stroke-width="1"/>';
+        const a = Math.max(0, x(Math.max(from, t0)));
+        const b = Math.max(a + 3, x(Math.min(to, t1)));
+        svg += '<rect x="' + a.toFixed(1) + '" y="0" width="' + (b - a).toFixed(1) + '" height="' + h + '" fill="#3366cc" fill-opacity=".15" stroke="#3366cc"/>';
+        return svg + "</svg>";
+    }
+    // ---- the logos --------------------------------------------------------------------
+    function ugfFinLogo(era, href) {
+        const esc = ugfNtEsc;
+        if (era === "fa06" || era === "f06") {
+            // Google's logo of the time, "Finance" under it and BETA beside, as the product logos were set
+            return '<a class="flogo b06" href="' + esc(href) + '"><img src="https://www.google.com/images/logo.gif" width="150" height="60" alt="Google">' +
+                "<b>Finance</b><i>BETA</i></a>";
+        }
+        if (era === "f09") {
+            return '<a class="flogo" href="' + esc(href) + '"><img src="https://www.google.com/images/logos/finance_logo.gif" width="195" height="40" alt="Google finance"></a>';
+        }
+        if (era === "f11") {
+            return '<a class="flogo" href="' + esc(href) + '">' + ugfCalHeadLogo() + "</a>";
+        }
+        return '<a class="flogo" href="' + esc(href) + '"><img src="' + ugfNtArt().glogo92 + '" width="92" height="36" alt="Google"></a>';
+    }
+    // ---- the page ---------------------------------------------------------------------
+    function ugfFinMain() {
+        const era = ugfFinEra();
+        const route = ugfFinRoute();
+        const esc = ugfNtEsc;
+        console.log("[Gplex] Finance: layout " + layout + " (" + era + ", " + route.page + ")" + (UGF_VERSION ? " - Gplex " + UGF_VERSION : ""));
+        const style = document.createElement("style");
+        style.id = "ugf-nt-styles";
+        style.textContent = ugfNtBaseCss("ugf-fin").concat(ugfFinCss(era)).join("\n");
+        (document.head || document.documentElement).appendChild(style);
+        if (era === "f17") {
+            const font = document.createElement("link");
+            font.rel = "stylesheet";
+            font.href = "https://fonts.googleapis.com/css?family=Roboto:400,500";
+            (document.head || document.documentElement).appendChild(font);
+        }
+        document.documentElement.setAttribute("gplex-nt", era);
+        const fav = ugfFinFav();
+        if (fav) {
+            ugfApplyFavicon(fav);
+            ugfKeepFavicon(function() {
+                return fav;
+            });
+        }
+        const shell = document.createElement("div");
+        shell.id = "ugf-fin";
+        shell.setAttribute("era", era);
+        document.body.appendChild(shell);
+        const giveUp = function(why) {
+            console.log("[Gplex] Finance: left to Google (" + why + ")");
+            shell.remove();
+            style.remove();
+            document.documentElement.removeAttribute("gplex-nt");
+            const veil = document.getElementById("ugf-fin-veil");
+            if (veil) {
+                veil.remove();
+            }
+        };
+        const keep = (function() {
+            const hl = new URLSearchParams(window.location.search).get("hl");
+            return hl ? "?hl=" + encodeURIComponent(hl) : "";
+        })();
+        const home = "/finance/" + keep;
+        const quoteUrl = function(sym) {
+            return "/finance/quote/" + encodeURIComponent(sym).replace(/%3A/gi, ":") + keep;
+        };
+        // what Google's own page does that Gplex doesn't (portfolios, lists, the rest)
+        const google = function(path) {
+            return "https://www.google.com" + path + (path.indexOf("?") > -1 ? "&" : "?") + "gplex=false";
+        };
+        // NASDAQ:GOOG, the exchange first, as Google wrote it
+        const dsym = function(q) {
+            return q.x ? q.x + ":" + q.t : q.sym;
+        };
+        const qlink = function(q, text) {
+            return '<a href="' + esc(quoteUrl(q.sym)) + '">' + esc(text || q.t || q.sym) + "</a>";
+        };
+        const chg = function(q, withPrice) {
+            return (withPrice ? '<span class="pr">' + ugfFinPrice(q.price) + "</span> " : "") +
+                '<span class="' + ugfFinCls(q.chg) + '">' + ugfFinSigned(q.chg, ugfFinDec(q)) + " (" + ugfFinPct(q.pct).replace("+", "") + ")</span>";
+        };
+        // the quotes you looked at last, kept in Gplex's storage (and shown with today's prices)
+        const recent = (function() {
+            let r = [];
+            try {
+                r = JSON.parse(String((typeof GM_getValue === "function" ? GM_getValue("UGF_FIN_RECENT", null) : null) || "[]"));
+            } catch (e) {}
+            return Array.isArray(r) ? r.filter(function(x) {
+                return x && x.s;
+            }).slice(0, 8) : [];
+        })();
+        const remember = function(q) {
+            const r = [{ s: q.sym, n: q.name, t: q.t }].concat(recent.filter(function(x) {
+                return x.s !== q.sym;
+            })).slice(0, 8);
+            try {
+                if (typeof GM_setValue === "function") {
+                    GM_setValue("UGF_FIN_RECENT", JSON.stringify(r));
+                }
+            } catch (e) {}
+        };
+        let data = null;
+        // ---- the header: the Google bar of the time, the logo, the search box
+        const who = ugfCalWho();
+        const signedIn = !!(who.name || who.email);
+        const gbar = function() {
+            if (era === "fa06") {
+                return '<div class="ftop">' + (signedIn ? "<b>" + esc(who.email || who.name) + '</b> | <a href="' + esc(google("/finance/")) + '">My Portfolio</a> | <a href="https://myaccount.google.com/">My Account</a> | <a href="https://accounts.google.com/Logout">Sign out</a>'
+                    : '<a href="https://accounts.google.com/ServiceLogin">Sign in</a>') + "</div>";
+            }
+            if (era === "f06") {
+                return ugfNtGbar("classic", "Finance", String(layout) === "2009" ? "2009" : "2007");
+            }
+            if (era === "f09") {
+                return ugfNtGbar("classic", "Finance", String(layout) === "2009L" ? "2009" : "2010");
+            }
+            if (era === "f11") {
+                return ugfNtHasGbar() ? ugfNtGbar("dark", "Finance") : "";
+            }
+            return "";
+        };
+        const searchBox = function(v) {
+            if (era === "fa06") {
+                return '<form class="fsearch"><div><input type="text" name="q" value="' + esc(v) + '" size="40" autocomplete="off"><input type="submit" value="Search"></div>' +
+                    '<div class="eg">e.g. "Google", "Cars", "AAPL"</div></form>';
+            }
+            if (era === "f06") {
+                return '<form class="fsearch"><div><input type="text" name="q" value="' + esc(v) + '" size="40" autocomplete="off"><input type="submit" value="Search Finance"></div>' +
+                    '<div class="eg">e.g. "CSCO" or "Google"</div></form>';
+            }
+            if (era === "f09") {
+                return '<form class="fsearch"><div><input type="text" name="q" value="' + esc(v) + '" autocomplete="off"><input type="submit" value="Get quotes"></div>' +
+                    '<div class="eg">Example: "CSCO" or "Google"</div></form>';
+            }
+            if (era === "f11") {
+                return '<form class="fsearch k"><input type="text" name="q" value="' + esc(v) + '" placeholder="Search Finance" autocomplete="off">' +
+                    '<button type="submit" class="kbtn blue" title="Search">' + ugfNtIcon("search", 18) + "</button></form>";
+            }
+            return '<form class="fsearch m"><input type="text" name="q" value="' + esc(v) + '" autocomplete="off"><span class="mic">' + ugfNtIcon("mic", 24) + "</span>" +
+                '<button type="submit" title="Search">' + ugfNtIcon("search", 24) + "</button></form>";
+        };
+        const header = function(v) {
+            if (era === "f11") {
+                return gbar() + '<div class="khead">' + ugfFinLogo(era, home) + searchBox(v) + ugfNtHeadCorner() + "</div>";
+            }
+            if (era === "f17") {
+                const tabs = [["All", "/search?q=" + encodeURIComponent(v || "stocks")], ["Finance", home], ["News", "/search?tbm=nws&q=" + encodeURIComponent(v || "stock market")],
+                    ["Images", "/search?tbm=isch&q=" + encodeURIComponent(v || "stock market")], ["Videos", "/search?tbm=vid&q=" + encodeURIComponent(v || "stock market")], ["More", ""]];
+                return '<div class="mhead">' + ugfFinLogo(era, "https://www.google.com/") + searchBox(v) + '<span class="corner">' + ugfNtCorner() + "</span></div>" +
+                    '<div class="mtabs">' + tabs.map(function(t) {
+                        return t[0] === "Finance" ? '<a class="on" href="' + esc(t[1]) + '">' + t[0] + "</a>" : t[1] ? '<a href="' + esc(t[1]) + '">' + t[0] + "</a>" : "<span>" + t[0] + "</span>";
+                    }).join("") + '<span class="sp"></span><a href="https://www.google.com/preferences">Settings</a><span>Tools</span></div>';
+            }
+            return gbar() + '<div class="fhead">' + ugfFinLogo(era, home) + searchBox(v) + "</div>";
+        };
+        const footer = function() {
+            const y = (String(layout).match(/\d{4}/) || ["2006"])[0];
+            if (era === "f17") {
+                return '<div class="mfoot"><a href="https://support.google.com/websearch">Help</a><a href="https://www.google.com/finance/?gplex=false">Send feedback</a>' +
+                    '<a href="https://policies.google.com/privacy">Privacy</a><a href="https://policies.google.com/terms">Terms</a></div>';
+            }
+            return '<div class="ffoot">' + (era === "f11" ? "" : "&copy;" + Math.max(2006, +y) + " Google - ") +
+                '<a href="https://www.google.com/">Google Home</a> - <a href="https://ads.google.com/">Advertising Programs</a> - <a href="https://policies.google.com/privacy">Privacy Policy</a> - ' +
+                '<a href="https://support.google.com/websearch/answer/2475746">Help</a>' + (era === "fa06" || era === "f06" ? "" : " - <a href=\"" + esc(google("/finance/")) + "\">Feedback</a>") +
+                '<div class="disc">Data is provided by Google\'s own Finance page today; quotes may be delayed. <a href="https://www.google.com/googlefinance/disclaimer/">Disclaimer</a></div></div>';
+        };
+        // the left-hand navigation of 2009-2017
+        const nav = function(sel) {
+            const items = [["Markets", home], ["News", home + "#news"], ["Portfolios", google("/finance/portfolio")], ["Stock screener", google("/finance/markets/most-active")],
+                ["Google Domestic Trends", google("/finance/markets/indexes")]];
+            const company = route.page === "quote" && data && data.q ? '<div class="nsub"><div class="nh' + (era === "f09" ? " sel" : "") + '">' + (data.q.type === 1 ? "Index" : data.q.type === 3 ? "Currency" : "Company") + "</div>" +
+                [["Summary", ""], ["News", "#news"], ["Related companies", "#related"], ["Historical prices", google(window.location.pathname)], ["Financials", google(window.location.pathname)]].map(function(c, i) {
+                    return '<a class="' + (i === 0 ? "on" : "") + '" href="' + esc(c[1] || quoteUrl(data.q.sym)) + '">' + c[0] + "</a>";
+                }).join("") + "</div>" : "";
+            return '<div class="fnav">' + company + '<div class="nmain">' + items.map(function(it) {
+                return '<a class="' + (it[0] === sel ? "on" : "") + '" href="' + esc(it[1]) + '">' + esc(it[0]) + "</a>";
+            }).join("") + "</div>" + recentBox() + "</div>";
+        };
+        const recentBox = function() {
+            const rows = recent.map(function(r) {
+                const q = data && data.recent && data.recent[r.s];
+                return '<tr><td><a href="' + esc(quoteUrl(r.s)) + '">' + esc(String(r.t || r.s).replace(/^([A-Z]{3})-([A-Z]{3})$/, "$1/$2")) + "</a></td><td class=\"num\">" + (q ? ugfFinPrice(q.price) : "") + "</td>" +
+                    '<td class="num ' + (q ? ugfFinCls(q.chg) : "") + '">' + (q ? (recentPct ? ugfFinPct(q.pct) : ugfFinSigned(q.chg, ugfFinDec(q))) : "") + "</td></tr>";
+            }).join("");
+            return '<div class="rq"><div class="rqh">Recent Quotes</div>' + (rows ? '<div class="rqt"><a class="tog" href="#">chg</a> | <a class="tog" href="#">%</a></div><table>' + rows + "</table>"
+                : '<div class="none">The quotes you look at show here.</div>') + '<a class="small" href="' + esc(google("/finance/portfolio")) + '">Create portfolio from quotes</a></div>';
+        };
+        let recentPct = false;
+        const box = function(title, body, cls, right) {
+            if (era === "f17") {
+                return '<div class="mcard ' + (cls || "") + '">' + (title ? '<div class="mct">' + title + "</div>" : "") + body + "</div>";
+            }
+            return '<div class="fbox ' + (cls || "") + '"><div class="fbh">' + title + (right ? '<span class="fbr">' + right + "</span>" : "") + "</div>" + '<div class="fbb">' + body + "</div></div>";
+        };
+        // ---- the home page
+        const groups = function(id) {
+            const g = (ugfFinAt(data.blocks["ds:0"], [0]) || []).filter(function(x) {
+                return x && x[0] === id;
+            })[0];
+            return g ? g[1].map(function(e) {
+                return ugfFinQuote(ugfFinAt(e, [1, 0]));
+            }).filter(Boolean) : [];
+        };
+        // "Dow" until 2009, "Dow Jones" from then; "Euro-USD" and "Yen-USD" until 2009
+        const early = era === "fa06" || era === "f06";
+        const US_NAMES = { ".DJI:INDEXDJX": early ? "Dow" : "Dow Jones", ".INX:INDEXSP": "S&P 500", ".IXIC:INDEXNASDAQ": "Nasdaq", "RUT:INDEXRUSSELL": "Russell 2000", "VIX:INDEXCBOE": "VIX" };
+        const FX06 = { "EUR-USD": "Euro-USD", "USD-JPY": "Yen-USD", "GBP-USD": "GBP-USD" };
+        const shortName = function(q) {
+            return US_NAMES[q.sym] || (early && FX06[q.sym]) || ({ "DAX PERFORMANCE-INDEX": "DAX", "FTSE 100 Index": "FTSE 100", "SSE Composite Index": "Shanghai", "BSE SENSEX": "BSE Sensex" })[q.name] ||
+                q.name.replace(/ \(([A-Z]{3}) \/ ([A-Z]{3})\)$/, "").replace(/ \/ /, "/");
+        };
+        const COLORS = ["#3366cc", "#dc3912", "#ff9900"];
+        const news = function() {
+            return (ugfFinAt(data.blocks["ds:7"], [0]) || []).filter(function(n) {
+                return Array.isArray(n) && /^https?:/.test(n[0]);
+            }).map(function(n) {
+                return { url: n[0], title: ugfPlayPlain(n[1]), src: n[2], t: (n[4] || 0) * 1000, text: ugfPlayPlain(n[16] || "") };
+            });
+        };
+        const ago = function(t) {
+            return t ? ugfNtAgo(new Date(t)) : "";
+        };
+        const newsItem = function(n, withText, cls) {
+            return '<div class="nw ' + (cls || "") + '"><a class="nt" href="' + esc(n.url) + '">' + esc(n.title) + "</a>" +
+                '<div class="ns">' + esc(n.src) + (n.t ? " - " + esc(ago(n.t)) : "") + "</div>" + (withText && n.text ? '<div class="nx">' + esc(n.text.slice(0, 260)) + (n.text.length > 260 ? "..." : "") + "</div>" : "") + "</div>";
+        };
+        const legendRows = function(list, dots) {
+            return '<table class="idx">' + list.map(function(q, i) {
+                return "<tr><td>" + (dots ? '<i class="dot" style="background:' + COLORS[i] + '"></i>' : '<i class="ln" style="background:' + COLORS[i] + '"></i>') + (era === "f11" ? qlink(q, shortName(q)) : "<b>" + qlink(q, shortName(q)) + "</b>") + "</td>" +
+                    '<td class="num">' + ugfFinNum(q.price, 2) + '</td><td class="num ' + ugfFinCls(q.chg) + '">' + ugfFinSigned(q.chg, 2) + '</td><td class="num ' + ugfFinCls(q.chg) + '">(' + ugfFinPct(q.pct).replace("+", "") + ")</td></tr>";
+            }).join("") + "</table>";
+        };
+        const quoteRows = function(list, nameFn) {
+            return '<table class="ql">' + list.map(function(q) {
+                return "<tr><td>" + qlink(q, nameFn ? nameFn(q) : shortName(q)) + '</td><td class="num">' + ugfFinPrice(q.price) + '</td><td class="num ' + ugfFinCls(q.chg) + '">' +
+                    ugfFinSigned(q.chg, ugfFinDec(q)) + " (" + ugfFinPct(q.pct).replace("+", "") + ")</td></tr>";
+            }).join("") + "</table>";
+        };
+        const movers = function() {
+            const m = data.blocks["ds:8"] || [];
+            const pick = function(i) {
+                return (m[i] || []).map(function(x) {
+                    return ugfFinQuote(ugfFinDig(x));
+                }).filter(Boolean);
+            };
+            return { up: pick(0), down: pick(1), active: pick(2) };
+        };
+        const sectors = function() {
+            return (ugfFinAt(data.blocks["ds:1"], [0, 0, 3]) || []).map(function(s) {
+                const q = ugfFinQuote(s && s[19]);
+                if (q) {
+                    q.label = s[14] || q.name;
+                }
+                return q;
+            }).filter(Boolean);
+        };
+        const sectorBox = function() {
+            const list = sectors();
+            const max = Math.max.apply(null, list.map(function(q) {
+                return Math.abs(q.pct || 0);
+            }).concat([0.5]));
+            return box("Sector summary", '<table class="sect"><tr><th>Sector</th><th class="num">% chg</th><th class="bars">% down / up</th></tr>' + list.map(function(q) {
+                const w = Math.round(48 * Math.abs(q.pct || 0) / max);
+                return "<tr><td>" + qlink(q, q.label) + '</td><td class="num ' + ugfFinCls(q.pct) + '">' + ugfFinPct(q.pct) + '</td><td class="bars"><span class="bar"><i class="dn" style="width:' +
+                    (q.pct < 0 ? w : 0) + 'px"></i><i class="up" style="width:' + (q.pct > 0 ? w : 0) + 'px"></i></span></td></tr>';
+            }).join("") + "</table>", "fsector");
+        };
+        const moversBox = function(title) {
+            const mv = movers();
+            const rows = function(list) {
+                return list.map(function(q) {
+                    return "<tr><td>" + qlink(q, q.name) + '</td><td class="num ' + ugfFinCls(q.pct) + '">' + ugfFinPct(q.pct) + '</td><td class="num">' + ugfFinPrice(q.price) + "</td></tr>";
+                }).join("");
+            };
+            return box(title, '<div class="mvt"><b class="mvtab on" data-mv="price">Price</b> | <a class="mvtab" data-mv="vol" href="#">Vol</a></div>' +
+                '<table class="mv" data-mv="price"><tr><th class="g">Gainers</th><th class="num">Change</th><th class="num">Price</th></tr>' + rows(mv.up) +
+                '<tr><th class="l">Losers</th><th class="num">Change</th><th class="num">Price</th></tr>' + rows(mv.down) + "</table>" +
+                '<table class="mv" data-mv="vol" hidden><tr><th>Most active</th><th class="num">Change</th><th class="num">Price</th></tr>' + rows(mv.active) + "</table>", "fmovers");
+        };
+        const homeChart = function(w, h, cls) {
+            return '<div class="hchart ' + (cls || "") + '" data-w="' + w + '" data-h="' + h + '"><div class="fc-empty" style="width:' + w + "px;height:" + h + 'px"></div></div>';
+        };
+        const homeBody = function() {
+            const us = groups(1);
+            const three = [".DJI:INDEXDJX", ".INX:INDEXSP", ".IXIC:INDEXNASDAQ"].map(function(s) {
+                return us.filter(function(q) {
+                    return q.sym === s;
+                })[0];
+            }).filter(Boolean);
+            const world = groups(3).concat(groups(2));
+            const fx = groups(4);
+            const nws = news();
+            const story = ugfFinAt(data.blocks["ds:5"], [0, 0]);
+            if (era === "fa06") {
+                const four = [".IXIC:INDEXNASDAQ", ".DJI:INDEXDJX", ".INX:INDEXSP", "RUT:INDEXRUSSELL"].map(function(s) {
+                    return us.filter(function(q) {
+                        return q.sym === s;
+                    })[0];
+                }).filter(Boolean);
+                const dji = us.filter(function(q) {
+                    return q.sym === ".DJI:INDEXDJX";
+                })[0];
+                const day = dji && dji.time ? new Intl.DateTimeFormat("en-GB", { timeZone: dji.tz, day: "numeric", month: "long", year: "numeric" }).format(new Date(dji.time * 1000)) : "";
+                return box("Market Summary", '<div class="ms06"><table class="ql z">' + four.map(function(q) {
+                    return "<tr><td>" + qlink(q, shortName(q)) + '</td><td class="num">' + ugfFinNum(q.price, 2) + '</td><td class="num ' + ugfFinCls(q.chg) + '">' + ugfFinSigned(q.chg, 2) +
+                        '</td><td class="num ' + ugfFinCls(q.chg) + '">(' + ugfFinPct(q.pct).replace("+", "") + ")</td></tr>";
+                }).join("") + '</table><div class="c06"><div class="ch"><span>' + esc(day) + "</span><span>DJI</span></div>" + homeChart(260, 110) + "</div></div>", "fsum") +
+                    box("Today's Headlines", nws.slice(0, 8).map(function(n) {
+                        return newsItem(n, true);
+                    }).join(""), "fnewsbox", "") + footer();
+            }
+            if (era === "f06") {
+                return '<div class="g3"><div class="c1">' + box("Market summary", homeChart(250, 130) + legendRows(three, true) + '<table class="fxr">' + fx.slice(0, 3).map(function(q) {
+                    return "<tr><td>" + qlink(q, shortName(q)) + '</td><td class="num">' + ugfFinPrice(q.price) + '</td><td class="num ' + ugfFinCls(q.chg) + '">' + ugfFinSigned(q.chg, 4) +
+                        '</td><td class="num ' + ugfFinCls(q.chg) + '">(' + ugfFinPct(q.pct).replace("+", "") + ")</td></tr>";
+                }).join("") + "</table>", "fsum") + box("Recent quotes", recentTable(), "frecent") + "</div>" +
+                    '<div class="c2" id="news">' + box("Today's news", nws.slice(0, 7).map(function(n) {
+                        return newsItem(n, false);
+                    }).join("") + '<a class="more" href="https://news.google.com/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB">View all of today\'s news &raquo;</a>', "fnewsbox") +
+                    nws.slice(7, 14).map(function(n) {
+                        return newsItem(n, false);
+                    }).join("") + "</div>" + '<div class="c3">' + sectorBox() + moversBox("Top movers") + "</div></div>" + footer();
+            }
+            if (era === "f17") {
+                const card = function(title, list) {
+                    return box(title, list.map(function(q) {
+                        return '<a class="mrow" href="' + esc(quoteUrl(q.sym)) + '"><span class="mn"><b>' + esc(q.name) + "</b><small>" + esc(q.sym.replace(":", ": ").split(": ").reverse().join(": ")) + " &middot; " +
+                            esc(ugfFinWhen((q.time || 0) * 1000, q.tz, "f17")) + '</small></span><span class="mp">' + ugfFinPrice(q.price) + '<small class="' + ugfFinCls(q.chg) + '">' +
+                            ugfFinSigned(q.chg, ugfFinDec(q)) + " (" + Math.abs(q.pct || 0).toFixed(2) + "%) " + (q.chg >= 0 ? "&#8593;" : "&#8595;") + "</small></span></a>";
+                    }).join(""), "mlist");
+                };
+                return '<div class="msub"><a class="on" href="' + esc(home) + '">Market Summary</a><a href="' + esc(google("/finance/portfolio")) + '">Your Stocks</a><a href="#us">Local Markets</a><a href="#world">World Markets</a></div>' +
+                    '<div class="mcols"><div class="ml">' + (recent.length ? '<div class="mct2 first">Recently searched</div>' + box("", recent.slice(0, 4).map(function(r) {
+                        const q = data.recent && data.recent[r.s];
+                        return '<a class="mrow" href="' + esc(quoteUrl(r.s)) + '"><span class="mn"><b>' + esc(r.n || r.s) + "</b><small>" + esc(r.s.split(":").reverse().join(": ")) + '</small><small class="fol">+ FOLLOW</small></span>' +
+                            '<span class="mp">' + (q ? ugfFinPrice(q.price) + '<small class="' + ugfFinCls(q.chg) + '">' + ugfFinSigned(q.chg, ugfFinDec(q)) + " (" + Math.abs(q.pct || 0).toFixed(2) + "%) " + (q.chg >= 0 ? "&#8593;" : "&#8595;") + "</small>" : "") + "</span></a>";
+                    }).join(""), "mlist") : "") + box("", '<table class="midx">' + three.map(function(q, i) {
+                        return '<tr><td><i class="dot" style="background:' + COLORS[i] + '"></i>' + qlink(q, q.name) + '</td><td class="num">' + ugfFinNum(q.price, 2) + '</td><td class="num ' + ugfFinCls(q.pct) + '">' +
+                            Math.abs(q.pct || 0).toFixed(2) + "% " + (q.pct >= 0 ? "&#8593;" : "&#8595;") + "</td></tr>";
+                    }).join("") + "</table>" + '<div class="rng home">' + ["1 month", "3 months", "1 year", "5 years", "Max"].map(function(r, i) {
+                        return '<a href="#" data-r="' + ["1m", "3m", "1y", "5y", "all"][i] + '"' + (i === 0 ? ' class="on"' : "") + ">" + r + "</a>";
+                    }).join("") + "</div>" + homeChart(560, 200), "fchartcard") +
+                    '<div class="mct2" id="news">Local market news</div>' + nws.slice(0, 10).map(function(n) {
+                        return '<a class="mnews mcard" href="' + esc(n.url) + '"><b>' + esc(n.title) + "</b><small>" + esc(n.src) + " &middot; " + esc(ugfNtAgo(new Date(n.t), "short").replace(" ago", "") + " ago") + "</small></a>";
+                    }).join("") + "</div>" +
+                    '<div class="mr"><a id="us"></a>' + card("United States markets", us) + '<a id="world"></a>' + card("World markets", world.slice(0, 6)) + card("Currencies", fx) + "</div></div>" + footer();
+            }
+            // f09 and f11: the left-hand navigation, the market summary, top stories, the right column
+            // the day's lead story: Google's own summary of it, and the papers that carried it
+            const lead = story ? (story[2] || []) : [];
+            const first = lead[0] ? { url: lead[0][0], title: ugfPlayPlain(story[0] || lead[0][1]), src: lead[0][2], text: ugfPlayPlain(story[1] || "") } : nws[0];
+            const summary = '<div class="msum"><div class="ml">' + (first ? '<a class="lead" href="' + esc(first.url) + '">' + esc(first.title) + '</a><div class="ns">' + esc(first.src || "") + "</div>" +
+                '<div class="nx">' + esc(String(first.text || "").slice(0, 330)) + "</div>" : "") + nws.slice(1, 3).map(function(n) {
+                return '<div class="more2"><a href="' + esc(n.url) + '">' + esc(n.title) + '</a> <span class="ns">' + esc(n.src) + "</span></div>";
+            }).join("") + '<div class="srcs">' + lead.slice(0, 3).map(function(a) {
+                return '<a href="' + esc(a[0]) + '">' + esc(a[2]) + "</a>";
+            }).join(" ") + "</div></div>" + '<div class="mr">' + homeChart(250, 150) + legendRows(three, false) + "</div></div>";
+            const right = moversBox("Trends") + box("World markets", quoteRows(world)) + box("Currencies", quoteRows(fx)) + box("Commodities", quoteRows(groups(7).slice(3)));
+            const title = era === "f11" ? '<div class="ktitle"><span class="kfin">Finance</span><span class="ktt">Market Summary</span></div>' : "";
+            const sumBox = era === "f11" ? '<div class="fbox fsum k">' + summary + "</div>" : box("Market summary", summary, "fsum", '<span class="date">' + esc(ugfFinWhen(Date.now(), "America/New_York").split(",")[0]) + "</span>");
+            return title + '<div class="fwrap">' + nav("Markets") + '<div class="fmain">' + sumBox +
+                '<div id="news">' + box("Top stories", '<div class="tabs"><b>Market</b><a href="' + esc(google("/finance/portfolio")) + '">Portfolio related</a></div>' + nws.slice(0, 10).map(function(n) {
+                    return newsItem(n, true);
+                }).join("") + '<a class="more" href="https://news.google.com/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB">More market news &raquo;</a>', "fstories") + "</div>" +
+                sectorBox() + "</div>" + '<div class="fright">' + right + "</div></div>" + footer();
+        };
+        const recentTable = function() {
+            if (!recent.length) {
+                return '<div class="none">The quotes you look at show here.</div>';
+            }
+            return '<table class="ql"><tr><th>Symbol</th><th class="num">Price</th><th class="num">Change</th></tr>' + recent.map(function(r) {
+                const q = data && data.recent && data.recent[r.s];
+                return '<tr><td><a href="' + esc(quoteUrl(r.s)) + '">' + esc(r.t || r.s) + '</a></td><td class="num">' + (q ? ugfFinPrice(q.price) : "") + '</td><td class="num ' + (q ? ugfFinCls(q.chg) : "") + '">' +
+                    (q ? ugfFinSigned(q.chg, ugfFinDec(q)) + " (" + ugfFinPct(q.pct).replace("+", "") + ")" : "") + "</td></tr>";
+            }).join("") + "</table>";
+        };
+        // ---- a quote's page
+        const ZOOMS = era === "fa06" || era === "f06" ? ["1d", "5d", "1m", "3m", "6m", "1y", "all"] : era === "f17" ? ["1d", "5d", "1m", "1y", "5y", "all"] : ["1d", "5d", "1m", "3m", "6m", "ytd", "1y", "5y", "10y", "all"];
+        const ZNAME = era === "f17" ? { "1d": "1 day", "5d": "5 days", "1m": "1 month", "1y": "1 year", "5y": "5 years", all: "Max" } : { all: era === "fa06" || era === "f06" ? "Max" : "All", ytd: "YTD" };
+        let zoom = era === "f09" ? "3m" : era === "f17" ? "1d" : "5d";
+        const about = function() {
+            const a = ugfFinAt(data.blocks["ds:3"], [0, 0]) || [];
+            return { name: a[1], desc: a[2], hq: Array.isArray(a[3]) ? a[3] : null, founded: a[4], ceo: a[5], emp: a[6], cap: a[7], open: a[9], high: a[10], low: a[11], hi52: a[12], lo52: a[13],
+                vol: a[14], pe: a[16], dy: a[17], avgvol: a[18], eps: a[19], beta: a[20], shares: a[21], web: a[22] };
+        };
+        const qnews = function() {
+            let list = [];
+            Object.keys(data.blocks).sort(function(a, b) {
+                return parseInt(a.split(":")[1], 10) - parseInt(b.split(":")[1], 10);
+            }).forEach(function(k) {
+                const v = ugfFinAt(data.blocks[k], [0]);
+                if (!list.length && Array.isArray(v) && Array.isArray(v[0]) && /^https?:/.test(String(v[0][0])) && typeof v[0][1] === "string" && k !== "ds:7") {
+                    list = v;
+                }
+            });
+            return list.map(function(n) {
+                return { url: n[0], title: ugfPlayPlain(n[1]), src: n[2], t: (n[4] || 0) * 1000, text: ugfPlayPlain(n[16] || "") };
+            });
+        };
+        const related = function() {
+            return (ugfFinAt(data.blocks["ds:5"], [0]) || []).map(function(e) {
+                return ugfFinQuote(ugfFinDig(e));
+            }).filter(Boolean);
+        };
+        const statsGrid = function(q, a) {
+            const cells = [["Range", a.low !== undefined ? ugfFinPrice(a.low) + " - " + ugfFinPrice(a.high) : "-"], ["52 week", a.lo52 !== undefined ? ugfFinPrice(a.lo52) + " - " + ugfFinPrice(a.hi52) : "-"],
+                ["Open", ugfFinPrice(a.open)], ["Vol / Avg.", ugfFinBig(a.vol) + "/" + ugfFinBig(a.avgvol)], ["Mkt cap", ugfFinBig(a.cap)], ["P/E", a.pe ? ugfFinNum(a.pe, 2) : "-"],
+                ["Div/yield", a.dy ? ugfFinNum(a.dy, 2) + "%" : "-"], ["EPS", a.eps ? ugfFinNum(a.eps, 2) : "-"], ["Shares", ugfFinBig(a.shares)], ["Beta", a.beta ? ugfFinNum(a.beta, 2) : "-"]];
+            if (q.type === 3) {
+                return "";
+            }
+            if (era === "fa06" || era === "f06") {
+                const c06 = [["Open:", ugfFinPrice(a.open)], ["High:", ugfFinPrice(a.high)], ["Low:", ugfFinPrice(a.low)], ["Vol:", ugfFinBig(a.vol)], ["Mkt Cap:", ugfFinBig(a.cap)],
+                    ["52Wk High:", ugfFinPrice(a.hi52)], ["52Wk Low:", ugfFinPrice(a.lo52)], ["Avg Vol:", ugfFinBig(a.avgvol)], ["P/E:", a.pe ? ugfFinNum(a.pe, 2) : "-"], ["Div:", a.dy ? ugfFinNum(a.dy, 2) + "%" : "-"],
+                    ["Beta:", a.beta ? ugfFinNum(a.beta, 2) : "-"], ["EPS:", a.eps ? ugfFinNum(a.eps, 2) : "-"]];
+                return '<table class="st06">' + [0, 1, 2, 3].map(function(r) {
+                    return "<tr>" + [0, 1, 2].map(function(c) {
+                        const it = c06[c * 4 + r];
+                        return '<td class="k">' + it[0] + '</td><td class="v">' + it[1] + "</td>";
+                    }).join("") + "</tr>";
+                }).join("") + "</table>";
+            }
+            const half = era === "f11" ? 6 : 5;
+            let out = '<div class="stats">';
+            for (let c = 0; c < 2; c++) {
+                out += '<table class="st">' + cells.slice(c * half, c ? cells.length : half).map(function(it) {
+                    return '<tr><td class="k">' + it[0] + '</td><td class="v">' + it[1] + "</td></tr>";
+                }).join("") + "</table>";
+            }
+            return out + "</div>";
+        };
+        const chartBox = function(q, w) {
+            const zl = ZOOMS.map(function(z) {
+                const nm = ZNAME[z] || z;
+                return z === zoom ? '<b data-z="' + z + '">' + nm + "</b>" : '<a href="#" data-z="' + z + '">' + nm + "</a>";
+            }).join(era === "f17" ? "" : " ");
+            if (era === "f17") {
+                return '<div class="rng q">' + zl + '</div><div class="qchart" data-w="' + w + '" data-h="230"><div class="fc-empty" style="width:' + w + 'px;height:230px"></div></div>';
+            }
+            const cmp = era === "fa06" ? "" : '<div class="cmp"><b>Compare:</b> <input type="text" class="cmpq" placeholder="Enter ticker here"> <input type="button" class="cmpadd" value="Add"> ' +
+                [[".DJI:INDEXDJX", "Dow Jones"], [".IXIC:INDEXNASDAQ", "Nasdaq"]].concat(related().slice(0, 3).map(function(r) {
+                    return [r.sym, r.t];
+                })).filter(function(c) {
+                    return c[0] !== q.sym;
+                }).map(function(c) {
+                    return '<label><input type="checkbox" data-cmp="' + esc(c[0]) + '"> ' + esc(c[1]) + "</label>";
+                }).join(" ") + "</div>";
+            const strip = '<div class="strip" data-w="' + w + '"></div>';
+            return cmp + '<div class="chartwrap">' + (era === "fa06" || era === "f06" ? strip : "") + '<div class="zoom"><b>Zoom:</b> ' + zl + '<span class="zr"></span></div>' +
+                '<div class="qchart" data-w="' + w + '" data-h="300"><div class="fc-empty" style="width:' + w + 'px;height:300px"></div></div>' + (era === "fa06" || era === "f06" ? "" : strip) + "</div>" +
+                (era === "fa06" || era === "f06" ? "" : '<div class="under"><a href="' + esc(google(window.location.pathname)) + '">Settings</a> | <a href="' + esc(google(window.location.pathname)) + '">Technicals</a> | <a href="' + esc(quoteUrl(q.sym)) + '">Link to this view</a></div>');
+        };
+        const newsCol = function(list) {
+            const L = "ABCDEFGHIJ";
+            return list.slice(0, 8).map(function(n, i) {
+                return '<div class="qn"><span class="fl">' + L.charAt(i) + '</span><div><a href="' + esc(n.url) + '">' + esc(n.title) + '</a><div class="ns">' + esc(n.src) + " - " + esc(ago(n.t)) + "</div></div></div>";
+            }).join("");
+        };
+        const aboutBox = function(a, q) {
+            if (!a.desc) {
+                return "";
+            }
+            const rows = [];
+            if (a.ceo) {
+                rows.push(["CEO", esc(a.ceo)]);
+            }
+            if (Array.isArray(a.founded) && a.founded[0]) {
+                rows.push(["Founded", esc(a.founded[0])]);
+            }
+            if (a.hq) {
+                rows.push(["Address", esc([a.hq[4], a.hq[0], a.hq[1], a.hq[2]].filter(Boolean).join(", "))]);
+            }
+            if (a.web) {
+                rows.push(["Website", '<a href="' + esc(a.web) + '">' + esc(a.web.replace(/^https?:\/\//, "").replace(/\/$/, "")) + "</a>"]);
+            }
+            if (a.emp) {
+                rows.push(["Employees", ugfFinNum(a.emp, 0)]);
+            }
+            return box(era === "f17" ? "About" : "Summary", '<div class="desc">' + esc(a.desc) + '</div><table class="ab">' + rows.map(function(r) {
+                return '<tr><td class="k">' + r[0] + '</td><td>' + r[1] + "</td></tr>";
+            }).join("") + "</table>", "fabout");
+        };
+        const relatedBox = function() {
+            const rel = related();
+            if (!rel.length) {
+                return "";
+            }
+            return '<div id="related">' + box(era === "f17" ? "People also search for" : "Related companies", '<table class="ql rel"><tr><th>Company</th><th class="num">Price</th><th class="num">Change</th></tr>' + rel.map(function(r) {
+                return "<tr><td>" + qlink(r, r.name) + ' <span class="sym">(' + esc(dsym(r)) + ')</span></td><td class="num">' + ugfFinPrice(r.price) + '</td><td class="num ' + ugfFinCls(r.chg) + '">' +
+                    ugfFinSigned(r.chg, ugfFinDec(r)) + " (" + ugfFinPct(r.pct).replace("+", "") + ")</td></tr>";
+            }).join("") + "</table>", "frel") + "</div>";
+        };
+        const quoteBody = function() {
+            const q = data.q;
+            const a = about();
+            const nl = qnews();
+            const openNow = q.open && q.shut ? Date.now() >= ugfFinTime(q.open) && Date.now() <= ugfFinTime(q.shut) : false;
+            const kind = q.type === 1 ? "Index" : q.type === 3 ? "Currency" : "Public";
+            const tline = (openNow ? "Real-time: " : "") + ugfFinWhen((q.time || 0) * 1000, q.tz);
+            const ahLine = q.ah && !openNow ? '<div class="ah">After Hours: <b>' + ugfFinPrice(q.ah.price) + '</b> <span class="' + ugfFinCls(q.ah.chg) + '">' + ugfFinSigned(q.ah.chg) + " (" + ugfFinPct(q.ah.pct).replace("+", "") + ")</span></div>" : "";
+            if (era === "f17") {
+                return '<div class="mcols"><div class="ml">' + box("", '<div class="mbread">Market Summary &rsaquo; <b>' + esc(q.name) + '</b></div><div class="msym">' + esc((q.x ? q.x + ": " : "") + q.t) + "</div>" +
+                    '<div class="mprice"><span class="big">' + ugfFinPrice(q.price) + '</span> <span class="cur">' + esc(q.cur) + '</span> <span class="' + ugfFinCls(q.chg) + '">' + ugfFinSigned(q.chg, ugfFinDec(q)) + " (" +
+                    Math.abs(q.pct || 0).toFixed(2) + "%) " + (q.chg >= 0 ? "&#8593;" : "&#8595;") + '</span></div><div class="mtime">' + (openNow ? "" : "Closed: ") + esc(ugfFinWhen((q.time || 0) * 1000, q.tz, "f17")) + " &middot; Disclaimer</div>" +
+                    chartBox(q, 600) + '<table class="mstats">' + [["Open", ugfFinPrice(a.open)], ["High", ugfFinPrice(a.high)], ["Low", ugfFinPrice(a.low)], ["Mkt cap", ugfFinBig(a.cap)], ["P/E ratio", a.pe ? ugfFinNum(a.pe, 2) : "-"],
+                        ["Div yield", a.dy ? ugfFinNum(a.dy, 2) + "%" : "-"], ["52-wk high", ugfFinPrice(a.hi52)], ["52-wk low", ugfFinPrice(a.lo52)]].reduce(function(acc, it, i, arr) {
+                        return i % 2 ? acc : acc + '<tr><td class="k">' + it[0] + '</td><td class="v">' + it[1] + '</td><td class="k">' + arr[i + 1][0] + '</td><td class="v">' + arr[i + 1][1] + "</td></tr>";
+                    }, "") + "</table>", "fquotecard") + '<div class="mct2" id="news">Top stories</div>' + nl.slice(0, 8).map(function(n) {
+                        return '<a class="mnews mcard" href="' + esc(n.url) + '"><b>' + esc(n.title) + "</b><small>" + esc(n.src) + " &middot; " + esc(ugfNtAgo(new Date(n.t), "short")) + "</small></a>";
+                    }).join("") + "</div>" + '<div class="mr">' + aboutBox(a, q) + relatedBox() + "</div></div>" + footer();
+            }
+            const head = era === "f11" ? '<div class="ktitle"><span class="kfin">Finance</span><span class="ktt">' + esc(q.name) + ' <span class="kx">(' + esc(dsym(q)) + ")</span></span>" +
+                '<a class="kbtn" href="' + esc(google(window.location.pathname)) + '">Add to portfolio</a><a class="kbtn blue more" href="' + esc(google("/finance/")) + '">More results</a></div>'
+                : '<div class="qh"><span><b>' + esc(q.name) + "</b> (" + kind + ", " + esc(dsym(q)) + ") " + (era === "fa06" || era === "f06" ? "- " : "") + '<a href="' + esc(google(window.location.pathname)) + '">' +
+                    (era === "f09" ? "Watch this stock" : "Add to Portfolio") + '</a></span><span class="fr">Find more results for <a href="' + esc(quoteUrl(q.sym)) + '">' + esc(q.t) + "</a></span></div>";
+            // 2009 on: the exchange's own data line; Kennedy: the price and its change on one line, the time alone
+            const dataLine = (era === "f09" || era === "f11") && q.x && q.type === 0 ? '<div class="tm">' + esc(q.x) + ' real-time data - <a href="https://www.google.com/googlefinance/disclaimer/">Disclaimer</a></div>' : "";
+            const price = era === "f11" ? '<div class="qp k"><div><span class="big">' + ugfFinPrice(q.price) + '</span> <span class="chg ' + ugfFinCls(q.chg) + '">' + ugfFinSigned(q.chg, ugfFinDec(q)) + " (" + ugfFinPct(q.pct).replace("+", "") + ")</span></div>" +
+                ahLine + '<div class="tm">' + esc(openNow ? "Real-time: " + ugfFinWhen((q.time || 0) * 1000, q.tz).split(", ")[1] : tline) + "</div>" + dataLine + (q.cur ? '<div class="tm">Currency in ' + esc(q.cur) + "</div>" : "") + "</div>"
+                : '<div class="qp"><div class="big">' + ugfFinPrice(q.price) + '</div><div class="chg ' + ugfFinCls(q.chg) + '">' + ugfFinSigned(q.chg, ugfFinDec(q)) + " (" + ugfFinPct(q.pct).replace("+", "") + ")</div>" +
+                ahLine + '<div class="tm">' + esc(tline) + "</div>" + dataLine + "</div>";
+            // the market beside the stock, with bars, as from 2010
+            const us = groups(1);
+            const side = us.filter(function(x) {
+                return x.sym === ".DJI:INDEXDJX" || x.sym === ".IXIC:INDEXNASDAQ";
+            }).concat([q]);
+            const maxp = Math.max.apply(null, side.map(function(x) {
+                return Math.abs(x.pct || 0);
+            }).concat([0.5]));
+            const bars = '<table class="sidebars">' + side.map(function(x) {
+                const w = Math.round(40 * Math.abs(x.pct || 0) / maxp);
+                return "<tr><td>" + qlink(x, x === q ? x.t : shortName(x)) + '</td><td class="num">' + ugfFinPrice(x.price) + '</td><td class="num ' + ugfFinCls(x.pct) + '">' +
+                    ugfFinPct(x.pct).replace("+", "") + '</td><td class="bars"><span class="half l">' + (x.pct < 0 ? '<span class="sb dn" style="width:' + w + 'px"></span>' : "") +
+                    '</span><span class="half r">' + (x.pct >= 0 ? '<span class="sb up" style="width:' + w + 'px"></span>' : "") + "</span></td></tr>";
+            }).join("") + "</table>";
+            const top = '<div class="qtop">' + price + statsGrid(q, a) + "</div>";
+            if (era === "fa06" || era === "f06") {
+                return head + '<div class="q06"><div class="ql06">' + top + chartBox(q, 460) + "</div>" + '<div class="qr06" id="news">' + newsCol(nl) +
+                    '<a class="more" href="https://news.google.com/search?q=' + encodeURIComponent(q.name) + '">All news for ' + esc(q.name) + " &raquo;</a></div></div>" + aboutBox(a, q) + relatedBox() + footer();
+            }
+            return (era === "f11" ? head : "") + '<div class="fwrap">' + nav("") + '<div class="fmain wide">' + (era === "f09" ? head : "") +
+                '<div class="qrow"><div class="qleft">' + top + chartBox(q, era === "f11" ? 440 : 480) + "</div>" + '<div class="qright" id="news">' + bars + '<div class="qnews">' + newsCol(nl) + "</div>" +
+                '<a class="more" href="https://news.google.com/search?q=' + encodeURIComponent(q.name) + '">All news for ' + esc(q.name) + " &raquo;</a></div></div>" + relatedBox() + aboutBox(a, q) + "</div></div>" + footer();
+        };
+        // ---- drawing, and what the page does
+        let flags = [];
+        const drawCharts = function() {
+            // the market: the three US indexes over a day, as percentages (a month and more on the 2017 page)
+            shell.querySelectorAll(".hchart").forEach(function(el) {
+                const w = +el.getAttribute("data-w");
+                const h = +el.getAttribute("data-h");
+                const r = el.getAttribute("data-r") || (era === "f17" ? "1m" : "1d");
+                const list = era === "fa06" ? [".DJI:INDEXDJX"] : [".DJI:INDEXDJX", ".INX:INDEXSP", ".IXIC:INDEXNASDAQ"];
+                ugfFinSeries(list, r).then(function(res) {
+                    const us = groups(1);
+                    const sets = res.map(function(s, i) {
+                        const q = us.filter(function(x) {
+                            return x.sym === list[i];
+                        })[0];
+                        return { pts: s.pts, color: era === "fa06" ? "#000066" : COLORS[i], base: r === "1d" && q ? q.prev : null };
+                    });
+                    el.innerHTML = trusted_policy.createHTML(ugfFinChart(sets, { w: w, h: h, era: era, range: r, pct: era !== "fa06", from: res[0].from, to: res[0].to, plain: true,
+                        base: era === "fa06" && sets[0] ? sets[0].base : null, baseColor: era === "fa06" ? "#00a000" : null }));
+                }).catch(function(e) {
+                    console.log("[Gplex] Finance: no chart (" + e + ")");
+                });
+            });
+            shell.querySelectorAll(".qchart").forEach(function(el) {
+                const q = data.q;
+                const w = +el.getAttribute("data-w");
+                const h = +el.getAttribute("data-h");
+                const cmp = Array.from(shell.querySelectorAll("input[data-cmp]:checked")).map(function(c) {
+                    return c.getAttribute("data-cmp");
+                }).concat(data.extra || []);
+                ugfFinSeries([q.sym].concat(cmp), zoom).then(function(res) {
+                    const material = era === "f17";
+                    const up = res[0].pts.length ? res[0].pts[res[0].pts.length - 1][1] >= (zoom === "1d" ? q.prev : res[0].pts[0][1]) : true;
+                    const sets = res.map(function(s, i) {
+                        return { pts: s.pts, color: material ? (up ? "#0f9d58" : "#d23f31") : COLORS[i] || "#888", fill: material ? null : "#e8eef7" };
+                    });
+                    el.innerHTML = trusted_policy.createHTML(ugfFinChart(sets, { w: w, h: h, era: era, range: zoom, pct: cmp.length > 0, from: res[0].from, to: res[0].to,
+                        base: zoom === "1d" ? q.prev : null, vol: !cmp.length && !material, flags: cmp.length || material ? [] : flags, tz: q.tz }));
+                    const zr = shell.querySelector(".zoom .zr");
+                    if (zr && res[0].pts.length) {
+                        const p = res[0].pts;
+                        const d = p[p.length - 1][1] - p[0][1];
+                        const yr = function(t) {
+                            return ugfFinWhen(t, q.tz).split(",")[0] + ", " + new Date(t).getUTCFullYear();
+                        };
+                        zr.innerHTML = trusted_policy.createHTML(esc(yr(p[0][0])) + " - " + esc(yr(p[p.length - 1][0])) + (era === "fa06" || era === "f06" ? "" :
+                            ' <span class="' + ugfFinCls(d) + '">' + ugfFinSigned(d, ugfFinDec(q)) + " (" + ugfFinPct(d / p[0][1] * 100).replace("+", "") + ")</span>"));
+                    }
+                    const strip = shell.querySelector(".strip");
+                    if (strip && data.all && res[0].pts.length) {
+                        strip.innerHTML = trusted_policy.createHTML(ugfFinStrip(data.all, res[0].pts[0][0], res[0].pts[res[0].pts.length - 1][0], +strip.getAttribute("data-w"), era === "fa06" || era === "f06"));
+                    }
+                }).catch(function(e) {
+                    console.log("[Gplex] Finance: no chart (" + e + ")");
+                });
+            });
+        };
+        const draw = function() {
+            const title = route.page === "quote" ? data.q.name + ": " + (data.q.x ? data.q.x + ":" + data.q.t : data.q.t) + " " + (era === "f17" ? "- Google Search" : "quotes & news - Google Finance")
+                : era === "f17" ? "Google Finance" : "Google Finance";
+            shell.innerHTML = trusted_policy.createHTML(header(route.page === "quote" ? data.q.t : "") + '<div class="fbody">' + (route.page === "quote" ? quoteBody() : homeBody()) + "</div>");
+            ugfNtMenus(shell, era === "f17");
+            ugfPlayKeepTitle(title);
+            drawCharts();
+        };
+        // the quotes in Recent Quotes, with today's prices
+        const loadRecent = function() {
+            if (!recent.length) {
+                return Promise.resolve();
+            }
+            return ugfFinSeries(recent.map(function(r) {
+                return r.s;
+            }), "1d").then(function(res) {
+                data.recent = {};
+                res.forEach(function(s, i) {
+                    const p = s.pts;
+                    if (p.length) {
+                        const r = recent[i];
+                        const known = route.page === "quote" && data.q && data.q.sym === r.s ? data.q : null;
+                        data.recent[r.s] = known || { price: p[p.length - 1][1], chg: p[p.length - 1][3], pct: p[p.length - 1][4] };
+                    }
+                });
+            }).catch(function() {});
+        };
+        shell.addEventListener("submit", function(ev) {
+            ev.preventDefault();
+            const v = String((ev.target.querySelector("input[name=q]") || {}).value || "").trim();
+            if (!v) {
+                return;
+            }
+            ugfFinSearch(v).then(function(list) {
+                const exact = list.filter(function(q) {
+                    return q.t.toUpperCase() === v.toUpperCase() || q.sym.toUpperCase() === v.toUpperCase();
+                })[0];
+                const q = exact || list[0];
+                window.location.href = q ? quoteUrl(q.sym) : "/finance/?q=" + encodeURIComponent(v);
+            }).catch(function() {
+                window.location.href = "https://www.google.com/finance?q=" + encodeURIComponent(v);
+            });
+        });
+        shell.addEventListener("click", function(ev) {
+            const t = ev.target;
+            const z = t.closest("[data-z]");
+            if (z && route.page === "quote") {
+                ev.preventDefault();
+                zoom = z.getAttribute("data-z");
+                shell.querySelectorAll("[data-z]").forEach(function(el) {
+                    const on = el.getAttribute("data-z") === zoom;
+                    const nm = el.textContent;
+                    const n = document.createElement(on ? "b" : "a");
+                    n.setAttribute("data-z", el.getAttribute("data-z"));
+                    if (!on) {
+                        n.href = "#";
+                    }
+                    n.textContent = nm;
+                    el.replaceWith(n);
+                });
+                drawCharts();
+                return;
+            }
+            const r = t.closest(".rng.home a[data-r]");
+            if (r) {
+                ev.preventDefault();
+                shell.querySelectorAll(".rng.home a").forEach(function(a) {
+                    a.classList.toggle("on", a === r);
+                });
+                shell.querySelectorAll(".hchart").forEach(function(el) {
+                    el.setAttribute("data-r", r.getAttribute("data-r"));
+                });
+                drawCharts();
+                return;
+            }
+            const mv = t.closest(".mvtab");
+            if (mv) {
+                ev.preventDefault();
+                const which = mv.getAttribute("data-mv");
+                const boxEl = mv.closest(".fmovers");
+                boxEl.querySelectorAll("table.mv").forEach(function(tb) {
+                    tb.hidden = tb.getAttribute("data-mv") !== which;
+                });
+                boxEl.querySelectorAll(".mvtab").forEach(function(tab) {
+                    tab.classList.toggle("on", tab.getAttribute("data-mv") === which);
+                });
+                return;
+            }
+            if (t.closest(".rq .tog")) {
+                ev.preventDefault();
+                recentPct = t.textContent === "%";
+                draw();
+                return;
+            }
+            if (t.closest(".cmpadd")) {
+                const v = String((shell.querySelector(".cmpq") || {}).value || "").trim();
+                if (v) {
+                    ugfFinSearch(v).then(function(list) {
+                        if (list[0]) {
+                            data.extra = (data.extra || []).concat([list[0].sym]);
+                            drawCharts();
+                        }
+                    });
+                }
+            }
+        });
+        shell.addEventListener("change", function(ev) {
+            if (ev.target.matches("input[data-cmp]")) {
+                drawCharts();
+            }
+        });
+        const read = function() {
+            const blocks = ugfFinBlocks();
+            if (!blocks["ds:0"]) {
+                return null;
+            }
+            const d = { blocks: blocks };
+            if (route.page === "quote") {
+                d.q = ugfFinQuote(ugfFinAt(blocks["ds:2"], [0, 0, 0]));
+                if (!d.q) {
+                    return null;
+                }
+                // the route's own name for it (a pair has no exchange)
+                if (!d.q.sym && /-/.test(route.sym)) {
+                    d.q.sym = d.q.t = route.sym;
+                }
+            }
+            return d;
+        };
+        const go = function() {
+            try {
+                data = read();
+                if (!data) {
+                    giveUp("nothing to read on " + route.page);
+                    return;
+                }
+                if (route.page === "quote") {
+                    remember(data.q);
+                    const L = "ABCDEFGHIJ";
+                    flags = qnewsSafe().slice(0, 8).map(function(n, i) {
+                        return [n.t, L.charAt(i)];
+                    }).filter(function(f) {
+                        return f[0];
+                    });
+                }
+                draw();
+                const veil = document.getElementById("ugf-fin-veil");
+                if (veil) {
+                    veil.remove();
+                }
+                loadRecent().then(function() {
+                    if (data.recent) {
+                        const y = shell.scrollTop;
+                        draw();
+                        shell.scrollTop = y;
+                    }
+                });
+                if (route.page === "quote" && era !== "f17") {
+                    ugfFinSeries([data.q.sym], "all").then(function(res) {
+                        data.all = res[0].pts;
+                        drawCharts();
+                    }).catch(function() {});
+                }
+            } catch (e) {
+                console.log("[Gplex] Finance: " + (e && e.stack || e));
+                giveUp("error");
+            }
+        };
+        const qnewsSafe = function() {
+            try {
+                return qnews();
+            } catch (e) {
+                return [];
+            }
+        };
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", go);
+        } else {
+            go();
+        }
+    }
+    function ugfFinCss(era) {
+        const F = "#ugf-fin";
+        const css = [
+            F + " a { color: #0000cc; } " + F + " .up { color: #008000; } " + F + " .dn { color: #cc0000; } " + F + " .num { text-align: right; white-space: nowrap; }",
+            F + " table { border-collapse: collapse; } " + F + " td, " + F + " th { padding: 1px 6px 1px 0; font-size: 13px; vertical-align: top; } " + F + " th { text-align: left; font-weight: normal; color: #666; }",
+            F + " .fchart { display: block; } " + F + " .fc-empty { background: #fafafa; } " + F + " .fstrip { display: block; margin-top: 2px; }",
+            F + " .ftop { text-align: right; padding: 6px 10px 0 0; font-size: 13px; }",
+            F + " .fhead { display: flex; align-items: flex-start; gap: 18px; padding: 10px 10px 8px 10px; } " + F + " .fsearch input[type=text] { font-size: 15px; padding: 2px; width: 320px; }",
+            F + " .fsearch input[type=submit] { font-size: 13px; margin-left: 4px; } " + F + " .fsearch .eg { font-size: 11px; color: #666; padding-top: 2px; }",
+            F + " .flogo { display: inline-block; position: relative; text-decoration: none; } " + F + " .flogo img { display: block; border: 0; }",
+            F + " .flogo.b06 { width: 162px; height: 80px; } " + F + " .flogo.b06 b { position: absolute; left: 44px; top: 56px; font: bold 18px arial, sans-serif; color: #3366cc; }",
+            F + " .flogo.b06 i { position: absolute; left: 122px; top: 63px; font: normal 10px arial, sans-serif; color: #999; letter-spacing: 1px; }",
+            F + " .fbody { padding: 0 10px 20px 10px; }",
+            F + " .fbox { margin: 0 0 14px 0; } " + F + " .fbh { background: #e5ecf9; font-weight: bold; font-size: 15px; padding: 3px 6px; display: flex; justify-content: space-between; } " + F + " .fbb { padding: 6px 4px 0 4px; }",
+            F + " .fbr { font-weight: normal; font-size: 12px; color: #666; }",
+            F + " .nw { margin: 0 0 9px 0; } " + F + " .nw .nt { font-size: 13px; } " + F + " .ns { color: #666; font-size: 12px; } " + F + " .nx { font-size: 13px; color: #000; line-height: 1.3; }",
+            F + " .more { display: inline-block; margin: 4px 0 10px 0; font-size: 13px; }",
+            F + " .ql td, " + F + " .idx td, " + F + " .fxr td { padding: 2px 8px 2px 0; } " + F + " .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }",
+            F + " .ln { display: inline-block; width: 16px; height: 3px; margin-right: 6px; vertical-align: middle; } " + F + " .idx td:first-child { white-space: nowrap; }",
+            F + " .sect .bar { display: inline-flex; width: 100px; height: 9px; background: #fde2d6; position: relative; } " + F + " .sect .bar i { display: block; height: 9px; position: absolute; top: 0; }",
+            F + " .sect .bar i.dn { right: 50px; background: #b83d3d; } " + F + " .sect .bar i.up { left: 50px; background: #33cc33; } " + F + " .sect .bar::after { content: ''; position: absolute; left: 50px; top: -2px; height: 13px; border-left: 1px solid #999; }",
+            F + " .mv th.g { color: #008000; font-weight: bold; } " + F + " .mv th.l { color: #cc0000; font-weight: bold; padding-top: 8px; } " + F + " .mvt { margin-bottom: 6px; } " + F + " .mvtab.on { color: #000; }",
+            F + " .none { color: #666; font-size: 12px; padding: 4px 0; } " + F + " .small { font-size: 11px; }",
+            // the quote
+            F + " .qh { display: flex; justify-content: space-between; background: #e5ecf9; padding: 4px 6px; font-size: 13px; margin-bottom: 8px; } " + F + " .qh b { font-size: 16px; }",
+            F + " .qtop { display: flex; gap: 24px; align-items: flex-start; margin-bottom: 10px; } " + F + " .qp .big { font: bold 30px arial, sans-serif; } " + F + " .qp .chg { font-size: 18px; font-weight: bold; }",
+            F + " .qp .tm, " + F + " .ah { font-size: 12px; color: #000; } " + F + " .stats { display: flex; gap: 18px; align-items: flex-start; } " + F + " .st td { padding: 1px 6px 1px 0; } " + F + " .st .k { color: #666; } " + F + " .st .v { text-align: right; }",
+            F + " .st06 td { padding: 1px 4px 1px 0; } " + F + " .st06 .k { padding-left: 14px; } " + F + " .st06 .v { text-align: right; }",
+            F + " .cmp { margin: 6px 0; font-size: 13px; } " + F + " .cmp input[type=text] { width: 120px; } " + F + " .cmp label { white-space: nowrap; margin-right: 6px; }",
+            F + " .chartwrap { border: 1px solid #a5b4d6; display: inline-block; } " + F + " .zoom { font-size: 12px; padding: 3px 4px; border-bottom: 1px solid #d6e3f6; } " + F + " .zoom a, " + F + " .zoom b { margin-right: 4px; }",
+            F + " .zoom .zr { float: right; } " + F + " .under { font-size: 12px; margin: 4px 0 12px 0; } " + F + " .qp.k .tm { color: #666; font-size: 11px; }",
+            F + " .qn { display: flex; gap: 8px; margin: 0 0 10px 0; } " + F + " .qn .fl { flex: 0 0 auto; border: 1px solid #666; width: 15px; height: 16px; font-size: 11px; text-align: center; line-height: 15px; }",
+            F + " .desc { line-height: 1.35; margin-bottom: 8px; } " + F + " .ab .k { color: #666; padding-right: 14px; } " + F + " .rel .sym { color: #666; font-size: 12px; }",
+            F + " .sidebars td { padding: 2px 8px 2px 0; } " + F + " .sidebars .bars { padding: 0; white-space: nowrap; } " + F + " .half { display: inline-flex; width: 42px; height: 12px; vertical-align: middle; }",
+            F + " .half.l { justify-content: flex-end; border-right: 1px solid #666; } " + F + " .sb { display: inline-block; height: 10px; margin-top: 1px; border: 1px solid; } " + F + " .sb.up { background: #ccffcc; border-color: #33aa33; } " + F + " .sb.dn { background: #ffcccc; border-color: #cc3333; }",
+            F + " .ql.z tr:nth-child(odd) td { background: #eeeeee; } " + F + " .ql.z td { padding: 5px 10px 5px 4px; font-size: 14px; } " + F + " .c06 .ch { display: flex; justify-content: space-between; font-size: 11px; padding-right: 52px; }",
+            F + " .ffoot { text-align: center; font-size: 12px; color: #666; padding: 20px 0 10px 0; clear: both; } " + F + " .ffoot .disc { margin-top: 4px; font-size: 11px; }"
+        ];
+        if (era === "fa06") {
+            css.push(F + " .fbh { background: #e6f8de; font-size: 17px; padding: 4px 6px; } " + F + " .flogo.b06 b { color: #0b7506; font-size: 18px; } " + F + " .qh { background: #e6f8de; }",
+                F + " .fbody { max-width: 780px; } " + F + " .ms06 { display: flex; gap: 14px; } " + F + " .ms06 .ql td { font-size: 14px; padding: 4px 12px 4px 0; }",
+                F + " .fnewsbox .nw .nt { font-size: 16px; } " + F + " .fnewsbox .nx { max-width: 560px; }");
+        }
+        if (era !== "f11" && era !== "f17") {
+            css.push(F + " .fbody a { text-decoration: underline; } " + F + " .fbody .fnav .nmain a, " + F + " .fbody .fnav .nsub a, " + F + " .fbody a.mvtab.on { text-decoration: none; }");
+        }
+        if (era === "f06") {
+            // December 2006: the logo and the box in the middle, over the three columns
+            css.push(F + " .fhead { justify-content: center; } " + F + " .fbody { max-width: 1100px; margin: 0 auto; }");
+        }
+        if (era === "f09" || era === "f11") {
+            css.push(F + " .zoom .zr { float: none; display: block; padding-top: 2px; }");
+        }
+        if (era === "fa06" || era === "f06") {
+            css.push(F + " .fhead .fsearch { padding-top: 14px; }",
+                F + " .g3 { display: grid; grid-template-columns: 290px 1fr 330px; gap: 22px; } " + F + " .c2 .nw { margin-bottom: 7px; } " + F + " .c2 .nw .nt { font-weight: bold; }",
+                F + " .q06 { display: flex; gap: 20px; } " + F + " .ql06 { flex: 0 0 auto; } " + F + " .qr06 { flex: 1 1 auto; max-width: 360px; padding-top: 4px; }");
+        }
+        if (era === "f09" || era === "f11") {
+            css.push(F + " .fwrap { display: flex; gap: 18px; align-items: flex-start; } " + F + " .fmain { flex: 1 1 auto; min-width: 0; } " + F + " .fright { flex: 0 0 300px; }",
+                F + " .fnav { flex: 0 0 140px; } " + F + " .fnav .nmain a, " + F + " .fnav .nsub a { display: block; text-decoration: none; color: #000; padding: 4px 6px; }",
+                F + " .rq { margin-top: 14px; font-size: 12px; } " + F + " .rq table { width: 100%; } " + F + " .rq table td { font-size: 11px; padding: 1px 3px 1px 0; white-space: nowrap; } " + F + " .rq .rqh { font-weight: bold; font-size: 13px; padding: 4px 0; } " + F + " .rqt { text-align: right; font-size: 11px; }",
+                F + " .msum { display: flex; gap: 16px; } " + F + " .msum .ml { flex: 1 1 auto; } " + F + " .msum .lead { font-size: 17px; font-weight: bold; } " + F + " .msum .more2 { margin-top: 4px; } " + F + " .srcs a { color: #008000; margin-right: 10px; font-size: 12px; }",
+                F + " .tabs { margin: 2px 0 8px 0; border-bottom: 1px solid #c9d7f1; padding-bottom: 3px; } " + F + " .tabs b { border: 1px solid #c9d7f1; border-bottom-color: #fff; padding: 3px 8px; margin-right: 6px; } " + F + " .fstories .nw .nt { font-size: 14px; }",
+                F + " .qrow { display: flex; gap: 18px; } " + F + " .qleft { flex: 0 0 auto; } " + F + " .qright { flex: 1 1 auto; min-width: 260px; } " + F + " .qnews { border-top: 1px solid #e5e5e5; padding-top: 8px; margin-top: 6px; }");
+        }
+        if (era === "f09") {
+            css.push(F + " .fhead { align-items: center; } " + F + " .fhead .fsearch input[type=text] { width: 400px; } " + F + " .fhead .fsearch input[type=submit] { padding: 2px 8px; }",
+                F + " .fnav .nmain a, " + F + " .fnav .nh { background: #e5ecf9; border-bottom: 1px solid #fff; } " + F + " .fnav .nmain a.on, " + F + " .fnav .nh.sel { background: #6b90da; color: #fff; font-weight: bold; padding: 4px 6px; }",
+                F + " .fnav .nsub { margin-bottom: 10px; } " + F + " .fnav .nsub a { background: #fff; padding: 2px 6px; } " + F + " .fnav .nsub a.on { background: #fff; color: #000; font-weight: bold; }",
+                F + " .rq { background: #e5ecf9; padding: 2px 6px 6px 6px; }");
+        }
+        if (era === "f11") {
+            css.push(F + " { font-family: arial, sans-serif; } " + F + " a { color: #15c; text-decoration: none; } " + F + " a:hover { text-decoration: underline; } " + F + " .up { color: #093; } " + F + " .dn { color: #dd4b39; }",
+                F + " .khead { display: flex; align-items: center; gap: 30px; height: 72px; padding: 0 20px 0 30px; background: #f1f1f1; border-bottom: 1px solid #e5e5e5; }",
+                F + " .fsearch.k { display: flex; align-items: center; } " + F + " .fsearch.k input { width: 470px; height: 29px; border: 1px solid #d9d9d9; border-top-color: #c0c0c0; padding: 1px 8px; font-size: 16px; }",
+                F + " .kbtn { display: inline-flex; align-items: center; justify-content: center; height: 29px; min-width: 54px; padding: 0 12px; border: 1px solid #dcdcdc; border-radius: 2px; background: linear-gradient(#f5f5f5, #f1f1f1); color: #444; font: bold 11px arial, sans-serif; margin-left: 8px; cursor: pointer; text-decoration: none !important; }",
+                F + " .kbtn.blue { border-color: #3079ed; background: linear-gradient(#4d90fe, #4787ed); color: #fff; } " + F + " .kbtn.blue svg { fill: #fff; }",
+                F + " .ktitle { display: flex; align-items: center; height: 58px; border-bottom: 1px solid #ebebeb; margin: 0 -10px 16px -10px; padding: 0 20px 0 30px; } " + F + " .kfin { flex: 0 0 158px; color: #dd4b39; font-size: 20px; }",
+                F + " .ktt { flex: 1 1 auto; font-size: 18px; font-weight: bold; color: #222; } " + F + " .ktt .kx { font-weight: normal; font-size: 13px; color: #666; } " + F + " .ktitle .kbtn.more { margin-left: 16px; }",
+                F + " .fbody { padding: 0 20px 20px 30px; } " + F + " .fbh { background: none; font-size: 16px; font-weight: normal; color: #222; padding: 4px 0 6px 0; border-bottom: 1px solid #ebebeb; } " + F + " .fbb { padding: 8px 0 0 0; }",
+                F + " .fnav { flex: 0 0 140px; } " + F + " .fnav .nmain a, " + F + " .fnav .nsub a { padding: 5px 0; color: #222; } " + F + " .fnav .nmain a.on, " + F + " .fnav .nsub a.on { color: #dd4b39; } " + F + " .fnav .nh { color: #dd4b39; padding: 5px 0 2px 0; } " + F + " .fnav .nsub a { padding: 2px 0 2px 10px; }",
+                F + " .rq { border-top: 1px solid #ebebeb; padding-top: 6px; } " + F + " .tabs { border: 0; } " + F + " .tabs b { border: 0; padding: 0 8px 0 0; border-right: 1px solid #ccc; }",
+                F + " .qp .big { font-size: 34px; font-weight: bold; color: #222; } " + F + " .qp .chg { font-size: 22px; font-weight: normal; } " + F + " .chartwrap { border-color: #d9d9d9; }",
+                F + " .qp.k .big { font-size: 30px; } " + F + " .qp.k .chg { font-size: 20px; } " + F + " .fbox.fsum.k { margin-bottom: 18px; }",
+                F + " .qn .fl { border-color: #999; color: #333; } " + F + " .ffoot { border-top: 1px solid #ebebeb; margin-top: 30px; }");
+        }
+        if (era === "f17") {
+            css.push(F + " { font-family: Roboto, arial, sans-serif; color: #222; } " + F + " a { color: #1a0dab; text-decoration: none; } " + F + " .up { color: #0f9d58; } " + F + " .dn { color: #d23f31; }",
+                F + " .mhead { display: flex; align-items: center; gap: 28px; padding: 20px 20px 4px 28px; } " + F + " .mhead .corner { margin-left: auto; display: flex; align-items: center; }",
+                F + " .fsearch.m { display: flex; align-items: center; width: 632px; height: 44px; border-radius: 2px; box-shadow: 0 2px 2px 0 rgba(0,0,0,.16), 0 0 0 1px rgba(0,0,0,.08); padding: 0 8px 0 14px; }",
+                F + " .fsearch.m input { flex: 1 1 auto; border: 0; outline: 0; font-size: 16px; } " + F + " .fsearch.m .mic { color: #4285f4; margin: 0 10px; } " + F + " .fsearch.m button { border: 0; background: none; color: #4285f4; cursor: pointer; }",
+                F + " .mtabs { display: flex; gap: 22px; padding: 6px 0 0 150px; border-bottom: 1px solid #ebebeb; font-size: 13px; } " + F + " .mtabs a, " + F + " .mtabs span { color: #777; padding: 10px 0 9px 0; }",
+                F + " .mtabs a.on { color: #4285f4; border-bottom: 3px solid #4285f4; font-weight: bold; } " + F + " .mtabs .sp { flex: 1 1 auto; padding: 0; }",
+                F + " .msub { display: flex; gap: 26px; padding: 0 0 0 140px; border-bottom: 1px solid #ebebeb; margin: 0 -10px 18px -10px; font-size: 12px; } " + F + " .msub a { color: #777; padding: 12px 0 10px 0; }",
+                F + " .msub a.on { color: #222; border-bottom: 2px solid #222; }",
+                F + " .mcols { display: flex; gap: 24px; padding-left: 130px; } " + F + " .mcols .ml { flex: 0 0 640px; } " + F + " .mcols .mr { flex: 0 0 340px; }",
+                F + " .mcard { display: block; border: 1px solid #dfe1e5; border-radius: 3px; box-shadow: 0 1px 2px rgba(0,0,0,.08); background: #fff; margin: 0 0 14px 0; padding: 12px 16px; }",
+                F + " .mct { font-size: 15px; color: #222; margin: 0 0 6px 0; } " + F + " .mct2 { font-size: 20px; color: #222; margin: 18px 0 10px 0; }",
+                F + " .mlist { padding: 0; } " + F + " .mlist .mct { padding: 12px 16px 4px 16px; } " + F + " .mrow { display: flex; justify-content: space-between; padding: 8px 16px; border-top: 1px solid #ebebeb; }",
+                F + " .mrow .mn b { display: block; color: #1a0dab; font-weight: normal; font-size: 14px; } " + F + " .mrow small { display: block; color: #777; font-size: 11px; } " + F + " .mrow .mp { text-align: right; color: #222; }",
+                F + " .midx td { padding: 6px 10px 6px 0; font-size: 14px; } " + F + " .rng { display: flex; border-bottom: 1px solid #ebebeb; margin: 10px 0 8px 0; } " + F + " .rng a, " + F + " .rng b { flex: 1 1 0; text-align: center; color: #777; padding: 8px 0; font-weight: normal; }",
+                F + " .rng a.on, " + F + " .rng b { color: #222; border-bottom: 2px solid #4285f4; }",
+                F + " .mnews b { display: block; font-weight: normal; color: #1a0dab; font-size: 16px; line-height: 1.3; } " + F + " .mnews small { color: #777; font-size: 12px; }",
+                F + " .mbread { font-size: 13px; color: #777; } " + F + " .msym { font-size: 13px; color: #777; } " + F + " .mprice .big { font-size: 36px; color: #222; } " + F + " .mprice .cur { font-size: 13px; color: #777; } " + F + " .mtime { font-size: 12px; color: #777; }",
+                F + " .mstats { width: 100%; margin-top: 10px; } " + F + " .mstats td { padding: 4px 8px 4px 0; font-size: 13px; } " + F + " .mstats .k { color: #777; } " + F + " .mstats .v { text-align: right; padding-right: 22px; }",
+                F + " .mfoot { background: #f2f2f2; border-top: 1px solid #e4e4e4; padding: 14px 0 14px 150px; margin: 30px -10px -20px -10px; } " + F + " .mfoot a { color: #777; margin-right: 28px; font-size: 14px; }",
+                F + " .mcard .fbh { display: none; } " + F + " .fbody > .mcols:first-child { margin-top: 18px; } " + F + " .mct2.first { margin-top: 0; }",
+                F + " .mrow .fol { color: #1a73e8; font-size: 10px; font-weight: 500; letter-spacing: .5px; margin-top: 4px; }");
+        }
+        return css;
+    }
+    // Google's tab icon of the time (the icons are kept outside this function: Finance is
+    // drawn before the search page's part of it has run)
+    function ugfFinFav() {
+        const l = String(layout || "");
+        if (l === "2009") {
+            return UGF_FAVICON_2009_G;
+        }
+        if (l === "2009L" || l === "2010" || l === "2010N" || l === "2011" || l === "2012") {
+            return UGF_FAVICON_2010;
+        }
+        if (/^(2013|2014|2015$|2015L)/.test(l)) {
+            return UGF_FAVICON_2012;
+        }
+        if (/^(2015N|2016|2017|2018|2019)/.test(l)) {
+            return UGF_FAVICON_2015;
+        }
+        return l === "2022" ? null : UGF_FAVICON_1999;
+    }
+    // the period's tab icon on the Finance pages Gplex leaves to Google
+    function ugfFinFavOnly() {
+        if (!ugfFinEra() || !ugfNtTopFrame() || !ugfNtOn("UGF_FINANCE_ON")) {
+            return;
+        }
+        const fav = ugfFinFav();
+        if (fav) {
+            ugfApplyFavicon(fav);
+            ugfKeepFavicon(function() {
+                return fav;
+            });
+        }
+    }
+    // ---- end Gplex for Google Finance ----
     // ---- Gplex for Google Calendar (4.2) ---------------------------------------
     // Like Gmail and Maps: Google's own Calendar keeps running underneath, hidden, and
     // Gplex draws the Calendar of the layout's period on top, with your events read
