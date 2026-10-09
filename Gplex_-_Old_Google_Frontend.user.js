@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      7.2.26
-// @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos and Google Keep, plus YouTube (Gplex Extended for YouTube: StarTube by lightbeam24, with the V3 extension)
+// @version      7.2.27
+// @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep and Google Play, plus YouTube (Gplex Extended for YouTube: StarTube by lightbeam24, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
 // @match        *://www.google.com/
@@ -44056,6 +44056,53 @@ if (!ugfOnYouTube && !ugfOnGplexPlus) (function() {
         }, 10000);
     } catch (e) {}
 })();
+// (7.2.27) Play: today's store is kept out of sight from the start as well, until Gplex's is up
+(function ugfPlayEarlyVeil() {
+    try {
+        if (window.location.host !== "play.google.com" || window.top !== window.self || /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "")) {
+            return;
+        }
+        const gv = function(k, d) {
+            try {
+                return String((typeof GM_getValue === "function" ? GM_getValue(k, null) : null) || d);
+            } catch (e) {
+                return d;
+            }
+        };
+        if (gv("UGF_PLAY_ON", "true") === "false" || gv("UGF_LAYOUT", "2015") === "2022") {
+            return;
+        }
+        // the pages Gplex draws (ugfPlayRoute): the front pages, a category, a developer, a search, an app
+        const p = (window.location.pathname || "/").replace(/\/+$/, "");
+        const q = new URLSearchParams(window.location.search);
+        if (!(/^\/store\/apps\/details(\/[^/]+)?$/.test(p) && q.get("id")) && !(p === "/store/search" && q.get("q") && /^(apps)?$/.test(q.get("c") || "")) &&
+                !/^\/store\/apps\/category\/[A-Z_]+$/.test(p) && !(/^\/store\/apps\/dev(eloper)?$/.test(p) && q.get("id")) && !/^\/store\/(apps|games)(\/top)?$/.test(p)) {
+            return;
+        }
+        const st = document.createElement("style");
+        st.id = "ugf-play-veil";
+        st.textContent = "html { background: #fff !important; } body > *:not(#ugf-play) { visibility: hidden !important; }";
+        const put = function() {
+            const at = document.head || document.documentElement;
+            if (!at) {
+                return false;
+            }
+            at.appendChild(st);
+            return true;
+        };
+        if (!put()) {
+            const wait = new MutationObserver(function() {
+                if (put()) {
+                    wait.disconnect();
+                }
+            });
+            wait.observe(document, { childList: true, subtree: true });
+        }
+        setTimeout(function() {
+            st.remove();
+        }, 10000);
+    } catch (e) {}
+})();
 // ---- Gplex error page ----
 // (6.1.2) Google's error page ("404. That's an error.", with the broken robot) on any
 // Google host, in the period's look: the robot page with the logo of the day from 2010
@@ -48449,7 +48496,7 @@ function ugfIsErrorPage() {
 // ---- end Gplex My Account page ----
 // (6.1.2) Gplex matches every google.com page so that Google's error page can be given the
 // period's look anywhere; the rest of Gplex still runs only on the pages it always has
-const UGF_OWN_PAGES = ["about.google/products*", "about.google/intl/*/products*", "www.google.com/search*", "www.google.com/", "www.google.com/?*", "www.google.com/#*", "www.google.com/webhp*", "www.google.com/imghp*", "www.google.com/videohp*", "www.google.com/shopping*", "www.google.com/advanced_search*", "www.google.com/preferences*", "mail.google.com/mail/*", "www.google.com/maps*", "maps.google.com/*", "calendar.google.com/calendar/*", "news.google.com/*", "translate.google.com/*", "docs.google.com/document/*", "docs.google.com/spreadsheets/*", "docs.google.com/presentation/*", "docs.google.com/forms/*", "docs.google.com/drawings/*", "drive.google.com/*", "photos.google.com/*", "accounts.google.com/v3/signin/*", "accounts.google.com/signin/*", "accounts.google.com/ServiceLogin*", "accounts.google.com/AccountChooser*", "accounts.google.com/InteractiveLogin*", "accounts.google.com/lifecycle/steps/signup/*", "accounts.google.com/signup*", "accounts.google.com/SignUp*", "myaccount.google.com/*", "keep.google.com/*", "www.google.com/gplex", "www.google.com/Gplex"];
+const UGF_OWN_PAGES = ["about.google/products*", "about.google/intl/*/products*", "www.google.com/search*", "www.google.com/", "www.google.com/?*", "www.google.com/#*", "www.google.com/webhp*", "www.google.com/imghp*", "www.google.com/videohp*", "www.google.com/shopping*", "www.google.com/advanced_search*", "www.google.com/preferences*", "mail.google.com/mail/*", "www.google.com/maps*", "maps.google.com/*", "calendar.google.com/calendar/*", "news.google.com/*", "translate.google.com/*", "docs.google.com/document/*", "docs.google.com/spreadsheets/*", "docs.google.com/presentation/*", "docs.google.com/forms/*", "docs.google.com/drawings/*", "drive.google.com/*", "photos.google.com/*", "accounts.google.com/v3/signin/*", "accounts.google.com/signin/*", "accounts.google.com/ServiceLogin*", "accounts.google.com/AccountChooser*", "accounts.google.com/InteractiveLogin*", "accounts.google.com/lifecycle/steps/signup/*", "accounts.google.com/signup*", "accounts.google.com/SignUp*", "myaccount.google.com/*", "keep.google.com/*", "play.google.com/store*", "www.google.com/gplex", "www.google.com/Gplex"];
 function ugfOwnPage() {
     const u = window.location.host + window.location.pathname + window.location.search;
     return UGF_OWN_PAGES.some(function(m) {
@@ -57070,6 +57117,8 @@ html:not([driveon-dd-open]) #ugf-driveon-dd,
 html:not([driveon-dd-open]) #ugf-driveon-fence,
 html:not([photoson-dd-open]) #ugf-photoson-dd,
 html:not([photoson-dd-open]) #ugf-photoson-fence,
+html:not([playon-dd-open]) #ugf-playon-dd,
+html:not([playon-dd-open]) #ugf-playon-fence,
 html:not([ytclassicon-dd-open]) #ugf-ytclassicon-dd,
 html:not([ytclassicon-dd-open]) #ugf-ytclassicon-fence,
 html:not([startubeon-dd-open]) #ugf-startubeon-dd,
@@ -61081,7 +61130,7 @@ html[shopping-results] #ugf-center {
     const ugfOnGmail = window.location.host === "mail.google.com";
     const ugfOnCalendar = window.location.host === "calendar.google.com";
     // news.google.com and translate.google.com: other origins, settings read from GM storage like Calendar
-    const ugfOnNT = window.location.host === "about.google" || window.location.host === "news.google.com" || window.location.host === "translate.google.com" || window.location.host === "docs.google.com" || window.location.host === "drive.google.com" || window.location.host === "photos.google.com";
+    const ugfOnNT = window.location.host === "about.google" || window.location.host === "news.google.com" || window.location.host === "translate.google.com" || window.location.host === "docs.google.com" || window.location.host === "drive.google.com" || window.location.host === "photos.google.com" || window.location.host === "play.google.com";
     // "Late 2015" (saved as 2015N) runs as 2016 - Google's look from the new logo of
     // 1 September 2015 was 2016's - with the few things that only changed in 2016 kept
     // as they were: the old Forms (the new one became the default on 10 Feb 2016), the
@@ -61291,6 +61340,7 @@ html[shopping-results] #ugf-center {
     let formsOn = "true";
     let driveOn = "true";
     let photosOn = "true";
+    let playOn = "true";
     let startubeOn = "true";
     let ytClassicOn = "true";
     try {
@@ -61306,6 +61356,7 @@ html[shopping-results] #ugf-center {
         formsOn = String((typeof GM_getValue === "function" ? GM_getValue("UGF_FORMS_ON", null) : null) || "true");
         driveOn = String((typeof GM_getValue === "function" ? GM_getValue("UGF_DRIVE_ON", null) : null) || "true");
         photosOn = String((typeof GM_getValue === "function" ? GM_getValue("UGF_PHOTOS_ON", null) : null) || "true");
+        playOn = String((typeof GM_getValue === "function" ? GM_getValue("UGF_PLAY_ON", null) : null) || "true");
         startubeOn = String((typeof GM_getValue === "function" ? GM_getValue("UGF_STARTUBE_ON", null) : null) || "true");
         ytClassicOn = String((typeof GM_getValue === "function" ? GM_getValue("UGF_YT_CLASSIC_ON", null) : null) || "true");
     } catch (e) {}
@@ -61918,6 +61969,8 @@ html[shopping-results] #ugf-center {
             <div id="ugf-driveon-fence" class="ugf-fence">
             </div>
             <div id="ugf-photoson-fence" class="ugf-fence">
+            </div>
+            <div id="ugf-playon-fence" class="ugf-fence">
             </div>
             <div id="ugf-ytclassicon-fence" class="ugf-fence">
             </div>
@@ -62681,6 +62734,33 @@ html[shopping-results] #ugf-center {
                                             <span>Choose whether or not Google Photos (your photos, albums and the photo viewer) is shown in the layout you picked above. Before Google Photos (2015) it is Picasa Web Albums, then Google+ Photos.</span>
                                         </div>
                                         <div class="ugf-dropdown" id="ugf-photoson-dd">
+                                            <div class="ugf-dropdown-inner">
+                                                <a id="" class="ugf-dropdown-item" value="true">
+                                                    <span>${UImessages.CLtrue}</span>
+                                                </a>
+                                                <a id="" class="ugf-dropdown-item" value="false">
+                                                    <span>${UImessages.CLfalse}</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ugf-gplex-section">
+                            <div class="ugf-gplex-section-inner">
+                                <div class="ugf-gplex-section-title">
+                                    <span>Gplex for Google Play</span>
+                                </div>
+                                <div class="ugf-gplex-section-content">
+                                    <div id="ugf-option-playon" class="ugf-gplex-option flex" value="${playOn}">
+                                        <a class="ugf-dropdown-button" id="ugf-playon-dd-btn">
+                                            <span>${UImessages.CLtrue}</span>
+                                        </a>
+                                        <div class="ugf-gplex-text">
+                                            <span>Choose whether or not the Google Play store (its front pages, categories, search and app pages) is shown in the layout you picked above. Before Google Play (2012) it is the Android Market web store of 2011.</span>
+                                        </div>
+                                        <div class="ugf-dropdown" id="ugf-playon-dd">
                                             <div class="ugf-dropdown-inner">
                                                 <a id="" class="ugf-dropdown-item" value="true">
                                                     <span>${UImessages.CLtrue}</span>
@@ -64073,6 +64153,16 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
     // Google Photos: Picasa Web Albums, Google+ Photos, or the Google Photos of the period
     if (window.location.host === "photos.google.com") {
         ugfPhStart();
+        return;
+    }
+    // Google Play: Gplex's own store (the front pages, categories, search and app pages);
+    // movies, books, your library and installing stay Google's
+    if (window.location.host === "play.google.com") {
+        if (ugfPlayWanted()) {
+            ugfPlayMain();
+        } else {
+            ugfPlayFavOnly();
+        }
         return;
     }
     // Google Maps: Gplex's own Maps page, or - for directions, Street View and the
@@ -65812,7 +65902,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 document.querySelector("#ugf-calon-fence").addEventListener("click",function() {
                     document.querySelector("html").removeAttribute("calon-dd-open");
                 });
-                ["newson", "tron", "docson", "sheetson", "slideson", "drawingson", "signinon", "accounton", "keepon", "formson", "driveon", "photoson", "startubeon", "ytclassicon"].forEach(function(k) {
+                ["newson", "tron", "docson", "sheetson", "slideson", "drawingson", "signinon", "accounton", "keepon", "formson", "driveon", "photoson", "playon", "startubeon", "ytclassicon"].forEach(function(k) {
                     document.querySelector("#ugf-" + k + "-dd-btn").addEventListener("click",function() {
                         document.querySelector("html").setAttribute(k + "-dd-open","");
                         document.title = "Gplex Settings";
@@ -66035,7 +66125,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                         document.querySelector("html").removeAttribute("neuro-dd-open");
                     });
                 });
-                [["newson", "UGF_NEWS_ON"], ["tron", "UGF_TRANSLATE_ON"], ["docson", "UGF_DOCS_ON"], ["sheetson", "UGF_SHEETS_ON"], ["slideson", "UGF_SLIDES_ON"], ["drawingson", "UGF_DRAWINGS_ON"], ["signinon", "UGF_SIGNIN_ON"], ["accounton", "UGF_ACCOUNT_ON"], ["keepon", "UGF_KEEP_ON"], ["formson", "UGF_FORMS_ON"], ["driveon", "UGF_DRIVE_ON"], ["photoson", "UGF_PHOTOS_ON"], ["startubeon", "UGF_STARTUBE_ON"], ["ytclassicon", "UGF_YT_CLASSIC_ON"]].forEach(function(o) {
+                [["newson", "UGF_NEWS_ON"], ["tron", "UGF_TRANSLATE_ON"], ["docson", "UGF_DOCS_ON"], ["sheetson", "UGF_SHEETS_ON"], ["slideson", "UGF_SLIDES_ON"], ["drawingson", "UGF_DRAWINGS_ON"], ["signinon", "UGF_SIGNIN_ON"], ["accounton", "UGF_ACCOUNT_ON"], ["keepon", "UGF_KEEP_ON"], ["formson", "UGF_FORMS_ON"], ["driveon", "UGF_DRIVE_ON"], ["photoson", "UGF_PHOTOS_ON"], ["playon", "UGF_PLAY_ON"], ["startubeon", "UGF_STARTUBE_ON"], ["ytclassicon", "UGF_YT_CLASSIC_ON"]].forEach(function(o) {
                     document.querySelectorAll("#ugf-option-" + o[0] + " .ugf-dropdown-item").forEach(itemRoot => {
                         itemRoot.addEventListener("click",function() {
                             let value = itemRoot.getAttribute("value");
@@ -66066,6 +66156,8 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                                 driveOn = value;
                             } else if (o[0] === "photoson") {
                                 photosOn = value;
+                            } else if (o[0] === "playon") {
+                                playOn = value;
                             } else if (o[0] === "startubeon") {
                                 startubeOn = value;
                             } else if (o[0] === "ytclassicon") {
@@ -66425,6 +66517,12 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             let sst = document.querySelector("#ugf-option-startubeon .ugf-dropdown-button span");
             if (sst) {
                 sst.textContent = startubeOn === "false" ? UImessages.CLfalse : UImessages.CLtrue;
+            }
+        }
+        if (setting == "playon" || setting == "all") {
+            let spl = document.querySelector("#ugf-option-playon .ugf-dropdown-button span");
+            if (spl) {
+                spl.textContent = playOn === "false" ? UImessages.CLfalse : UImessages.CLtrue;
             }
         }
         if (setting == "photoson" || setting == "all") {
@@ -91774,6 +91872,1173 @@ html[gplex-gmail] body {
         return css[era] || css.t2015;
     }
     // ---- end Gplex for Google News and Google Translate ----
+    // ---- Gplex for Google Play (7.2.27) ------------------------------------------------
+    // play.google.com as it was in your layout's year, built from the period's own pages
+    // (Android Police's hands-on of the first web store, 2 February 2011; Android Police and
+    // Phandroid on the card store of 15 July 2013 and its app page of December 2014; gsmarena
+    // on the Material store of July 2015; XDA's pictures of the store of 2017-2021 beside its
+    // replacement) and Google's own images where its servers still have them:
+    //   p11 - the Android Market web store (2 February 2011 - 6 March 2012), for every layout
+    //         up to Late 2011-Early 2012 (it was the first one: before it there was none)
+    //   p13 - Google Play's card store (15 July 2013 - July 2015): Late 2012-2013, 2014, 2015
+    //         (Play's first web store, March 2012 - July 2013, is not drawn: no picture of it
+    //         could be found, so Late 2012-2013 has the store of its second half)
+    //   p15 - the Material store, the app's page as a card (July 2015 - 2016): 2016
+    //   p17 - the same in green, "Google Play" in Product Sans beside the prism of the new
+    //         Play icon of May 2017 (2017 - 2021): 2017-2018, 2019 (with Play Points and Kids)
+    //   2022 keeps today's store.
+    // Gplex draws the front pages of Apps and Games, a category, a developer's apps, search
+    // results and app pages from what Google's present-day page carries: its embedded data
+    // (AF_initDataCallback, the same blocks the page itself is drawn from), its description
+    // for search engines (ld+json), and the app links and sections it draws, which stay
+    // loaded underneath, out of sight. Movies, books, your library and installing stay
+    // Google's own: Install opens Google's page for the app.
+    function ugfPlayArt() {
+        if (!ugfPlayArt.c) {
+            ugfPlayArt.c = {"amLogo":"data:image/png;base64,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","favAm":"data:image/png;base64,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","favP13":"data:image/png;base64,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"};
+            // the Google Play wordmarks, still on Google's servers: "Google play" with the
+            // prism (2012-2016) and "Google Play" in Product Sans (2017-2021); the favicon of 2017
+            ugfPlayArt.c.logoP13 = "https://www.gstatic.com/android/market_images/web/play_logo_x2.png";
+            ugfPlayArt.c.logoP17 = "https://www.gstatic.com/android/market_images/web/play_prism_hlock_2x.png";
+            ugfPlayArt.c.favP17 = "https://www.gstatic.com/android/market_images/web/favicon_v2.ico";
+        }
+        return ugfPlayArt.c;
+    }
+    // Material icons the store used that Gplex's other pages don't
+    function ugfPlayIcon(n, size) {
+        const P = {
+            android: "M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6v10zM3.5 8C2.67 8 2 8.67 2 9.5v7c0 .83.67 1.5 1.5 1.5S5 17.33 5 16.5v-7C5 8.67 4.33 8 3.5 8zm17 0c-.83 0-1.5.67-1.5 1.5v7c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-7c0-.83-.67-1.5-1.5-1.5zm-4.97-5.84l1.3-1.3c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0l-1.48 1.48C13.85 1.23 12.95 1 12 1c-.96 0-1.86.23-2.66.63L7.85.15c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71l1.31 1.31C6.97 3.26 6 5.01 6 7h12c0-1.99-.97-3.75-2.47-4.84zM10 5H9V4h1v1zm5 0h-1V4h1v1z",
+            help: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z",
+            settings: "M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z",
+            search: "M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z",
+            apps: "M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z",
+            person: "M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z",
+            bookmark: "M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z",
+            left: "M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z",
+            right: "M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z",
+            drop: "M7 10l5 5 5-5z",
+            star: "M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+        };
+        const s = size || 24;
+        return '<i class="mi"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="' + s + '" height="' + s + '"><path d="' + (P[n] || "") + '"/></svg></i>';
+    }
+    // which page this is: the stores' front pages, a category, a developer's apps, a search
+    // (of apps) or an app's page; anything else on play.google.com stays Google's
+    function ugfPlayRoute() {
+        const p = (window.location.pathname || "/").replace(/\/+$/, "") || "/";
+        const q = new URLSearchParams(window.location.search);
+        if (/^\/store\/apps\/details(\/[^/]+)?$/.test(p) && q.get("id")) {
+            return { page: "details", id: q.get("id") };
+        }
+        if (p === "/store/search" && q.get("q") && /^(apps)?$/.test(q.get("c") || "")) {
+            return { page: "search", q: q.get("q") };
+        }
+        let m = p.match(/^\/store\/apps\/category\/([A-Z_]+)$/);
+        if (m) {
+            return { page: "list", kind: "category", cat: m[1], games: /^GAME/.test(m[1]) };
+        }
+        if (/^\/store\/apps\/dev(eloper)?$/.test(p) && q.get("id")) {
+            return { page: "list", kind: "dev" };
+        }
+        m = p.match(/^\/store\/(apps|games)(\/top)?$/);
+        if (m) {
+            return { page: "home", games: m[1] === "games" };
+        }
+        return null;
+    }
+    function ugfPlayEra() {
+        const l = String(layout || "2015");
+        if (l === "2022") {
+            return null;
+        }
+        if (l === "2019") {
+            return "p19";
+        }
+        if (l === "2017" || l === "2018" || l === "2018M") {
+            return "p17";
+        }
+        // 2016 is also Late 2015 and Early and Late 2016 (saved as 2016)
+        if (/^2016/.test(l)) {
+            return "p15";
+        }
+        if (["2013", "2013L", "2014", "2015", "2015L"].indexOf(l) > -1) {
+            return "p13";
+        }
+        return "p11";
+    }
+    function ugfPlayWanted() {
+        if (window.location.host !== "play.google.com" || !ugfNtTopFrame() || !ugfNtOn("UGF_PLAY_ON")) {
+            return false;
+        }
+        if (/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "")) {
+            return false;
+        }
+        return !!(ugfPlayEra() && ugfPlayRoute());
+    }
+    function ugfPlayFav(era) {
+        const A = ugfPlayArt();
+        return era === "p11" ? A.favAm : era === "p13" || era === "p15" ? A.favP13 : A.favP17;
+    }
+    // Google's other pages (movies, books, your library...) keep their look but take the period's tab icon
+    function ugfPlayFavOnly() {
+        const era = ugfPlayEra();
+        if (!era || !ugfNtTopFrame() || !ugfNtOn("UGF_PLAY_ON") || window.location.host !== "play.google.com") {
+            return;
+        }
+        const fav = ugfPlayFav(era);
+        ugfApplyFavicon(fav);
+        ugfKeepFavicon(function() {
+            return fav;
+        });
+    }
+    // ---- reading the store out of Google's page --------------------------------------------
+    function ugfPlayAt(o, path) {
+        for (let i = 0; i < path.length; i++) {
+            if (o === null || o === undefined) {
+                return undefined;
+            }
+            o = o[path[i]];
+        }
+        return o;
+    }
+    // the page's data, as Google's own script gets it: AF_initDataCallback({key: 'ds:5', ..., data: [...]})
+    function ugfPlayBlocks() {
+        const out = [];
+        document.querySelectorAll("script").forEach(function(s) {
+            const t = s.textContent || "";
+            if (t.indexOf("AF_initDataCallback") < 0) {
+                return;
+            }
+            const m = t.match(/data:([\s\S]*),\s*sideChannel:\s*\{\s*\}\s*\}\s*\)\s*;?\s*$/);
+            if (m) {
+                try {
+                    out.push(JSON.parse(m[1]));
+                } catch (e) {}
+            }
+        });
+        return out;
+    }
+    // Google's pictures come in any size: "=s128" (square), "=h310" (height), "=w1024" (width)
+    function ugfPlayImg(src, spec) {
+        src = String(src || "");
+        if (!/^https:\/\/play-lh\.googleusercontent\.com\//.test(src)) {
+            return src;
+        }
+        return src.replace(/=[\w-]*$/, "") + "=" + spec;
+    }
+    // descriptions come as HTML: the lines are kept, the markup isn't
+    function ugfPlayPlain(html) {
+        const ent = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ", "#39": "'" };
+        return String(html || "").replace(/<br\s*\/?>/gi, "\n").replace(/<\/p>/gi, "\n").replace(/<[^>]*>/g, "")
+            .replace(/&(#x[0-9a-f]+|#\d+|\w+);/gi, function(all, e) {
+                if (e.charAt(0) === "#") {
+                    const c = e.charAt(1).toLowerCase() === "x" ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10);
+                    return isNaN(c) ? all : String.fromCodePoint(c);
+                }
+                return ent[e.toLowerCase()] !== undefined ? ent[e.toLowerCase()] : all;
+            }).replace(/\r/g, "").trim();
+    }
+    function ugfPlayLines(text) {
+        return ugfNtEsc(text).replace(/\n/g, "<br>");
+    }
+    // one app, from a link Google draws to its page: the icon, then the name, the developer
+    // (where the link has one) and the rating
+    function ugfPlayLinkApp(a) {
+        const m = (a.getAttribute("href") || "").match(/[?&]id=([^&#]+)/);
+        if (!m) {
+            return null;
+        }
+        let icon = "";
+        let alt = "";
+        a.querySelectorAll("img").forEach(function(img) {
+            const al = img.getAttribute("alt") || "";
+            if (!icon && !/^Screenshot/i.test(al)) {
+                icon = img.getAttribute("src") || "";
+                alt = al;
+            }
+        });
+        const texts = [];
+        const walk = document.createTreeWalker(a, NodeFilter.SHOW_TEXT);
+        let n;
+        while ((n = walk.nextNode())) {
+            const t = (n.nodeValue || "").trim();
+            const p = n.parentElement;
+            // the material icons' names ("star") are text as well
+            if (!t || (p && (p.tagName === "I" || (p.closest && p.closest("i, [class*='material'], [class*='google-symbols']"))))) {
+                continue;
+            }
+            texts.push(t);
+        }
+        let name = "";
+        let dev = "";
+        let rating = null;
+        texts.forEach(function(t) {
+            if (/^\d(?:[.,]\d)?$/.test(t)) {
+                if (rating === null) {
+                    rating = parseFloat(t.replace(",", "."));
+                }
+            } else if (!name) {
+                name = t;
+            } else if (!dev && rating === null) {
+                dev = t;
+            }
+        });
+        if (!name) {
+            name = alt.replace(/^(Icon|Thumbnail) image\s*/i, "") || a.getAttribute("aria-label") || a.getAttribute("title") || "";
+        }
+        let id = m[1];
+        try {
+            id = decodeURIComponent(id);
+        } catch (e) {}
+        return name ? { id: id, name: name, dev: dev, rating: rating, icon: icon } : null;
+    }
+    // the clusters Google draws ("Popular apps", "More by...", "Similar apps"): its <section>s,
+    // each a header (title, a line under it, a link to all of it) and its app links
+    function ugfPlaySections(root) {
+        const out = [];
+        (root || document).querySelectorAll("section").forEach(function(sec) {
+            const head = sec.querySelector("header");
+            const words = [];
+            let more = "";
+            if (head) {
+                const walk = document.createTreeWalker(head, NodeFilter.SHOW_TEXT);
+                let n;
+                while ((n = walk.nextNode())) {
+                    const t = (n.nodeValue || "").trim();
+                    const p = n.parentElement;
+                    if (t && !(p && p.closest && p.closest("i, button, [class*='material'], [class*='google-symbols']"))) {
+                        words.push(t);
+                    }
+                }
+                const ml = head.querySelector("a[href]");
+                if (ml) {
+                    more = ml.getAttribute("href") || "";
+                }
+            }
+            const apps = [];
+            const seen = {};
+            sec.querySelectorAll('a[href*="/store/apps/details?id="]').forEach(function(a) {
+                if (a.closest("section") !== sec) {
+                    return;
+                }
+                const app = ugfPlayLinkApp(a);
+                if (app && !seen[app.id]) {
+                    seen[app.id] = true;
+                    apps.push(app);
+                }
+            });
+            if (apps.length) {
+                out.push({ title: words[0] || "", sub: words[1] || "", more: more, apps: apps });
+            }
+        });
+        return out;
+    }
+    // every app linked from the page, in order (a search's results)
+    function ugfPlayAllApps() {
+        const apps = [];
+        const seen = {};
+        document.querySelectorAll('a[href*="/store/apps/details?id="]').forEach(function(a) {
+            if (a.closest("#ugf-play")) {
+                return;
+            }
+            const app = ugfPlayLinkApp(a);
+            if (app && !seen[app.id]) {
+                seen[app.id] = true;
+                apps.push(app);
+            } else if (app && seen[app.id]) {
+                // the big first result draws the app twice: keep what either copy knows
+                const had = apps.filter(function(x) {
+                    return x.id === app.id;
+                })[0];
+                had.dev = had.dev || app.dev;
+                had.rating = had.rating === null ? app.rating : had.rating;
+                had.icon = had.icon || app.icon;
+            }
+        });
+        return apps;
+    }
+    // an app's page: Google's data for it (ds:5 as of 2026; whichever block has the app's name
+    // and icon where an app's page keeps them), the ld+json, and what's drawn on the page
+    function ugfPlayDetails() {
+        let d = null;
+        ugfPlayBlocks().some(function(b) {
+            if (typeof ugfPlayAt(b, [1, 2, 0, 0]) === "string" && /^https?:/.test(String(ugfPlayAt(b, [1, 2, 95, 0, 3, 2]) || ""))) {
+                d = b;
+                return true;
+            }
+            return false;
+        });
+        const at = function(p) {
+            return d ? ugfPlayAt(d, [1, 2].concat(p)) : undefined;
+        };
+        let ld = {};
+        try {
+            const s = document.querySelector('script[type="application/ld+json"]');
+            ld = s ? JSON.parse(s.textContent) || {} : {};
+        } catch (e) {}
+        const h1 = document.querySelector("h1");
+        const devA = document.querySelector('a[href*="/store/apps/dev"]');
+        const rating = parseFloat(at([51, 0, 1]) || (ld.aggregateRating || {}).ratingValue);
+        const app = {
+            id: new URLSearchParams(window.location.search).get("id") || "",
+            name: at([0, 0]) || ld.name || (h1 ? h1.textContent.trim() : ""),
+            icon: at([95, 0, 3, 2]) || ld.image || ((document.querySelector('img[alt="Icon image"]') || {}).src || ""),
+            graphic: at([96, 0, 3, 2]) || "",
+            dev: at([68, 0]) || (ld.author || {}).name || (devA ? devA.textContent.trim() : ""),
+            devHref: at([68, 1, 4, 2]) || (devA ? devA.getAttribute("href") : ""),
+            rating: isNaN(rating) ? null : rating,
+            ratings: parseInt(at([51, 2, 1]) || (ld.aggregateRating || {}).ratingCount || 0, 10) || 0,
+            reviewCount: parseInt(at([51, 3, 1]) || 0, 10) || 0,
+            hist: [1, 2, 3, 4, 5].map(function(i) {
+                return parseInt(at([51, 1, i, 1]) || 0, 10) || 0;
+            }),
+            installs: at([13, 0]) || "",
+            desc: ugfPlayPlain(at([72, 0, 1]) || ld.description || ""),
+            summary: ugfPlayPlain(at([73, 0, 1]) || ""),
+            category: at([79, 0, 0, 0]) || "",
+            catId: at([79, 0, 0, 2]) || "",
+            rated: at([9, 0]) || ld.contentRating || "",
+            updated: at([145, 0, 0]) || "",
+            version: at([140, 0, 0, 0]) || "",
+            android: at([140, 1, 1, 0, 0, 1]) || "",
+            whatsNew: ugfPlayPlain(at([144, 1, 1]) || ""),
+            website: at([69, 0, 5, 2]) || "",
+            email: at([69, 1, 0]) || "",
+            privacy: at([99, 0, 5, 2]) || "",
+            shots: [],
+            similar: [],
+            moreBy: [],
+            reviews: []
+        };
+        // the price, in millionths, or 0
+        const micros = at([57, 0, 0, 0, 0, 1, 0, 0]);
+        const offer = (ld.offers || [])[0] || {};
+        const price = micros !== undefined && micros !== null ? micros / 1e6 : parseFloat(offer.price || 0);
+        const cur = at([57, 0, 0, 0, 0, 1, 0, 1]) || offer.priceCurrency || "USD";
+        app.price = price > 0 ? (at([57, 0, 0, 0, 0, 1, 0, 2]) || (cur === "USD" ? "$" + price.toFixed(2) : price.toFixed(2) + " " + cur)) : "";
+        const shots = at([78, 0]);
+        if (Array.isArray(shots)) {
+            shots.forEach(function(x) {
+                const u = ugfPlayAt(x, [3, 2]);
+                if (u) {
+                    app.shots.push(u);
+                }
+            });
+        }
+        if (!app.shots.length) {
+            document.querySelectorAll('img[alt="Screenshot image"]').forEach(function(img) {
+                if (img.src && !img.closest("a")) {
+                    app.shots.push(img.src);
+                }
+            });
+        }
+        ugfPlaySections().forEach(function(s) {
+            if (/\/store\/apps\/dev(eloper)?\?/.test(s.more) || (!s.more && /^More by /i.test(s.title))) {
+                app.moreBy = s.apps.filter(function(x) {
+                    return x.id !== app.id;
+                });
+                app.moreTitle = s.title;
+            } else if (/\/collection\/cluster/.test(s.more) || /^Similar/i.test(s.title)) {
+                app.similar = s.apps.filter(function(x) {
+                    return x.id !== app.id;
+                });
+            }
+        });
+        app.reviews = ugfPlayReviews();
+        return app.name ? app : null;
+    }
+    // the reviews Google draws on the app's page (after the page has loaded): each one a
+    // header with the writer's picture and name, a "Rated 4 stars out of five stars" with the
+    // date beside it, and the text
+    function ugfPlayReviews() {
+        const root = document.querySelector('[data-g-id="reviews"]') || document;
+        const list = [];
+        root.querySelectorAll("header").forEach(function(h) {
+            const img = h.querySelector("img");
+            const card = h.parentElement;
+            if (!img || !card || list.length >= 4 || card.closest("#ugf-play")) {
+                return;
+            }
+            const st = card.querySelector('[role="img"][aria-label]');
+            if (!st) {
+                return;
+            }
+            const sm = (st.getAttribute("aria-label") || "").match(/(\d)/);
+            const nm = img.nextElementSibling;
+            const row = st.parentElement;
+            let text = "";
+            Array.prototype.forEach.call(card.children, function(c) {
+                if (c === h || c.contains(st) || c.querySelector('button, [role="button"], [aria-label="Yes"]')) {
+                    return;
+                }
+                const t = c.textContent.trim();
+                if (t.length > text.length) {
+                    text = t;
+                }
+            });
+            list.push({ name: nm ? nm.textContent.trim() : "", photo: img.getAttribute("src") || "", stars: sm ? parseInt(sm[1], 10) : 0,
+                date: row ? row.textContent.trim() : "", text: text });
+        });
+        return list;
+    }
+    // who's signed in, from Play's own account menu: an address there is you, "Sign in" is
+    // nobody, and anything else leaves it to what google.com and Gmail told Gplex (the shared
+    // helper would otherwise take the developer's support address, a mailto link, for you)
+    function ugfPlayWho() {
+        const menu = document.querySelector('ul[aria-label="Account menu"]');
+        const btn = document.querySelector('[aria-label="Open account menu"], [aria-label^="Google Account"]');
+        const txt = menu ? menu.textContent : "";
+        const m = txt.match(/[\w.+-]+@[\w-]+(\.[\w-]+)+/);
+        if (m) {
+            const name = txt.split(m[0])[0].replace(/\s+/g, " ").trim();
+            const img = btn ? btn.querySelector("img") : null;
+            return { name: name, first: name.split(" ")[0] || "", email: m[0], photo: img ? img.getAttribute("src") || "" : "" };
+        }
+        if (/Sign in/i.test(txt) || document.querySelector('a[href*="accounts.google.com/ServiceLogin"], a[href*="accounts.google.com/v3/signin"]')) {
+            return { name: "", first: "", email: "", photo: "" };
+        }
+        const name = ugfGmailShared("UGF_USERNAME") || "";
+        return { name: name, first: name.split(" ")[0] || "", email: ugfGmailShared("UGF_EMAIL") || "", photo: ugfGmailShared("UGF_PFP") || "" };
+    }
+    // ---- the categories, as each period listed them (and where they are on today's store) ----
+    function ugfPlayCats(era) {
+        if (era === "p11") {
+            return {
+                games: [["Arcade & Action", "GAME_ARCADE"], ["Brain & Puzzle", "GAME_PUZZLE"], ["Cards & Casino", "GAME_CARD"], ["Casual", "GAME_CASUAL"],
+                    ["Live Wallpaper", "PERSONALIZATION"], ["Sports Games", "GAME_SPORTS"], ["Widgets", "PERSONALIZATION"]],
+                apps: [["Books & Reference", "BOOKS_AND_REFERENCE"], ["Business", "BUSINESS"], ["Comics", "COMICS"], ["Communication", "COMMUNICATION"],
+                    ["Education", "EDUCATION"], ["Entertainment", "ENTERTAINMENT"], ["Finance", "FINANCE"], ["Health & Fitness", "HEALTH_AND_FITNESS"],
+                    ["Libraries & Demo", "LIBRARIES_AND_DEMO"], ["Lifestyle", "LIFESTYLE"], ["Live Wallpaper", "PERSONALIZATION"], ["Media & Video", "VIDEO_PLAYERS"],
+                    ["Medical", "MEDICAL"], ["Music & Audio", "MUSIC_AND_AUDIO"], ["News & Magazines", "NEWS_AND_MAGAZINES"], ["Personalization", "PERSONALIZATION"],
+                    ["Photography", "PHOTOGRAPHY"], ["Productivity", "PRODUCTIVITY"], ["Shopping", "SHOPPING"], ["Social", "SOCIAL"], ["Sports", "SPORTS"],
+                    ["Tools", "TOOLS"], ["Transportation", "MAPS_AND_NAVIGATION"], ["Travel & Local", "TRAVEL_AND_LOCAL"], ["Weather", "WEATHER"], ["Widgets", "PERSONALIZATION"]]
+            };
+        }
+        const games = [["Action", "GAME_ACTION"], ["Adventure", "GAME_ADVENTURE"], ["Arcade", "GAME_ARCADE"], ["Board", "GAME_BOARD"], ["Card", "GAME_CARD"],
+            ["Casino", "GAME_CASINO"], ["Casual", "GAME_CASUAL"], ["Educational", "GAME_EDUCATIONAL"], ["Music", "GAME_MUSIC"], ["Puzzle", "GAME_PUZZLE"],
+            ["Racing", "GAME_RACING"], ["Role Playing", "GAME_ROLE_PLAYING"], ["Simulation", "GAME_SIMULATION"], ["Sports", "GAME_SPORTS"],
+            ["Strategy", "GAME_STRATEGY"], ["Trivia", "GAME_TRIVIA"], ["Word", "GAME_WORD"]];
+        if (era === "p13" || era === "p15") {
+            return {
+                games: games,
+                apps: [["Books & Reference", "BOOKS_AND_REFERENCE"], ["Business", "BUSINESS"], ["Comics", "COMICS"], ["Communication", "COMMUNICATION"],
+                    ["Education", "EDUCATION"], ["Entertainment", "ENTERTAINMENT"]].concat(era === "p15" ? [["Family", "FAMILY"]] : []).concat([["Finance", "FINANCE"],
+                    ["Health & Fitness", "HEALTH_AND_FITNESS"], ["Libraries & Demo", "LIBRARIES_AND_DEMO"], ["Lifestyle", "LIFESTYLE"], ["Live Wallpaper", "PERSONALIZATION"],
+                    ["Media & Video", "VIDEO_PLAYERS"], ["Medical", "MEDICAL"], ["Music & Audio", "MUSIC_AND_AUDIO"], ["News & Magazines", "NEWS_AND_MAGAZINES"],
+                    ["Personalization", "PERSONALIZATION"], ["Photography", "PHOTOGRAPHY"], ["Productivity", "PRODUCTIVITY"], ["Shopping", "SHOPPING"],
+                    ["Social", "SOCIAL"], ["Sports", "SPORTS"], ["Tools", "TOOLS"], ["Transportation", "MAPS_AND_NAVIGATION"], ["Travel & Local", "TRAVEL_AND_LOCAL"],
+                    ["Weather", "WEATHER"], ["Widgets", "PERSONALIZATION"]])
+            };
+        }
+        // the new categories of July 2016 (Art & Design, Beauty, Dating, Events, Food & Drink...)
+        return {
+            games: games,
+            apps: [["Art & Design", "ART_AND_DESIGN"], ["Auto & Vehicles", "AUTO_AND_VEHICLES"], ["Beauty", "BEAUTY"], ["Books & Reference", "BOOKS_AND_REFERENCE"],
+                ["Business", "BUSINESS"], ["Comics", "COMICS"], ["Communication", "COMMUNICATION"], ["Dating", "DATING"], ["Education", "EDUCATION"],
+                ["Entertainment", "ENTERTAINMENT"], ["Events", "EVENTS"], ["Finance", "FINANCE"], ["Food & Drink", "FOOD_AND_DRINK"], ["Health & Fitness", "HEALTH_AND_FITNESS"],
+                ["House & Home", "HOUSE_AND_HOME"], ["Libraries & Demo", "LIBRARIES_AND_DEMO"], ["Lifestyle", "LIFESTYLE"], ["Maps & Navigation", "MAPS_AND_NAVIGATION"],
+                ["Medical", "MEDICAL"], ["Music & Audio", "MUSIC_AND_AUDIO"], ["News & Magazines", "NEWS_AND_MAGAZINES"], ["Parenting", "PARENTING"],
+                ["Personalization", "PERSONALIZATION"], ["Photography", "PHOTOGRAPHY"], ["Productivity", "PRODUCTIVITY"], ["Shopping", "SHOPPING"],
+                ["Social", "SOCIAL"], ["Sports", "SPORTS"], ["Tools", "TOOLS"], ["Travel & Local", "TRAVEL_AND_LOCAL"], ["Video Players & Editors", "VIDEO_PLAYERS"],
+                ["Weather", "WEATHER"]]
+        };
+    }
+    // ---- the page ---------------------------------------------------------------------
+    function ugfPlayMain() {
+        const era = ugfPlayEra();
+        const route = ugfPlayRoute();
+        const A = ugfPlayArt();
+        const esc = ugfNtEsc;
+        const icon = ugfPlayIcon;
+        const material = era === "p17" || era === "p19";
+        console.log("[Gplex] Play: layout " + layout + " (" + era + ", " + route.page + ")" + (UGF_VERSION ? " - Gplex " + UGF_VERSION : ""));
+        const style = document.createElement("style");
+        style.id = "ugf-nt-styles";
+        style.textContent = ugfNtBaseCss("ugf-play").concat(ugfPlayCss(era)).join("\n");
+        (document.head || document.documentElement).appendChild(style);
+        if (era !== "p11") {
+            const font = document.createElement("link");
+            font.rel = "stylesheet";
+            font.href = "https://fonts.googleapis.com/css?family=Roboto:300,300italic,400,500,700";
+            (document.head || document.documentElement).appendChild(font);
+        }
+        document.documentElement.setAttribute("gplex-nt", era);
+        const fav = ugfPlayFav(era);
+        ugfApplyFavicon(fav);
+        ugfKeepFavicon(function() {
+            return fav;
+        });
+        const shell = document.createElement("div");
+        shell.id = "ugf-play";
+        shell.setAttribute("era", era);
+        document.body.appendChild(shell);
+        // Google's own page, the way it was, if anything here can't be drawn
+        const giveUp = function(why) {
+            console.log("[Gplex] Play: left to Google (" + why + ")");
+            shell.remove();
+            style.remove();
+            document.documentElement.removeAttribute("gplex-nt");
+            const veil = document.getElementById("ugf-play-veil");
+            if (veil) {
+                veil.remove();
+            }
+        };
+        // ---- addresses: keep the page's language and country
+        const keep = (function() {
+            const q = new URLSearchParams(window.location.search);
+            return ["hl", "gl"].filter(function(k) {
+                return q.get(k);
+            }).map(function(k) {
+                return "&" + k + "=" + encodeURIComponent(q.get(k));
+            }).join("");
+        })();
+        const withKeep = function(path) {
+            if (!keep) {
+                return path;
+            }
+            return path + (path.indexOf("?") > -1 ? keep : "?" + keep.slice(1));
+        };
+        const appUrl = function(id) {
+            return "/store/apps/details?id=" + encodeURIComponent(id) + keep;
+        };
+        const catUrl = function(id) {
+            return withKeep("/store/apps/category/" + id);
+        };
+        // installing (and the wishlist) stay Google's: its page for the app, without Gplex
+        const installUrl = function(id) {
+            return "https://play.google.com/store/apps/details?id=" + encodeURIComponent(id) + keep + "&gplex=false";
+        };
+        const devUrl = function(href) {
+            return href ? withKeep(href) : "";
+        };
+        const homeUrl = withKeep(route.games ? "/store/games" : "/store/apps");
+        const appsHome = withKeep("/store/apps");
+        const searchUrl = function(q) {
+            return "/store/search?q=" + encodeURIComponent(q) + "&c=apps" + keep;
+        };
+        const fmt = function(n) {
+            return Number(n || 0).toLocaleString("en-US");
+        };
+        // stars: grey ones with the rating's share of coloured ones over them
+        const stars = function(r, cls) {
+            const w = Math.max(0, Math.min(100, (Number(r) || 0) / 5 * 100));
+            const five = "&#9733;&#9733;&#9733;&#9733;&#9733;";
+            return '<span class="stars' + (cls ? " " + cls : "") + '"' + (r ? ' title="' + esc("Rated " + Number(r).toFixed(1) + " stars out of five stars") + '"' : "") + '>' +
+                '<span class="s0">' + five + '</span><span class="s1" style="width:' + w.toFixed(0) + '%">' + five + "</span></span>";
+        };
+        const q0 = route.page === "search" ? route.q : "";
+        const cats = ugfPlayCats(era);
+        // ---- what's on this page
+        let data = null;
+        const read = function() {
+            if (route.page === "details") {
+                return ugfPlayDetails();
+            }
+            if (route.page === "search") {
+                const apps = ugfPlayAllApps();
+                return apps.length ? { apps: apps } : null;
+            }
+            const secs = ugfPlaySections().filter(function(s) {
+                return s.apps.length >= 2;
+            });
+            if (!secs.length) {
+                return null;
+            }
+            let title = "";
+            if (route.kind === "category") {
+                const c = cats.apps.concat(cats.games).filter(function(x) {
+                    return x[1] === route.cat;
+                })[0];
+                title = c ? c[0] : (document.title || "").split(" - ")[0];
+            } else if (route.kind === "dev") {
+                title = ((document.title || "").match(/by (.+?) on Google Play/) || [])[1] || (secs[0].title || "").replace(/^More by /, "");
+            }
+            return { secs: secs, title: title };
+        };
+        // ================================================================================
+        // p11: the Android Market web store
+        // ================================================================================
+        const marketBar = function() {
+            if (String(layout || "") === "2012" || String(layout || "") === "2011") {
+                // late 2011: the black bar had come
+                return ugfNtGbar("dark", "");
+            }
+            const who = ugfCalWho();
+            const signed = !!(who.name || who.email);
+            const left = [["Gmail", "https://mail.google.com/"], ["Calendar", "https://calendar.google.com/"], ["Documents", "https://docs.google.com/"],
+                ["Photos", "https://photos.google.com/"], ["Reader", "https://www.google.com/reader/"], ["Web", "https://www.google.com/"]].map(function(a) {
+                return '<a href="' + esc(a[1]) + '">' + esc(a[0]) + "</a>";
+            }).join("") + '<a href="https://www.google.com/intl/en/options/" class="more">more <small>&#9660;</small></a>';
+            const right = signed ? '<b class="who">' + esc(who.email || who.name) + '</b> | <a href="' + esc(withKeep("/store/myapps")) + '">My Market Account</a> | ' +
+                '<a href="https://myaccount.google.com/">My Account</a> | <a href="https://accounts.google.com/Logout">Sign out</a>'
+                : '<a href="https://accounts.google.com/ServiceLogin?service=googleplay&amp;continue=' + encodeURIComponent(window.location.href) + '">Sign in</a>';
+            return '<div class="ugf-nt-gbar classic am"><div class="left">' + left + '</div><div class="right">' + right + "</div></div>";
+        };
+        const amButton = function(app, big) {
+            const label = app.price ? esc(app.price) + " BUY" : "INSTALL";
+            return '<a class="' + (big ? "am-install" : "am-btn") + '" href="' + esc(installUrl(app.id)) + '">' + label + "</a>";
+        };
+        const amTile = function(app) {
+            return '<div class="am-tile"><a href="' + esc(appUrl(app.id)) + '" class="ic"><img src="' + esc(ugfPlayImg(app.icon, "s144")) + '" width="72" height="72" alt=""></a>' +
+                '<a href="' + esc(appUrl(app.id)) + '" class="nm" title="' + esc(app.name) + '">' + esc(app.name) + "</a>" +
+                '<div class="dv">' + esc(app.dev || "") + "</div>" + amButton(app) + "</div>";
+        };
+        const amRow = function(app) {
+            return '<div class="am-row"><a href="' + esc(appUrl(app.id)) + '" class="ic"><img src="' + esc(ugfPlayImg(app.icon, "s144")) + '" width="72" height="72" alt=""></a>' +
+                '<div class="tx"><a href="' + esc(appUrl(app.id)) + '" class="nm">' + esc(app.name) + "</a>" +
+                (app.dev ? '<div class="dv">' + esc(app.dev) + "</div>" : "") + (app.rating ? stars(app.rating) : "") + "</div></div>";
+        };
+        const amCats = function() {
+            const grp = function(label, list, cat0) {
+                return '<a class="grp" href="' + esc(catUrl(cat0)) + '">' + esc(label) + " <i>&rsaquo;</i></a>" + list.map(function(c) {
+                    return '<a class="sub' + (route.cat === c[1] ? " on" : "") + '" href="' + esc(catUrl(c[1])) + '">' + esc(c[0]) + " <i>&rsaquo;</i></a>";
+                }).join("");
+            };
+            return '<div class="am-tab">CATEGORIES</div><div class="am-cats">' + grp("Games", cats.games, "GAME") + grp("Applications", cats.apps, "APPLICATION") + "</div>";
+        };
+        const amFrame = function(body) {
+            return marketBar() + '<div class="am-page"><div class="am-head"><a href="' + esc(appsHome) + '" class="logo"><img src="' + A.amLogo + '" width="272" height="42" alt="Android Market"></a>' +
+                '<form class="am-search ugf-play-search"><input type="text" name="q" value="' + esc(q0) + '" placeholder="Search" autocomplete="off"><button type="submit" title="Search">' + icon("search", 20) + "</button></form></div>" +
+                body + '<div class="am-foot">&copy;2011 Google &nbsp;-&nbsp; <a href="https://play.google.com/about/play-terms/">Android Market Terms of Service</a> &nbsp;-&nbsp; ' +
+                '<a href="https://policies.google.com/privacy">Privacy Policy</a> &nbsp;-&nbsp; <a href="https://support.google.com/googleplay/">Help</a></div></div>';
+        };
+        const amHome = function(d) {
+            // the tabs over the first grid were Featured, Top Paid and Top Free; today's store
+            // has clusters instead, so the first three of them take the tabs
+            const tabs = d.secs.slice(0, 3);
+            let h = '<div class="am-rule"></div><div class="am-cols"><div class="am-left">' + amCats() + '</div><div class="am-main">' +
+                (d.title ? '<div class="am-ptitle">' + esc(d.title.toUpperCase()) + "</div>" : "") +
+                '<div class="am-tabs">' + tabs.map(function(s, i) {
+                    return '<a href="#" data-amtab="' + i + '" class="' + (i ? "" : "on") + '">' + esc(i || d.title ? s.title.toUpperCase() : "FEATURED") + "</a>";
+                }).join("") + "</div>";
+            tabs.forEach(function(s, i) {
+                h += '<div class="am-tabbody" data-amtab="' + i + '"' + (i ? " hidden" : "") + '><div class="am-grid">' + s.apps.slice(0, 12).map(amTile).join("") + "</div>" +
+                    (s.more ? '<div class="am-more"><a href="' + esc(withKeep(s.more)) + '">See more <i>&rsaquo;</i></a></div>' : "") + "</div>";
+            });
+            d.secs.slice(3).forEach(function(s) {
+                h += '<div class="am-sec"><h2>' + esc(s.title.toUpperCase()) + '</h2><div class="am-grid">' + s.apps.slice(0, 8).map(amTile).join("") + "</div>" +
+                    (s.more ? '<div class="am-more"><a href="' + esc(withKeep(s.more)) + '">See more <i>&rsaquo;</i></a></div>' : "") + "</div>";
+            });
+            return h + "</div></div>";
+        };
+        const amSearch = function(d) {
+            return '<div class="am-results"><div class="t">RESULTS FOR &quot;' + esc(route.q) + '&quot;</div><div class="o">' + icon("search", 16) + " Search Options</div></div>" +
+                '<div class="am-count">About ' + fmt(d.apps.length) + ' results</div><div class="am-list">' + d.apps.map(function(app) {
+                    return '<div class="am-res"><div class="l"><a href="' + esc(appUrl(app.id)) + '"><img src="' + esc(ugfPlayImg(app.icon, "s144")) + '" width="72" height="72" alt=""></a>' +
+                        (app.rating ? stars(app.rating) : "") + amButton(app) + '</div><div class="r"><a class="nm" href="' + esc(appUrl(app.id)) + '">' + esc(app.name) + "</a>" +
+                        (app.dev ? '<div class="dv">' + esc(app.dev) + "</div>" : "") + "</div></div>";
+                }).join("") + "</div>";
+        };
+        const amDetails = function(app) {
+            const crumbCat = app.catId ? '<a href="' + esc(catUrl(app.catId)) + '">' + esc(app.category.toUpperCase()) + "</a> &rsaquo; " : "";
+            const reviews = app.reviews.length ? app.reviews.map(function(r) {
+                return '<div class="am-rev"><div class="rt">' + esc(r.text.length > 90 ? r.text.slice(0, 90).replace(/\s+\S*$/, "") + "..." : r.text) + "</div>" +
+                    '<div class="rb">' + stars(r.stars) + " by <b>" + esc(r.name) + "</b> &ndash; " + esc(r.date) + "</div></div>";
+            }).join("") : '<div class="am-none">No reviews yet.</div>';
+            const about = [["RATING", stars(app.rating) + '<div class="small">(' + fmt(app.ratings) + ")</div>"], ["UPDATED", esc(app.updated)],
+                ["CURRENT VERSION", esc(app.version || "Varies with device")], ["REQUIRES ANDROID", esc(app.android || "Varies with device")],
+                ["CATEGORY", esc(app.category)], ["INSTALLS", esc(app.installs)], ["CONTENT RATING", esc(app.rated)], ["PRICE", esc(app.price || "Free")]].filter(function(x) {
+                return x[1];
+            }).map(function(x) {
+                return "<dt>" + x[0] + ":</dt><dd>" + x[1] + "</dd>";
+            }).join("");
+            const side = function(title, list) {
+                return list.length ? '<h3 class="am-sh">' + title + "</h3>" + list.slice(0, 6).map(amRow).join("") : "";
+            };
+            return '<div class="am-crumb"><a href="' + esc(appsHome) + '">ANDROID MARKET</a> &rsaquo; ' + crumbCat + esc(app.name.toUpperCase()) + "</div>" +
+                '<div class="am-dhead"><div class="am-dbox"><h1>' + esc(app.name) + '</h1><div class="dv">' + (app.devHref ? '<a href="' + esc(devUrl(app.devHref)) + '">' + esc(app.dev) + "</a>" : esc(app.dev)) + "</div>" +
+                '<div class="am-drow"><img src="' + esc(ugfPlayImg(app.icon, "s240")) + '" width="113" height="113" alt=""><div class="am-drate">' + stars(app.rating) +
+                '<div class="small">(' + fmt(app.ratings) + " ratings)</div>" + amButton(app, true) + "</div></div></div>" +
+                '<div class="am-promo">' + (app.graphic ? '<img src="' + esc(ugfPlayImg(app.graphic, "w1024")) + '" alt="">' : "") + "</div></div>" +
+                '<div class="am-dcols"><div class="am-left">' + side("RELATED", app.similar) + side("MORE FROM DEVELOPER", app.moreBy) + "</div>" +
+                '<div class="am-dright"><div class="am-tabs d"><a href="#" data-amd="ov" class="on">OVERVIEW</a><a href="#" data-amd="rv">USER REVIEWS' + (app.reviewCount ? " (" + fmt(app.reviewCount) + ")" : "") + "</a>" +
+                '<a href="#" data-amd="wn">WHAT\'S NEW</a><a href="' + esc(installUrl(app.id)) + '">PERMISSIONS</a></div><div class="am-dbody"><div class="am-dmain">' +
+                '<div data-amd="ov"><h2>DESCRIPTION</h2><div class="am-desc clip">' + ugfPlayLines(app.desc) + "</div>" + '<div class="am-moreline"><a href="#" class="am-morebtn">MORE</a></div>' +
+                (app.website ? '<a class="am-site" href="' + esc(app.website) + '" target="_blank" rel="noopener">Visit Developer\'s Website <i>&rsaquo;</i></a>' : "") +
+                (app.shots.length ? '<h2>APP SCREENSHOTS</h2><div class="am-shots"><div class="strip">' + app.shots.slice(0, 8).map(function(s) {
+                    return '<img src="' + esc(ugfPlayImg(s, "h230")) + '" height="230" alt="">';
+                }).join("") + '</div><div class="pager"><a href="#" class="pv">&lsaquo;</a><a href="#" class="nx">&rsaquo;</a></div></div>' : "") +
+                '<h2>USER REVIEWS</h2><div class="am-revs">' + reviews + "</div></div>" +
+                '<div data-amd="rv" hidden><h2>USER REVIEWS</h2><div class="am-revs">' + reviews + "</div></div>" +
+                '<div data-amd="wn" hidden><h2>WHAT\'S NEW</h2><div class="am-desc">' + (app.whatsNew ? ugfPlayLines(app.whatsNew) : "Nothing listed for this version.") + "</div></div>" +
+                '</div><div class="am-about"><div class="h">ABOUT THIS APP</div><dl>' + about + "</dl></div></div></div></div>";
+        };
+        // ================================================================================
+        // p13 - p19: the card store
+        // ================================================================================
+        const gpCorner = function() {
+            if (era === "p13") {
+                return ugfNtHeadCorner();
+            }
+            const who = ugfCalWho();
+            return '<div class="kcorner"><a href="#" class="kic apps" title="Google apps">' + icon("apps", 24) + "</a>" +
+                (who.name || who.email ? '<a href="#" class="me" title="Google Account">' + ugfGmailAvatar() + "</a>"
+                    : '<a class="ksignin" href="https://accounts.google.com/ServiceLogin?service=googleplay&amp;continue=' + encodeURIComponent(window.location.href) + '">Sign in</a>') + "</div>";
+        };
+        const gpCard = function(app) {
+            return '<a class="gp-card" href="' + esc(appUrl(app.id)) + '"><span class="ci"><img src="' + esc(ugfPlayImg(app.icon, "s340")) + '" alt="" loading="lazy"></span>' +
+                '<span class="cd"><span class="ct" title="' + esc(app.name) + '">' + esc(app.name) + '</span><span class="cs">' + esc(app.dev || "") + "</span>" +
+                '<span class="cr">' + (app.rating ? stars(app.rating) : "") + "</span></span></a>";
+        };
+        const seeMore = function(href) {
+            return href ? '<a class="gp-more" href="' + esc(withKeep(href)) + '">See more</a>' : "";
+        };
+        const gpCluster = function(s, max) {
+            return '<div class="gp-cluster"><div class="gp-ch"><h2>' + esc(s.title) + "</h2>" + seeMore(s.more) + "</div>" +
+                (s.sub ? '<div class="gp-csub">' + esc(s.sub) + "</div>" : "") + '<div class="gp-cards">' + s.apps.slice(0, max || 100).map(gpCard).join("") + "</div></div>";
+        };
+        const gpFrame = function(body) {
+            const sub = function(on) {
+                const t = material ? ["Home", "Top charts", "New releases"] : ["Home", "Top Charts", "New Releases"];
+                return '<div class="gp-sub"><a href="#" class="cats">' + (route.kind === "category" && data && data.title ? esc(data.title) : "Categories") + " " + icon("drop", 20) + "</a>" +
+                    '<span class="sep"></span>' + t.map(function(x, i) {
+                        return '<a class="tab' + (i === on ? " on" : "") + '" href="' + esc(i === 0 ? homeUrl : withKeep(route.games ? "/store/games" : "/store/apps/top")) + '">' + x + "</a>";
+                    }).join("") + '<span class="gp-subr"><a class="sq" href="https://support.google.com/googleplay/" title="Help">' + icon("help", 18) + "</a>" +
+                    '<a class="sq" href="https://www.google.com/gplex" title="Settings">' + icon("settings", 18) + "</a></span>" +
+                    '<div class="gp-catmenu" hidden><div class="col"><h4>Apps</h4>' + cats.apps.map(function(c) {
+                        return '<a href="' + esc(catUrl(c[1])) + '">' + esc(c[0]) + "</a>";
+                    }).join("") + '</div><div class="col"><h4>Games</h4>' + cats.games.map(function(c) {
+                        return '<a href="' + esc(catUrl(c[1])) + '">' + esc(c[0]) + "</a>";
+                    }).join("") + "</div></div></div>";
+            };
+            const acct = material ? '<div class="gp-navsep"></div><div class="gp-navacc">' + [["Account", "/store/account"], ["Payment methods", "https://pay.google.com/"]]
+                .concat(era === "p19" ? [["Play Points", "/store/points/enroll"]] : []).concat([["My subscriptions", "/store/account/subscriptions"], ["Redeem", "/redeem"],
+                    ["Buy gift card", "/store/giftcards"], ["My wishlist", "/wishlist"], ["My Play activity", "/store/myplayactivity"],
+                    ["Parent Guide", "https://support.google.com/googleplay/answer/6209544"]]).map(function(x) {
+                    return '<a href="' + esc(/^\//.test(x[1]) ? withKeep(x[1]) : x[1]) + '">' + esc(x[0]) + "</a>";
+                }).join("") + "</div>" : "";
+            const nav = '<div class="gp-nav"><a class="gp-navhead" href="' + esc(appsHome) + '">' + (material ? icon("apps", 24) : icon("android", 26)) + "<span>Apps</span></a>" +
+                '<div class="gp-navlist"><a href="' + esc(withKeep("/store/myapps")) + '">My apps</a><a' + (route.games ? "" : ' class="on"') + ' href="' + esc(appsHome) + '">Shop</a></div>' +
+                '<div class="gp-navsep"></div><div class="gp-navsub"><a' + (route.games ? ' class="on"' : "") + ' href="' + esc(withKeep("/store/games")) + '">Games</a>' +
+                (era === "p13" ? "" : '<a href="' + esc(catUrl("FAMILY")) + '">' + (era === "p19" ? "Kids" : "Family") + "</a>") +
+                '<a href="' + esc(appsHome) + '">Editors\' Choice</a></div>' + acct + "</div>";
+            const logo = era === "p13" || era === "p15" ? A.logoP13 : A.logoP17;
+            return (ugfNtHasGbar() ? ugfNtGbar("dark", "Play") : "") +
+                '<div class="gp-head"><a class="logo" href="' + esc(appsHome) + '"><img src="' + esc(logo) + '" width="183" height="39" alt="Google Play"></a>' +
+                '<form class="gp-search ugf-play-search"><input type="text" name="q" value="' + esc(q0) + '" placeholder="Search" autocomplete="off">' +
+                '<button type="submit" title="Search">' + icon("search", 22) + "</button></form>" + gpCorner() + "</div>" +
+                '<div class="gp-body">' + nav + '<div class="gp-main">' + sub(route.page === "home" ? 0 : -1) + '<div class="gp-content">' + body + "</div></div></div>";
+        };
+        const gpHome = function(d) {
+            const lead = route.kind === "dev" ? '<div class="gp-ptitle">' + esc(d.title) + "</div>" : "";
+            return lead + d.secs.map(function(s) {
+                return gpCluster(s, route.page === "home" ? 10 : 0);
+            }).join("");
+        };
+        const gpSearch = function(d) {
+            return gpCluster({ title: "Apps", sub: "", more: "", apps: d.apps });
+        };
+        const gpReviews = function(app) {
+            const max = Math.max.apply(null, app.hist.concat([1]));
+            const cols = { 5: "#57bb8a", 4: "#9ace6a", 3: "#ffcf02", 2: "#ff9f02", 1: "#ff6f31" };
+            const bars = [5, 4, 3, 2, 1].map(function(i) {
+                return '<div class="hb"><span class="hn">' + icon("star", 12) + " " + i + '</span><span class="hbar" style="width:' + Math.max(1, Math.round(app.hist[i - 1] / max * 100)) +
+                    "%;background:" + cols[i] + '"><span>' + fmt(app.hist[i - 1]) + "</span></span></div>";
+            }).join("");
+            const list = app.reviews.map(function(r) {
+                return '<div class="gp-rev">' + (r.photo ? '<img src="' + esc(r.photo) + '" width="48" height="48" alt="">' : '<span class="nophoto"></span>') +
+                    '<div class="rbody"><div class="rhead"><b>' + esc(r.name) + "</b> " + stars(r.stars, "sm") + ' <span class="rdate">' + esc(r.date) + "</span></div>" +
+                    '<div class="rtext">' + esc(r.text) + "</div></div></div>";
+            }).join("");
+            return '<div class="gp-revs"><div class="gp-score"><div class="big">' + (app.rating ? app.rating.toFixed(1) : "&ndash;") + "</div>" + stars(app.rating) +
+                '<div class="tot">' + icon("person", 14) + " " + fmt(app.ratings) + " total</div></div>" + '<div class="gp-hist">' + bars + "</div>" +
+                '<div class="gp-revlist">' + (list || '<div class="gp-norev">No reviews to show yet.</div>') + "</div></div>";
+        };
+        const gpMeta = function(app) {
+            const dev = [app.website ? '<a href="' + esc(app.website) + '" target="_blank" rel="noopener">Visit website</a>' : "",
+                app.email ? '<a href="mailto:' + esc(app.email) + '">Email ' + esc(app.email) + "</a>" : "",
+                app.privacy ? '<a href="' + esc(app.privacy) + '" target="_blank" rel="noopener">Privacy Policy</a>' : ""].filter(Boolean).join("<br>");
+            return '<div class="gp-meta">' + [["Updated", esc(app.updated)], ["Installs", esc(app.installs)], ["Current Version", esc(app.version || "Varies with device")],
+                ["Requires Android", esc(app.android || "Varies with device")], ["Content Rating", esc(app.rated)], ["Offered By", esc(app.dev)], ["Developer", dev]].filter(function(x) {
+                return x[1];
+            }).map(function(x) {
+                return '<div class="mi2"><div class="ml">' + x[0] + '</div><div class="mv">' + x[1] + "</div></div>";
+            }).join("") + "</div>";
+        };
+        const gpShots = function(app) {
+            return app.shots.length ? '<div class="gp-shots"><a href="#" class="arrow pv">' + icon("left", 36) + '</a><div class="strip">' + app.shots.slice(0, 12).map(function(s) {
+                return '<img src="' + esc(ugfPlayImg(s, "h310")) + '" alt="" loading="lazy">';
+            }).join("") + '</div><a href="#" class="arrow nx">' + icon("right", 36) + "</a></div>" : "";
+        };
+        const gpButtons = function(app) {
+            return '<a class="gp-wish" href="' + esc(installUrl(app.id)) + '">' + icon("bookmark", 18) + " Add to Wishlist</a>" +
+                '<a class="gp-install" href="' + esc(installUrl(app.id)) + '">' + (app.price ? esc(app.price) + " Buy" : "Install") + "</a>";
+        };
+        const gpDetails = function(app) {
+            const devLink = app.devHref ? '<a class="dev" href="' + esc(devUrl(app.devHref)) + '">' + esc(app.dev) + "</a>" : '<span class="dev">' + esc(app.dev) + "</span>";
+            const catLink = app.catId ? '<a class="cat" href="' + esc(catUrl(app.catId)) + '">' + esc(app.category) + "</a>" : "";
+            const desc = '<div class="gp-desc clip">' + ugfPlayLines(app.desc) + '</div><div class="gp-readmore"><a href="#">Read more</a></div>';
+            const more = function(title, list, href) {
+                return list.length ? gpCluster({ title: title, sub: "", more: href || "", apps: list.slice(0, 10) }) : "";
+            };
+            if (era === "p13") {
+                // 2013-2015: the grey band, then everything below it on the page
+                return '<div class="gp-band"><img class="gp-dicon" src="' + esc(ugfPlayImg(app.icon, "s360")) + '" width="175" height="175" alt="">' +
+                    '<div class="gp-dinfo"><h1>' + esc(app.name) + '</h1><div class="gp-dsub">' + devLink + (app.updated ? " - " + esc(app.updated) : "") + "</div>" +
+                    (catLink ? '<div class="gp-dcat">' + catLink + "</div>" : "") + '<div class="gp-dbtns">' + gpButtons(app) + "</div>" +
+                    '<div class="gp-drule"></div><div class="gp-drate">' + stars(app.rating) + " (" + icon("person", 13) + " " + fmt(app.ratings) + ")</div></div></div>" +
+                    '<div class="gp-dbody">' + gpShots(app) + '<h3 class="gp-h">Description</h3>' + desc + '<h3 class="gp-h">Reviews</h3>' + gpReviews(app) +
+                    (app.whatsNew ? '<h3 class="gp-h">What\'s New</h3><div class="gp-desc">' + ugfPlayLines(app.whatsNew) + "</div>" : "") +
+                    '<h3 class="gp-h">Additional information</h3>' + gpMeta(app) + more("Similar", app.similar) + more(app.moreTitle || "More from developer", app.moreBy, app.devHref) + "</div>";
+            }
+            // July 2015 on: the app as a card, Similar down the right
+            const side = app.similar.length ? '<div class="gp-dside"><div class="gp-sh"><h2>Similar</h2></div>' + app.similar.slice(0, 6).map(gpCard).join("") + "</div>" : "";
+            return '<div class="gp-dwrap"><div class="gp-dcard"><div class="gp-dtop"><img class="gp-dicon" src="' + esc(ugfPlayImg(app.icon, "s360")) + '" width="180" height="180" alt="">' +
+                '<div class="gp-dinfo"><h1>' + esc(app.name) + '</h1><div class="gp-dmeta">' + devLink + catLink + '<span class="gp-drate">' + stars(app.rating, "sm") + " " + fmt(app.ratings) + " " + icon("person", 14) + "</span></div>" +
+                (app.rated ? '<div class="gp-drated">' + esc(app.rated) + "</div>" : "") +
+                '<div class="gp-dbtns">' + gpButtons(app) + "</div></div></div>" + gpShots(app) + desc +
+                '<h3 class="gp-h">What\'s New</h3><div class="gp-desc">' + (app.whatsNew ? ugfPlayLines(app.whatsNew) : "Nothing listed for this version.") + "</div>" +
+                '<h3 class="gp-h">Reviews</h3>' + gpReviews(app) + '<h3 class="gp-h">Additional Information</h3>' + gpMeta(app) + "</div>" + side + "</div>" +
+                more(app.moreTitle || "More by " + app.dev, app.moreBy, app.devHref);
+        };
+        // ================================================================================
+        const draw = function() {
+            let body;
+            if (era === "p11") {
+                body = route.page === "details" ? amDetails(data) : route.page === "search" ? amSearch(data) : amHome(data);
+                shell.innerHTML = trusted_policy.createHTML(amFrame(body));
+            } else {
+                body = route.page === "details" ? gpDetails(data) : route.page === "search" ? gpSearch(data) : gpHome(data);
+                shell.innerHTML = trusted_policy.createHTML(gpFrame(body));
+            }
+            ugfNtMenus(shell, material);
+            // Google's page is out of sight under ours now: the early veil would hide the menus too
+            const veil = document.getElementById("ugf-play-veil");
+            if (veil) {
+                veil.remove();
+            }
+            const title = route.page === "details" ? data.name + (era === "p11" ? " - Android Market" : " - Android Apps on Google Play")
+                : route.page === "search" ? route.q + (era === "p11" ? " - Android Market" : " - Android Apps on Google Play")
+                : (data.title ? data.title + " - " : "") + (era === "p11" ? "Android Market" : "Android Apps on Google Play");
+            ugfPlayKeepTitle(title);
+        };
+        // the page's links, buttons and search box
+        shell.addEventListener("submit", function(ev) {
+            const f = ev.target.closest(".ugf-play-search");
+            if (!f) {
+                return;
+            }
+            ev.preventDefault();
+            const q = (f.querySelector("input[name=q]").value || "").trim();
+            if (q) {
+                window.location.href = searchUrl(q);
+            }
+        });
+        shell.addEventListener("click", function(ev) {
+            const t = ev.target;
+            const amtab = t.closest("[data-amtab]:not(.am-tabbody)");
+            if (amtab) {
+                ev.preventDefault();
+                shell.querySelectorAll(".am-tabs [data-amtab]").forEach(function(a) {
+                    a.classList.toggle("on", a === amtab);
+                });
+                shell.querySelectorAll(".am-tabbody").forEach(function(b) {
+                    b.hidden = b.getAttribute("data-amtab") !== amtab.getAttribute("data-amtab");
+                });
+                return;
+            }
+            const amd = t.closest("a[data-amd]");
+            if (amd) {
+                ev.preventDefault();
+                shell.querySelectorAll(".am-tabs a[data-amd]").forEach(function(a) {
+                    a.classList.toggle("on", a === amd);
+                });
+                shell.querySelectorAll(".am-dmain > [data-amd]").forEach(function(b) {
+                    b.hidden = b.getAttribute("data-amd") !== amd.getAttribute("data-amd");
+                });
+                return;
+            }
+            if (t.closest(".am-morebtn, .gp-readmore a")) {
+                ev.preventDefault();
+                const box = t.closest(".am-dmain, .gp-dbody, .gp-dcard").querySelector(".clip, .open");
+                if (box) {
+                    const open = box.classList.toggle("open");
+                    box.classList.toggle("clip", !open);
+                    t.textContent = era === "p11" ? (open ? "LESS" : "MORE") : (open ? "Collapse" : "Read more");
+                }
+                return;
+            }
+            const arrow = t.closest(".am-shots .pager a, .gp-shots .arrow");
+            if (arrow) {
+                ev.preventDefault();
+                const strip = arrow.closest(".am-shots, .gp-shots").querySelector(".strip");
+                strip.scrollBy({ left: (arrow.classList.contains("pv") ? -1 : 1) * strip.clientWidth * 0.8, behavior: "smooth" });
+                return;
+            }
+            const cats = t.closest(".gp-sub .cats");
+            const menu = shell.querySelector(".gp-catmenu");
+            if (cats && menu) {
+                ev.preventDefault();
+                menu.hidden = !menu.hidden;
+                return;
+            }
+            if (menu && !menu.hidden && !t.closest(".gp-catmenu")) {
+                menu.hidden = true;
+            }
+        });
+        // what Google draws after its page has loaded (the reviews) comes in once it's there
+        const go = function() {
+            try {
+                ugfGmailIdentity.c = ugfPlayWho();
+                data = read();
+                if (!data) {
+                    giveUp("nothing to read on " + route.page);
+                    return;
+                }
+                draw();
+                if (route.page === "details") {
+                    let tries = 0;
+                    const more = function() {
+                        tries++;
+                        const r = ugfPlayReviews();
+                        if (r.length && JSON.stringify(r) !== JSON.stringify(data.reviews)) {
+                            data.reviews = r;
+                            const y = shell.scrollTop;
+                            draw();
+                            shell.scrollTop = y;
+                        } else if (tries < 6 && !data.reviews.length) {
+                            setTimeout(more, 1500);
+                        }
+                    };
+                    setTimeout(more, 1500);
+                }
+            } catch (e) {
+                console.log("[Gplex] Play: " + (e && e.stack || e));
+                giveUp("error");
+            }
+        };
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", go);
+        } else {
+            go();
+        }
+    }
+    // the period's title on the tab (Google's page sets its own as it goes)
+    function ugfPlayKeepTitle(title) {
+        document.title = title;
+        if (!ugfPlayKeepTitle.mo) {
+            ugfPlayKeepTitle.mo = new MutationObserver(function() {
+                if (document.title !== ugfPlayKeepTitle.t) {
+                    document.title = ugfPlayKeepTitle.t;
+                }
+            });
+            const t = document.querySelector("title");
+            if (t) {
+                ugfPlayKeepTitle.mo.observe(t, { childList: true, characterData: true, subtree: true });
+            }
+        }
+        ugfPlayKeepTitle.t = title;
+    }
+    function ugfPlayCss(era) {
+        const P = "#ugf-play";
+        const css = [
+            P + ' .stars { position: relative; display: inline-block; white-space: nowrap; line-height: 1; vertical-align: middle; font-size: 14px; letter-spacing: 1px; }',
+            P + ' .stars .s0 { color: #ccc; } ' + P + ' .stars .s1 { position: absolute; left: 0; top: 0; overflow: hidden; }',
+            P + ' a { text-decoration: none; }',
+            P + ' [hidden] { display: none !important; }'
+        ];
+        if (era === "p11") {
+            // ---- February 2011: the pinstriped page, a white column of 870px, lime and charcoal
+            return css.concat([
+                P + ' { background: #f0f0f0 repeating-linear-gradient(-45deg, #d9d9d9 0 1px, #f0f0f0 1px 4px) !important; font: 13px arial, sans-serif; color: #333; }',
+                P + ' .ugf-nt-gbar.classic.am { background: #fff; border-bottom: 0; } ' + P + ' .ugf-nt-gbar.classic.am a { text-decoration: none; color: #15c; } ' + P + ' .ugf-nt-gbar.classic.am .more { text-decoration: underline; }',
+                P + ' .ugf-nt-gbar.classic.am .right .who { color: #000; }',
+                P + ' .am-page { width: 870px; margin: 6px auto 0; background: #fff; min-height: calc(100% - 40px); }',
+                P + ' .am-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px 6px 10px; border-bottom: 1px solid #eee; }',
+                P + ' .am-head .logo img { display: block; }',
+                P + ' .am-search { display: flex; width: 245px; height: 26px; border: 1px solid #b3b3b3; background: #fff; }',
+                P + ' .am-search input { flex: 1; border: 0; outline: 0; padding: 0 6px; font: 13px arial, sans-serif; color: #333; min-width: 0; }',
+                P + ' .am-search button { border: 0; background: none; color: #aaa; cursor: pointer; padding: 0 4px; display: flex; align-items: center; }',
+                P + ' .am-rule { height: 5px; background: #a1b636; }',
+                P + ' .am-cols { display: flex; }',
+                P + ' .am-left { width: 245px; flex: 0 0 245px; border-right: 4px solid #e8e8e8; padding-bottom: 24px; }',
+                P + ' .am-tab, ' + P + ' .am-tabs a { display: inline-block; position: relative; height: 22px; padding: 0 16px 0 10px; font: bold 11px/23px arial, sans-serif; color: #fff; background: #333; text-transform: uppercase; margin-top: 14px; }',
+                P + ' .am-tab::after, ' + P + ' .am-tabs a::after { content: ""; position: absolute; right: -11px; top: 0; border-style: solid; border-width: 22px 11px 0 0; border-color: #333 transparent transparent transparent; }',
+                P + ' .am-tabs { border-bottom: 3px solid #333; display: flex; gap: 12px; padding-left: 0; }',
+                P + ' .am-tabs a { background: #ccc; color: #fff; margin-top: 0; } ' + P + ' .am-tabs a::after { border-top-color: #ccc; }',
+                P + ' .am-tabs a.on { background: #333; } ' + P + ' .am-tabs a.on::after { border-top-color: #333; }',
+                P + ' .am-cats { padding: 12px 18px; }',
+                P + ' .am-cats a { display: block; color: #555; font-size: 13px; line-height: 27px; border-bottom: 1px solid #eee; }',
+                P + ' .am-cats a i { color: #33b5e5; font-style: normal; } ' + P + ' .am-cats a:hover { color: #000; }',
+                P + ' .am-cats .grp { font-size: 13px; color: #555; border: 0; margin-top: 8px; } ' + P + ' .am-cats .sub { margin-left: 10px; } ' + P + ' .am-cats .sub.on { color: #000; font-weight: bold; }',
+                P + ' .am-main { flex: 1; min-width: 0; padding: 14px 18px 24px 18px; }',
+                P + ' .am-ptitle { font: bold 20px arial, sans-serif; color: #8aa219; margin: 4px 0 10px 0; }',
+                P + ' .am-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px 12px; padding: 22px 18px 6px 18px; }',
+                P + ' .am-tile { min-width: 0; } ' + P + ' .am-tile .ic img { display: block; border-radius: 4px; }',
+                P + ' .am-tile .nm { display: block; margin-top: 6px; color: #333; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
+                P + ' .am-tile .dv, ' + P + ' .am-row .dv, ' + P + ' .am-res .dv, ' + P + ' .am-dbox .dv { color: #999; font-size: 10px; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 1px 0 3px 0; }',
+                P + ' .am-btn { display: inline-block; border: 1px solid #c8c8c8; color: #fff; font-size: 10px; line-height: 13px; background: #a9a9a9; box-shadow: inset 0 0 0 1px #fff; padding: 1px 7px; }',
+                P + ' .am-btn:hover { background: #33b5e5; }',
+                P + ' .am-more { text-align: right; padding: 10px 18px 14px 0; border-bottom: 3px solid #f0f0f0; margin: 0 18px; } ' + P + ' .am-more a { color: #333; font-size: 13px; } ' + P + ' .am-more i { color: #33b5e5; font-style: normal; }',
+                P + ' .am-sec h2 { font: bold 18px arial, sans-serif; color: #8aa219; margin: 22px 18px 0 18px; text-transform: uppercase; }',
+                P + ' .am-foot { padding: 18px; color: #999; font-size: 11px; text-align: center; border-top: 1px solid #eee; } ' + P + ' .am-foot a { color: #33b5e5; }',
+                // search results: the charcoal bar
+                P + ' .am-results { display: flex; justify-content: space-between; align-items: center; height: 58px; margin-top: 4px; padding: 0 22px; background: #333 repeating-linear-gradient(-45deg, #2d2d2d 0 1px, #3a3a3a 1px 4px); border-top: 4px solid #222; color: #fff; }',
+                P + ' .am-results .t { font: bold 13px arial, sans-serif; } ' + P + ' .am-results .o { display: flex; align-items: center; gap: 6px; font: bold 13px arial, sans-serif; border-left: 1px solid #555; padding-left: 16px; height: 58px; }',
+                P + ' .am-count { text-align: right; padding: 8px 10px; font-size: 12px; color: #333; border-top: 2px solid #222; }',
+                P + ' .am-list { padding: 4px 46px 24px 46px; }',
+                P + ' .am-res { display: flex; gap: 12px; padding: 12px 0 14px 0; }',
+                P + ' .am-res .l { width: 76px; flex: 0 0 76px; text-align: center; } ' + P + ' .am-res .l img { display: block; margin: 0 auto 3px auto; border-radius: 4px; }',
+                P + ' .am-res .l .stars { font-size: 12px; color: #33b5e5; } ' + P + ' .am-res .l .am-btn { margin-top: 4px; }',
+                P + ' .am-res .nm { color: #333; font: bold 13px arial, sans-serif; }',
+                P + ' .stars .s1 { color: #33b5e5; }',
+                // the app's page
+                P + ' .am-crumb { padding: 9px 36px; font-size: 9px; color: #333; text-transform: uppercase; } ' + P + ' .am-crumb a { color: #33b5e5; }',
+                P + ' .am-dhead { display: flex; height: 283px; }',
+                P + ' .am-dbox { width: 290px; flex: 0 0 290px; background: #4a4a4a repeating-linear-gradient(-45deg, #444 0 1px, #4d4d4d 1px 4px); border-top: 12px solid #89b332; color: #fff; padding: 64px 22px 0 24px; }',
+                P + ' .am-dbox h1 { margin: 0; font: bold 20px arial, sans-serif; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
+                P + ' .am-dbox .dv { color: #ddd; font-size: 13px; text-transform: none; } ' + P + ' .am-dbox .dv a { color: #ddd; }',
+                P + ' .am-drow { display: flex; align-items: flex-end; gap: 12px; margin-top: 16px; } ' + P + ' .am-drow img { display: block; background: #fff; }',
+                P + ' .am-drate .stars { font-size: 13px; } ' + P + ' .am-drate .small { color: #ddd; font-size: 12px; margin: 2px 0 10px 0; }',
+                P + ' .am-install { display: inline-block; background: #33b5e5; border: 2px solid #8fd9f5; color: #fff; font: 17px arial, sans-serif; padding: 3px 7px; }',
+                P + ' .am-install:hover { background: #0099cc; }',
+                P + ' .am-promo { flex: 1; min-width: 0; background: #a1b636; overflow: hidden; } ' + P + ' .am-promo img { display: block; width: 100%; height: 100%; object-fit: cover; }',
+                P + ' .am-dcols { display: flex; }',
+                P + ' .am-dcols .am-left { width: 290px; flex: 0 0 290px; border-right: 1px solid #ddd; padding: 18px 18px 24px 18px; }',
+                P + ' .am-sh { font: bold 13px arial, sans-serif; color: #333; border-bottom: 1px solid #ddd; padding-bottom: 6px; margin: 18px 0 14px 0; } ' + P + ' .am-sh:first-child { margin-top: 0; }',
+                P + ' .am-row { display: flex; gap: 10px; margin-bottom: 18px; } ' + P + ' .am-row .ic img { display: block; }',
+                P + ' .am-row .tx { min-width: 0; } ' + P + ' .am-row .nm { color: #333; font: bold 13px arial, sans-serif; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
+                P + ' .am-dright { flex: 1; min-width: 0; }',
+                P + ' .am-tabs.d { margin-top: 14px; padding-left: 0; } ' + P + ' .am-tabs.d a { margin-top: 0; }',
+                P + ' .am-dbody { display: flex; }',
+                P + ' .am-dmain { flex: 1; min-width: 0; padding: 4px 22px 24px 22px; }',
+                P + ' .am-dmain h2 { font: bold 18px arial, sans-serif; color: #8aa219; margin: 22px 0 14px 0; }',
+                P + ' .am-desc { color: #555; font-size: 13px; line-height: 19px; } ' + P + ' .am-desc.clip { max-height: 152px; overflow: hidden; }',
+                P + ' .am-moreline { border-bottom: 1px solid #ccc; text-align: right; margin: 6px 0 16px 0; } ' + P + ' .am-morebtn { display: inline-block; background: #a9a9a9; color: #fff; font-size: 11px; padding: 2px 6px; margin-bottom: -1px; }',
+                P + ' .am-site { color: #333; } ' + P + ' .am-site i { color: #33b5e5; font-style: normal; }',
+                P + ' .am-shots .strip { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; } ' + P + ' .am-shots .strip img { display: block; flex: 0 0 auto; }',
+                P + ' .am-shots .pager { border-top: 1px solid #ccc; margin-top: 10px; padding-top: 6px; } ' + P + ' .am-shots .pager a { color: #999; font-size: 22px; margin-right: 12px; }',
+                P + ' .am-rev { border-bottom: 1px solid #ddd; padding: 0 0 10px 0; margin-bottom: 12px; } ' + P + ' .am-rev .rt { font: bold 13px arial, sans-serif; color: #333; margin-bottom: 6px; }',
+                P + ' .am-rev .rb { color: #888; font-size: 12px; } ' + P + ' .am-rev .rb b { color: #333; } ' + P + ' .am-none { color: #888; }',
+                P + ' .am-about { width: 120px; flex: 0 0 120px; border-left: 1px solid #ddd; margin: 22px 10px 0 0; padding-left: 10px; font-size: 10px; color: #999; }',
+                P + ' .am-about .h { font: bold 10px arial, sans-serif; color: #333; margin-bottom: 14px; } ' + P + ' .am-about dl { margin: 0; }',
+                P + ' .am-about dt { color: #333; text-transform: uppercase; font-size: 10px; } ' + P + ' .am-about dd { margin: 0 0 12px 0; color: #888; font-size: 10px; }',
+                P + ' .am-about .stars { font-size: 11px; }'
+            ]);
+        }
+        // ---- July 2013 on: Roboto, the grey header, the coloured Apps block, white cards on grey
+        const g = era === "p13" || era === "p15" ? "#b3c833" : "#689f38";
+        const gd = era === "p13" || era === "p15" ? "#9cb02a" : "#558b2f";
+        css.push(
+            P + ' { font: 13px Roboto, arial, sans-serif; color: #333; background: #e5e5e5 !important; }',
+            P + ' .gp-head { display: flex; align-items: center; height: 70px; padding: 0 20px 0 30px; background: #f1f1f1; border-bottom: 1px solid #e5e5e5; }',
+            P + ' .gp-head .logo img { display: block; }',
+            P + ' .gp-search { display: flex; margin-left: 32px; flex: 0 1 600px; height: 32px; }',
+            P + ' .gp-search input { flex: 1; min-width: 0; border: 1px solid #d9d9d9; border-right: 0; padding: 0 10px; font: 16px Roboto, arial, sans-serif; color: #333; outline: none; background: #fff; }',
+            P + ' .gp-search input:focus { border-color: #4d90fe; }',
+            P + ' .gp-search button { width: 70px; border: 1px solid #3079ed; background: linear-gradient(#4d90fe, #4787ed); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 0 2px 2px 0; }',
+            P + ' .gp-search button .mi svg { fill: #fff; }',
+            P + ' .gp-head .kcorner { margin-left: auto; }',
+            P + ' .gp-body { display: flex; align-items: flex-start; min-height: calc(100% - 71px); }',
+            P + ' .gp-nav { width: 200px; flex: 0 0 200px; background: #f3f3f3; padding-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,.15); position: sticky; top: 0; }',
+            P + ' .gp-navhead { display: flex; align-items: center; gap: 14px; height: 52px; padding: 0 12px; background: ' + g + '; color: #fff !important; font: 20px Roboto, arial, sans-serif; }',
+            P + ' .gp-navhead .mi svg { fill: #fff; }',
+            P + ' .gp-navlist { padding: 12px 0 8px 0; background: #fff; } ' + P + ' .gp-navlist a { display: block; padding: 0 30px; font: 18px/38px Roboto, arial, sans-serif; color: #555; }',
+            P + ' .gp-navlist a.on { color: ' + g + '; } ' + P + ' .gp-navlist a:hover { background: #eee; }',
+            P + ' .gp-navsep { height: 1px; background: #ddd; margin: 0 15px; }',
+            P + ' .gp-navsub { padding: 10px 0; background: #fff; } ' + P + ' .gp-navsub a, ' + P + ' .gp-navacc a { display: block; padding: 0 30px; line-height: 32px; font-size: 14px; color: #555; }',
+            P + ' .gp-navsub a:hover, ' + P + ' .gp-navacc a:hover { background: #eee; } ' + P + ' .gp-navsub a.on { color: ' + g + '; font-weight: 500; }',
+            P + ' .gp-navacc { padding: 8px 0; } ' + P + ' .gp-navacc a { padding: 0 22px; }',
+            P + ' .gp-main { flex: 1; min-width: 0; }',
+            P + ' .gp-sub { position: relative; display: flex; align-items: center; height: 52px; padding: 0 20px 0 36px; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.1); }',
+            P + ' .gp-sub .cats { display: inline-flex; align-items: center; gap: 2px; color: #555; font-size: 15px; } ' + P + ' .gp-sub .cats .mi svg { fill: #777; }',
+            P + ' .gp-sub .sep { width: 1px; height: 30px; background: #ddd; margin: 0 16px 0 22px; }',
+            P + ' .gp-sub .tab { display: inline-flex; align-items: center; height: 52px; padding: 0 14px; color: #555; font-size: 15px; border-bottom: 3px solid transparent; }',
+            P + ' .gp-sub .tab.on { color: #333; font-weight: 500; border-bottom-color: ' + g + '; } ' + P + ' .gp-sub .tab:hover { color: #000; }',
+            P + ' .gp-subr { margin-left: auto; display: flex; gap: 10px; }',
+            P + ' .gp-subr .sq { display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 32px; border: 1px solid #ddd; border-radius: 2px; color: #444; background: #fff; }',
+            P + ' .gp-subr .sq .mi svg { fill: #444; }',
+            P + ' .gp-catmenu { position: absolute; z-index: 5; top: 52px; left: 20px; display: flex; gap: 40px; padding: 16px 24px; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,.25); }',
+            P + ' .gp-catmenu .col { columns: 2; column-gap: 32px; } ' + P + ' .gp-catmenu h4 { margin: 0 0 6px 0; font: 500 14px Roboto, arial, sans-serif; color: #333; column-span: all; }',
+            P + ' .gp-catmenu a { display: block; line-height: 26px; color: #555; font-size: 13px; white-space: nowrap; } ' + P + ' .gp-catmenu a:hover { color: ' + g + '; }',
+            P + ' .gp-content { padding: 10px 36px 40px 36px; max-width: 1180px; }',
+            P + ' .gp-ptitle { font: 300 32px Roboto, arial, sans-serif; color: #333; margin: 22px 0 0 0; }',
+            P + ' .gp-cluster { margin-top: 24px; }',
+            P + ' .gp-ch { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }',
+            P + ' .gp-ch h2 { margin: 0; font: italic 300 30px Roboto, arial, sans-serif; color: #333; }',
+            P + ' .gp-csub { margin: -10px 0 12px 0; color: #777; font-size: 14px; }',
+            P + ' .gp-more { display: inline-flex; align-items: center; height: 32px; padding: 0 14px; background: ' + g + '; color: #fff !important; font: 500 14px Roboto, arial, sans-serif; border-radius: 2px; }',
+            P + ' .gp-more:hover { background: ' + gd + '; }',
+            P + ' .gp-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(164px, 1fr)); gap: 12px; }',
+            P + ' .gp-card { display: block; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.12); color: #333; min-width: 0; }',
+            P + ' .gp-card:hover { box-shadow: 0 2px 6px rgba(0,0,0,.25); }',
+            P + ' .gp-card .ci { display: block; padding: 16px 16px 6px 16px; } ' + P + ' .gp-card .ci img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }',
+            P + ' .gp-card .cd { display: block; padding: 4px 12px 12px 12px; }',
+            P + ' .gp-card .ct { display: block; font-size: 16px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }',
+            P + ' .gp-card .cs { display: block; font-size: 13px; color: #999; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 17px; }',
+            P + ' .gp-card .cr { display: block; margin-top: 10px; height: 14px; } ' + P + ' .gp-card .stars { font-size: 13px; }',
+            P + ' .stars .s1 { color: #555; } ' + P + ' .stars.sm { font-size: 12px; }',
+            // the app's page
+            P + ' .gp-band { display: flex; gap: 30px; margin: 0 -36px; padding: 30px 36px 24px 66px; background: #e5e5e5; }',
+            P + ' .gp-dicon { display: block; flex: 0 0 auto; box-shadow: 0 2px 4px rgba(0,0,0,.25); }',
+            P + ' .gp-dinfo { min-width: 0; flex: 1; }',
+            P + ' .gp-dinfo h1 { margin: 0; font: 300 34px Roboto, arial, sans-serif; color: #333; }',
+            P + ' .gp-dsub { margin-top: 4px; color: #555; font-size: 14px; } ' + P + ' .gp-dsub .dev { color: #555; font-weight: bold; }',
+            P + ' .gp-dcat a { color: #555; font-weight: bold; font-size: 14px; }',
+            P + ' .gp-dbtns { display: flex; gap: 10px; margin: 16px 0; }',
+            P + ' .gp-install { display: inline-flex; align-items: center; height: 38px; padding: 0 22px; background: ' + g + '; color: #fff !important; font: 500 15px Roboto, arial, sans-serif; border-radius: 2px; box-shadow: 0 1px 1px rgba(0,0,0,.2); }',
+            P + ' .gp-install:hover { background: ' + gd + '; }',
+            P + ' .gp-wish { display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 14px; background: #fff; color: #555 !important; border: 1px solid #ddd; border-radius: 2px; font-size: 14px; } ' + P + ' .gp-wish .mi svg { fill: #777; }',
+            P + ' .gp-drule { height: 1px; background: #cdcdcd; max-width: 560px; margin: 4px 0 10px 0; }',
+            P + ' .gp-drate { display: flex; align-items: center; gap: 6px; color: #777; font-size: 13px; } ' + P + ' .gp-drate .mi svg { fill: #777; }',
+            P + ' .gp-dbody { background: #f5f5f5; margin: 0 -36px; padding: 20px 36px 30px 36px; }',
+            P + ' .gp-shots { position: relative; display: flex; align-items: center; margin: 4px 0 20px 0; }',
+            P + ' .gp-shots .strip { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; flex: 1; } ' + P + ' .gp-shots .strip img { display: block; height: 310px; flex: 0 0 auto; }',
+            P + ' .gp-shots .arrow { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; width: 42px; height: 120px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.2); }',
+            P + ' .gp-shots .arrow .mi svg { fill: #777; }',
+            P + ' .gp-h { margin: 22px 0 12px 0; font: italic 300 30px Roboto, arial, sans-serif; color: #333; }',
+            P + ' .gp-desc { font-size: 14px; line-height: 22px; color: #333; max-width: 900px; } ' + P + ' .gp-desc.clip { max-height: 220px; overflow: hidden; }',
+            P + ' .gp-readmore a { display: inline-block; margin-top: 8px; color: ' + gd + '; font-weight: 500; text-transform: uppercase; font-size: 13px; }',
+            P + ' .gp-revs { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }',
+            P + ' .gp-score { width: 160px; text-align: center; padding: 16px 0; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.12); }',
+            P + ' .gp-score .big { font: 300 64px Roboto, arial, sans-serif; color: #333; line-height: 1; } ' + P + ' .gp-score .stars { font-size: 20px; margin: 6px 0; }',
+            P + ' .gp-score .tot { color: #777; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 4px; } ' + P + ' .gp-score .tot .mi svg { fill: #777; }',
+            P + ' .gp-hist { width: 240px; padding-top: 12px; } ' + P + ' .gp-hist .hb { display: flex; align-items: center; gap: 6px; height: 22px; font-size: 12px; color: #777; }',
+            P + ' .gp-hist .hn { display: inline-flex; align-items: center; width: 26px; } ' + P + ' .gp-hist .hn .mi svg { fill: #777; }',
+            P + ' .gp-hist .hbar { display: inline-flex; align-items: center; height: 18px; min-width: 2px; } ' + P + ' .gp-hist .hbar span { padding-left: 4px; color: #333; white-space: nowrap; }',
+            P + ' .gp-revlist { flex: 1; min-width: 280px; }',
+            P + ' .gp-rev { display: flex; gap: 14px; margin-bottom: 16px; } ' + P + ' .gp-rev img, ' + P + ' .gp-rev .nophoto { border-radius: 50%; flex: 0 0 48px; background: #ccc; height: 48px; }',
+            P + ' .gp-rev .rhead { color: #333; font-size: 14px; } ' + P + ' .gp-rev .rdate { color: #999; font-size: 13px; margin-left: 4px; }',
+            P + ' .gp-rev .rtext { color: #555; font-style: italic; font-size: 14px; line-height: 20px; margin-top: 2px; } ' + P + ' .gp-norev { color: #777; }',
+            P + ' .gp-meta { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px 24px; max-width: 900px; }',
+            P + ' .gp-meta .ml { font-weight: 500; color: #333; font-size: 14px; } ' + P + ' .gp-meta .mv { color: #777; font-size: 13px; margin-top: 2px; } ' + P + ' .gp-meta .mv a { color: ' + gd + '; }'
+        );
+        if (era === "p13") {
+            return css;
+        }
+        // ---- July 2015 on: the app as one white card, Similar down the right; no italics
+        css.push(
+            P + ' .gp-ch h2, ' + P + ' .gp-h { font-style: normal; font-weight: 400; font-size: 22px; }',
+            P + ' .gp-dwrap { display: flex; gap: 30px; align-items: flex-start; margin-top: 24px; }',
+            P + ' .gp-dcard { flex: 1; min-width: 0; max-width: 880px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.2); padding: 24px 30px 30px 30px; }',
+            P + ' .gp-dtop { display: flex; gap: 26px; margin-bottom: 26px; } ' + P + ' .gp-dtop .gp-dicon { box-shadow: none; }',
+            P + ' .gp-dinfo h1 { font-size: 30px; }',
+            P + ' .gp-dmeta { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 20px; margin-top: 8px; font-size: 13px; }',
+            P + ' .gp-dmeta .dev, ' + P + ' .gp-dmeta .cat { color: ' + gd + '; font-weight: 500; } ' + P + ' .gp-dmeta .gp-drate { margin-left: auto; }',
+            P + ' .gp-drated { margin-top: 10px; color: #333; font-weight: 500; font-size: 13px; }',
+            P + ' .gp-dbtns { justify-content: flex-end; align-items: center; margin-top: 22px; }',
+            P + ' .gp-wish { border: 0; background: none; color: #333 !important; font-weight: 500; } ' + P + ' .gp-wish .mi svg { fill: ' + gd + '; }',
+            P + ' .gp-shots .strip img { height: 280px; } ' + P + ' .gp-shots .arrow { background: rgba(255,255,255,.9); }',
+            P + ' .gp-desc { font-size: 14px; } ' + P + ' .gp-dcard .gp-score, ' + P + ' .gp-dcard .gp-card { box-shadow: none; border: 1px solid #eee; }',
+            P + ' .gp-dside { width: 160px; flex: 0 0 160px; } ' + P + ' .gp-dside .gp-sh h2 { margin: 0 0 14px 0; font: 400 22px Roboto, arial, sans-serif; color: #333; }',
+            P + ' .gp-dside .gp-card { margin-bottom: 14px; }'
+        );
+        if (era === "p15") {
+            return css;
+        }
+        // ---- 2017-2021: the white header, the green Apps block, the account list under the store's
+        css.push(
+            P + ' { background: #eee !important; }',
+            P + ' .gp-head { background: #fff; padding-left: 24px; }',
+            P + ' .gp-search input { background: #fff; border-color: #ddd; } ' + P + ' .gp-search button { width: 56px; background: #4285f4; border-color: #4285f4; border-radius: 0 3px 3px 0; }',
+            P + ' .gp-nav { background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.2); } ' + P + ' .gp-navhead { font-size: 18px; }',
+            P + ' .gp-navlist a { font-size: 17px; padding-left: 44px; } ' + P + ' .gp-navsub a { padding-left: 44px; }',
+            P + ' .gp-card { box-shadow: 0 1px 3px rgba(0,0,0,.2); }',
+            P + ' .stars .s1 { color: #333; }'
+        );
+        return css;
+    }
+    // ---- end Gplex for Google Play ----
     // ---- Gplex for Google Calendar (4.2) ---------------------------------------
     // Like Gmail and Maps: Google's own Calendar keeps running underneath, hidden, and
     // Gplex draws the Calendar of the layout's period on top, with your events read
