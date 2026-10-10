@@ -1,100 +1,115 @@
 #!/usr/bin/env node
-// Builds Gplex YouTube into the alpha: alpha.user.js (Gplex Extended with StarTube swapped for Gplex
-// YouTube) and, unless --no-packages, the alpha's Chrome and Firefox packages in releases/alpha/.
+// Builds Gplex Extended for YouTube into the alpha: alpha.user.js (the main script with its YouTube part
+// swapped for this one) and, unless --no-packages, the alpha's Chrome and Firefox packages in
+// releases/alpha/.
 //   node youtube/build.js [--check] [--no-packages]
-// --check only assembles and syntax-checks the module.
+// --check only assembles the module (youtube/gplex-youtube.module.js, for the test harness) and
+// syntax-checks it.
 "use strict";
 const fs = require("fs");
 const path = require("path");
 const { execFileSync } = require("child_process");
-const { prune, tokensOf } = require("./tools/css-prune.js");
 
 const HERE = __dirname;
 const ROOT = path.join(HERE, "..");
 const MAIN = path.join(ROOT, "Gplex_-_Old_Google_Frontend.user.js");
 const ALPHA = path.join(ROOT, "alpha.user.js");
-const VERSION = "9.0.0.1";
+const VERSION = "9.0.0.2";
 const args = process.argv.slice(2);
 const read = function(p) {
     return fs.readFileSync(p, "utf8").replace(/\r\n/g, "\n");
 };
-const dataUri = function(p) {
-    const ext = path.extname(p).slice(1).toLowerCase();
-    const mime = { png: "image/png", gif: "image/gif", svg: "image/svg+xml", jpg: "image/jpeg" }[ext] || "application/octet-stream";
-    return "data:" + mime + ";base64," + fs.readFileSync(p).toString("base64");
-};
 const listed = function(dir, ext) {
-    return fs.readdirSync(dir).filter(function(f) { return f.endsWith(ext); }).sort();
+    return fs.readdirSync(dir).filter(function(f) {
+        return f.endsWith(ext);
+    }).sort();
+};
+const MIME = { png: "image/png", gif: "image/gif", svg: "image/svg+xml", jpg: "image/jpeg", webp: "image/webp" };
+const dataUri = function(p) {
+    return "data:" + MIME[path.extname(p).slice(1).toLowerCase()] + ";base64," + fs.readFileSync(p).toString("base64");
+};
+// indentation and line breaks out (nothing inside a value or a selector is touched)
+const packCss = function(css) {
+    return css.replace(/\n\s*/g, "");
 };
 
-// ---- the module
-const srcDir = path.join(HERE, "src");
-const sources = listed(srcDir, ".js").map(function(f) { return read(path.join(srcDir, f)); });
-const moduleText = sources.join("\n");
-
-// ---- stylesheets and pictures
-const themeDir = path.join(HERE, "themes");
-const themes = {};
-listed(themeDir, ".css").forEach(function(f) {
-    themes[f.replace(/\.css$/, "")] = read(path.join(themeDir, f));
-});
-const hhDir = path.join(HERE, "assets", "hitchhiker");
-const pictures = {};
-listed(path.join(hhDir, "img"), "").forEach(function(f) {
-    pictures[f] = dataUri(path.join(hhDir, "img", f));
-});
-const hhCss = listed(hhDir, ".css").map(function(f) { return read(path.join(hhDir, f)); }).join("\n");
-const tokens = tokensOf(sources.concat(Object.values(themes)));
-const pruned = prune(hhCss, tokens, pictures);
-themes.hitchhiker = pruned.css;
-const logos = {};
-listed(path.join(HERE, "assets", "logos"), ".svg").forEach(function(f) {
-    logos[f.replace(/\.svg$/, "")] = dataUri(path.join(HERE, "assets", "logos", f));
-});
-// the logos go into the stylesheets as --gy-logo-YEAR custom properties, the favicons into the assets
-const logoVars = ":root{" + Object.keys(logos).map(function(k) { return "--gy-" + k + ":url(" + logos[k] + ")"; }).join(";") + "}";
-themes.base = logoVars + "\n" + (themes.base || "");
-const assets = { favicon2013: faviconSvg("#e62117", "#fff", 2013), favicon2017: faviconSvg("#f00", "#fff", 2017) };
-function faviconSvg(bg, fg, year) {
-    const svg = year >= 2017
-        ? "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='" + bg + "' d='M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8z'/><path fill='" + fg + "' d='M9.6 15.6V8.4l6.2 3.6z'/></svg>"
-        : "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect x='1' y='3' width='14' height='10' rx='3' fill='" + bg + "'/><path fill='" + fg + "' d='M6.5 5.5v5l4-2.5z'/></svg>";
-    return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+// ---- the stylesheet: blocks under /* @eras ... */ markers, in cascade order
+const ALL_ERAS = /^\s*(\w+):\s*\{\s*family:/gm;
+const coreText = read(path.join(HERE, "src", "10-core.js"));
+const eraIds = [];
+let m;
+while ((m = ALL_ERAS.exec(coreText))) {
+    eraIds.push(m[1]);
 }
-const prelude = "const UGF_YT_CSS = " + JSON.stringify(themes) + ";\nconst UGF_YT_ASSETS = " + JSON.stringify(assets) + ";\n";
+const sheet = read(path.join(HERE, "css", "startube.css"));
+const blocks = sheet.split("/* @eras ").slice(1).map(function(part) {
+    const i = part.indexOf(" */");
+    const eras = part.slice(0, i).trim();
+    const css = packCss(part.slice(i + 3).trim());
+    (eras === "all" ? eraIds : eras.split(" ")).forEach(function(e) {
+        if (eraIds.indexOf(e) < 0) {
+            throw new Error("unknown era in @eras: " + e);
+        }
+    });
+    return { eras: eras === "all" ? eraIds.join(" ") : eras, css: css };
+});
+const pictures = {};
+listed(path.join(HERE, "assets", "pictures"), "").forEach(function(f) {
+    pictures["--st-pic-" + f.replace(/\.\w+$/, "")] = dataUri(path.join(HERE, "assets", "pictures", f));
+});
+blocks.forEach(function(b) {
+    (b.css.match(/var\(--st-pic-[\w-]+\)/g) || []).forEach(function(v) {
+        if (!pictures[v.slice(4, -1)]) {
+            throw new Error("no picture for " + v);
+        }
+    });
+});
+const extra = {};
+listed(path.join(HERE, "css", "extra"), ".css").forEach(function(f) {
+    extra[f.replace(/\.css$/, "")] = packCss(read(path.join(HERE, "css", "extra", f)).replace(/^\/\*[\s\S]*?\*\/\n/, ""));
+});
 
+// ---- the module: src/10-90 inside ugfStarTube(), src/99 (the launcher) after it
+const srcDir = path.join(HERE, "src");
+const inside = listed(srcDir, ".js").filter(function(f) {
+    return !f.startsWith("99-");
+}).map(function(f) {
+    return read(path.join(srcDir, f));
+});
+const launcher = read(path.join(srcDir, "99-launcher.js"));
 const wrapped = [
-    "// ---- Gplex YouTube ----",
-    "// Gplex Extended's own YouTube (alpha): the desktop YouTube drawn by Gplex itself, in the look of the",
-    "// year of your layout, without YouTube's app and without the V3 extension. Source: youtube/ in the",
-    "// repository; this is its build. Stylesheets of 2013-2017 and their pictures are YouTube's own.",
-    "function ugfYouTube() {",
+    "// ---- Gplex Extended for YouTube ----",
+    "// The YouTube part of Gplex, on the V3 extension (Vorapis 2013), which draws youtube.com as it was in",
+    "// 2013: this moves it to the look of the year of your Gplex layout, 2007 to 2022. Descended from",
+    "// StarTube " + "2.7.0.10 by lightbeam24 (MIT license, https://github.com/lightbeam24/StarTube), rewritten.",
+    "// Source: youtube/ in the repository; this is its build.",
+    "function ugfStarTube() {",
     "\"use strict\";",
-    prelude,
-    moduleText,
+    "const ST_CSS = " + JSON.stringify(blocks) + ";",
+    "const ST_PICTURES = " + JSON.stringify(pictures) + ";",
+    "const ST_EXTRA_CSS = " + JSON.stringify(extra) + ";",
+    inside.join("\n"),
     "}",
-    "if (ugfOnYouTube && !ugfYtmTakesOver() && !ugfYtmPlayerFrame()) {",
-    "    try {",
-    "        ugfYouTube();",
-    "    } catch (e) {",
-    "        console.error(\"Gplex YouTube:\", e);",
-    "    }",
-    "}",
-    "// ---- end Gplex YouTube ----"
+    launcher,
+    "// ---- end Gplex Extended for YouTube ----"
 ].join("\n");
 try {
-    new Function("ugfOnYouTube", "ugfYtmTakesOver", "ugfYtmPlayerFrame", "GM_getValue", "GM_setValue", "GM_info", wrapped);
+    new Function("ugfOnYouTube", "ugfYtmTakesOver", "ugfYtmPlayerFrame", "ugfTT", "GM_getValue", "GM_setValue", "GM_deleteValue", "GM_info", wrapped);
 } catch (e) {
     console.error("the module does not parse:", e.message);
     process.exit(1);
 }
-console.log("module: " + sources.length + " files, " + (moduleText.length / 1024).toFixed(0) + " KB; Hitchhiker CSS " + (hhCss.length / 1024).toFixed(0) + " KB -> " + (pruned.css.length / 1024).toFixed(0) + " KB (" + pruned.stats.kept + " of " + pruned.stats.total + " rules); pictures " + Object.keys(pictures).length);
+const kb = function(n) {
+    return (n / 1024).toFixed(0) + " KB";
+};
+console.log("module: " + inside.length + " files, " + kb(inside.join("").length) + " code; stylesheet " + blocks.length + " blocks, " +
+    kb(blocks.reduce(function(n, b) { return n + b.css.length; }, 0)) + "; " + Object.keys(pictures).length + " pictures, " + kb(JSON.stringify(pictures).length));
 if (args.includes("--check")) {
     fs.writeFileSync(path.join(HERE, "gplex-youtube.module.js"), wrapped);
     process.exit(0);
 }
 
-// ---- alpha.user.js: the main script, with StarTube swapped for Gplex YouTube
+// ---- alpha.user.js: the main script, with StarTube swapped for this
 let main = read(MAIN);
 const between = function(s, startMarker, endMarker, replacement) {
     const a = s.indexOf(startMarker);
@@ -105,38 +120,34 @@ const between = function(s, startMarker, endMarker, replacement) {
     return s.slice(0, a) + replacement + s.slice(b + endMarker.length);
 };
 const once = function(s, from, to) {
-    const n = s.split(from).length - 1;
+    const n = typeof from === "string" ? s.split(from).length - 1 : (s.match(new RegExp(from.source, from.flags + "g")) || []).length;
     if (n !== 1) {
-        throw new Error("expected one occurrence, found " + n + ": " + from.slice(0, 60));
+        throw new Error("expected one occurrence, found " + n + ": " + String(from).slice(0, 70));
     }
     return s.replace(from, to);
 };
 // the header
-main = once(main, "// @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script", "// @name         Gplex Extended Alpha - Gplex Old Google with Gplex's own YouTube");
-main = main.replace(/^\/\/ @version\s+\S+$/m, "// @version      " + VERSION);
-main = main.replace(/^(\/\/ @description\s+.*?), plus YouTube \(.*\)$/m, "$1, plus YouTube drawn by Gplex itself (Gplex YouTube, alpha)");
-main = main.replace(/^\/\/ @downloadURL .*$/m, "// @downloadURL https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/alpha.user.js");
-main = main.replace(/^\/\/ @updateURL .*$/m, "// @updateURL https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/alpha.user.js");
-// StarTube: out, Gplex YouTube: in (the mobile YouTube part after it stays)
+main = once(main, "// @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script", "// @name         Gplex Extended Alpha - Gplex Old Google with its YouTube part rewritten");
+main = once(main, /^\/\/ @version\s+\S+$/m, "// @version      " + VERSION);
+main = once(main, /^(\/\/ @description\s+.*?), plus YouTube \(.*\)$/m, "$1, plus YouTube (Gplex Extended for YouTube, rewritten: alpha, with the V3 extension)");
+main = once(main, /^\/\/ @downloadURL .*$/m, "// @downloadURL https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/alpha.user.js");
+main = once(main, /^\/\/ @updateURL .*$/m, "// @updateURL https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/alpha.user.js");
+// StarTube out, this in (the mobile YouTube part after it stays)
 main = between(main, "// ---- Gplex Extended for YouTube: StarTube 2.7.0.10 by lightbeam24", "// ---- end StarTube ----", wrapped);
-// what referred to StarTube elsewhere
-main = once(main, "const ugfHasStarTube = true;", "const ugfHasStarTube = true;   // (the YouTube settings section shows; in the alpha it is Gplex YouTube's)");
-main = main.replace(/\n\s*if \(typeof ugfStarTubeApi !== "undefined" && ugfStarTubeApi\.applyMaster\) \{\n\s*ugfStarTubeApi\.applyMaster\(\);\n\s*\}/, "");
-main = main.replace(/\n\s*if \(typeof ugfStarTube === "function" && document\.getElementById\("ugf-yt-st-host"\)[^\n]*\n\s*ugfStarTube\("settings"\);\n\s*\}/, "");
-// the settings page: the two StarTube sections become Gplex YouTube's
-const settingsStart = main.indexOf("<div class=\"ugf-gplex-section\"${ugfHasStarTube ? \"\" : ' style=\"display: none\"'}>");
-const settingsEnd = main.indexOf("<div class=\"ugf-gplex-section\" style=\"display: none\">", settingsStart);
-if (settingsStart < 0 || settingsEnd < 0) {
-    throw new Error("settings sections not found");
-}
-main = main.slice(0, settingsStart) + read(path.join(HERE, "tools", "settings-section.html")).trim() + "\n                        " + main.slice(settingsEnd);
-main = once(main, "\"finon\", \"startubeon\", \"ytclassicon\"]", "\"finon\", \"yton\", \"ytlayout\", \"ytautoplay\", \"ytclassicon\"]");
-main = once(main, "[\"startubeon\", \"UGF_STARTUBE_ON\"], [\"ytclassicon\", \"UGF_YT_CLASSIC_ON\"]]", "[\"yton\", \"UGF_YT_ON\"], [\"ytlayout\", \"UGF_YT_LAYOUT\"], [\"ytautoplay\", \"UGF_YT_AUTOPLAY\"], [\"ytclassicon\", \"UGF_YT_CLASSIC_ON\"]]");
-main = once(main, "    let startubeOn = \"true\";", "    let startubeOn = \"true\";\n    let ytLayout = \"auto\";\n    let ytAutoplay = \"true\";");
-main = once(main, "html:not([startubeon-dd-open]) #ugf-startubeon-dd,\nhtml:not([startubeon-dd-open]) #ugf-startubeon-fence,", "html:not([yton-dd-open]) #ugf-yton-dd,\nhtml:not([yton-dd-open]) #ugf-yton-fence,\nhtml:not([ytlayout-dd-open]) #ugf-ytlayout-dd,\nhtml:not([ytlayout-dd-open]) #ugf-ytlayout-fence,\nhtml:not([ytautoplay-dd-open]) #ugf-ytautoplay-dd,\nhtml:not([ytautoplay-dd-open]) #ugf-ytautoplay-fence,");
-main = once(main, "            <div id=\"ugf-startubeon-fence\" class=\"ugf-fence\">\n            </div>", "            <div id=\"ugf-yton-fence\" class=\"ugf-fence\">\n            </div>\n            <div id=\"ugf-ytlayout-fence\" class=\"ugf-fence\">\n            </div>\n            <div id=\"ugf-ytautoplay-fence\" class=\"ugf-fence\">\n            </div>");
-main = main.replace(/\n\s*\} else if \(o\[0\] === "startubeon"\) \{\n\s*startubeOn = value;/, "");
-main = once(main, "startubeOn = String((typeof GM_getValue === \"function\" ? GM_getValue(\"UGF_STARTUBE_ON\", null) : null) || \"true\");", "startubeOn = String((typeof GM_getValue === \"function\" ? GM_getValue(\"UGF_YT_ON\", null) : null) || \"true\");\n        ytLayout = String((typeof GM_getValue === \"function\" ? GM_getValue(\"UGF_YT_LAYOUT\", null) : null) || \"auto\");\n        ytAutoplay = String((typeof GM_getValue === \"function\" ? GM_getValue(\"UGF_YT_AUTOPLAY\", null) : null) || \"true\");");
+// the settings page: StarTube's settings window becomes two choices (its on/off section stays)
+main = once(main, /\n\s*if \(typeof ugfStarTubeApi !== "undefined" && ugfStarTubeApi\.applyMaster\) \{\n\s*ugfStarTubeApi\.applyMaster\(\);\n\s*\}/, "");
+main = once(main, /\n\s*if \(typeof ugfStarTube === "function" && document\.getElementById\("ugf-yt-st-host"\)[^\n]*\n\s*ugfStarTube\("settings"\);(\n[^\n]*){8}\n\s*\}/, "");
+main = between(main, "<div class=\"ugf-gplex-section\" id=\"ugf-yt-settings\"", "<div class=\"ugf-gplex-section\" style=\"display: none\">",
+    read(path.join(HERE, "tools", "settings-section.html")).trim() + "\n                        <div class=\"ugf-gplex-section\" style=\"display: none\">");
+main = once(main, "\"finon\", \"startubeon\", \"ytclassicon\"]", "\"finon\", \"startubeon\", \"ytlayout\", \"ytdark\", \"ytclassicon\"]");
+main = once(main, "[\"startubeon\", \"UGF_STARTUBE_ON\"], [\"ytclassicon\", \"UGF_YT_CLASSIC_ON\"]]", "[\"startubeon\", \"UGF_STARTUBE_ON\"], [\"ytlayout\", \"UGF_ST_layoutPick\"], [\"ytdark\", \"UGF_ST_dark\"], [\"ytclassicon\", \"UGF_YT_CLASSIC_ON\"]]");
+main = once(main, "    let startubeOn = \"true\";", "    let startubeOn = \"true\";\n    let ytLayout = \"auto\";\n    let ytDark = \"auto\";");
+main = once(main, "html:not([startubeon-dd-open]) #ugf-startubeon-dd,\nhtml:not([startubeon-dd-open]) #ugf-startubeon-fence,", "html:not([startubeon-dd-open]) #ugf-startubeon-dd,\nhtml:not([startubeon-dd-open]) #ugf-startubeon-fence,\nhtml:not([ytlayout-dd-open]) #ugf-ytlayout-dd,\nhtml:not([ytlayout-dd-open]) #ugf-ytlayout-fence,\nhtml:not([ytdark-dd-open]) #ugf-ytdark-dd,\nhtml:not([ytdark-dd-open]) #ugf-ytdark-fence,");
+main = once(main, "            <div id=\"ugf-startubeon-fence\" class=\"ugf-fence\">\n            </div>", "            <div id=\"ugf-startubeon-fence\" class=\"ugf-fence\">\n            </div>\n            <div id=\"ugf-ytlayout-fence\" class=\"ugf-fence\">\n            </div>\n            <div id=\"ugf-ytdark-fence\" class=\"ugf-fence\">\n            </div>");
+main = once(main, "                            } else if (o[0] === \"startubeon\") {\n                                startubeOn = value;\n", "                            } else if (o[0] === \"startubeon\") {\n                                startubeOn = value;\n                            } else if (o[0] === \"ytlayout\") {\n                                ytLayout = value;\n                            } else if (o[0] === \"ytdark\") {\n                                ytDark = value;\n");
+main = once(main, "startubeOn = String((typeof GM_getValue === \"function\" ? GM_getValue(\"UGF_STARTUBE_ON\", null) : null) || \"true\");", "startubeOn = String((typeof GM_getValue === \"function\" ? GM_getValue(\"UGF_STARTUBE_ON\", null) : null) || \"true\");\n        ytLayout = String((typeof GM_getValue === \"function\" ? GM_getValue(\"UGF_ST_layoutPick\", null) : null) || \"auto\");\n        ytDark = String((typeof GM_getValue === \"function\" ? GM_getValue(\"UGF_ST_dark\", null) : null) || \"auto\");");
+// the two dropdowns show the wording of the chosen item
+main = once(main, "        if (setting == \"startubeon\" || setting == \"all\") {\n", "        [[\"ytlayout\", ytLayout], [\"ytdark\", ytDark]].forEach(function(o) {\n            if (setting == o[0] || setting == \"all\") {\n                const item = document.querySelector(\"#ugf-option-\" + o[0] + \" .ugf-dropdown-item[value=\\\"\" + o[1] + \"\\\"] span\");\n                const btn = document.querySelector(\"#ugf-option-\" + o[0] + \" .ugf-dropdown-button span\");\n                if (item && btn) {\n                    btn.textContent = item.textContent;\n                }\n            }\n        });\n        if (setting == \"startubeon\" || setting == \"all\") {\n");
 main = main.replace(/\r?\n/g, "\r\n");
 fs.writeFileSync(ALPHA, main);
 try {
@@ -153,6 +164,7 @@ if (args.includes("--no-packages")) {
 const out = path.join(ROOT, "releases", "alpha");
 fs.mkdirSync(out, { recursive: true });
 const base = "gplex-extended-alpha-" + VERSION;
-execFileSync("node", [path.join(ROOT, "build", "build-chrome.js"), ALPHA, path.join(out, base + "-chrome.zip"), path.join(out, base + "-chrome-unpacked")], { stdio: "inherit", env: Object.assign({}, process.env, { GPLEX_ALPHA: "1" }) });
-execFileSync("node", [path.join(ROOT, "build", "build-firefox.js"), ALPHA, path.join(out, base + "-firefox.xpi")], { stdio: "inherit", env: Object.assign({}, process.env, { GPLEX_ALPHA: "1" }) });
+const env = Object.assign({}, process.env, { GPLEX_ALPHA: "1" });
+execFileSync("node", [path.join(ROOT, "build", "build-chrome.js"), ALPHA, path.join(out, base + "-chrome.zip"), path.join(out, base + "-chrome-unpacked")], { stdio: "inherit", env: env });
+execFileSync("node", [path.join(ROOT, "build", "build-firefox.js"), ALPHA, path.join(out, base + "-firefox.xpi")], { stdio: "inherit", env: env });
 console.log("packages in releases/alpha/");

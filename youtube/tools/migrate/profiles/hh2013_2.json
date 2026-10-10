@@ -1,0 +1,80 @@
+{
+ "layout": "2015",
+ "home": {
+  "html": {
+   "lang": "en",
+   "color-version": "v2_0",
+   "data-cast-api-enabled": "true",
+   "logged-in": "false",
+   "nocast": "",
+   "config-polymer-menu-v3-settings-button": "",
+   "exp-classic-ltod": "",
+   "exp-fixed-x-icon": "",
+   "class": "exp-display-ddd-only-navi",
+   "startube": "",
+   "config-account-menu-v3-settings-button": "",
+   "config-create-menu-v3-settings-button": "",
+   "notif-square": "",
+   "ly": "hh2013_2",
+   "aozora-home": "",
+   "exp-aozora-home": "",
+   "config-watch7-sidebar-card-shadow": "",
+   "exp-comments-full-width": "",
+   "exp-fixed-share-icons": "",
+   "location": "home"
+  },
+  "v3": {
+   "class": "spitfire-body-container v3",
+   "rel-tabs": "off",
+   "wl": "w7",
+   "layout": "hh2013_2",
+   "search-text": "off",
+   "rel-size": "small",
+   "compact-date": "off"
+  },
+  "bodyClass": "interactive-debugger site-left-aligned hitchhiker-enabled flex-width-enabled guide-enabled spacetronic appbar-mini-cinema appbar-flexwatch-mini exp-player-bigger-storyboard page-loaded exp-search-filter-less-space",
+  "page": "home clearfix"
+ },
+ "watch": {
+  "html": {
+   "lang": "en",
+   "color-version": "v2_0",
+   "data-cast-api-enabled": "true",
+   "logged-in": "false",
+   "nocast": "",
+   "config-polymer-menu-v3-settings-button": "",
+   "exp-classic-ltod": "",
+   "exp-fixed-x-icon": "",
+   "aozora-home": "",
+   "config-watch7-sidebar-card-shadow": "",
+   "exp-fixed-share-icons": "",
+   "custom-sizerules": "",
+   "dir": "ltr",
+   "class": "exp-display-ddd-only-navi",
+   "startube": "",
+   "location": "watch",
+   "config-account-menu-v3-settings-button": "",
+   "config-create-menu-v3-settings-button": "",
+   "notif-square": "",
+   "ly": "hh2013_2",
+   "exp-aozora-home": "",
+   "exp-comments-full-width": ""
+  },
+  "v3": {
+   "class": "spitfire-body-container v3",
+   "rel-head-added": "true",
+   "rel-tabs": "off",
+   "wl": "w7",
+   "layout": "hh2013_2",
+   "search-text": "off",
+   "rel-size": "small",
+   "compact-date": "off",
+   "has-ts": "true",
+   "pw": "640",
+   "playlist-watch": "false",
+   "autoplay": "true"
+  },
+  "bodyClass": "interactive-debugger site-left-aligned hitchhiker-enabled guide-enabled spacetronic appbar-mini-cinema appbar-flexwatch-mini exp-player-bigger-storyboard page-loaded exp-search-filter-less-space",
+  "page": "watch clearfix"
+ }
+}

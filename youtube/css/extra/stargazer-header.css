@@ -1,0 +1,545 @@
+/* the 2007-2009 header (added by addStargazerHeader) */
+#yt-masthead {
+    display: none;
+}
+[static] #stargazer-header {
+    width: 970px;
+    margin: 0 auto;
+}
+#stargazer-header-inner {
+    width: 100%;
+}
+.stargazer-toplinks {
+    margin-left: auto;
+    width: fit-content;
+}
+.st-sth .stargazer-logo-container #logo {
+    width: 132px;
+    height: 63px;
+    background: white url(https://raw.githubusercontent.com/lightbeam24/StarTube/refs/heads/main/images/stgz1.gif) no-repeat scroll 0px 0px;
+}
+.st-sbh .stargazer-logo-container #logo {
+    width: 84px;
+    height: 33px;
+    background: white url(https://raw.githubusercontent.com/lightbeam24/StarTube/refs/heads/main/images/stgz2.png) no-repeat scroll 0px 0px;
+}
+.st-ssh .stargazer-logo-container #logo {
+    width: 110px;
+    height: 54px;
+    background: white url(https://raw.githubusercontent.com/lightbeam24/StarTube/refs/heads/main/images/stgz3.png) no-repeat scroll 0px 0px;
+}
+.stargazer-logo-companion {
+    margin-left: 6px;
+    margin-top: -2px;
+    font-size: 12px;
+}
+.stargazer-logo-link {
+    color: var(--03c);
+    padding: 0 0 1px 0;
+    margin-left: 2px;
+    display: block;
+}
+.stargazer-language {
+    border-left: 1px solid #aaa;
+    padding: 0 0 1px 6px;
+    margin-left: 6px;
+}
+.stargazer-slogan {
+    background: transparent url(https://raw.githubusercontent.com/lightbeam24/StarTube/refs/heads/main/images/stgz3.png) repeat-x scroll 0 -45px;
+    width: 125px;
+    height: 11px;
+    margin: 2px 2px 3px 2px;
+    cursor: default;
+    display: block;
+}
+#stargazer-upload-menu-container:not([visible]) {
+    display: none;
+}
+.stargazer-menu {
+    position: absolute;
+    top: 25px;
+    left: 0;
+    border: 1px solid #ecc101;
+    background: #ffeb81;
+    z-index: 9;
+    min-width: 106px;
+}
+.stargazer-menu-item {
+    color: #994800;
+    border-top: 1px solid #ffeb81;
+    background: #ffc;
+    padding: 5px 8px;
+    display: block;
+    cursor: pointer;
+    text-decoration: none !important;
+}
+.stargazer-menu-item:hover {
+    background: #fff;
+}
+.stargazer-menu-item:first-child {
+    border-top: none;
+}
+[stargazer-header] #yt-masthead-container {
+    background: none;
+    border: none;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+html:not([stargazer-header^="tabbed"]) .st-sth,
+html:not([stargazer-header^="bar"]) .st-sbh,
+html:not([stargazer-header^="simple"]) .st-ssh {
+    display: none !important;
+}
+.st-ssh .stargazer-user-container,
+.st-sth .stargazer-user-container {
+    position: absolute;
+    top: -8px;
+    width: max-content;
+    right: 0;
+    z-index: 4;
+}
+.st-ssh .stargazer-user-container {
+    top: -2px;
+}
+.st-ssh {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}
+.stargazer-header-upper,
+.stargazer-header-middle,
+.stargazer-header-lower {
+    position: relative;
+    width: 100%;
+}
+.stargazer-toplink {
+    color: var(--03c);
+}
+#stargazer-header #yt-masthead-user-displayname {
+    color: var(--03c);
+    font-weight: var(--bold);
+    font-size: 13px;
+}
+.or-text {
+    margin: 0 5px;
+}
+#stargazer-header {
+    position: relative;
+}
+.st-sth .stargazer-header-middle {
+    position: relative;
+    height: 70px;
+    margin-top: 10px;
+}
+.st-sbh .stargazer-header-upper {
+    height: 33px;
+    padding: 4px 0 8px;
+}
+.st-ssh .stargazer-header-upper {
+    margin-bottom: 4px;
+}
+.stargazer-simple-header-inner {
+    width: 100%;
+    padding: 9px 0 0;
+    margin-left: 32px;
+}
+#stargazer-header #logo-container {
+    float: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+.st-sth .content-region {
+    position: absolute;
+    top: 2px;
+    left: 126px;
+}
+#stargazer-header .content-region {
+    display: none;
+}
+.st-sbh .stargazer-logo-container {
+    height: 33px;
+    width: 84px;
+    position: relative;
+}
+.st-ssh .stargazer-logo-container {
+    height: 54px;
+    width: 110px;
+    position: relative;
+}
+.stargazer-tabs,
+.stargazer-logo-container {
+    width: fit-content;
+}
+.stargazer-tabs {
+    margin: 42px auto 0;
+}
+.stargazer-tab {
+    background: linear-gradient(to top,#bbc7e6,#bbc7e6 2px,#fbfcff);
+    color: #039;
+    width: 124px;
+    height: 28px;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    border: 1px solid #c3d0ec;
+    border-bottom: none;
+    border-radius: 5px 5px 0 0;
+    margin-right: 5px;
+    text-decoration: none !important;
+    outline: none !important;
+}
+.stargazer-tab.active {
+    border-color: #d5d5d5;
+    border-top-color: #d8d8d8;
+    background: linear-gradient(to top,#d5d5d5,#d5d5d5 2px,#fcfcfc);
+    color: #333;
+}
+.stargazer-tab span {
+    margin: 0 auto;
+}
+.stargazer-nav {
+    border-left: 1px solid #fff;
+    border-right: 1px solid #999;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 10px 8px 11px 8px;
+    color: var(--03c);
+    text-decoration: none !important;
+    outline: none !important;
+}
+.stargazer-nav:hover {
+    background: linear-gradient(to top,#d4d4d4,#f7f7f7 15%,#fff);
+}
+.stargazer-nav:active {
+    background: linear-gradient(to top,#fefefe,#efefef 50%,#9a9a9a);
+    border-left-color: transparent;
+}
+.stargazer-link {
+    color: var(--03c);
+    font-weight: bold;
+    margin-right: 13px;
+}
+.stargazer-links-right {
+    margin-left: auto;
+}
+.st-sth .stargazer-header-lower {
+    width: 100%;
+    height: 37px;
+    background: linear-gradient(to top,#e7e7e7,#d5d5d5);
+    position: relative;
+    border-radius: 5px;
+}
+.st-sbh .stargazer-header-lower {
+    border: 1px solid #999999;
+    height: 35px;
+    background: linear-gradient(to top,#dedede,#f2f2f2 33px, #fff);
+}
+#stargazer-header #masthead-search {
+    overflow: visible;
+}
+[static]:not([topbar]) #stargazer-header #masthead-search-terms {
+    border: 1px solid #999;
+    box-shadow: none;
+    border-radius: 0;
+    width: 211px;
+    height: 25px;
+    background: #fff;
+}
+[static]:not([topbar]) #stargazer-header .st-sbh #masthead-search-terms {
+    width: 300px;
+    transition: none;
+}
+[static]:not([topbar]) #stargazer-header .st-ssh #masthead-search-terms {
+    width: 330px;
+    transition: none;
+    margin-bottom: 0;
+}
+[static]:not([topbar]) .st-sth #masthead-search-terms.gsfe_b {
+    outline: 2px solid #3584e4 !important;
+    border-radius: 1px !important;
+}
+[static]:not([topbar]) .st-sbh #masthead-search-terms.gsfe_b {
+    border: 1px solid #bbdafd !important;
+    outline: 1px solid #bbdafd !important;
+}
+[static]:not([topbar]) .st-ssh #masthead-search-terms.gsfe_b {
+    border: 1px solid #bbdafd !important;
+    outline: 2px solid #3584e4 !important;
+    border-radius: 1px !important;
+}
+html:not([topbar])[static] .st-sth #masthead-search {
+    min-width: 274px;
+    max-width: 350px;
+}
+html:not([topbar])[static] .st-sbh #masthead-search {
+    min-width: 369px;
+    max-width: 420px;
+    margin-top: 2px;
+}
+html:not([topbar])[static] .st-ssh #masthead-search {
+    min-width: 396px;
+    max-width: 450px;
+    margin-top: 0px;
+    background: #eaeaea;
+    border: 1px solid #ccc;
+    padding: 3px;
+    border-radius: 3px;
+}
+.st-sbh .stargazer-search-container {
+    margin-right: 173px;
+    margin-left: auto;
+}
+#stargazer-header #masthead-search input {
+    position: relative;
+    top: -3px;
+    font-family: MS Shell Dlg, Noto Sans, Arial !important;
+    font-size: 13px;
+    padding: 0 1px;
+}
+#stargazer-header .st-sbh #masthead-search input,
+#stargazer-header .st-ssh #masthead-search input {
+    font-family: Arial !important;
+    padding: 0 1px;
+}
+.st-sth #search-btn {
+    background: #e9e9ed;
+    border: 1px solid #8f8f9d;
+    height: 25px;
+    padding: 0 5px;
+    border-radius: 4px;
+    cursor: unset !important;
+    margin-left: 2px;
+}
+.st-sth #search-btn:hover {
+    background: #d0d0d7;
+    border-color: #676774;
+}
+.st-sth #search-btn:hover:active {
+    background: #b1b1b9;
+    border-color: #484851;
+}
+.st-sbh #search-btn,
+.st-ssh #search-btn {
+    height: 25px;
+    border-radius: 3px;
+    border: 1px solid #a0b1dc;
+    background: linear-gradient(to top,#bed0ee,#f5f9fd);
+}
+.st-sbh #search-btn:hover,
+.st-ssh #search-btn:hover {
+    border: 1px solid #a0b1dc;
+    background: linear-gradient(to top,#c5d6f3,#f8fafd 50%,#f8fafd);
+}
+#stargazer-header #masthead-search .search-btn-component .yt-uix-button-content {
+    background: none;
+    text-indent: 0;
+    display: unset;
+    opacity: 1 !important;
+}
+.st-sth #masthead-search .search-btn-component .yt-uix-button-content span {
+    font-weight: normal;
+    font-size: 13.33px;
+    color: #000;
+    font-family: MS Shell Dlg, Noto Sans, Arial !important;
+}
+.st-ssh #masthead-search .search-btn-component .yt-uix-button-content span,
+.st-sbh #masthead-search .search-btn-component .yt-uix-button-content span {
+    font-weight: bold;
+    font-size: 12px;
+    color: #039;
+}
+.st-sbh #search-btn:hover .yt-uix-button-content span,
+.st-ssh #search-btn:hover .yt-uix-button-content span {
+    text-decoration: underline;
+}
+.logged-out .signed-in,
+.logged-in .signed-out {
+    display: none;
+}
+.st-sth .stargazer-header-lower-inner {
+    width: 100%;
+}
+.st-sth .stargazer-search-container {
+    margin: 0 auto;
+}
+.st-sth .stargazer-upload,
+.st-sbh #stargazer-upload-dd {
+    position: absolute;
+    right: 7px;
+}
+[stargazer-sub] .oz_frame oz_widget_holder .yt-uix-button-subscribe-branded,
+[stargazer-sub] .oz_frame oz_widget_holder .yt-uix-button-subscribed-branded,
+.st-stargazer-sub .yt-uix-button-subscribe-branded,
+.st-stargazer-sub .yt-uix-button-subscribed-branded,
+[stargazer-sub] #page:not(.watch) .yt-uix-button-subscribe-branded,
+[stargazer-sub] #page:not(.watch) .yt-uix-button-subscribed-branded,
+.stargazer-button {
+    border-radius: 3px !important;
+    height: 23px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 0 12px !important;
+    color: #039 !important;
+    font-size: 12px !important;
+    border: 1px solid #a0b1dc !important;
+    background: linear-gradient(to top,#bed0ee,#f5f9fd) !important;
+}
+.stargazer-button:hover {
+    border: 1px solid #a0b1dc;
+    background: linear-gradient(to top,#c5d6f3,#f8fafd 50%,#f8fafd);
+}
+[stargazer-sub] .oz_frame .yt-uix-button-subscribe-branded,
+[stargazer-sub] .oz_frame .yt-uix-button-subscribed-branded,
+.st-stargazer-sub .yt-uix-button-subscribe-branded,
+.st-stargazer-sub .yt-uix-button-subscribed-branded,
+[stargazer-sub] #page:not(.watch) .yt-uix-button-subscribe-branded,
+[stargazer-sub] #page:not(.watch) .yt-uix-button-subscribed-branded,
+.stargazer-yellow-button {
+    background: linear-gradient(to top,#fed81c,#fff9c1) !important;
+    border: 1px solid #ecc101 !important;
+    color: #994800 !important;
+    font-weight: var(--bold) !important;
+}
+[stargazer-sub] .oz_frame .yt-uix-button-subscribe-branded,
+[stargazer-sub] .oz_frame .yt-uix-button-subscribed-branded,
+.st-stargazer-sub .yt-uix-button-subscribe-branded,
+.st-stargazer-sub .yt-uix-button-subscribed-branded,
+[stargazer-sub] #page:not(.watch) .yt-uix-button-subscribe-branded,
+[stargazer-sub] #page:not(.watch) .yt-uix-button-subscribed-branded {
+    padding: 0 3px 0 4px !important;
+    box-shadow: none !important;
+    height: 25px !important;
+}
+[stargazer-sub] .oz_frame .yt-uix-button-subscription-container,
+.st-stargazer-sub .yt-uix-button-subscription-container,
+[stargazer-sub] #page:not(.watch) .yt-uix-button-subscription-container {
+    display: inline-flex;
+}
+[stargazer-sub] .oz_frame .yt-uix-button-subscribe-branded .yt-uix-button-icon-wrapper,
+[stargazer-sub] .oz_frame .yt-uix-button-subscribed-branded .yt-uix-button-icon-wrapper,
+.st-stargazer-sub .yt-uix-button-subscribe-branded .yt-uix-button-icon-wrapper,
+.st-stargazer-sub .yt-uix-button-subscribed-branded .yt-uix-button-icon-wrapper,
+[stargazer-sub] #page:not(.watch) .yt-uix-button-subscribe-branded .yt-uix-button-icon-wrapper,
+[stargazer-sub] #page:not(.watch) .yt-uix-button-subscribed-branded .yt-uix-button-icon-wrapper {
+    display: none;
+}
+[stargazer-sub] .oz_frame .yt-uix-button-subscribe-branded .yt-uix-button-content span,
+[stargazer-sub] .oz_frame .yt-uix-button-subscribed-branded .yt-uix-button-content span,
+.st-stargazer-sub .yt-uix-button-subscribe-branded .yt-uix-button-content span,
+.st-stargazer-sub .yt-uix-button-subscribed-branded .yt-uix-button-content span,
+[stargazer-sub] #page:not(.watch) .yt-uix-button-subscribe-branded .yt-uix-button-content span,
+[stargazer-sub] #page:not(.watch) .yt-uix-button-subscribed-branded .yt-uix-button-content span {
+    color: #994800 !important;
+    font-weight: var(--bold) !important;
+    text-shadow: none !important;
+}
+[stargazer-sub] .oz_frame .yt-uix-button-subscribe-branded:hover,
+[stargazer-sub] .oz_frame .yt-uix-button-subscribed-branded:hover,
+.st-stargazer-sub .yt-uix-button-subscribe-branded:hover,
+.st-stargazer-sub .yt-uix-button-subscribed-branded:hover,
+[stargazer-sub] #page:not(.watch) .yt-uix-button-subscribe-branded:hover,
+[stargazer-sub] #page:not(.watch) .yt-uix-button-subscribed-branded:hover,
+.stargazer-yellow-button:hover {
+    border: 1px solid #ecc101 !important;
+    background: linear-gradient(to top,#fed925,#ffef97,#fffffa) !important;
+}
+[stargazer-sub] .oz_frame .yt-uix-button-subscribe-branded:hover span span,
+[stargazer-sub] .oz_frame .yt-uix-button-subscribed-branded:hover span span,
+.st-stargazer-sub .yt-uix-button-subscribe-branded:hover span span,
+.st-stargazer-sub .yt-uix-button-subscribed-branded:hover span span,
+[stargazer-sub] #page:not(.watch) .yt-uix-button-subscribe-branded:hover span span,
+[stargazer-sub] #page:not(.watch) .yt-uix-button-subscribed-branded:hover span span {
+    text-decoration: underline;
+}
+.stargazer-shiny-button,
+.stargazer-shiny-button:hover {
+    background: linear-gradient(to top,#fed925,#fff094 50%,#fff9c1) !important;
+}
+.stargazer-small-button {
+    height: 18px !important;
+}
+.st-sbh .stargazer-upload {
+    border-radius: 3px 0 0 3px !important;
+}
+[stargazer-sub] .oz_frame .yt-uix-button-subscribe-branded:hover,
+[stargazer-sub] .oz_frame .yt-uix-button-subscribed-branded,
+.st-stargazer-sub .yt-uix-button-subscribed-branded:hover,
+.st-stargazer-sub .yt-uix-button-subscribed-branded,
+.st-stargazer-sub .yt-uix-subscription-preferences-button,
+[stargazer-sub] #page:not(.watch) .yt-uix-button-subscribed-branded:hover,
+[stargazer-sub] #page:not(.watch) .yt-uix-button-subscribed-branded {
+    background: linear-gradient(to top,#e0e0e0,#f5f5f5 50%,#fff) !important;
+    border-color: #a9a9a9 !important;
+}
+.st-stargazer-sub .yt-uix-subscription-preferences-button {
+    height: 25px;
+}
+[stargazer-sub] .oz_frame .yt-uix-button-subscribed-branded .yt-uix-button-content span,
+.st-stargazer-sub .yt-uix-button-subscribed-branded .yt-uix-button-content span,
+[stargazer-sub] #page:not(.watch) .yt-uix-button-subscribed-branded .yt-uix-button-content span {
+    color: #333 !important;
+}
+#stargazer-upload-dropdown {
+    padding: 0 !important;
+    border-radius: 0 3px 3px 0 !important;
+    height: 25px !important;
+    border-left: none !important;
+}
+#stargazer-upload-dropdown span {
+    background: url(https://raw.githubusercontent.com/lightbeam24/StarTube/refs/heads/main/images/stgz3.png) no-repeat -80px center;
+    width: 25px;
+    height: 12px;
+    display: block;
+}
+.upload-menu-open #stargazer-upload-dropdown span,
+#stargazer-upload-dropdown:hover span {
+    background-position: -100px center;
+}
+.upload-menu-open #stargazer-upload-dropdown {
+    background: linear-gradient(to top,#fffbda,#fff19e 50%,#ffeb81) !important;
+}
+[cirrus-sub] .oz_frame oz_widget_holder .yt-uix-button-subscribe-branded,
+[cirrus-sub] .oz_frame oz_widget_holder .yt-uix-button-subscribed-branded,
+.st-cirrus-sub .yt-uix-button-subscribe-branded,
+.st-cirrus-sub .yt-uix-button-subscribed-branded,
+[cirrus-sub] #page:not(.watch) .yt-uix-button-subscribe-branded,
+[cirrus-sub] #page:not(.watch) .yt-uix-button-subscribed-branded {
+    border-radius: 3px !important;
+    height: 23px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 0 8px !important;
+    color: #039 !important;
+    font-size: 12px !important;
+    border: 1px solid #D70 !important;
+    background: linear-gradient(to top,#df7f0f,#ff9900) !important;
+}
+[cirrus-sub] .oz_frame .yt-uix-button-subscribe-branded .yt-uix-button-content span,
+[cirrus-sub] .oz_frame .yt-uix-button-subscribed-branded .yt-uix-button-content span,
+.st-cirrus-sub .yt-uix-button-subscribe-branded .yt-uix-button-content span,
+.st-cirrus-sub .yt-uix-button-subscribed-branded .yt-uix-button-content span,
+[cirrus-sub] #page:not(.watch) .yt-uix-button-subscribe-branded .yt-uix-button-content span,
+[cirrus-sub] #page:not(.watch) .yt-uix-button-subscribed-branded .yt-uix-button-content span {
+    color: #fff !important;
+    font-weight: var(--bold) !important;
+    text-shadow: none !important;
+}
+[cirrus-sub] .oz_frame .yt-uix-button-subscribe-branded:hover,
+[cirrus-sub] .oz_frame .yt-uix-button-subscribed-branded:hover,
+.st-cirrus-sub .yt-uix-button-subscribe-branded:hover,
+.st-cirrus-sub .yt-uix-button-subscribed-branded:hover,
+[cirrus-sub] #page:not(.watch) .yt-uix-button-subscribe-branded:hover,
+[cirrus-sub] #page:not(.watch) .yt-uix-button-subscribed-branded:hover {
+    border: 1px solid #D70 !important;
+    background: linear-gradient(to top,#df7f0f,#ff9900) !important;
+    box-shadow: none !important;
+}
+[cirrus-sub] .oz_frame .yt-uix-button-subscribe-branded:hover span span,
+[cirrus-sub] .oz_frame .yt-uix-button-subscribed-branded:hover span span,
+.st-cirrus-sub .yt-uix-button-subscribe-branded:hover span span,
+.st-cirrus-sub .yt-uix-button-subscribed-branded:hover span span,
+[cirrus-sub] #page:not(.watch) .yt-uix-button-subscribe-branded:hover span span,
+[cirrus-sub] #page:not(.watch) .yt-uix-button-subscribed-branded:hover span span {
+    color: #000 !important;
+}

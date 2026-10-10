@@ -1,60 +1,95 @@
-// Loads a page of youtube.com in Chromium with the built script, the way a userscript manager would at
-// document-start, and screenshots it. The GM functions are stubbed with an in-memory store.
-// usage: node render.js <script> <url> <era> <out.png> [settingsJSON]
-//   env: GPLEX_MOCK=file (serve this saved HTML as the page), GPLEX_EVAL (JavaScript to run before the screenshot), GPLEX_CLIP (x,y,w,h), GPLEX_FULL=1,
-//        GPLEX_FAKE_EMBED=path (serves this HTML for /embed/* so the control bar can be tested)
+#!/usr/bin/env node
+// Renders a youtube.com page in Chromium with V3 and the module (build.js --check), and screenshots it:
+//   V3=/path/to/Vorapis.user.js node tools/render.js <era> <gplexLayout> <url> <out.png> [options]
+// Options: --pick=<era> (the hand-picked era setting; default auto), --mock=<saved watch page html> (served
+// as the document: V3 fetches the data itself, and youtube.com rate-limits repeated watch loads),
+// --settle=<ms> (wait after V3 drew the page; default 4000), --eval=<js> (printed as JSON), --profile=<dir>.
+// Needs Playwright (npm install playwright) and a copy of the V3 userscript, which is not distributed here.
+"use strict";
+const { chromium } = require("playwright");
 const fs = require("fs");
 const path = require("path");
-const { chromium } = require("playwright");
-(async () => {
-    const [script, url, era, out, extra] = process.argv.slice(2);
-    const store = Object.assign({ UGF_LAYOUT: "2015", UGF_YT_LAYOUT: era || "auto" }, extra ? JSON.parse(extra) : {});
-    const src = fs.readFileSync(script, "utf8");
-    const browser = await chromium.launch({ proxy: process.env.HTTPS_PROXY ? { server: process.env.HTTPS_PROXY } : undefined, args: ["--autoplay-policy=no-user-gesture-required"] });
-    const context = await browser.newContext({ viewport: { width: Number(process.env.GPLEX_WIDTH) || 1366, height: Number(process.env.GPLEX_HEIGHT) || 900 }, locale: "en-US", userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36" });
-    await context.addInitScript(({ store }) => {
-        const s = store;
-        window.GM_getValue = (k, d) => (k in s ? s[k] : d);
-        window.GM_setValue = (k, v) => { s[k] = v; };
-        window.GM_deleteValue = (k) => { delete s[k]; };
-        window.GM_listValues = () => Object.keys(s);
-        window.GM_registerMenuCommand = () => {};
-        window.GM_info = { script: { version: "test" } };
-        window.unsafeWindow = window;
-        window.GM_xmlhttpRequest = (o) => { fetch(o.url, { method: o.method || "GET" }).then(r => r.text().then(t => o.onload && o.onload({ status: r.status, responseText: t, response: t }))).catch(e => o.onerror && o.onerror(e)); };
-        window.GM = { getValue: async (k, d) => window.GM_getValue(k, d), setValue: async (k, v) => window.GM_setValue(k, v), deleteValue: async (k) => window.GM_deleteValue(k), listValues: async () => window.GM_listValues() };
-    }, { store });
-    await context.addInitScript({ content: "(function(){ if (location.pathname.startsWith('/embed/')) return; var run = function(){\n" + src + "\n}; if (document.documentElement) { run(); } else { var mo = new MutationObserver(function(){ if (document.documentElement) { mo.disconnect(); run(); } }); mo.observe(document, { childList: true }); } })();" });
-    if (process.env.GPLEX_MOCK) {
-        // the page's own HTML from a saved copy (youtube.com challenges a browser from here on some pages)
-        const html = fs.readFileSync(process.env.GPLEX_MOCK, "utf8");
-        await context.route(url, route => route.request().resourceType() === "document" ? route.fulfill({ status: 200, contentType: "text/html; charset=utf-8", body: html }) : route.continue());
+
+const [era, layout, url, out, ...rest] = process.argv.slice(2);
+const opt = { pick: "auto", settle: 4000, profile: path.join(__dirname, "..", "profile") };
+rest.forEach(function(a) {
+    const m = /^--(\w+)=(.*)$/s.exec(a);
+    if (m) {
+        opt[m[1]] = m[2];
     }
-    if (process.env.GPLEX_FAKE_EMBED) {
-        const fake = fs.readFileSync(process.env.GPLEX_FAKE_EMBED, "utf8");
-        await context.route(/https:\/\/www\.youtube\.com\/embed\/.*/, route => route.fulfill({ status: 200, contentType: "text/html", body: fake }));
+});
+if (!era || !layout || !url || !out || !process.env.V3) {
+    console.error("usage: V3=<Vorapis.user.js> node tools/render.js <era> <gplexLayout> <url> <out.png> [--pick=] [--mock=] [--settle=] [--eval=]");
+    process.exit(1);
+}
+const v3 = fs.readFileSync(process.env.V3, "utf8");
+const module_ = fs.readFileSync(path.join(__dirname, "..", "gplex-youtube.module.js"), "utf8");
+// what the main script gives the module: Gplex's storage, the Trusted Types helper, the page tests
+const shim = "(function() {\n" +
+    "var store = " + JSON.stringify({ UGF_LAYOUT: layout, UGF_STARTUBE_ON: "true", UGF_ST_layoutPick: opt.pick, UGF_ST_dark: "auto", UGF_V3_NATIVE: "0" }) + ";\n" +
+    "window.GM_getValue = function(k, d) { return Object.prototype.hasOwnProperty.call(store, k) ? store[k] : d; };\n" +
+    "window.GM_setValue = function(k, v) { store[k] = v; };\n" +
+    "window.GM_deleteValue = function(k) { delete store[k]; };\n" +
+    "window.GM_info = { script: { name: 'Gplex Extended', version: 'render' } };\n" +
+    "window.ugfOnYouTube = true; window.ugfYtmTakesOver = function() { return false; }; window.ugfYtmPlayerFrame = function() { return false; };\n" +
+    "var policy = null; try { policy = window.trustedTypes.createPolicy('gplex-tt', { createHTML: function(s) { return s; } }); } catch (e) {}\n" +
+    "window.ugfTT = function(s) { return policy ? policy.createHTML(s) : s; };\n" +
+    "})();";
+// V3's welcome dialog, marked as seen
+const oobe = "(function() { try { var db = JSON.parse(localStorage.getItem('v3_local_db') || 'null') || { config: { db: { yt: {} } } }; var yt = db.config.db.yt; " +
+    "if (!yt.NEW_OOBE_INFO || !yt.NEW_OOBE_INFO.welcomePassed) { yt.NEW_OOBE_INFO = { welcomePassed: true }; yt.NEW_OOBE_DEBUGGER_DELEGATION2 = false; localStorage.setItem('v3_local_db', JSON.stringify(db)); } } catch (e) {} })();";
+// V3 expects a document element: as an init script it runs before there is one
+const v3Wrapped = "(function() { var run = function() {\n" + v3.replace(/<\/script>/g, "<\\/script>") + "\n}; if (document.documentElement) { run(); } else { new MutationObserver(function(m, o) { if (document.documentElement) { o.disconnect(); run(); } }).observe(document, { childList: true }); } })();";
+
+(async function() {
+    const ctx = await chromium.launchPersistentContext(opt.profile, {
+        headless: true, viewport: { width: 1366, height: 900 }, locale: "en-US",
+        userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"
+    });
+    const page = ctx.pages()[0] || await ctx.newPage();
+    page.on("pageerror", function(e) {
+        console.log("[pageerror]", String(e.stack || e).slice(0, 600));
+    });
+    page.on("console", function(m) {
+        if (/Gplex/.test(m.text())) {
+            console.log("[console]", m.text().slice(0, 300));
+        }
+    });
+    for (const content of [oobe, v3Wrapped, shim, module_]) {
+        await page.addInitScript({ content: content });
     }
-    const page = await context.newPage();
-    const logs = [];
-    page.on("console", m => { const t = m.text(); if (!/swiftshader|GroupMarker/.test(t)) logs.push(m.type() + ": " + t.slice(0, 300)); });
-    page.on("pageerror", e => logs.push("pageerror: " + String(e.stack || e).slice(0, 900)));
-    page.on("response", r => { if (r.status() >= 400 && !/ytimg|ggpht|gstatic/.test(r.url())) logs.push("http " + r.status() + " " + r.request().resourceType() + " " + r.url().slice(0, 110)); });
-    page.on("requestfailed", r => { if (/youtube\.com\/(youtubei|embed)/.test(r.url())) logs.push("requestfailed: " + r.url().slice(0, 120) + " " + (r.failure() || {}).errorText); });
-    await page.goto(url, { waitUntil: "load", timeout: 90000 }).catch(e => logs.push("goto: " + e.message.slice(0, 200)));
-    await page.waitForFunction(() => document.documentElement.hasAttribute("gplex-yt") || document.querySelector(".gy-error"), null, { timeout: 25000 }).catch(() => logs.push("no gplex page within 25s"));
-    await page.waitForTimeout(Number(process.env.GPLEX_WAIT) || 2500);
-    if (process.env.GPLEX_EVAL) {
-        await page.evaluate(process.env.GPLEX_EVAL).catch(e => logs.push("eval: " + e.message));
-        await page.waitForTimeout(800);
+    if (opt.mock) {
+        const html = fs.readFileSync(opt.mock, "utf8");
+        await page.route(function(u) {
+            return u.href.split("#")[0] === url.split("#")[0];
+        }, function(route) {
+            if (route.request().resourceType() === "document") {
+                route.fulfill({ status: 200, contentType: "text/html; charset=utf-8", body: html });
+            } else {
+                route.continue();
+            }
+        });
     }
-    if (process.env.GPLEX_CLIP) {
-        const c = process.env.GPLEX_CLIP.split(",").map(Number);
-        await page.screenshot({ path: out, clip: { x: c[0], y: c[1], width: c[2], height: c[3] } });
-    } else {
-        await page.screenshot({ path: out, fullPage: !!process.env.GPLEX_FULL });
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 90000 }).catch(function(e) {
+        console.log("goto:", e.message);
+    });
+    // until V3 drew the page in the era (the module reloads once when it changes V3's settings)
+    const t0 = Date.now();
+    while (Date.now() - t0 < 60000) {
+        const ok = await page.evaluate(function(exp) {
+            return !!document.querySelector("#page") && document.documentElement.style.display !== "none" && document.documentElement.getAttribute("ly") === exp;
+        }, era).catch(function() {
+            return false;
+        });
+        if (ok) {
+            break;
+        }
+        await page.waitForTimeout(500);
     }
-    const state = await page.evaluate(() => ({ title: document.title, era: document.documentElement.getAttribute("gplex-yt"), body: document.body.className.slice(0, 80), lockups: document.querySelectorAll(".yt-lockup").length, guide: document.querySelectorAll(".guide-item").length, scripts: Array.from(document.scripts).filter(s => s.type !== "text/plain" && !s.hasAttribute("data-gplex")).length, errorPage: !!document.querySelector(".gy-error"), player: !!document.getElementById("gy-embed") }));
-    console.log(JSON.stringify(state));
-    logs.slice(0, 20).forEach(l => console.log("  " + l));
-    await browser.close();
-})().catch(e => { console.error(e); process.exit(1); });
+    await page.waitForTimeout(Number(opt.settle));
+    if (opt.eval) {
+        console.log(JSON.stringify(await page.evaluate(opt.eval), null, 1));
+    }
+    await page.screenshot({ path: out });
+    await ctx.close();
+})();

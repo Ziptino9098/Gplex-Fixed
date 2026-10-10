@@ -1,0 +1,63 @@
+/* the Add to / Share popups of the 2017+ watch pages (buildPopups) */
+#wmr-fence {
+    opacity: 0.3;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    transition: opacity 0.3s;
+    background: #000;
+}
+#wmr-fence[visible="false"] {
+    opacity: 0;
+    pointer-events: none;
+}
+#wmr-popups {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    z-index: 10000;
+    position: fixed;
+}
+html:not([popup-visible="true"]) #wmr-popups {
+    z-index: -1;
+}
+[popup-visible="true"] #masthead-positioner {
+    background: #adadad;
+    pointer-events: none;
+}
+[popup-visible="true"] #yt-masthead-container {
+    opacity: 0.7;
+}
+.wmr-popup {
+    /*box-shadow: 0 0 8000px #0004;
+    */ opacity: 0;
+    margin: 0 auto;
+    pointer-events: none;
+    width: 412px;
+    top: 0;
+    left: 0;
+    display: none;
+    position: relative;
+    z-index: 10000;
+}
+.wmr-popup-inner {
+    background: #fff;
+    box-shadow: 0 0 8px #0004;
+    margin: 0 auto;
+    width: 412px;
+}
+.wmr-popup[visible="true"] {
+    opacity: 1;
+    pointer-events: all;
+    display: flex;
+}
+.wmr-popup .action-panel-content {
+    width: 372px;
+}
+.wmr-popup input {
+    width: 360px !important;
+}
