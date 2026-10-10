@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      8.0
+// @version      8.1
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube: StarTube by lightbeam24, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -856,7 +856,17 @@ function ugfPlusMeHere() {
 }
 function ugfPlusFirst() {
     const m = ugfPlusMeHere();
-    return m ? (m.name.split(" ")[0] || m.name) : "You";
+    if (m) {
+        return m.name.split(" ")[0] || m.name;
+    }
+    // (8.1) without a Gplex+ profile, the Google account's first name: the bar said +Name, not +You
+    try {
+        const n = String((typeof GM_getValue === "function" ? GM_getValue("UGF_USERNAME", "") : "") || "").trim();
+        if (n && String(GM_getValue("UGF_NAME_EMAIL", "") || "") !== "none") {
+            return n.split(" ")[0];
+        }
+    } catch (e) {}
+    return "You";
 }
 function ugfPlusProfileLink() {
     const m = ugfPlusMeHere();
@@ -51199,6 +51209,170 @@ html:not([search-focus]) #ugf-search-predictions-container {
 #ugf-side-info-top-right {
   margin-left: auto;
 }
+/* (8.1) the knowledge panel's sections drawn again as in 2012-2016 */
+#ugf-side-info-kay-sees-and-ess-esses > span[ugf-kp] {
+  margin-top: 0;
+}
+.ugf-kp-h {
+  font-size: 18px;
+  font-weight: normal;
+  color: #222;
+  margin: 18px 0 8px;
+  line-height: 22px;
+}
+.ugf-kp-facts {
+  margin-top: 12px;
+}
+.ugf-kp-fact {
+  font-size: 13px;
+  line-height: 18px;
+  color: #222;
+  margin: 0 0 7px;
+}
+.ugf-kp-fact b {
+  font-weight: bold;
+  color: #222;
+}
+.ugf-kp-fact a,
+.ugf-kp-list a,
+.ugf-kp-strip a,
+.ugf-kp-rating a,
+.ugf-kp-more-link {
+  color: #1a0dab !important;
+  text-decoration: none !important;
+}
+[layout="2013"] .ugf-kp-fact a,
+[layout="2013"] .ugf-kp-strip a,
+[layout="2013"] .ugf-kp-list a,
+[layout="2013"] .ugf-kp-rating a,
+[layout="2013"] .ugf-kp-more-link,
+[layout="2014"][gplex2013n] .ugf-kp-fact a,
+[layout="2014"][gplex2013n] .ugf-kp-strip a,
+[layout="2014"][gplex2013n] .ugf-kp-list a,
+[layout="2014"][gplex2013n] .ugf-kp-rating a,
+[layout="2014"][gplex2013n] .ugf-kp-more-link,
+[layout="2014"][gplex2014e] .ugf-kp-fact a,
+[layout="2014"][gplex2014e] .ugf-kp-strip a,
+[layout="2014"][gplex2014e] .ugf-kp-list a,
+[layout="2014"][gplex2014e] .ugf-kp-rating a,
+[layout="2014"][gplex2014e] .ugf-kp-more-link {
+  color: #12c !important;
+}
+.ugf-kp-fact a:hover,
+.ugf-kp-list a:hover .t,
+.ugf-kp-strip a:hover .n,
+.ugf-kp-rating a:hover,
+.ugf-kp-more-link:hover {
+  text-decoration: underline !important;
+}
+.ugf-kp-strip {
+  display: flex;
+  gap: 16px;
+  margin: 0 0 4px;
+}
+.ugf-kp-it {
+  display: block;
+  width: 72px;
+  font-size: 13px;
+  line-height: 16px;
+}
+.ugf-kp-it .ugf-kp-pic {
+  display: block;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 4px;
+  background: #f1f1f1;
+  overflow: hidden;
+}
+.ugf-kp-it img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  display: block;
+  border-radius: 0 !important;
+}
+.ugf-kp-it .n {
+  display: block;
+  max-height: 32px;
+  overflow: hidden;
+}
+.ugf-kp-it .r {
+  display: block;
+  color: #777;
+  font-size: 11px;
+  line-height: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ugf-kp-strip {
+  align-items: flex-start;
+}
+.ugf-kp-list {
+  border-top: 1px solid #ebebeb;
+  margin: 0 0 6px;
+}
+.ugf-kp-row {
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 5px 0;
+  border-bottom: 1px solid #ebebeb;
+  font-size: 13px;
+  line-height: 16px;
+}
+.ugf-kp-row img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  margin-right: 12px;
+  flex: none;
+  border-radius: 0 !important;
+}
+.ugf-kp-row-t {
+  min-width: 0;
+}
+.ugf-kp-row .t,
+.ugf-kp-row .s {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ugf-kp-row .s {
+  color: #777;
+}
+.ugf-kp-more-link {
+  display: inline-block;
+  font-size: 13px;
+  margin: 2px 0 6px;
+}
+.ugf-kp-rating {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: #222;
+  margin: 0 0 5px;
+}
+.ugf-kp-stars {
+  position: relative;
+  display: inline-block;
+  width: 65px;
+  height: 13px;
+  margin-right: 6px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 65 13'%3E%3Cpath id='s' d='M6.5 0l1.9 4.1 4.5.5-3.3 3.1.9 4.4L6.5 10l-3.9 2.1.9-4.4L.1 4.6l4.5-.5z' fill='%23ddd'/%3E%3Cuse href='%23s' x='13'/%3E%3Cuse href='%23s' x='26'/%3E%3Cuse href='%23s' x='39'/%3E%3Cuse href='%23s' x='52'/%3E%3C/svg%3E") no-repeat;
+}
+.ugf-kp-stars span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 13px;
+  overflow: hidden;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 65 13'%3E%3Cpath id='s' d='M6.5 0l1.9 4.1 4.5.5-3.3 3.1.9 4.4L6.5 10l-3.9 2.1.9-4.4L.1 4.6l4.5-.5z' fill='%23f0a533'/%3E%3Cuse href='%23s' x='13'/%3E%3Cuse href='%23s' x='26'/%3E%3Cuse href='%23s' x='39'/%3E%3Cuse href='%23s' x='52'/%3E%3C/svg%3E") no-repeat;
+}
+.ugf-kp-rating-v {
+  margin-right: 4px;
+}
 /* (8.0) the knowledge panel's pictures, 2012-2016: one big, four small, "More images" on the last */
 #ugf-side-info-collage {
   display: grid;
@@ -51411,14 +51585,15 @@ html[ugf-more-open] #ugf-more-dd {
 #ugf-more-dd a:hover {
   background: #eee;
 }
+/* (8.1) the search tools of 2013-2016: the row and its menus, Images' swatches and sizes, Custom range, the gear's menu */
 #ugf-tools-row {
   display: none;
   align-items: center;
-  gap: 24px;
-  height: 22px;
-  margin: 0 0 6px 0;
+  height: 28px;
+  margin: 0 0 8px 0;
+  padding-left: 8px;
   font-size: 13px;
-  color: #666;
+  color: #777;
 }
 html[ugf-tools-open] #ugf-tools-row {
   display: flex;
@@ -51426,51 +51601,258 @@ html[ugf-tools-open] #ugf-tools-row {
 html[ugf-tools-open] #ugf-search-results-header {
   display: none !important;
 }
+/* the Search tools tab pressed in, as Google's was while the row is open */
 html[ugf-tools-open] #ugf-tools-tab {
   color: #222 !important;
+}
+html[ugf-tools-open] #ugf-tools-tab .ugf-tab-inner {
+  background: #eee linear-gradient(to bottom, #f0f0f0, #e4e4e4);
+  border: 1px solid #d5d5d5;
+  border-radius: 2px;
+  padding: 0 10px;
+  margin: 0 -11px;
+  height: 27px;
+  line-height: 27px;
 }
 .ugf-tool {
   position: relative;
   cursor: pointer;
   user-select: none;
+  margin-right: 26px;
+  white-space: nowrap;
 }
-.ugf-tool:hover,
-.ugf-tool.on {
+.ugf-tool:hover .lbl {
   color: #222;
+}
+.ugf-tool.on .lbl {
+  font-weight: bold;
+}
+.ugf-tool .ugf-k-caret {
+  border-top-color: #777;
 }
 .ugf-tool-dd {
   display: none;
   position: absolute;
-  top: 20px;
-  left: -16px;
+  top: 24px;
+  left: -8px;
   z-index: 1000;
   background: #fff;
-  border: 1px solid rgba(0,0,0,.2);
+  border: 1px solid #d6d6d6;
   box-shadow: 0 2px 4px rgba(0,0,0,.2);
   padding: 6px 0;
+  min-width: 150px;
+  text-align: left;
 }
 .ugf-tool[open] .ugf-tool-dd {
   display: block;
 }
 .ugf-tool-dd a {
   display: block;
-  padding: 6px 44px 6px 16px;
-  color: #333 !important;
+  position: relative;
+  padding: 7px 24px 7px 30px;
+  color: #777 !important;
+  font-size: 13px;
+  font-weight: normal;
+  line-height: 15px;
   text-decoration: none !important;
   white-space: nowrap;
 }
 .ugf-tool-dd a:hover {
   background: #eee;
+  color: #222 !important;
 }
-.ugf-tool-dd a.on {
-  font-weight: bold;
+/* the check beside what the menu is set to */
+.ugf-tool-dd a.cur:not(.ugf-sw)::before {
+  content: "";
+  position: absolute;
+  left: 9px;
+  top: 7px;
+  width: 11px;
+  height: 11px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 11 11'%3E%3Cpath d='M1 5.5l1.4-1.4L4.5 6.2 8.6 2l1.4 1.4-5.5 5.5z' fill='%235b5b5b'/%3E%3C/svg%3E") no-repeat;
 }
 .ugf-tool-clear {
-  color: #666 !important;
+  color: #777 !important;
   text-decoration: none !important;
 }
 .ugf-tool-clear:hover {
   color: #222 !important;
+}
+/* Images' colour menu: the twelve swatches of 2013-2016 under the choices */
+.ugf-tool-swatches {
+  display: grid;
+  grid-template-columns: repeat(6, 20px);
+  gap: 4px;
+  padding: 8px 12px 6px 30px;
+  border-top: 1px solid #ebebeb;
+  margin-top: 4px;
+}
+.ugf-tool-dd a.ugf-sw {
+  display: block;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid rgba(0,0,0,.15);
+  box-sizing: border-box;
+}
+.ugf-tool-dd a.ugf-sw:hover,
+.ugf-tool-dd a.ugf-sw.cur {
+  outline: 2px solid #4d90fe;
+}
+.ugf-sw-red { background: #c00; }
+.ugf-sw-orange { background: #fb940b; }
+.ugf-sw-yellow { background: #ff0; }
+.ugf-sw-green { background: #0c0; }
+.ugf-sw-teal { background: #03c0c6; }
+.ugf-sw-blue { background: #00f; }
+.ugf-sw-purple { background: #762ca7; }
+.ugf-sw-pink { background: #ff98bf; }
+.ugf-sw-white { background: #fff; }
+.ugf-sw-gray { background: #999; }
+.ugf-sw-black { background: #000; }
+.ugf-sw-brown { background: #885418; }
+/* "Show sizes": the picture's size in the corner of each thumbnail */
+html[ugf-show-sizes] .ugf-image-result-inner[ugf-size]::after {
+  content: attr(ugf-size);
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 1px 4px;
+  background: rgba(0,0,0,.6);
+  color: #fff;
+  font-size: 11px;
+  line-height: 14px;
+  white-space: nowrap;
+}
+/* the tools row in Images sits on white over the grey results */
+#ugf-tools-row.ugf-tools-images {
+  margin: 0;
+  padding: 0 0 0 14px;
+  height: 36px;
+  background: #fff;
+}
+/* "Custom range...": Google's small card */
+#ugf-range {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3000;
+  background: rgba(0,0,0,.05);
+}
+.ugf-range-card {
+  position: absolute;
+  left: 50%;
+  top: 160px;
+  width: 260px;
+  margin-left: -150px;
+  padding: 16px 20px 18px;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.2);
+  box-shadow: 0 4px 16px rgba(0,0,0,.2);
+  color: #222;
+  font-size: 13px;
+}
+.ugf-range-title {
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+.ugf-range-card label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 8px;
+  color: #555;
+}
+.ugf-range-card input {
+  width: 180px;
+  height: 25px;
+  border: 1px solid #d9d9d9;
+  border-top-color: #c0c0c0;
+  padding: 1px 8px;
+  font: 13px arial, sans-serif;
+  color: #222;
+  box-sizing: border-box;
+}
+.ugf-range-card input:focus {
+  border-color: #4d90fe;
+  outline: none;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+}
+.ugf-range-btns {
+  margin-top: 6px;
+  text-align: right;
+}
+.ugf-range-go {
+  display: inline-block;
+  min-width: 54px;
+  height: 27px;
+  line-height: 27px;
+  padding: 0 8px;
+  background: #f5f5f5 linear-gradient(to bottom, #f5f5f5, #f1f1f1);
+  border: 1px solid rgba(0,0,0,.1);
+  border-radius: 2px;
+  color: #444 !important;
+  font-size: 11px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none !important;
+}
+.ugf-range-go:hover {
+  border-color: #c6c6c6;
+  background: #f8f8f8 linear-gradient(to bottom, #f8f8f8, #f1f1f1);
+  color: #222 !important;
+}
+.ugf-range-x {
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  color: #999 !important;
+  font-size: 18px;
+  line-height: 18px;
+  text-decoration: none !important;
+}
+/* the gear's menu, 2013-2016, and "SafeSearch on" beside it */
+#ugf-navbar-right {
+  position: relative;
+}
+#ugf-gear-dd {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 34px;
+  z-index: 1000;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.2);
+  box-shadow: 0 2px 4px rgba(0,0,0,.2);
+  padding: 6px 0;
+  min-width: 130px;
+}
+html[ugf-gear-open] #ugf-gear-dd {
+  display: block;
+}
+#ugf-gear-dd a {
+  display: block;
+  padding: 7px 24px 7px 16px;
+  color: #333 !important;
+  font-size: 13px;
+  text-decoration: none !important;
+  white-space: nowrap;
+}
+#ugf-gear-dd a:hover {
+  background: #eee;
+}
+#ugf-safe-on {
+  align-self: center;
+  margin-right: 16px;
+  font-size: 13px;
+  color: #777;
+}
+html[ugf-gear-open] #ugf-settings-button {
+  border: 1px solid #c6c6c6;
+  background: linear-gradient(to bottom,#f6f6f6,#f1f1f1);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
 }
 
 #ugf-image-results {
@@ -57582,6 +57964,127 @@ html:not([legacy-neuro]) .ugf-neuro-playground,
 .ugf-instant-answer-list {
   padding: 15px 20px 0;
 }
+/* (8.1) the calculator card of 2012-2016 (Google's of October 2013) */
+#ugf-calc {
+  position: relative;
+  box-shadow: 0 1px 4px rgba(0,0,0,.2);
+  background: #fff;
+  padding: 20px 20px 24px;
+  margin: 0 0 20px;
+  outline: none;
+  font-family: arial, sans-serif;
+}
+#ugf-calc-display {
+  position: relative;
+  border: 1px solid #c8c8c8;
+  border-top-color: #b4b4b4;
+  background: #fff;
+  height: 54px;
+  margin-bottom: 8px;
+  padding: 4px 12px;
+  text-align: right;
+  overflow: hidden;
+}
+#ugf-calc-expr {
+  height: 14px;
+  font-size: 12px;
+  line-height: 14px;
+  color: #777;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#ugf-calc-out {
+  font-size: 32px;
+  line-height: 38px;
+  color: #222;
+  white-space: nowrap;
+}
+#ugf-calc-out.small {
+  font-size: 22px;
+}
+#ugf-calc-keys {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+.ugf-calc-k {
+  display: block;
+  height: 34px;
+  line-height: 34px;
+  text-align: center;
+  font-size: 15px;
+  color: #444 !important;
+  text-decoration: none !important;
+  border: 1px solid rgba(0,0,0,.1);
+  border-radius: 1px;
+  background: #e8e8e8 linear-gradient(to bottom, #ececec, #e2e2e2);
+  cursor: default;
+  user-select: none;
+}
+.ugf-calc-k sup {
+  font-size: 10px;
+  line-height: 0;
+  vertical-align: 5px;
+}
+.ugf-calc-k.k-n {
+  background: #f8f8f8 linear-gradient(to bottom, #fafafa, #f0f0f0);
+  color: #222 !important;
+}
+.ugf-calc-k:hover {
+  border-color: #c6c6c6;
+  box-shadow: 0 1px 1px rgba(0,0,0,.1);
+  color: #222 !important;
+}
+.ugf-calc-k:active {
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.15);
+}
+.ugf-calc-k.k-eq {
+  background: #4d90fe linear-gradient(to bottom, #4d90fe, #4787ed);
+  border-color: #3079ed;
+  color: #fff !important;
+  font-weight: bold;
+}
+.ugf-calc-k.k-eq:hover {
+  background: #357ae8 linear-gradient(to bottom, #4d90fe, #357ae8);
+  border-color: #2f5bb7;
+}
+/* Rad | Deg: two halves of one button */
+.ugf-calc-k.k-mode {
+  color: #777 !important;
+  font-size: 13px;
+}
+.ugf-calc-k.k-mode.on {
+  background: #d8d8d8 linear-gradient(to bottom, #d6d6d6, #cfcfcf);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.15);
+  color: #333 !important;
+}
+.ugf-calc-k[data-k="rad"] {
+  border-radius: 1px 0 0 1px;
+  margin-right: -6px;
+}
+.ugf-calc-k[data-k="deg"] {
+  border-radius: 0 1px 1px 0;
+}
+#ugf-calc.inv .k-inv {
+  background: #d8d8d8 linear-gradient(to bottom, #d6d6d6, #cfcfcf);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.15);
+}
+#ugf-calc-info {
+  position: absolute;
+  right: 12px;
+  bottom: 6px;
+  font-size: 11px;
+  color: #777 !important;
+  text-decoration: none !important;
+}
+#ugf-calc-info:hover {
+  text-decoration: underline !important;
+}
+[layout="2012"] #ugf-calc {
+  box-shadow: none;
+  border: 1px solid #ebebeb;
+}
 
 
 .ugf-correction {
@@ -58262,6 +58765,53 @@ html[layout="2014"][gplex2014n] #ugf-fake-share-button::after {
 }
 html[layout="2014"][gplex2014n] #ugf-fake-share-button:hover::after {
   opacity: 1;
+}
+/* (8.1) the corner of October-December 2014 as measured off Google's own screenshot: +Name in #404040,
+   the grid of 19px, the bell 19x23, the Share icon 24x21 (all 55% black, as Google drew them) and the
+   photo at 34px, with Google's spacing */
+html[layout="2014"][gplex2014n] .ugf-plus-buttons a {
+  color: #404040;
+  margin-right: 24px;
+}
+html[layout="2014"][gplex2014n] #waffle {
+  padding: 0 18px 0 0;
+}
+html[layout="2014"][gplex2014n] #waffle .gp-icon {
+  width: 19px;
+  height: 19px;
+  align-self: center;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 19 19'%3E%3Cpath d='M0 0h5v5H0zM7 0h5v5H7zM14 0h5v5h-5zM0 7h5v5H0zM7 7h5v5H7zM14 7h5v5h-5zM0 14h5v5H0zM7 14h5v5H7zM14 14h5v5h-5z'/%3E%3C/svg%3E") center / 19px 19px no-repeat;
+}
+html[layout="2014"][gplex2014n] #ugf-fake-notifs-button {
+  padding: 0 4px;
+}
+html[layout="2014"][gplex2014n] #ugf-fake-notifs-button .ugf-plus-button-icon {
+  width: 28px;
+  height: 28px;
+  background-size: 28px 28px;
+}
+html[layout="2014"][gplex2014n] #ugf-fake-share-button {
+  width: 24px;
+  margin-left: 11px;
+}
+html[layout="2014"][gplex2014n] #ugf-fake-share-button::after {
+  top: 4px;
+  right: 0;
+  width: 24px;
+  height: 21px;
+  opacity: .55;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 21'%3E%3Cpath d='M1.5 0h18A1.5 1.5 0 0 1 21 1.5V17l3 4H0V1.5A1.5 1.5 0 0 1 1.5 0zM2 2v15h17V2zm7.25 2.5h2.5v3.75h3.75v2.5h-3.75v3.75h-2.5v-3.75H5.5v-2.5h3.75z' fill-rule='evenodd'/%3E%3C/svg%3E") center / 24px 21px no-repeat;
+}
+html[layout="2014"][gplex2014n] #ugf-fake-share-button:hover::after {
+  opacity: .8;
+}
+html[layout="2014"][gplex2014n] #ugf-account-button,
+html[layout="2014"][gplex2014n] #ugf-account-button img {
+  width: 34px;
+  height: 34px;
+}
+html[layout="2014"][gplex2014n] #ugf-account-button {
+  margin-left: 3px;
 }
 html[layout="2014"] #ugf-account-button,
 html[layout="2014"] #ugf-account-button img {
@@ -68437,7 +68987,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         container.insertBefore(newElem, container.children[0]);
         ugfKpTwitter(newElem);
         ugfKpCollage(newElem, SB.imgs, SB.title);
-        ugfKpPeriod(newElem);
+        ugfKpRebuild(newElem);
     }
     // The knowledge panel's profile links: X is Twitter again, with its blue bird (Twitter's own
     // bird icon, as abs.twimg.com/favicons/twitter.ico still serves it) (issue #25)
@@ -68503,6 +69053,689 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 ic.parentNode.replaceChild(bird, ic);
             });
         });
+    }
+    // (8.1) The knowledge panel rebuilt, section by section, in the shapes Google used from 2012 to
+    // 2016 (as in its own screenshots of 2014): bold "Label: value" facts, strips of 72px pictures
+    // with the name under each ("People also search for", the cast), lists of rows ruled off from
+    // one another (songs, episodes, "Available on"), star ratings with the source after them, and
+    // "View 15+ more" as a plain link. Each of today's sections is read for what it holds - a
+    // heading, repeated items with a picture, a label with a colon - and drawn again from that; a
+    // section nothing is made of keeps Google's markup and gets the period's clothes from
+    // ugfKpPeriod, which runs after this on the whole panel.
+    function ugfKpText(el) {
+        return String(el && el.textContent || "").replace(/\s+/g, " ").trim();
+    }
+    function ugfKpImgSrc(im) {
+        if (!im) {
+            return "";
+        }
+        let src = im.getAttribute("src") || "";
+        if (!src || /^data:image\/gif/.test(src) || (src.length < 100 && /^data:/.test(src))) {
+            src = (im.id && typeof ugfGetDeferredImage === "function" ? ugfGetDeferredImage(im.id) : "") || im.getAttribute("data-src") || im.getAttribute("data-iurl") || "";
+        }
+        return /^data:image\/gif/.test(src) ? "" : src;
+    }
+    // the first text lines of an item (its name, then what it is), without the picture's
+    function ugfKpLines(el, max) {
+        const out = [];
+        const walk = function(n) {
+            if (out.length >= max) {
+                return;
+            }
+            if (n.nodeType === 3) {
+                const t = n.nodeValue.replace(/\s+/g, " ").trim();
+                if (t) {
+                    // one block of text at a time: its text nodes join into a line
+                    const blk = n.parentElement;
+                    if (out.length && out[out.length - 1].blk === blk) {
+                        out[out.length - 1].t += (out[out.length - 1].t ? " " : "") + t;
+                    } else {
+                        out.push({ t: t, blk: blk });
+                    }
+                }
+                return;
+            }
+            if (n.nodeType !== 1 || /^(svg|style|script|img)$/i.test(n.tagName)) {
+                return;
+            }
+            for (let c = n.firstChild; c; c = c.nextSibling) {
+                walk(c);
+            }
+        };
+        walk(el);
+        return out.map(function(o) {
+            return o.t;
+        });
+    }
+    function ugfKpHref(el) {
+        const a = el.tagName === "A" && el.getAttribute("href") ? el : el.querySelector("a[href]");
+        return a ? a.getAttribute("href") : "";
+    }
+    // the section's heading: short, big or bold, before everything else
+    function ugfKpHeading(kc) {
+        const els = kc.querySelectorAll("*");
+        for (let i = 0; i < els.length; i++) {
+            const el = els[i];
+            if (el.closest("a") || el.closest("svg")) {
+                continue;
+            }
+            const t = ugfKpText(el);
+            if (!t || t.length > 48 || !ugfKpOwnText(el)) {
+                continue;
+            }
+            const s = getComputedStyle(el);
+            const fs = parseFloat(s.fontSize) || 0;
+            const fw = parseInt(s.fontWeight, 10) || 400;
+            if (/^h[1-6]$/i.test(el.tagName) || el.getAttribute("role") === "heading" || fs >= 18 || (fs >= 16 && fw >= 500)) {
+                return { el: el, text: t.replace(/:$/, "") };
+            }
+            // (the first text is not a heading: the section has none)
+            return null;
+        }
+        return null;
+    }
+    // repeated items with a picture each: the first container with two or more such children
+    function ugfKpItems(kc) {
+        const cands = kc.querySelectorAll("*");
+        for (let i = 0; i < cands.length; i++) {
+            const p = cands[i];
+            if (p.children.length < 2 || p.closest("svg")) {
+                continue;
+            }
+            const kids = Array.prototype.filter.call(p.children, function(c) {
+                return c.tagName !== "SCRIPT" && c.tagName !== "STYLE" && c.getBoundingClientRect().width > 0;
+            });
+            const withPic = kids.filter(function(c) {
+                return c.querySelectorAll("img").length === 1 && ugfKpLines(c, 1).length;
+            });
+            // (a heading and a "more" button may sit beside the items)
+            if (withPic.length >= 2 && withPic.length >= kids.length / 2) {
+                const r0 = withPic[0].getBoundingClientRect();
+                const r1 = withPic[1].getBoundingClientRect();
+                const strip = Math.abs(r1.top - r0.top) < 8 && r1.left > r0.left && r0.width < 200;
+                return { el: p, items: withPic, strip: strip };
+            }
+        }
+        return null;
+    }
+    // "Label: value"
+    function ugfKpFact(kc) {
+        const t = ugfKpText(kc);
+        const m = t.match(/^([^:]{1,40}):\s+(\S[\s\S]*)$/);
+        if (!m || kc.getBoundingClientRect().height > 96 || kc.querySelector("img")) {
+            return null;
+        }
+        // the value with its links: the text after the label's colon
+        const clone = kc.cloneNode(true);
+        clone.querySelectorAll("svg, style, script, img").forEach(function(e) {
+            e.remove();
+        });
+        let html = "";
+        let labelDone = false;
+        const walker = document.createTreeWalker(clone, NodeFilter.SHOW_TEXT);
+        const nodes = [];
+        while (walker.nextNode()) {
+            nodes.push(walker.currentNode);
+        }
+        let seen = "";
+        for (let i = 0; i < nodes.length && !labelDone; i++) {
+            seen += nodes[i].nodeValue;
+            const at = seen.indexOf(":");
+            if (at > -1) {
+                // this node holds the colon: keep what follows it, drop everything before
+                const keep = nodes[i].nodeValue.slice(nodes[i].nodeValue.length - (seen.length - at - 1));
+                nodes[i].nodeValue = keep.replace(/^\s+/, "");
+                for (let j = 0; j < i; j++) {
+                    nodes[j].nodeValue = "";
+                }
+                labelDone = true;
+            }
+        }
+        // links keep their addresses, nothing else of the markup
+        const flat = function(n) {
+            if (n.nodeType === 3) {
+                return ugfEscapeHtml(n.nodeValue);
+            }
+            if (n.nodeType !== 1) {
+                return "";
+            }
+            let s = "";
+            for (let c = n.firstChild; c; c = c.nextSibling) {
+                s += flat(c);
+            }
+            if (n.tagName === "A" && n.getAttribute("href") && s.trim()) {
+                return '<a href="' + ugfEscapeHtml(n.getAttribute("href")) + '">' + s + "</a>";
+            }
+            return s;
+        };
+        html = flat(clone).replace(/\s+/g, " ").trim();
+        if (!html) {
+            return null;
+        }
+        return { label: m[1].trim(), html: html };
+    }
+    // "8.7/10 - GameStop": stars, then the figure and where it is from
+    function ugfKpRatings(kc) {
+        const links = Array.prototype.filter.call(kc.querySelectorAll("a[href]"), function(a) {
+            return ugfKpText(a) && !a.querySelector("img");
+        });
+        if (!links.length || kc.querySelector("img") || kc.getBoundingClientRect().height > 80) {
+            return null;
+        }
+        const t = ugfKpText(kc);
+        if (!/(\d+(\.\d+)?)\s*(%|\/\s*(5|10|100))/.test(t)) {
+            return null;
+        }
+        const out = [];
+        links.forEach(function(a) {
+            // the figure just before the link
+            const name = ugfKpText(a);
+            const before = t.slice(0, t.indexOf(name));
+            const m = before.match(/(\d+(?:\.\d+)?)\s*(%|\/\s*(5|10|100))?[^\d]*$/);
+            if (!m) {
+                return;
+            }
+            const v = parseFloat(m[1]);
+            const kind = (m[2] || "").replace(/\s/g, "");
+            let stars = kind === "%" || kind === "/100" ? v / 20 : kind === "/10" ? v / 2 : kind === "/5" ? v : v <= 5 ? v : v <= 10 ? v / 2 : v / 20;
+            stars = Math.max(0, Math.min(5, stars));
+            out.push({ stars: stars, text: m[1] + (kind ? kind : ""), name: name, href: a.getAttribute("href") });
+        });
+        return out.length ? out : null;
+    }
+    function ugfKpMoreLink(kc) {
+        const els = kc.querySelectorAll("a, [role='button'], button, span, div");
+        for (let i = 0; i < els.length; i++) {
+            const t = ugfKpText(els[i]);
+            if (t.length < 24 && /^(view|see|show)\b.*\b(more|all)\b|^more\b/i.test(t) && !els[i].querySelector("img")) {
+                return { text: t, href: ugfKpHref(els[i]) };
+            }
+        }
+        return null;
+    }
+    function ugfKpRebuild(root, tries) {
+        if (!root) {
+            return;
+        }
+        if (ugfKpEra() !== "k" || root.hasAttribute("ugf-kp-rebuilt")) {
+            ugfKpPeriod(root);
+            return;
+        }
+        if (!root.getBoundingClientRect().height && (tries || 0) < 25) {
+            setTimeout(function() {
+                ugfKpRebuild(root, (tries || 0) + 1);
+            }, 200);
+            return;
+        }
+        root.setAttribute("ugf-kp-rebuilt", "");
+        const esc = ugfEscapeHtml;
+        const box = root.querySelector("#ugf-side-info-kay-sees-and-ess-esses");
+        const title = ugfKpText(root.querySelector("#ugf-side-info-title"));
+        const width = box ? box.getBoundingClientRect().width : 424;
+        const fit = Math.max(3, Math.floor((width + 16) / 88));
+        const q = function(s) {
+            return "https://www.google.com/search?q=" + encodeURIComponent(s);
+        };
+        const moreHtml = function(more, fallback) {
+            if (!more && !fallback) {
+                return "";
+            }
+            const href = (more && more.href) || fallback;
+            return '<a class="ugf-kp-more-link" href="' + esc(href) + '">' + esc(more ? more.text : "View more") + "</a>";
+        };
+        const facts = [];
+        root.querySelectorAll(".ugf-kc").forEach(function(kc) {
+            if (!ugfKpText(kc)) {
+                return;
+            }
+            try {
+                const head = ugfKpHeading(kc);
+                const more = ugfKpMoreLink(kc);
+                const fact = !head ? ugfKpFact(kc) : null;
+                if (fact) {
+                    kc.innerHTML = trusted_policy.createHTML('<div class="ugf-kp-fact"><b>' + esc(fact.label) + ":</b> " + fact.html + "</div>");
+                    kc.setAttribute("ugf-kp", "fact");
+                    facts.push(kc);
+                    return;
+                }
+                const rate = !head ? ugfKpRatings(kc) : null;
+                if (rate) {
+                    kc.innerHTML = trusted_policy.createHTML(rate.map(function(r) {
+                        return '<div class="ugf-kp-rating"><span class="ugf-kp-stars"><span style="width:' + (r.stars * 20) + '%"></span></span>' +
+                            '<span class="ugf-kp-rating-v">' + esc(r.text) + ' -&nbsp;</span><a href="' + esc(r.href) + '">' + esc(r.name) + "</a></div>";
+                    }).join(""));
+                    kc.setAttribute("ugf-kp", "rating");
+                    return;
+                }
+                const found = ugfKpItems(kc);
+                if (found) {
+                    const items = found.items;
+                    let html = head ? '<div class="ugf-kp-h">' + esc(head.text) + "</div>" : "";
+                    if (found.strip) {
+                        html += '<div class="ugf-kp-strip">' + items.slice(0, fit).map(function(it) {
+                            const lines = ugfKpLines(it, 2);
+                            const href = ugfKpHref(it) || q(lines[0]);
+                            return '<a class="ugf-kp-it" href="' + esc(href) + '"><span class="ugf-kp-pic"><img src="' + esc(ugfKpImgSrc(it.querySelector("img"))) + '" alt=""></span>' +
+                                '<span class="n">' + esc(lines[0] || "") + "</span>" + (lines[1] ? '<span class="r">' + esc(lines[1]) + "</span>" : "") + "</a>";
+                        }).join("") + "</div>";
+                        html += moreHtml(more, items.length > fit ? q((head ? head.text + " " : "") + title) : "");
+                    } else {
+                        html += '<div class="ugf-kp-list">' + items.slice(0, 6).map(function(it) {
+                            const lines = ugfKpLines(it, 3);
+                            const href = ugfKpHref(it) || q(lines[0]);
+                            const src = ugfKpImgSrc(it.querySelector("img"));
+                            return '<a class="ugf-kp-row" href="' + esc(href) + '">' + (src ? '<img src="' + esc(src) + '" alt="">' : "") +
+                                '<span class="ugf-kp-row-t"><span class="t">' + esc(lines[0] || "") + "</span>" +
+                                (lines[1] ? '<span class="s">' + esc(lines.slice(1).join(" · ")) + "</span>" : "") + "</span></a>";
+                        }).join("") + "</div>";
+                        html += moreHtml(more, items.length > 6 ? q((head ? head.text + " " : "") + title) : "");
+                    }
+                    kc.innerHTML = trusted_policy.createHTML(html);
+                    kc.setAttribute("ugf-kp", found.strip ? "strip" : "list");
+                    return;
+                }
+                // a heading over something else: the heading in the period's type, the rest as it is
+                if (head && head.el && head.el.parentNode) {
+                    const h = document.createElement("div");
+                    h.className = "ugf-kp-h";
+                    h.textContent = head.text;
+                    head.el.parentNode.replaceChild(h, head.el);
+                    kc.setAttribute("ugf-kp", "headed");
+                }
+            } catch (e) {}
+        });
+        // the facts sit together, one under the other
+        if (facts.length > 1) {
+            const group = document.createElement("div");
+            group.className = "ugf-kp-facts";
+            facts[0].parentNode.insertBefore(group, facts[0]);
+            facts.forEach(function(kc) {
+                group.appendChild(kc);
+            });
+        }
+        ugfKpPeriod(root);
+    }
+    // (8.1) The calculator Google showed over the results from July 2012 (Late 2011-Early 2012 to 2016
+    // layouts): a sum typed in the search box ("12*(3+4)", "sqrt(2)", "sin(pi/2)") or the word
+    // "calculator" brings up the card of October 2013 - the display, Rad/Deg, Inv, the functions
+    // on the left, the digits in the middle, the blue "=" - and it works, on the page, with the
+    // keyboard too. The sum is worked out here, by Gplex, not sent anywhere.
+    function ugfCalcWanted(q) {
+        const lay = String(layout || "");
+        if (["2012", "2013", "2014", "2015", "2016"].indexOf(lay) < 0 || location != "all") {
+            return false;
+        }
+        const s = String(q || "").trim().toLowerCase();
+        if (/^(online\s+)?(calculator|calc|scientific calculator)$/.test(s)) {
+            return "";
+        }
+        const t = s.replace(/×/g, "*").replace(/÷/g, "/").replace(/−/g, "-").replace(/\s+/g, "");
+        if (!/\d/.test(t) || /^\d+$/.test(t)) {
+            return false;
+        }
+        // (not a phone number, a date or a version number)
+        if (/^\d[\d-]*\d$/.test(t) && (t.match(/-/g) || []).length >= 2 || /^\d+[\/.]\d+[\/.]\d+$/.test(t)) {
+            return false;
+        }
+        if (!/^[\d.()+\-*\/^%!,πe]*$/.test(t.replace(/\b(sin|cos|tan|asin|acos|atan|ln|log|sqrt|abs|exp|pi)\b/g, ""))) {
+            return false;
+        }
+        if (!/[+\-*\/^%!]|\b(sin|cos|tan|asin|acos|atan|ln|log|sqrt|abs|exp)\b|π|sqrt/.test(t) && !/\(/.test(t)) {
+            return false;
+        }
+        return t;
+    }
+    // the sum worked out: numbers, + - * / ^ % !, brackets, the functions, π, e and Ans
+    function ugfCalcEval(src, deg, ans) {
+        const s = String(src || "").replace(/×/g, "*").replace(/÷/g, "/").replace(/−/g, "-").replace(/√/g, "sqrt").replace(/π/g, "pi").replace(/\s+/g, "");
+        const toks = [];
+        let i = 0;
+        while (i < s.length) {
+            const c = s[i];
+            if (/[\d.]/.test(c)) {
+                const m = s.slice(i).match(/^\d*\.?\d+(?:e[+-]?\d+)?|^\d+\.?(?:e[+-]?\d+)?/i);
+                if (!m) {
+                    throw new Error("number");
+                }
+                toks.push({ t: "n", v: parseFloat(m[0]) });
+                i += m[0].length;
+            } else if (/[a-z]/i.test(c)) {
+                const m = s.slice(i).match(/^[a-z]+/i);
+                const w = m[0].toLowerCase();
+                if (w === "pi") {
+                    toks.push({ t: "n", v: Math.PI });
+                } else if (w === "e") {
+                    toks.push({ t: "n", v: Math.E });
+                } else if (w === "ans") {
+                    toks.push({ t: "n", v: ans || 0 });
+                } else if (/^(sin|cos|tan|asin|acos|atan|ln|log|sqrt|abs|exp)$/.test(w)) {
+                    toks.push({ t: "f", v: w });
+                } else {
+                    throw new Error("word");
+                }
+                i += m[0].length;
+            } else if ("+-*/^%!(),".indexOf(c) > -1) {
+                toks.push({ t: c });
+                i++;
+            } else {
+                throw new Error("char");
+            }
+        }
+        let p = 0;
+        const peek = function() {
+            return toks[p] || { t: "end" };
+        };
+        const take = function() {
+            return toks[p++];
+        };
+        const fact = function(n) {
+            if (n < 0 || n !== Math.floor(n) || n > 170) {
+                return NaN;
+            }
+            let r = 1;
+            for (let k = 2; k <= n; k++) {
+                r *= k;
+            }
+            return r;
+        };
+        const fn = function(name, x) {
+            const toR = deg ? Math.PI / 180 : 1;
+            switch (name) {
+                case "sin": return Math.sin(x * toR);
+                case "cos": return Math.cos(x * toR);
+                case "tan": return Math.tan(x * toR);
+                case "asin": return Math.asin(x) / toR;
+                case "acos": return Math.acos(x) / toR;
+                case "atan": return Math.atan(x) / toR;
+                case "ln": return Math.log(x);
+                case "log": return Math.log(x) / Math.LN10;
+                case "sqrt": return Math.sqrt(x);
+                case "abs": return Math.abs(x);
+                case "exp": return Math.exp(x);
+            }
+            return NaN;
+        };
+        const expr = function() {
+            let v = term();
+            while (peek().t === "+" || peek().t === "-") {
+                const op = take().t;
+                const r = term();
+                v = op === "+" ? v + r : v - r;
+            }
+            return v;
+        };
+        const term = function() {
+            let v = unary();
+            for (;;) {
+                const n = peek();
+                if (n.t === "*" || n.t === "/") {
+                    take();
+                    const r = unary();
+                    v = n.t === "*" ? v * r : v / r;
+                } else if (n.t === "n" || n.t === "f" || n.t === "(") {
+                    // 2(3), 2pi, 2sin(x): multiplied
+                    v = v * unary();
+                } else {
+                    return v;
+                }
+            }
+        };
+        const unary = function() {
+            if (peek().t === "-") {
+                take();
+                return -unary();
+            }
+            if (peek().t === "+") {
+                take();
+                return unary();
+            }
+            return power();
+        };
+        const power = function() {
+            const b = postfix();
+            if (peek().t === "^") {
+                take();
+                return Math.pow(b, unary());
+            }
+            return b;
+        };
+        const postfix = function() {
+            let v = atom();
+            for (;;) {
+                if (peek().t === "!") {
+                    take();
+                    v = fact(v);
+                } else if (peek().t === "%") {
+                    take();
+                    v = v / 100;
+                } else {
+                    return v;
+                }
+            }
+        };
+        const atom = function() {
+            const n = take();
+            if (!n) {
+                throw new Error("end");
+            }
+            if (n.t === "n") {
+                return n.v;
+            }
+            if (n.t === "(") {
+                const v = expr();
+                if (take().t !== ")") {
+                    throw new Error("bracket");
+                }
+                return v;
+            }
+            if (n.t === "f") {
+                let x;
+                if (peek().t === "(") {
+                    take();
+                    x = expr();
+                    if (take().t !== ")") {
+                        throw new Error("bracket");
+                    }
+                } else {
+                    x = unary();
+                }
+                return fn(n.v, x);
+            }
+            throw new Error("syntax");
+        };
+        if (!toks.length) {
+            throw new Error("empty");
+        }
+        const v = expr();
+        if (p < toks.length) {
+            throw new Error("trailing");
+        }
+        return v;
+    }
+    function ugfCalcFormat(v) {
+        if (typeof v !== "number" || isNaN(v)) {
+            return "Error";
+        }
+        if (!isFinite(v)) {
+            return v > 0 ? "Infinity" : "-Infinity";
+        }
+        let s = String(parseFloat(v.toPrecision(11)));
+        if (/e/.test(s)) {
+            s = s.replace(/e\+?/, " E ");
+        }
+        return s;
+    }
+    function ugfKCalc(searchValue) {
+        const want = ugfCalcWanted(searchValue);
+        if (want === false || document.querySelector("#ugf-calc")) {
+            return;
+        }
+        const at = document.querySelector("#ugf-search-results-reserved-top");
+        if (!at) {
+            return;
+        }
+        const esc = ugfEscapeHtml;
+        const keys = [
+            ["rad", "Rad", "k-mode on"], ["deg", "Deg", "k-mode"], ["!", "x!", "k-f"], ["(", "(", "k-f"], [")", ")", "k-f"], ["%", "%", "k-f"], ["AC", "AC", "k-f"],
+            ["inv", "Inv", "k-f k-inv"], ["sin", "sin", "k-f"], ["ln", "ln", "k-f"], ["7", "7", "k-n"], ["8", "8", "k-n"], ["9", "9", "k-n"], ["/", "÷", "k-f"],
+            ["pi", "π", "k-f"], ["cos", "cos", "k-f"], ["log", "log", "k-f"], ["4", "4", "k-n"], ["5", "5", "k-n"], ["6", "6", "k-n"], ["*", "×", "k-f"],
+            ["e", "e", "k-f"], ["tan", "tan", "k-f"], ["sqrt", "√", "k-f"], ["1", "1", "k-n"], ["2", "2", "k-n"], ["3", "3", "k-n"], ["-", "−", "k-f"],
+            ["ans", "Ans", "k-f"], ["exp", "EXP", "k-f"], ["^", "x<sup>y</sup>", "k-f"], ["0", "0", "k-n"], [".", ".", "k-n"], ["=", "=", "k-eq"], ["+", "+", "k-f"]
+        ];
+        const card = document.createElement("div");
+        card.id = "ugf-calc";
+        card.setAttribute("tabindex", "0");
+        card.innerHTML = trusted_policy.createHTML('<div id="ugf-calc-display"><div id="ugf-calc-expr"></div><div id="ugf-calc-out">0</div></div>' +
+            '<div id="ugf-calc-keys">' + keys.map(function(k) {
+                return '<a href="#" class="ugf-calc-k ' + k[2] + '" data-k="' + esc(k[0]) + '">' + k[1] + "</a>";
+            }).join("") + "</div><a id=\"ugf-calc-info\" href=\"https://support.google.com/websearch/answer/3284611\">More info</a>");
+        at.insertBefore(card, at.firstChild);
+        const exprEl = card.querySelector("#ugf-calc-expr");
+        const outEl = card.querySelector("#ugf-calc-out");
+        let cur = "";          // what is being typed
+        let ans = 0;
+        let deg = false;
+        let inv = false;
+        let fresh = true;      // the display shows an answer: the next digit starts over
+        const show = function(expr, out) {
+            exprEl.textContent = expr;
+            outEl.textContent = out;
+            outEl.classList.toggle("small", out.length > 14);
+        };
+        const pretty = function(s) {
+            return s.replace(/\*/g, " × ").replace(/\//g, " ÷ ").replace(/-/g, " - ").replace(/\+/g, " + ").replace(/\s+/g, " ").trim();
+        };
+        const run = function() {
+            if (!cur) {
+                return;
+            }
+            let out;
+            try {
+                const v = ugfCalcEval(cur, deg, ans);
+                out = ugfCalcFormat(v);
+                if (out !== "Error") {
+                    ans = v;
+                }
+            } catch (e) {
+                out = "Error";
+            }
+            show(pretty(cur) + " =", out);
+            fresh = true;
+        };
+        const put = function(s) {
+            if (fresh) {
+                cur = "";
+                fresh = false;
+                exprEl.textContent = "";
+            }
+            cur += s;
+            show("", pretty(cur) || "0");
+        };
+        const press = function(k) {
+            if (k === "rad" || k === "deg") {
+                deg = k === "deg";
+                card.querySelectorAll(".k-mode").forEach(function(b) {
+                    b.classList.toggle("on", b.getAttribute("data-k") === k);
+                });
+                return;
+            }
+            if (k === "inv") {
+                inv = !inv;
+                card.classList.toggle("inv", inv);
+                card.querySelectorAll(".ugf-calc-k").forEach(function(b) {
+                    const t = b.getAttribute("data-k");
+                    const alt = { sin: "sin<sup>-1</sup>", cos: "cos<sup>-1</sup>", tan: "tan<sup>-1</sup>", ln: "e<sup>x</sup>", log: "10<sup>x</sup>", sqrt: "x<sup>2</sup>" }[t];
+                    if (alt) {
+                        b.innerHTML = trusted_policy.createHTML(inv ? alt : t === "sqrt" ? "√" : t);
+                    }
+                });
+                return;
+            }
+            if (k === "AC") {
+                cur = "";
+                fresh = true;
+                show("", "0");
+                return;
+            }
+            if (k === "=") {
+                run();
+                return;
+            }
+            if (k === "ans") {
+                put("Ans");
+                return;
+            }
+            if (k === "exp") {
+                put("*10^");
+                return;
+            }
+            if (inv && /^(sin|cos|tan)$/.test(k)) {
+                put("a" + k + "(");
+            } else if (inv && k === "ln") {
+                put("e^");
+            } else if (inv && k === "log") {
+                put("10^");
+            } else if (inv && k === "sqrt") {
+                put("^2");
+            } else if (/^(sin|cos|tan|ln|log|sqrt)$/.test(k)) {
+                put(k + "(");
+            } else if (k === "pi") {
+                put("π");
+            } else if (k === "!" || k === "%") {
+                // (after an answer, these work on it)
+                if (fresh) {
+                    cur = ugfCalcFormat(ans).replace(/ E /, "e");
+                    fresh = false;
+                }
+                cur += k;
+                show("", pretty(cur));
+            } else {
+                put(k);
+            }
+            if (inv && k !== "inv") {
+                press("inv");
+            }
+        };
+        card.addEventListener("click", function(ev) {
+            const b = ev.target.closest(".ugf-calc-k");
+            if (b) {
+                ev.preventDefault();
+                press(b.getAttribute("data-k"));
+                card.focus();
+            }
+        });
+        card.addEventListener("keydown", function(ev) {
+            const k = ev.key;
+            if (/^[\d.()+\-*\/^%!]$/.test(k)) {
+                ev.preventDefault();
+                press(k);
+            } else if (k === "Enter" || k === "=") {
+                ev.preventDefault();
+                press("=");
+            } else if (k === "Backspace") {
+                ev.preventDefault();
+                if (!fresh && cur) {
+                    cur = cur.slice(0, -1);
+                    show("", pretty(cur) || "0");
+                }
+            } else if (k === "Escape" || k === "Delete") {
+                ev.preventDefault();
+                press("AC");
+            }
+        });
+        if (want) {
+            cur = want;
+            fresh = false;
+            run();
+            // (Google's own one-line answer, if the page had it, would say the same twice)
+            setTimeout(function() {
+                document.querySelectorAll("#ugf-search-results-reserved-top .ugf-instant-answer").forEach(function(b) {
+                    if (/^[\s\d.,+\-*\/×÷=()eE%!π√]*$/.test(String(b.textContent || "").trim())) {
+                        b.remove();
+                    }
+                });
+            }, 1500);
+        }
     }
     // (8.0) The knowledge panel's sections are today's: Google's own markup, styled by Google's
     // own style sheet - round buttons, grey chips and cards, Google Sans, rows that scroll sideways
@@ -68784,34 +70017,260 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 }
             });
         }
-        const head = document.querySelector("#ugf-search-results-header");
-        const tools = document.querySelector("#ugf-tools-tab");
-        if (!head || !tools || document.querySelector("#ugf-tools-row")) {
+        ugfBarTitles();
+        ugfKTools(searchValue, tbs);
+        ugfKGear(searchValue);
+    }
+    // (8.1) The bar's buttons named on hover, as Google's were: by the browser's own tooltip, from
+    // each button's title (Google's own screenshots of 2013-2014 show "Notifications" and, from
+    // October 2014, "Google+ Share" in the plain system tooltip)
+    function ugfBarTitles(name, mail) {
+        const lay = String(layout || "");
+        if (["2013", "2014", "2015", "2016", "2016C"].indexOf(lay) < 0) {
             return;
         }
-        const base = "https://www.google.com/search?q=" + q;
-        const t = String(tbs || "");
-        const times = [["", "Any time"], ["qdr:h", "Past hour"], ["qdr:d", "Past 24 hours"], ["qdr:w", "Past week"], ["qdr:m", "Past month"], ["qdr:y", "Past year"]];
-        const kinds = [["", "All results"], ["li:1", "Verbatim"]];
-        const menu = function(list, cur) {
-            const now = list.filter(function(x) {
-                return x[0] === cur;
-            })[0] || list[0];
-            return '<div class="ugf-tool' + (now[0] ? " on" : "") + '"><span class="lbl">' + now[1] + '</span><span class="ugf-k-caret"></span><div class="ugf-tool-dd">' +
-                list.map(function(x) {
-                    return '<a href="' + base + (x[0] ? "&tbs=" + x[0] : "") + '"' + (x === now ? ' class="on"' : "") + ">" + x[1] + "</a>";
-                }).join("") + "</div></div>";
+        const set = function(sel, t) {
+            document.querySelectorAll(sel).forEach(function(e) {
+                if (t) {
+                    e.setAttribute("title", t);
+                }
+            });
         };
+        set("#waffle", "Apps");
+        set("#ugf-fake-notifs-button", "Notifications");
+        set("#ugf-fake-share-button", document.documentElement.hasAttribute("gplex2014n") ? "Google+ Share" : "Share");
+        if (name || mail) {
+            set("#ugf-account-button", "Google Account: " + (name || "") + (mail ? "\n(" + mail + ")" : ""));
+        }
+    }
+    // (8.1) Search tools as Google had them from 2013 to 2016: the button stays pressed while the row
+    // is open, each menu shows what it is set to (in bold once it is not the default) with a check
+    // beside it in the list, and Clear takes every tool off. The tools are each tab's own - Web's
+    // time and verbatim, Images' size, colour, type, time and usage rights, Videos' duration and
+    // quality, News' time and order - and only those Google still answers to (Reading level,
+    // Visited pages and the like are gone from Google, so they are not offered).
+    function ugfKTools(searchValue, tbs) {
+        const h = document.documentElement;
+        const toolsTab = document.querySelector("#ugf-tools-tab");
+        // (the layouts with the Search tools tab; the others have their tools of their own)
+        if (!toolsTab || document.querySelector("#ugf-tools-row") || ["2013", "2014", "2015", "2016"].indexOf(String(layout || "")) < 0) {
+            return;
+        }
+        const kind = location == "images" ? "images" : location == "videos" ? "videos" : location == "news" ? "news" : location == "all" ? "web" : "";
+        if (!kind) {
+            toolsTab.style.setProperty("display", "none", "important");
+            return;
+        }
+        const params = new URLSearchParams(window.location.search);
+        const keep = new URLSearchParams();
+        keep.set("q", searchValue || "");
+        ["udm", "tbm", "safe", "hl", "gl", "lr", "cr"].forEach(function(k) {
+            if (params.get(k)) {
+                keep.set(k, params.get(k));
+            }
+        });
+        const parts = String(tbs || "").split(",").filter(Boolean);
+        const url = function(list) {
+            const u = new URLSearchParams(keep);
+            if (list.length) {
+                u.set("tbs", list.join(","));
+            }
+            return "https://www.google.com/search?" + u.toString();
+        };
+        const esc = ugfEscapeHtml;
+        const TIME = /^(qdr|cdr|cd_min|cd_max):/;
+        const range = function() {
+            const lo = (parts.filter(function(p) { return /^cd_min:/.test(p); })[0] || "").slice(7);
+            const hi = (parts.filter(function(p) { return /^cd_max:/.test(p); })[0] || "").slice(7);
+            return parts.indexOf("cdr:1") > -1 ? [lo, hi] : null;
+        };
+        const timeItems = function(short) {
+            const list = [["Any time", []]];
+            if (!short) {
+                list.push(["Past hour", ["qdr:h"]]);
+            }
+            list.push(["Past 24 hours", ["qdr:d"]], ["Past week", ["qdr:w"]]);
+            if (!short) {
+                list.push(["Past month", ["qdr:m"]], ["Past year", ["qdr:y"]]);
+            }
+            list.push(["Custom range...", null]);
+            return list;
+        };
+        const colours = ["red", "orange", "yellow", "green", "teal", "blue", "purple", "pink", "white", "gray", "black", "brown"];
+        let sur = "";
+        try {
+            sur = window.sessionStorage.getItem("UGF_SUR_LABEL") || "";
+        } catch (e) {}
+        const menus = {
+            web: [
+                { strip: TIME, items: timeItems(false) },
+                { strip: /^li:/, items: [["All results", []], ["Verbatim", ["li:1"]]] }
+            ],
+            images: [
+                { strip: /^(isz|islt|isilu):/, label: "Size", items: [["Any size", []], ["Large", ["isz:l"]], ["Medium", ["isz:m"]], ["Icon", ["isz:i"]]] },
+                { strip: /^(ic|isc):/, label: "Color", items: [["Any color", []], ["Full color", ["ic:color"]], ["Black and white", ["ic:gray"]], ["Transparent", ["ic:trans"]]], swatches: true },
+                { strip: /^itp:/, label: "Type", items: [["Any type", []], ["Face", ["itp:face"]], ["Photo", ["itp:photo"]], ["Clip art", ["itp:clipart"]], ["Line drawing", ["itp:lineart"]], ["Animated", ["itp:animated"]]] },
+                { strip: TIME, label: "Time", items: timeItems(true) },
+                // (today's Google has only Creative Commons for the four "labeled for" choices of 2014)
+                { strip: /^sur:/, label: "Usage rights", sur: true, items: [["not filtered by license", []], ["labeled for reuse", ["sur:cl"]], ["labeled for commercial reuse", ["sur:cl"]],
+                    ["labeled for reuse with modification", ["sur:cl"]], ["labeled for commercial reuse with modification", ["sur:cl"]]] },
+                { label: "More tools", more: true, items: [["Show sizes", null]] }
+            ],
+            videos: [
+                { strip: /^dur:/, items: [["Any duration", []], ["Short (0-4 min)", ["dur:s"]], ["Medium (4-20 min)", ["dur:m"]], ["Long (20+ min)", ["dur:l"]]] },
+                { strip: TIME, items: timeItems(false) },
+                { strip: /^hq:/, items: [["Any quality", []], ["High quality", ["hq:h"]]] },
+                { strip: /^cc:/, items: [["All videos", []], ["Closed captioned", ["cc:1"]]] }
+            ],
+            news: [
+                { strip: TIME, items: timeItems(false) },
+                { strip: /^sbd:/, items: [["Sorted by relevance", []], ["Sorted by date", ["sbd:1"]]] }
+            ]
+        }[kind];
+        const all = [];
+        menus.forEach(function(m) {
+            if (m.strip) {
+                all.push(m.strip);
+            }
+        });
+        const without = function(strip) {
+            return parts.filter(function(p) {
+                return !(strip && strip.test(p));
+            });
+        };
+        // which item each menu is on now
+        const current = function(m) {
+            if (m.more) {
+                return -1;
+            }
+            const mine = parts.filter(function(p) {
+                return m.strip.test(p);
+            });
+            if (!mine.length) {
+                return 0;
+            }
+            if (m.items.some(function(it) { return it[0] === "Custom range..."; }) && range()) {
+                return m.items.length - 1;
+            }
+            if (m.sur) {
+                const at = m.items.map(function(it) { return it[0]; }).indexOf(sur);
+                return at > 0 ? at : 1;
+            }
+            for (let i = 1; i < m.items.length; i++) {
+                const p = m.items[i][1];
+                if (p && p.length && p.every(function(x) { return mine.indexOf(x) > -1; }) && mine.length === p.length) {
+                    return i;
+                }
+            }
+            return -2;   // set to something these menus don't offer (a swatch, or Google's own)
+        };
+        let any = false;
+        const html = menus.map(function(m, mi) {
+            const at = current(m);
+            let label = m.label || m.items[0][0];
+            let on = false;
+            if (at > 0) {
+                on = true;
+                label = m.items[at][0];
+                if (label === "Custom range...") {
+                    const r = range();
+                    label = (r[0] || "...") + " – " + (r[1] || "...");
+                }
+            } else if (at === -2) {
+                on = true;
+                const isc = (parts.filter(function(p) { return /^isc:/.test(p); })[0] || "").slice(4);
+                label = isc ? isc.charAt(0).toUpperCase() + isc.slice(1) : label;
+            }
+            if (on) {
+                any = true;
+            }
+            let list = m.items.map(function(it, i) {
+                const cls = (i === at ? "cur" : "") + (it[1] === null ? " ugf-tool-special" : "");
+                const href = it[1] === null ? "#" : url(without(m.strip).concat(it[1]));
+                return '<a href="' + esc(href) + '" class="' + cls.trim() + '" data-i="' + i + '">' + esc(it[0]) + "</a>";
+            }).join("");
+            if (m.swatches) {
+                const isc = (parts.filter(function(p) { return /^isc:/.test(p); })[0] || "").slice(4);
+                list += '<div class="ugf-tool-swatches">' + colours.map(function(c) {
+                    return '<a class="ugf-sw ugf-sw-' + c + (c === isc ? " cur" : "") + '" title="' + c + '" href="' + esc(url(without(m.strip).concat(["ic:specific", "isc:" + c]))) + '"></a>';
+                }).join("") + "</div>";
+            }
+            return '<div class="ugf-tool' + (on ? " on" : "") + '" data-m="' + mi + '"><span class="lbl">' + esc(label) + '</span><span class="ugf-k-caret"></span>' +
+                '<div class="ugf-tool-dd">' + list + "</div></div>";
+        }).join("");
         const row = document.createElement("div");
         row.id = "ugf-tools-row";
-        row.innerHTML = trusted_policy.createHTML(menu(times, /^qdr:/.test(t) ? t : "") + menu(kinds, t === "li:1" ? t : "") +
-            (t ? '<a class="ugf-tool-clear" href="' + base + '">Clear</a>' : ""));
-        head.parentNode.insertBefore(row, head);
-        if (t) {
+        row.className = "ugf-tools-" + kind;
+        const cleared = parts.filter(function(p) {
+            return !all.some(function(re) { return re.test(p); });
+        });
+        row.innerHTML = trusted_policy.createHTML(html + (any ? '<a class="ugf-tool-clear" href="' + esc(url(cleared)) + '">Clear</a>' : ""));
+        const at = kind === "images" ? document.querySelector("#ugf-image-results") : document.querySelector("#ugf-search-results-header");
+        if (!at) {
+            return;
+        }
+        at.parentNode.insertBefore(row, at);
+        if (any) {
             h.setAttribute("ugf-tools-open", "");
+        }
+        // "Show sizes": the picture's size on each thumbnail, kept from one search to the next
+        let sizes = false;
+        try {
+            sizes = window.localStorage.getItem("UGF_SHOW_SIZES") === "1";
+        } catch (e) {}
+        const sizeTags = function() {
+            document.querySelectorAll(".ugf-image-result").forEach(function(r) {
+                const inner = r.querySelector(".ugf-image-result-inner");
+                if (inner && !inner.hasAttribute("ugf-size")) {
+                    inner.setAttribute("ugf-size", (r.getAttribute("img-orig-w") || r.getAttribute("img-w") || "?") + " × " + (r.getAttribute("img-orig-h") || r.getAttribute("img-h") || "?"));
+                }
+            });
+        };
+        const showSizes = function(v) {
+            sizes = v;
+            if (v) {
+                h.setAttribute("ugf-show-sizes", "");
+                // (the results may still be coming in)
+                sizeTags();
+                setTimeout(sizeTags, 1500);
+                setTimeout(sizeTags, 4000);
+            } else {
+                h.removeAttribute("ugf-show-sizes");
+            }
+            row.querySelectorAll(".ugf-tool-special").forEach(function(a) {
+                if (a.textContent === "Show sizes" || a.textContent === "Hide sizes") {
+                    a.classList.toggle("cur", v);
+                }
+            });
+            try {
+                window.localStorage.setItem("UGF_SHOW_SIZES", v ? "1" : "0");
+            } catch (e) {}
+        };
+        if (kind === "images") {
+            showSizes(sizes);
         }
         row.querySelectorAll(".ugf-tool").forEach(function(tool) {
             tool.addEventListener("click", function(ev) {
+                const a = ev.target.closest(".ugf-tool-dd a");
+                if (a) {
+                    const m = menus[+tool.getAttribute("data-m")];
+                    const it = m.items[+a.getAttribute("data-i")];
+                    if (m.sur && it) {
+                        try {
+                            window.sessionStorage.setItem("UGF_SUR_LABEL", it[0]);
+                        } catch (e) {}
+                    }
+                    if (it && it[1] === null) {
+                        ev.preventDefault();
+                        tool.removeAttribute("open");
+                        if (it[0] === "Show sizes") {
+                            showSizes(!sizes);
+                        } else {
+                            ugfKRange(url, without(TIME), range());
+                        }
+                    }
+                    return;
+                }
                 if (ev.target.closest(".ugf-tool-dd")) {
                     return;
                 }
@@ -68824,12 +70283,115 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 }
             });
         });
-        tools.addEventListener("click", function(ev) {
+        toolsTab.addEventListener("click", function(ev) {
             ev.preventDefault();
             if (h.hasAttribute("ugf-tools-open")) {
                 h.removeAttribute("ugf-tools-open");
             } else {
                 h.setAttribute("ugf-tools-open", "");
+            }
+        });
+    }
+    // "Custom range...": the small box of 2013-2016, From and To, and Go
+    function ugfKRange(url, rest, now) {
+        const old = document.querySelector("#ugf-range");
+        if (old) {
+            old.remove();
+        }
+        const box = document.createElement("div");
+        box.id = "ugf-range";
+        box.innerHTML = trusted_policy.createHTML('<div class="ugf-range-card"><div class="ugf-range-title">Customized date range</div>' +
+            '<label>From:<input type="text" id="ugf-range-from" placeholder="ex. 5/23/2004"></label>' +
+            '<label>To:<input type="text" id="ugf-range-to" placeholder="ex. 5/23/2004"></label>' +
+            '<div class="ugf-range-btns"><a href="#" id="ugf-range-go" class="ugf-range-go">Go</a></div>' +
+            '<a href="#" class="ugf-range-x" title="Close">×</a></div>');
+        document.body.appendChild(box);
+        const from = box.querySelector("#ugf-range-from");
+        const to = box.querySelector("#ugf-range-to");
+        if (now) {
+            from.value = now[0] || "";
+            to.value = now[1] || "";
+        }
+        from.focus();
+        const go = function(ev) {
+            if (ev) {
+                ev.preventDefault();
+            }
+            const clean = function(s) {
+                return String(s || "").trim().replace(/[^0-9/.\-]/g, "");
+            };
+            const a = clean(from.value);
+            const b = clean(to.value);
+            if (!a && !b) {
+                return;
+            }
+            window.location.href = url(rest.concat(["cdr:1", "cd_min:" + a, "cd_max:" + b]));
+        };
+        box.querySelector("#ugf-range-go").addEventListener("click", go);
+        [from, to].forEach(function(i) {
+            i.addEventListener("keydown", function(ev) {
+                if (ev.key === "Enter") {
+                    go(ev);
+                } else if (ev.key === "Escape") {
+                    box.remove();
+                }
+            });
+        });
+        box.addEventListener("click", function(ev) {
+            if (ev.target === box || ev.target.closest(".ugf-range-x")) {
+                ev.preventDefault();
+                box.remove();
+            }
+        });
+    }
+    // (8.1) The gear beside the tabs, 2013-2016: Google's menu of the time instead of going straight
+    // to the settings page, and "SafeSearch on" beside it while SafeSearch is on
+    function ugfKGear(searchValue) {
+        const lay = String(layout || "");
+        const btn = document.querySelector("#ugf-settings-button");
+        if (!btn || btn.hasAttribute("ugf-gear") || ["2013", "2014", "2015", "2016"].indexOf(lay) < 0) {
+            return;
+        }
+        btn.setAttribute("ugf-gear", "");
+        btn.setAttribute("title", "Options");
+        const params = new URLSearchParams(window.location.search);
+        const safeOn = params.get("safe") === "active" || params.get("safe") === "strict";
+        const here = new URL(window.location.href);
+        here.searchParams.delete("start");
+        here.searchParams.set("safe", safeOn ? "off" : "active");
+        const q = encodeURIComponent(searchValue || "");
+        const items = [
+            ["Search settings", "https://www.google.com/preferences"],
+            ["Languages", "https://www.google.com/preferences#languages"],
+            [safeOn ? "Turn off SafeSearch" : "Turn on SafeSearch", here.toString()],
+            ["Advanced search", "https://www.google.com/advanced_search" + (q ? "?q=" + q : "")],
+            [lay === "2016" ? "History" : "Web history", "https://myactivity.google.com/product/search"],
+            ["Search help", "https://support.google.com/websearch"]
+        ];
+        const dd = document.createElement("div");
+        dd.id = "ugf-gear-dd";
+        dd.innerHTML = trusted_policy.createHTML(items.map(function(it) {
+            return '<a href="' + ugfEscapeHtml(it[1]) + '">' + ugfEscapeHtml(it[0]) + "</a>";
+        }).join(""));
+        btn.parentNode.insertBefore(dd, btn.nextSibling);
+        if (safeOn) {
+            const lbl = document.createElement("span");
+            lbl.id = "ugf-safe-on";
+            lbl.textContent = "SafeSearch on";
+            btn.parentNode.insertBefore(lbl, btn);
+        }
+        const h = document.documentElement;
+        btn.addEventListener("click", function(ev) {
+            ev.preventDefault();
+            if (h.hasAttribute("ugf-gear-open")) {
+                h.removeAttribute("ugf-gear-open");
+            } else {
+                h.setAttribute("ugf-gear-open", "");
+            }
+        });
+        document.addEventListener("click", function(ev) {
+            if (!ev.target.closest("#ugf-settings-button") && !ev.target.closest("#ugf-gear-dd")) {
+                h.removeAttribute("ugf-gear-open");
             }
         });
     }
@@ -69314,6 +70876,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                         }
                     });
                 }
+                ugfBarTitles(kName, kMail);
             }, 2500);
         }
         // (6.5.7) the page numbers and tabs are filled in once the account is known; pages with no
@@ -69363,6 +70926,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     document.querySelector("#ugf-account-pfp img").src = pfp96;
                     document.querySelector("#ugf-account-normal-pfp img").src = pfp96;
                     document.querySelector("#gp-gbar-plusyou span").textContent = "+" + ugfPlusFirst();
+                    ugfBarTitles(username, email);
                 }
                 fixPagination();
             }
@@ -69432,6 +70996,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             document.querySelector("#ugf-news-tab").href = "https://www.google.com/search?q=" + encodedNavSearch + "&tbm=nws";
             document.querySelector("#ugf-maps-tab").href = "https://maps.google.com/maps?q=" + encodedNavSearch;
             ugfKTabs(searchValue, tbs);
+            ugfKCalc(searchValue);
             document.querySelector("#ugf-all-item").href = "https://www.google.com/search?q=" + encodedNavSearch;
             document.querySelector("#ugf-images-item").href = "https://www.google.com/search?q=" + encodedNavSearch + "&udm=2";
             document.querySelector("#ugf-videos-item").href = "https://www.google.com/search?q=" + encodedNavSearch + "&udm=7";
