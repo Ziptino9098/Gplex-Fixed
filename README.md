@@ -2,8 +2,10 @@
 Install Gplex Extended:
 https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
 
-Install Gplex Extended Alpha (WARNING: VERY BUGGY):
+Install Gplex Extended Alpha (Gplex Extended plus Gplex YouTube, the alpha of Gplex's own YouTube; expect rough edges):
 https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/alpha.user.js
+
+The alpha's Chrome (unpacked) and Firefox builds are in releases/alpha/. How Gplex YouTube works, and its source, are in youtube/.
 
 
 To get any layout: Search Google in [year] so for example, you can get 1998 layout by searching "Google in 1998"
@@ -34,10 +36,10 @@ Geckium (A Firefox theme that makes the browser look like every version of Chrom
 
 https://github.com/angelbruni/geckium
 
-StarTube by lightbeam24
+StarTube by lightbeam24 (the YouTube part of the main script)
 https://github.com/lightbeam24/StarTube/raw/refs/heads/main/StarTube.user.js
 
-StarTube requires Vorapis V3. Since Vorapis V3 is ARR, I'm not risking distributing it here. Just search for "Vorapis V3 Old YouTube" to find it.
+StarTube requires Vorapis V3. Since Vorapis V3 is ARR, I'm not risking distributing it here. Just search for "Vorapis V3 Old YouTube" to find it. The alpha does not need V3: it draws YouTube itself (Gplex YouTube).
 
 <img width="1736" height="989" alt="Screen Shot 2026-09-19 at 2 38 02 PM" src="https://github.com/user-attachments/assets/451daf65-8dfa-47a9-832f-91f20f62a9d5" />
 <img width="1780" height="980" alt="Screen Shot 2026-09-19 at 2 40 39 PM" src="https://github.com/user-attachments/assets/868739cf-5e97-431b-9f4e-31354323d84a" />

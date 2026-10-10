@@ -1,0 +1,14 @@
+/* 2019: bigger pictures, rounder pieces, the new red */
+.gy-era-2019 body { background: #f9f9f9; }
+.gy-era-2019 .yt-shelf-grid-item { width: 251px; margin: 0 16px 40px 0; }
+.gy-era-2019 .yt-lockup-grid .yt-lockup-thumbnail img { width: 251px; height: 141px; }
+.gy-era-2019 .yt-lockup-grid .yt-lockup-title { font-size: 14px; }
+.gy-era-2019 .yt-uix-button-subscribe-branded { background: #f00; }
+.gy-era-2019 .yt-uix-button-primary { background: #065fd4; }
+.gy-era-2019 #masthead-search-terms { border-radius: 2px 0 0 2px; height: 32px; }
+.gy-era-2019 #search-btn { height: 32px; }
+.gy-era-2019 .gy-cb-played, .gy-era-2019 .gy-cb-handle { background: #f00; }
+.gy-era-2019 #player-api { width: 1280px; height: 720px; max-width: 100%; }
+.gy-era-2019 #player { width: auto; }
+.gy-era-2019 #watch7-content { width: auto; flex: 1; }
+.gy-era-2019 .guide-item-selected .thumb { color: #111; }

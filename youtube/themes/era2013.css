@@ -1,0 +1,7 @@
+/* 2013: the black Google bar above the site, Arial, the logo of 2013-2015 */
+.gy-era-2013 body { font-family: arial, sans-serif; }
+.gy-era-2013 #masthead-positioner { top: 30px; }
+.gy-era-2013 #masthead-positioner-height-offset { height: 80px; }
+.gy-era-2013 .appbar-guide-menu-layout { margin-top: 80px; }
+.gy-era-2013 .gy-gbar { position: fixed; top: 0; left: 0; right: 0; }
+.gy-era-2013 #yt-masthead #logo-container .logo, .gy-era-2014 #yt-masthead #logo-container .logo, .gy-era-2013 #footer-logo .footer-logo-icon, .gy-era-2014 #footer-logo .footer-logo-icon { background: no-repeat var(--gy-logo-2013) center / contain; width: 72px; height: 30px; }

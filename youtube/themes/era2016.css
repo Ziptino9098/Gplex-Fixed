@@ -1,0 +1,4 @@
+/* 2016: Roboto comes in, the search box loses its border (YouTube's "searchbox redesign") */
+.gy-era-2016 #yt-masthead #logo-container .logo, .gy-era-2016 #footer-logo .footer-logo-icon { background: no-repeat var(--gy-logo-2015) center / contain; width: 72px; height: 30px; }
+.gy-era-2016 #masthead-search { border: 1px solid #ccc; background: #fff; }
+.gy-era-2016 #search-btn { display: inline-block; }

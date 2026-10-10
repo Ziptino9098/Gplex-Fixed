@@ -1,0 +1,7 @@
+{
+  "name": "gplex-youtube",
+  "private": true,
+  "type": "commonjs",
+  "description": "Gplex YouTube: the YouTube part of the Gplex Extended alpha. node build.js builds alpha.user.js and the packages.",
+  "license": "MIT"
+}

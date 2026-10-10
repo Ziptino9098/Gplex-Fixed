@@ -1,0 +1,3 @@
+/* 2014: Arial, the logo of 2013-2015 */
+.gy-era-2014 body { font-family: arial, sans-serif; }
+.gy-era-2014 #yt-masthead #logo-container .logo, .gy-era-2014 #footer-logo .footer-logo-icon { background: no-repeat var(--gy-logo-2013) center / contain; width: 72px; height: 30px; }

@@ -1,0 +1,32 @@
+<!doctype html>
+<!-- A stand-in for YouTube's embedded player, for testing the control bar here: it speaks the
+     player's message protocol (listening, command, infoDelivery, onReady, onStateChange) over a
+     fake 3-minute video. -->
+<html><head><meta charset="utf-8"><style>html,body{margin:0;height:100%;background:#123;color:#fff;font:14px arial}#t{position:absolute;left:10px;top:10px}</style></head>
+<body><div id="t">fake embed</div>
+<script>
+var state = { playerState: 5, currentTime: 0, duration: 180, volume: 100, muted: false, playbackQuality: "hd720", availableQualityLevels: ["hd1080", "hd720", "large", "medium", "small", "auto"], playbackRate: 1, availablePlaybackRates: [0.25, 0.5, 1, 1.5, 2], videoLoadedFraction: 0.3 };
+var parent_ = window.parent, origin = "https://www.youtube.com", listening = false, timer = 0;
+function send(ev, info) { parent_.postMessage(JSON.stringify({ event: ev, info: info, id: 1, channel: "widget" }), origin); }
+function deliver() { send("infoDelivery", state); }
+function setState(s) { state.playerState = s; send("onStateChange", s); deliver(); }
+window.addEventListener("message", function(e) {
+  var m; try { m = JSON.parse(e.data); } catch (err) { return; }
+  if (m.event === "listening") { listening = true; send("onReady", null); send("initialDelivery", state); return; }
+  if (m.event !== "command") return;
+  var a = m.args || [];
+  switch (m.func) {
+    case "playVideo": setState(1); timer = timer || setInterval(function() { if (state.playerState === 1) { state.currentTime = Math.min(state.duration, state.currentTime + 0.25 * state.playbackRate); if (state.currentTime >= state.duration) { setState(0); } else { deliver(); } } }, 250); break;
+    case "pauseVideo": setState(2); break;
+    case "seekTo": state.currentTime = a[0]; deliver(); break;
+    case "setVolume": state.volume = a[0]; deliver(); break;
+    case "mute": state.muted = true; deliver(); break;
+    case "unMute": state.muted = false; deliver(); break;
+    case "setPlaybackRate": state.playbackRate = a[0]; deliver(); break;
+    case "setPlaybackQuality": case "setPlaybackQualityRange": state.playbackQuality = a[0]; deliver(); break;
+    default: break;
+  }
+  document.getElementById("t").textContent = "fake embed: " + m.func + " " + JSON.stringify(a).slice(0, 60);
+});
+if (/autoplay=1/.test(location.search)) { setTimeout(function() { if (listening) { setState(1); timer = setInterval(function() { if (state.playerState === 1) { state.currentTime = Math.min(state.duration, state.currentTime + 0.25 * state.playbackRate); deliver(); if (state.currentTime >= state.duration) setState(0); } }, 250); } }, 500); }
+</script></body></html>

@@ -1,0 +1,131 @@
+/* ---- Gplex YouTube: what every era shares ----
+   Gplex's own pieces (gy-*): the search suggestions, popups and menus, the player's control bar, the
+   up-next card, the sign-in promo, the share panel, "Add to", notifications, the account menu, and the
+   error page. The era stylesheets colour and place them. */
+.gy .hid, .gy [hidden] { display: none !important; }
+.gy-icon { width: 24px; height: 24px; fill: currentColor; vertical-align: middle; display: inline-block; }
+.gy-hh .yt-uix-button-icon-wrapper .gy-icon, .gy-hh .yt-channel-title-icon-verified .gy-icon, .gy-hh .yt-pl-icon .gy-icon, .gy-hh .play-icon .gy-icon, .gy-hh .yt-uix-shelfslider-prev-arrow .gy-icon, .gy-hh .yt-uix-shelfslider-next-arrow .gy-icon, .gy-hh .playlist-mix-icon .gy-icon { display: none; }
+.gy img { border: 0; }
+.gy-message { padding: 30px 15px; color: #555; font-size: 13px; }
+.gy-message .display-message-detail { color: #767676; }
+.gy-feed-title { margin: 0 0 15px; }
+.gy-channel-list .gy-feed-title { margin-top: 15px; }
+/* search suggestions */
+#masthead-search { position: relative; }
+.gy-sbox { position: absolute; left: 0; right: 0; top: 100%; z-index: 2000000000; margin: 0; padding: 0; list-style: none; background: #fff; border: 1px solid #ccc; border-top: 0; box-shadow: 0 2px 4px rgba(0,0,0,.2); text-align: left; }
+.gy-sbox li { padding: 4px 8px; font-size: 16px; line-height: 22px; color: #333; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gy-sbox li b { font-weight: normal; }
+.gy-sbox li.gy-sbox-on, .gy-sbox li:hover { background: #eee; }
+/* popups and menus */
+.gy-popup { position: absolute; z-index: 2000000001; min-width: 200px; max-width: 360px; background: #fff; border: 1px solid #ccc; box-shadow: 0 2px 8px rgba(0,0,0,.25); font-size: 13px; color: #333; text-align: left; }
+.gy-menu { list-style: none; margin: 0; padding: 4px 0; }
+.gy-menu li.gy-menu-sep { border-top: 1px solid #e2e2e2; margin: 4px 0; }
+.gy-menu-item { display: block; padding: 7px 15px; color: #333; text-decoration: none; white-space: nowrap; }
+.gy-menu-item .gy-icon { width: 18px; height: 18px; margin: -2px 10px 0 0; opacity: .6; }
+.gy-menu-item:hover { background: #f0f0f0; text-decoration: none; }
+.gy-addto, .gy-notifications, .gy-account { padding: 10px 15px; }
+.gy-addto h3, .gy-notifications h3 { margin: 0 0 8px; font-size: 13px; font-weight: 500; text-transform: uppercase; color: #555; }
+.gy-addto-list { list-style: none; margin: 0 0 10px; padding: 0; max-height: 240px; overflow: auto; }
+.gy-addto-list li { padding: 4px 0; display: flex; align-items: center; }
+.gy-addto-list label { flex: 1; margin-left: 6px; cursor: pointer; }
+.gy-addto-privacy { color: #767676; font-size: 11px; }
+.gy-addto-new { display: flex; gap: 6px; border-top: 1px solid #e2e2e2; padding-top: 10px; }
+.gy-addto-new-title { flex: 1; font-size: 13px; padding: 4px; border: 1px solid #ccc; }
+.gy-notifications ul { list-style: none; margin: 0; padding: 0; width: 330px; max-height: 420px; overflow: auto; }
+.gy-notifications li a { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; color: #333; text-decoration: none; border-top: 1px solid #eee; }
+.gy-notifications li img { border-radius: 50%; }
+.gy-notifications .gy-notification-video { border-radius: 0; width: 86px; height: 48px; }
+.gy-notification-text { flex: 1; font-size: 12px; line-height: 16px; }
+.gy-notification-time { display: block; color: #767676; font-size: 11px; }
+.gy-unread a { background: #f5f8fc; }
+.gy-account-header { display: flex; gap: 12px; align-items: center; padding-bottom: 10px; border-bottom: 1px solid #e2e2e2; margin-bottom: 4px; }
+.gy-account-header img { border-radius: 50%; }
+.gy-account-name { font-weight: 500; }
+.gy-account-email { color: #767676; font-size: 12px; }
+.gy-addto-loading { color: #767676; padding: 10px 0; }
+/* the sign-in promo of the feeds, signed out */
+.gy-signin-promo { text-align: center; padding: 60px 20px; }
+.gy-signin-promo h2 { font-size: 20px; font-weight: normal; margin: 0 0 8px; }
+.gy-signin-promo p { color: #767676; margin: 0 0 20px; }
+/* the share panel */
+.gy-share .share-service-buttons { list-style: none; margin: 0 0 10px; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.gy-share .share-service-buttons a { display: inline-block; padding: 4px 8px; border: 1px solid #ccc; border-radius: 2px; color: #333; font-size: 12px; text-decoration: none; background: #f8f8f8; }
+.gy-share .share-service-buttons a:hover { background: #eee; }
+.gy-share-url { display: flex; gap: 6px; }
+.gy-share-url input { flex: 1; font-size: 13px; padding: 4px 6px; border: 1px solid #ccc; }
+.gy-share-embed textarea { width: 100%; box-sizing: border-box; font: 12px monospace; }
+.gy-share-tabs { margin-bottom: 10px; border-bottom: 1px solid #e2e2e2; }
+.gy-share-tab.gy-on .yt-uix-button-content { color: #333; font-weight: 500; }
+/* the chips under a channel's Videos tab */
+.gy-chips { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; }
+/* the error page */
+.gy-error { max-width: 560px; margin: 80px auto; font: 13px arial, sans-serif; color: #333; text-align: center; }
+.gy-error h1 { font-size: 20px; font-weight: normal; }
+/* ---- the player ---- */
+.gy-player { position: relative; width: 100%; height: 100%; background: #000; overflow: hidden; outline: none; }
+.gy-embed { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+.gy-player-shade { position: absolute; left: 0; right: 0; top: 0; bottom: 0; cursor: pointer; }
+.gy-player-native .gy-player-shade, .gy-player-native .gy-cb { display: none; }
+.gy-player-unavailable { position: absolute; left: 0; right: 0; top: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: #fff; background: #000; font-size: 16px; }
+.gy-bigplay { display: none; position: absolute; left: 50%; top: 50%; width: 68px; height: 48px; margin: -24px 0 0 -34px; border: 0; border-radius: 6px; background: rgba(0,0,0,.6); color: #fff; cursor: pointer; }
+.gy-bigplay .gy-icon { width: 36px; height: 36px; }
+.gy-player.gy-unstarted .gy-bigplay, .gy-player.gy-paused .gy-bigplay { display: block; }
+.gy-player.gy-ended .gy-bigplay { display: block; }
+.gy-cb { position: absolute; left: 0; right: 0; bottom: 0; color: #fff; font: 12px arial, sans-serif; user-select: none; }
+.gy-cb-row { display: flex; align-items: center; height: 36px; }
+.gy-cb-left, .gy-cb-right { display: flex; align-items: center; }
+.gy-cb-right { margin-left: auto; }
+.gy-cb-btn { width: 36px; height: 36px; border: 0; background: none; color: inherit; cursor: pointer; padding: 0; display: inline-flex; align-items: center; justify-content: center; opacity: .9; }
+.gy-cb-btn:hover { opacity: 1; }
+.gy-cb-btn .gy-icon { width: 24px; height: 24px; }
+.gy-cb-btn.gy-cb-on { color: #f00; }
+.gy-cb-time { padding: 0 8px; white-space: nowrap; }
+.gy-cb-volume-area { display: flex; align-items: center; }
+.gy-cb-volume { width: 0; overflow: hidden; transition: width .2s; height: 36px; display: flex; align-items: center; cursor: pointer; }
+.gy-cb-volume-area:hover .gy-cb-volume, .gy-cb-volume:active { width: 60px; }
+.gy-cb-volume-track { position: relative; width: 52px; height: 3px; background: rgba(255,255,255,.3); }
+.gy-cb-volume-level { height: 100%; background: #fff; }
+.gy-cb-volume-handle { position: absolute; top: -4px; width: 11px; height: 11px; margin-left: -6px; border-radius: 50%; background: #fff; }
+.gy-cb-progress { position: relative; height: 10px; cursor: pointer; }
+.gy-cb-track { position: absolute; left: 0; right: 0; top: 4px; height: 3px; background: rgba(255,255,255,.25); transition: height .1s, top .1s; }
+.gy-cb-progress:hover .gy-cb-track, .gy-scrubbing .gy-cb-track { height: 5px; top: 3px; }
+.gy-cb-loaded, .gy-cb-played, .gy-cb-hover { position: absolute; left: 0; top: 0; bottom: 0; }
+.gy-cb-loaded { background: rgba(255,255,255,.4); }
+.gy-cb-hover { background: rgba(255,255,255,.5); width: 0; }
+.gy-cb-played { background: #f00; }
+.gy-cb-handle { position: absolute; top: 50%; width: 13px; height: 13px; margin: -6px 0 0 -6px; border-radius: 50%; background: #f00; transform: scale(0); transition: transform .1s; }
+.gy-cb-progress:hover .gy-cb-handle, .gy-scrubbing .gy-cb-handle { transform: scale(1); }
+.gy-cb-tip { display: none; position: absolute; bottom: 14px; transform: translateX(-50%); padding: 2px 6px; background: rgba(0,0,0,.8); border-radius: 2px; font-size: 11px; }
+.gy-cb-progress:hover .gy-cb-tip { display: block; }
+.gy-player.gy-playing.gy-idle .gy-cb { opacity: 0; transition: opacity .3s; }
+.gy-player.gy-playing.gy-idle { cursor: none; }
+.gy-popup-player { position: absolute; z-index: 10; background: rgba(28,28,28,.9); border: 0; color: #eee; min-width: 160px; }
+.gy-pmenu { list-style: none; margin: 0; padding: 6px 0; font-size: 12px; }
+.gy-pmenu-title { padding: 6px 12px; color: #aaa; font-weight: bold; border-bottom: 1px solid #444; margin-bottom: 4px; }
+.gy-pmenu-item { display: flex; align-items: center; padding: 6px 12px; cursor: pointer; white-space: nowrap; }
+.gy-pmenu-item:hover { background: rgba(255,255,255,.1); }
+.gy-pmenu-check { width: 18px; height: 16px; margin-right: 6px; visibility: hidden; }
+.gy-pmenu-on .gy-pmenu-check { visibility: visible; }
+.gy-pmenu-check .gy-icon { width: 16px; height: 16px; }
+.gy-pmenu-value { margin-left: auto; padding-left: 20px; color: #aaa; display: flex; align-items: center; }
+.gy-pmenu-value .gy-icon { width: 16px; height: 16px; }
+.gy-player.gy-fullscreen { width: 100vw; height: 100vh; }
+.gy-upnext { position: absolute; left: 0; right: 0; top: 0; bottom: 36px; background: rgba(0,0,0,.85); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; font: 13px arial, sans-serif; }
+.gy-upnext-label { color: #aaa; text-transform: uppercase; font-size: 12px; }
+.gy-upnext-video { color: #fff; text-decoration: none; text-align: center; max-width: 320px; }
+.gy-upnext-video img { display: block; width: 240px; height: 135px; object-fit: cover; margin: 0 auto 8px; }
+.gy-upnext-title { display: block; font-size: 16px; }
+.gy-upnext-by { display: block; color: #aaa; }
+.gy-upnext-actions { display: flex; gap: 10px; }
+/* the hidden text screen readers get */
+.gy .accessible-description { position: absolute; left: -10000px; top: 0; width: 1px; height: 1px; overflow: hidden; }
+/* the black Google bar of 2012 and 2013 */
+.gy-gbar { position: relative; height: 30px; background: #2d2d2d; font: 13px arial, sans-serif; z-index: 2000000000; }
+.gy-gbar-links { list-style: none; margin: 0; padding: 0 0 0 20px; display: flex; height: 30px; }
+.gy-gbar-links li a { display: block; line-height: 30px; padding: 0 10px; color: #ccc; font-weight: bold; text-decoration: none; }
+.gy-gbar-links li a:hover { color: #fff; text-decoration: underline; }
+.gy-gbar-links li.gy-gbar-on a { color: #fff; }
+.gy-gbar-arrow { display: inline-block; width: 0; height: 0; margin-left: 5px; border: 4px solid transparent; border-top-color: #ccc; vertical-align: middle; }
+.gy-gbar-right { position: absolute; right: 20px; top: 0; line-height: 30px; }
+.gy-gbar-right a { color: #ccc; font-weight: bold; text-decoration: none; }
+.gy-gbar-right img { vertical-align: middle; margin-top: -2px; }

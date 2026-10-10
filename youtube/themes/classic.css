@@ -1,0 +1,283 @@
+/* ---- the classic site: 2010 (white, 4:3 pictures) and 2012 (Cosmic Panda) ----
+   Gplex's own stylesheet for the whole page structure, on the same markup as the other eras. */
+.gy-classic body { margin: 0; font: 12px arial, sans-serif; color: #333; background: #fff; }
+.gy-classic a { color: #03c; text-decoration: none; }
+.gy-classic a:hover { text-decoration: underline; }
+.gy-classic .yt-uix-button-icon-wrapper .gy-icon, .gy-classic .yt-sprite { display: none; }
+.gy-classic .yt-uix-button-icon-wrapper { display: none; }
+.gy-classic #body-container { min-height: 100%; }
+.gy-classic #page-container { width: 970px; margin: 0 auto; }
+.gy-classic #page { position: relative; padding-top: 10px; }
+.gy-classic .content-alignment { width: 970px; margin: 0 auto; }
+/* the masthead */
+.gy-classic #masthead-positioner { background: #fff; }
+.gy-classic #yt-masthead-container { width: 970px; margin: 0 auto; padding: 12px 0; position: relative; height: 36px; }
+.gy-classic #yt-masthead { position: relative; }
+.gy-classic .yt-masthead-logo-container { float: left; margin-right: 20px; }
+.gy-classic #logo-container .logo { display: block; width: 114px; height: 36px; background: no-repeat var(--gy-logo-2005) center / contain; }
+.gy-classic .content-region { display: none; }
+.gy-classic #yt-masthead-content { float: left; }
+.gy-classic #masthead-search { display: flex; align-items: center; }
+.gy-classic #masthead-search-terms { width: 420px; height: 27px; border: 1px solid #ccc; box-shadow: inset 0 1px 2px #eee; background: #fff; }
+.gy-classic #masthead-search-term { width: 100%; height: 100%; border: 0; padding: 2px 6px; font: 15px arial, sans-serif; outline: none; box-sizing: border-box; background: transparent; }
+.gy-classic #search-btn { order: 2; height: 29px; margin-left: -1px; padding: 0 14px; border: 1px solid #c6c6c6; border-radius: 0 2px 2px 0; background: linear-gradient(#f8f8f8, #ececec); font: bold 12px arial, sans-serif; color: #333; cursor: pointer; }
+.gy-classic #search-btn .yt-uix-button-content { display: inline; }
+.gy-classic #yt-masthead-signin, .gy-classic #yt-masthead-user { float: right; margin-top: 6px; }
+.gy-classic #yt-masthead-signin .yt-uix-button, .gy-classic #yt-masthead-user .yt-uix-button { display: inline-block; margin-left: 10px; font-size: 12px; }
+.gy-classic #yt-masthead-signin .yt-masthead-signin-button { color: #03c; background: none; border: 0; padding: 4px 0; }
+.gy-era-2010 .yt-masthead-signin-button::before { content: "Create Account | "; color: #03c; }
+.gy-classic #upload-btn { padding: 4px 12px; border: 1px solid #c9a200; border-radius: 2px; background: linear-gradient(#fdd835, #f9c300); color: #333; font-weight: bold; }
+.gy-classic #upload-btn:hover { text-decoration: none; background: #f9c300; }
+.gy-classic .yt-masthead-user-icon { border: 0; background: none; padding: 0; vertical-align: middle; }
+.gy-classic .yt-masthead-user-icon img { vertical-align: middle; }
+.gy-classic #yt-masthead-notifications { display: none; }
+.gy-classic #appbar-guide-button { display: none; }
+.gy-classic #masthead-appbar-container { width: 970px; margin: 0 auto; }
+.gy-classic #appbar-nav { padding: 8px 0; border-bottom: 1px solid #ddd; }
+.gy-classic #masthead-positioner-height-offset { display: none; }
+/* buttons */
+.gy-classic .yt-uix-button { display: inline-block; padding: 4px 10px; border: 1px solid #ccc; border-radius: 2px; background: linear-gradient(#fff, #eee); color: #333; font: 12px arial, sans-serif; cursor: pointer; text-decoration: none; line-height: 18px; vertical-align: middle; }
+.gy-classic .yt-uix-button:hover { background: #eee; text-decoration: none; }
+.gy-classic .yt-uix-button-primary { background: linear-gradient(#5a9ff2, #2a7bd6); border-color: #2a6fc0; color: #fff; }
+.gy-classic .yt-uix-button-link { border: 0; background: none; color: #03c; padding: 4px; }
+.gy-classic .yt-uix-button-subscribe-branded { background: linear-gradient(#fdd835, #f9c300); border-color: #c9a200; font-weight: bold; }
+.gy-classic .yt-uix-button-subscribed-branded { background: #eee; }
+.gy-classic .yt-uix-button-toggled { background: #ddd; }
+.gy-classic .yt-subscriber-count { margin-left: 6px; color: #666; }
+/* the guide: a left column (2012 only); 2010 had none */
+.gy-classic #guide { display: none; }
+.gy-era-2012 #guide { display: block; float: left; width: 200px; margin-right: 20px; }
+.gy-era-2012.show-guide #content { margin-left: 220px; }
+.gy-era-2012 .watch #guide { display: none; }
+.gy-era-2012 .watch #content { margin-left: 0; }
+.gy-classic .guide-toplevel, .gy-classic .guide-user-links { list-style: none; margin: 0; padding: 0; }
+.gy-classic .guide-section h3 { margin: 10px 0 4px; font-size: 11px; text-transform: uppercase; color: #666; }
+.gy-classic .guide-item { display: block; padding: 5px 8px; color: #333; font-size: 13px; }
+.gy-classic .guide-item:hover { background: #eee; text-decoration: none; }
+.gy-classic .guide-item-selected { background: #e9e9e9; font-weight: bold; }
+.gy-classic .guide-item .thumb { display: inline-block; vertical-align: middle; margin-right: 8px; width: 20px; height: 20px; }
+.gy-classic .guide-item .thumb img { border-radius: 2px; }
+.gy-classic .gy-guide-icon .gy-icon { width: 18px; height: 18px; color: #555; display: inline-block; }
+.gy-classic .guide-section-separator { border: 0; border-top: 1px solid #e2e2e2; margin: 8px 0; }
+.gy-classic .guide-item-hidden { display: none; }
+.gy-classic .guide-expanded .guide-item-hidden { display: block; }
+.gy-classic .guide-view-more { background: none; border: 0; color: #03c; cursor: pointer; padding: 4px 8px; font-size: 11px; }
+.gy-classic .guide-signin-promo { padding: 8px; font-size: 11px; color: #666; }
+/* cards and lists */
+.gy-classic .yt-card { background: #fff; margin: 0 0 10px; }
+.gy-classic .branded-page-v2-top-row { margin-bottom: 10px; }
+.gy-classic #browse-items-primary, .gy-classic .section-list, .gy-classic .item-section, .gy-classic .shelf-content, .gy-classic .expanded-shelf-content-list, .gy-classic .yt-uix-shelfslider-list { list-style: none; margin: 0; padding: 0; }
+.gy-classic .gy-feed-title, .gy-classic .branded-page-module-title { font-size: 14px; font-weight: bold; color: #333; margin: 0 0 8px; padding: 6px 0; border-bottom: 1px solid #ccc; }
+.gy-classic .branded-page-module-title a { color: #333; }
+.gy-classic .feed-item-container { margin-bottom: 20px; }
+.gy-classic .yt-uix-shelfslider { position: relative; overflow: hidden; }
+.gy-classic .yt-uix-shelfslider-list { white-space: normal; }
+.gy-classic .yt-uix-shelfslider-item { white-space: normal; }
+.gy-classic .yt-uix-shelfslider-prev, .gy-classic .yt-uix-shelfslider-next { display: none; }
+.gy-classic .yt-shelf-grid-item { display: inline-block; vertical-align: top; width: 180px; margin: 0 12px 15px 0; }
+.gy-era-2012 .yt-shelf-grid-item { width: 176px; margin: 0 6px 15px 0; }
+.gy-classic .yt-lockup-grid .yt-lockup-thumbnail img { width: 120px; height: 90px; display: block; }
+.gy-era-2012 .yt-lockup-grid .yt-lockup-thumbnail img { width: 170px; height: 128px; }
+.gy-classic .yt-lockup-tile { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid #eee; }
+.gy-classic .yt-lockup-tile .yt-lockup-thumbnail img { width: 120px; height: 90px; display: block; }
+.gy-classic .yt-lockup-tile .yt-lockup-dismissable { display: flex; gap: 10px; }
+.gy-classic .yt-lockup-thumbnail { position: relative; flex: none; }
+.gy-classic .yt-lockup-title { margin: 4px 0 2px; font-size: 13px; font-weight: bold; line-height: 1.3; }
+.gy-classic .yt-lockup-grid .yt-lockup-title { font-size: 12px; }
+.gy-classic .yt-lockup-title a { color: #03c; }
+.gy-classic .yt-lockup-byline, .gy-classic .yt-lockup-meta { color: #666; font-size: 11px; line-height: 1.4; }
+.gy-classic .yt-lockup-byline a { color: #666; }
+.gy-classic .yt-lockup-meta-info { list-style: none; margin: 0; padding: 0; }
+.gy-classic .yt-lockup-meta-info li { display: inline; }
+.gy-classic .yt-lockup-meta-info li + li::before { content: " - "; }
+.gy-classic .yt-lockup-description { color: #333; font-size: 11px; margin-top: 4px; }
+.gy-classic .yt-lockup-badges { margin-top: 4px; }
+.gy-classic .yt-badge-list { list-style: none; margin: 0; padding: 0; }
+.gy-classic .yt-badge { font-size: 10px; color: #666; border: 1px solid #ccc; padding: 0 3px; }
+.gy-classic .video-time { position: absolute; right: 2px; bottom: 2px; background: #000; color: #fff; font-size: 11px; padding: 0 3px; opacity: .8; }
+.gy-classic .resume-playback-background, .gy-classic .resume-playback-progress-bar { position: absolute; left: 0; bottom: 0; height: 3px; background: #ccc; width: 100%; }
+.gy-classic .resume-playback-progress-bar { background: #c00; }
+.gy-classic .yt-pl-thumb .sidebar { position: absolute; right: 0; top: 0; bottom: 0; width: 44%; background: rgba(0,0,0,.75); color: #eee; display: flex; align-items: center; justify-content: center; font-size: 11px; text-align: center; }
+.gy-classic .yt-pl-thumb .yt-pl-icon { display: block; color: #fff; }
+.gy-classic .yt-pl-thumb-overlay { display: none; }
+.gy-classic .yt-lockup-playlist-items { list-style: none; margin: 4px 0; padding: 0; font-size: 11px; color: #666; }
+.gy-classic .yt-lockup-playlist-item-length { margin-right: 6px; color: #999; }
+.gy-classic .yt-lockup-channel .yt-lockup-thumbnail img { width: 60px; height: 60px; }
+.gy-classic .yt-thumb-clip img { display: block; }
+.gy-classic .load-more-button { display: block; margin: 15px auto; }
+.gy-classic .load-more-loading { display: none; }
+.gy-classic .spell-correction { padding: 8px 0; font-size: 13px; }
+.gy-classic .search-header { padding: 6px 0; border-bottom: 1px solid #ccc; margin-bottom: 6px; color: #666; display: flex; align-items: center; gap: 15px; }
+.gy-classic .num-results { margin: 0; }
+.gy-classic #filter-dropdown { padding: 10px; background: #f5f5f5; border: 1px solid #ddd; margin-bottom: 8px; display: flex; gap: 25px; }
+.gy-classic #filter-dropdown .filter-col { list-style: none; margin: 0; padding: 0; }
+.gy-classic #filter-dropdown .filter-col-title { margin: 0 0 6px; font-size: 11px; text-transform: uppercase; color: #666; }
+.gy-classic #filter-dropdown .filter { padding: 2px 0; font-size: 11px; }
+.gy-classic #filter-dropdown .filter-selected a { font-weight: bold; color: #333; }
+.gy-classic .filter-crumb-list { list-style: none; margin: 0; padding: 0; }
+.gy-classic .filter-crumb { display: inline-block; margin-right: 8px; font-weight: bold; }
+.gy-classic .gy-message { padding: 20px 0; }
+/* the watch page: the title above the video, the user bar below, related on the right */
+.gy-classic .watch #content { display: grid; grid-template-columns: 640px 300px; column-gap: 30px; align-items: start; }
+.gy-classic #watch7-container, .gy-classic #watch7-main-container, .gy-classic #watch7-main { display: contents; }
+.gy-classic #player-messages { display: none; }
+.gy-classic #watch7-content { grid-column: 1; width: 640px; }
+.gy-classic #watch7-sidebar { grid-column: 2; width: 300px; }
+.gy-classic #player { width: 640px; margin: 0 0 10px; }
+.gy-classic #watch7-headline { margin-bottom: 8px; }
+.gy-classic #watch-headline-title h1 { margin: 0; font-size: 18px; font-weight: bold; line-height: 1.3; }
+.gy-classic .standalone-collection-badge-renderer-text { font-size: 11px; }
+.gy-classic #player-api { width: 640px; height: 390px; }
+.gy-classic .watch-stage-mode #player-api { width: 640px; }
+.gy-classic #theater-background { display: none; }
+.gy-classic #player-playlist .watch-playlist { margin-top: 10px; background: #f1f1f1; border: 1px solid #ccc; }
+.gy-classic #player-playlist .playlist-header { padding: 8px 10px; border-bottom: 1px solid #ccc; }
+.gy-classic #player-playlist .playlist-title { margin: 0; font-size: 13px; }
+.gy-classic #player-playlist .playlist-details { list-style: none; margin: 0; padding: 0; color: #666; font-size: 11px; }
+.gy-classic #player-playlist .playlist-details li { display: inline-block; margin-right: 8px; }
+.gy-classic .playlist-videos-list { list-style: none; margin: 0; padding: 0; max-height: 300px; overflow: auto; }
+.gy-classic .playlist-videos-list li { display: flex; align-items: center; gap: 6px; padding: 5px 10px; border-bottom: 1px solid #ddd; }
+.gy-classic .playlist-videos-list li.currently-playing { background: #fff; font-weight: bold; }
+.gy-classic .playlist-videos-list .index { width: 20px; color: #999; font-size: 11px; }
+.gy-classic .playlist-video { display: flex; align-items: center; gap: 8px; color: #333; }
+.gy-classic .playlist-video h4 { margin: 0; font-size: 12px; font-weight: inherit; }
+.gy-classic .video-uploader-byline { color: #666; font-size: 11px; }
+.gy-classic #watch-header { border: 1px solid #ccc; background: #f5f5f5; padding: 10px; }
+.gy-classic #watch7-user-header { display: flex; align-items: center; gap: 10px; }
+.gy-classic .yt-user-photo img { display: block; }
+.gy-classic .yt-user-info { flex: 1; font-size: 13px; font-weight: bold; }
+.gy-classic #watch8-action-buttons { display: flex; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 1px solid #ddd; }
+.gy-classic #watch8-sentiment-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.gy-classic .watch-view-count { font-size: 13px; font-weight: bold; }
+.gy-classic .video-extras-sparkbars { display: none; }
+.gy-classic .like-button-renderer .yt-uix-button { padding: 3px 6px; }
+.gy-classic .like-button-renderer .gy-icon { display: inline-block; width: 16px; height: 16px; }
+.gy-classic .like-button-renderer .yt-uix-button-icon-wrapper { display: inline-block; }
+.gy-classic #watch-action-panels { margin: 10px 0; }
+.gy-classic #watch-action-panels .hid { display: none; }
+.gy-classic .gy-share { border: 1px solid #ccc; padding: 10px; }
+.gy-classic #action-panel-details { margin-top: 10px; padding: 10px; border: 1px solid #ddd; }
+.gy-classic .watch-time-text { display: block; margin-bottom: 6px; }
+.gy-classic #eow-description { margin: 0; line-height: 1.5; white-space: pre-wrap; }
+.gy-classic .yt-uix-expander-collapsed #watch-description-text { max-height: 60px; overflow: hidden; }
+.gy-classic .yt-uix-expander-collapsed .yt-uix-expander-body { display: none; }
+.gy-classic .yt-uix-expander:not(.yt-uix-expander-collapsed) .yt-uix-expander-collapsed-body { display: none; }
+.gy-classic .watch-extras-section { list-style: none; margin: 10px 0 0; padding: 0; font-size: 11px; }
+.gy-classic .watch-meta-item .title { display: inline-block; width: 80px; margin: 0; font-size: 11px; }
+.gy-classic .watch-info-tag-list { display: inline; list-style: none; margin: 0; padding: 0; }
+.gy-classic .watch-info-tag-list li { display: inline; }
+.gy-classic .yt-uix-button-expander { margin-top: 6px; }
+.gy-classic #watch7-sidebar .video-list { list-style: none; margin: 0; padding: 0; }
+.gy-classic #watch7-sidebar .video-list-item { display: flex; gap: 8px; padding: 6px 0; border-bottom: 1px solid #eee; }
+.gy-classic #watch7-sidebar .thumb-wrapper { order: -1; flex: none; }
+.gy-classic #watch7-sidebar .thumb-wrapper img { width: 120px; height: 90px; display: block; }
+.gy-classic #watch7-sidebar .yt-uix-simple-thumb-wrap { position: relative; display: block; }
+.gy-classic #watch7-sidebar .title { display: block; color: #03c; font-size: 12px; line-height: 1.3; }
+.gy-classic #watch7-sidebar .stat { display: block; color: #666; font-size: 11px; }
+.gy-classic #watch7-sidebar .related-playlist { display: flex; gap: 8px; }
+.gy-classic #watch7-sidebar .related-playlist .yt-pl-thumb { position: relative; flex: none; }
+.gy-classic #watch7-sidebar .related-playlist img { width: 120px; height: 90px; display: block; }
+.gy-classic .watch-sidebar-head { margin: 0 0 6px; font-size: 13px; }
+.gy-classic .autoplay-bar { display: none; }
+.gy-classic #watch7-sidebar .load-more-button { width: 100%; }
+/* comments */
+.gy-classic #watch-discussion { margin-top: 15px; }
+.gy-classic .comment-section-header-renderer { font-size: 14px; font-weight: bold; padding: 6px 0; border-bottom: 1px solid #ccc; margin-bottom: 10px; }
+.gy-classic .comment-section-sort-menu { float: right; font-weight: normal; font-size: 11px; }
+.gy-classic .comment-simplebox { display: flex; gap: 8px; margin-bottom: 15px; }
+.gy-classic .comment-simplebox-content { flex: 1; }
+.gy-classic .comment-simplebox-text { width: 100%; box-sizing: border-box; font: 12px arial, sans-serif; border: 1px solid #ccc; padding: 4px; }
+.gy-classic .comment-simplebox-buttons { display: none; margin-top: 6px; }
+.gy-classic .gy-simplebox-active .comment-simplebox-buttons { display: block; }
+.gy-classic .comment-renderer { display: flex; gap: 8px; padding: 8px 0; border-bottom: 1px solid #eee; }
+.gy-classic .comment-renderer-content { flex: 1; }
+.gy-classic .comment-author-text { font-weight: bold; color: #333; }
+.gy-classic .comment-renderer-time a { color: #999; font-size: 11px; margin-left: 6px; }
+.gy-classic .comment-renderer-text-content { margin: 4px 0; line-height: 1.4; white-space: pre-wrap; }
+.gy-classic .comment-action-buttons-toolbar { display: flex; align-items: center; gap: 6px; font-size: 11px; }
+.gy-classic .comment-action-buttons-toolbar .gy-icon { display: inline-block; width: 14px; height: 14px; color: #666; }
+.gy-classic .comment-action-buttons-toolbar .yt-uix-button { padding: 2px 5px; }
+.gy-classic .comment-renderer-like-count { color: #666; }
+.gy-classic .comment-replies-renderer { margin-left: 56px; }
+.gy-classic .comment-replies-renderer-header .yt-uix-button { padding: 2px 0; }
+.gy-classic .comment-renderer-pinned-comment-badge { font-size: 11px; color: #666; }
+.gy-classic .comment-section-renderer-paginator { width: 100%; }
+/* channels and playlists */
+.gy-classic .channel-header { border: 1px solid #ccc; margin-bottom: 10px; }
+.gy-classic #c4-header-bg-container { height: 130px; background: #333 center / cover; position: relative; }
+.gy-classic .channel-header-profile-image-container { position: absolute; left: 15px; bottom: -20px; }
+.gy-classic .channel-header-profile-image { width: 80px; height: 80px; border: 1px solid #ddd; background: #fff; }
+.gy-classic .primary-header-contents { padding: 8px 15px 8px 110px; display: flex; align-items: center; min-height: 40px; }
+.gy-classic .primary-header-upper-section { display: flex; align-items: center; width: 100%; }
+.gy-classic .primary-header-upper-section-block:first-child { flex: 1; min-width: 0; }
+.gy-classic .branded-page-header-title { margin: 0; font-size: 20px; flex: 1; }
+.gy-classic .branded-page-header-title a { color: #333; }
+.gy-classic #channel-subheader { border-top: 1px solid #ddd; padding: 0 15px; }
+.gy-classic #channel-navigation-menu { list-style: none; margin: 0; padding: 0; display: flex; }
+.gy-classic #channel-navigation-menu .yt-uix-button { border: 0; border-radius: 0; background: none; padding: 8px 12px; font-weight: bold; color: #666; }
+.gy-classic #channel-navigation-menu .yt-uix-button.selected { color: #333; border-bottom: 3px solid #c00; }
+.gy-classic .appbar-nav-menu { display: none; }
+.gy-classic .appbar-nav-owner { font-weight: bold; color: #333; }
+.gy-classic .appbar-nav-avatar { vertical-align: middle; margin-right: 6px; }
+.gy-classic .gy-chips { margin-bottom: 10px; }
+.gy-classic .about-description pre { white-space: pre-wrap; font: inherit; }
+.gy-classic #pl-header { display: flex; gap: 15px; padding: 10px 0; border-bottom: 1px solid #ccc; margin-bottom: 10px; }
+.gy-classic .pl-header-thumb { position: relative; }
+.gy-classic .pl-header-play-all-overlay { display: none; }
+.gy-classic .pl-header-title { margin: 0 0 4px; font-size: 18px; }
+.gy-classic .pl-header-details { list-style: none; margin: 0; padding: 0; color: #666; font-size: 11px; }
+.gy-classic .pl-header-details li { display: inline; margin-right: 10px; }
+.gy-classic .playlist-actions { margin-top: 8px; }
+.gy-classic .pl-video-table { width: 100%; border-collapse: collapse; }
+.gy-classic .pl-video td { padding: 6px 4px; border-bottom: 1px solid #eee; vertical-align: middle; }
+.gy-classic .pl-video-index { color: #999; width: 24px; text-align: right; }
+.gy-classic .pl-video-title-link { font-weight: bold; }
+.gy-classic .pl-video-owner { color: #666; font-size: 11px; }
+.gy-classic .pl-video-time { text-align: right; color: #666; }
+.gy-classic .c4-player-container { float: left; width: 320px; margin-right: 12px; }
+.gy-classic .c4-player-thumb { display: block; position: relative; }
+.gy-classic .c4-player-thumb img { width: 100%; display: block; }
+.gy-classic .c4-player-thumb .play-icon { display: none; }
+.gy-classic .c4-video-info { overflow: hidden; }
+.gy-classic .c4-video-info .title { margin: 0 0 4px; font-size: 14px; }
+.gy-classic .c4-video-info .metadata { color: #666; font-size: 11px; margin-bottom: 6px; }
+.gy-classic .video-player-view-component::after { content: ""; display: block; clear: both; }
+/* the footer */
+.gy-classic #footer-container { width: 970px; margin: 20px auto 0; padding: 15px 0; border-top: 1px solid #ccc; font-size: 11px; color: #666; }
+.gy-classic #footer-logo .footer-logo-icon { display: inline-block; width: 90px; height: 28px; background: no-repeat var(--gy-logo-2005) center / contain; }
+.gy-classic #footer-main { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.gy-classic .pickers { list-style: none; margin: 0; padding: 0; display: flex; gap: 8px; }
+.gy-classic .yt-picker-button .yt-uix-button-arrow { display: none; }
+.gy-classic #footer-links ul { list-style: none; margin: 0 0 6px; padding: 0; }
+.gy-classic #footer-links li { display: inline; margin-right: 12px; }
+.gy-classic #footer-links a { color: #666; }
+/* the player of 2010: the grey bar under the picture */
+.gy-era-2010 #player-api { height: 426px; }
+.gy-era-2010 .gy-player { height: 426px; }
+.gy-era-2010 .gy-embed, .gy-era-2010 .gy-player-shade { height: 390px; bottom: auto; }
+.gy-era-2010 .gy-cb { top: 390px; bottom: auto; height: 36px; background: linear-gradient(#f7f7f7, #d9d9d9); color: #333; border: 1px solid #bbb; border-top: 0; padding: 0; box-sizing: border-box; }
+.gy-era-2010 .gy-cb-progress { position: absolute; left: 0; right: 0; top: -10px; height: 10px; }
+.gy-era-2010 .gy-cb-track { background: rgba(0,0,0,.4); }
+.gy-era-2010 .gy-cb-played { background: #c00; }
+.gy-era-2010 .gy-cb-handle { background: #fff; border: 1px solid #999; }
+.gy-era-2010 .gy-cb-btn { color: #333; opacity: .8; }
+.gy-era-2010 .gy-cb-volume-track { background: #bbb; }
+.gy-era-2010 .gy-cb-volume-level, .gy-era-2010 .gy-cb-volume-handle { background: #666; }
+.gy-era-2010 .gy-player.gy-playing.gy-idle .gy-cb { opacity: 1; }
+.gy-era-2010 .gy-player.gy-playing.gy-idle { cursor: default; }
+.gy-era-2010 .gy-player-shade { bottom: 0; }
+/* 2012, Cosmic Panda: the black Google bar, a light grey page with white cards */
+.gy-era-2012 body { background: #f1f1f1; }
+.gy-era-2012 .gy-gbar { height: 30px; background: #2d2d2d; font: 13px arial, sans-serif; }
+.gy-era-2012 .gy-gbar-links { width: 970px; margin: 0 auto; padding: 0; position: relative; }
+.gy-era-2012 .gy-gbar-right { right: 50%; margin-right: -485px; }
+.gy-era-2012 #yt-masthead-container { padding: 14px 0; }
+.gy-era-2012 #masthead-positioner { border-bottom: 1px solid #ddd; }
+.gy-era-2012 .yt-card { box-shadow: 0 1px 2px rgba(0,0,0,.1); padding: 15px; }
+.gy-era-2012 #watch-header, .gy-era-2012 #action-panel-details { border: 0; background: #fff; }
+.gy-era-2012 #player-api { height: 360px; }
+.gy-era-2012 .gy-cb { background: rgba(28,28,28,.9); }
+.gy-era-2012 .gy-cb-played, .gy-era-2012 .gy-cb-handle { background: #c4302b; }
+.gy-era-2012 a { color: #1c62b9; }
+.gy-era-2012 .yt-lockup-title a { color: #1c62b9; }
+.gy-era-2012 .yt-uix-button-subscribe-branded { background: #c4302b; border-color: #a52a26; color: #fff; }

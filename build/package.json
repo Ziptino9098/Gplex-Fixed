@@ -1,0 +1,11 @@
+{
+  "name": "gplex-extended-firefox-build",
+  "version": "7.0.4",
+  "private": true,
+  "description": "Builds the Gplex Extended Firefox add-on from main.user.js",
+  "license": "MIT",
+  "dependencies": {
+    "acorn": "^8.18.0",
+    "acorn-walk": "^8.3.5"
+  }
+}

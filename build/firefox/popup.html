@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body { font: 13px arial, sans-serif; color: #222; margin: 0; width: 300px; background: #fff; }
+#head { background: #f1f1f1; border-bottom: 1px solid #e5e5e5; padding: 10px 12px; font-size: 15px; }
+#head b { color: #dd4b39; }
+#head span { color: #777; font-size: 12px; margin-left: 4px; }
+.sec { padding: 6px 0; border-bottom: 1px solid #ebebeb; }
+.sec:last-child { border-bottom: none; }
+.item { display: block; width: 100%; box-sizing: border-box; text-align: left; background: none; border: none; padding: 7px 12px; font: 13px arial, sans-serif; color: #222; cursor: pointer; }
+.item:hover { background: #eee; }
+.none { padding: 7px 12px; color: #777; }
+.lbl { padding: 4px 12px 2px; color: #777; font-size: 11px; }
+textarea { display: none; box-sizing: border-box; width: 276px; height: 90px; margin: 4px 12px; font: 11px monospace; }
+#msg { padding: 4px 12px 8px; color: #070; font-size: 12px; min-height: 0; }
+</style>
+</head>
+<body>
+<div id="head"><b>Gplex</b> Extended<span id="ver"></span></div>
+<div class="sec" id="cmds"><div class="lbl">This page</div></div>
+<div class="sec">
+  <button class="item" id="open">Gplex settings</button>
+</div>
+<div class="sec">
+  <div class="lbl">Gplex+, the Gplex Extended community</div>
+  <button class="item" id="plus">Open Gplex+</button>
+  <button class="item" id="join">Join Gplex+ (invite link)</button>
+</div>
+<div class="sec">
+  <div class="lbl">Settings file</div>
+  <button class="item" id="export">Export settings</button>
+  <button class="item" id="import">Import settings (from here or Tampermonkey)</button>
+  <textarea id="box" spellcheck="false"></textarea>
+  <div id="msg"></div>
+</div>
+<script src="popup.js"></script>
+</body>
+</html>

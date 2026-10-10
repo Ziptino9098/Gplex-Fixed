@@ -1,0 +1,136 @@
+/* ---- Hitchhiker (2013-2016), on top of YouTube's own stylesheets ----
+   What YouTube's scripts did for its stylesheets, and the few things Gplex adds. */
+.gy-hh { background: #f1f1f1; }
+.gy-hh #masthead-positioner { position: fixed; top: 0; left: 0; right: 0; z-index: 1999999999; }
+.gy-hh.guide-overlay #appbar-guide-menu { visibility: visible; left: 0; opacity: 1; }
+.gy-hh .appbar-guide-menu-layout { height: 100%; bottom: 0; }
+.gy-hh #guide .guide-section .guide-item-hidden { display: none; }
+.gy-hh #guide .guide-section .guide-expanded .guide-item-hidden { display: block; }
+.gy-hh .guide-view-more { background: none; border: 0; color: #767676; font-size: 11px; padding: 4px 25px 8px; cursor: pointer; text-transform: uppercase; font-weight: 500; }
+.gy-hh .guide-view-more:hover { color: #333; }
+.gy-hh .gy-guide-icon { display: inline-block; width: 18px; height: 18px; margin: 0 8px 0 0; vertical-align: middle; color: #555; }
+.gy-hh .gy-guide-icon .gy-icon { width: 18px; height: 18px; }
+.gy-hh .guide-signin-promo { padding: 10px 15px 10px 5px; font-size: 11px; color: #767676; }
+.gy-hh .guide-signin-promo p { margin: 0 0 8px; }
+.gy-hh .guide-item.guide-item-selected { font-weight: 500; }
+/* the masthead's own icons are sprites; the drawn ones stay out */
+.gy-hh #yt-masthead .yt-uix-button-icon-wrapper .gy-icon { display: none; }
+.gy-hh #yt-masthead-signin .yt-uix-button-icon-wrapper, .gy-hh #search-btn .yt-uix-button-icon-wrapper { display: none; }
+.gy-hh #search-btn .yt-uix-button-content { font-size: 0; }
+.gy-hh #search-btn .yt-uix-button-content::before { content: ""; display: inline-block; width: 15px; height: 15px; background: no-repeat var(--gy-search-sprite, none); }
+.gy-hh #upload-btn { display: inline-block; }
+.gy-hh #yt-masthead-notifications { margin-right: 10px; }
+.gy-hh #yt-masthead-notifications .yt-uix-button-icon-bell { vertical-align: middle; }
+.gy-hh #yt-masthead-user, .gy-hh #yt-masthead-signin { white-space: nowrap; }
+.gy-hh .yt-masthead-user-icon .yt-thumb-28 img { border-radius: 50%; }
+.gy-hh .yt-masthead-user-icon .gy-icon { width: 28px; height: 28px; color: #777; }
+/* the content and its cards */
+.gy-hh #page { position: relative; }
+.gy-hh #content { padding-bottom: 20px; }
+.gy-hh .gy-feed-title { padding: 15px 15px 0; font-size: 18px; font-weight: normal; color: #333; }
+.gy-hh .branded-page-v2-subnav-container.channel-subnav { padding: 10px 15px; }
+.gy-hh .gy-chips .yt-uix-button-link .yt-uix-button-content { color: #555; }
+.gy-hh .yt-lockup-thumbnail img { display: block; }
+.gy-hh .yt-lockup-grid .yt-lockup-thumbnail img { width: 100%; height: auto; }
+.gy-hh .video-time-live { background: #c00; }
+.gy-hh .yt-uix-shelfslider-list { transition: transform .3s; white-space: nowrap; }
+.gy-hh .yt-uix-shelfslider-item { white-space: normal; vertical-align: top; }
+.gy-hh .yt-uix-shelfslider-at-head .yt-uix-shelfslider-prev, .gy-hh .yt-uix-shelfslider-at-tail .yt-uix-shelfslider-next { display: none; }
+.gy-hh .yt-uix-shelfslider-prev, .gy-hh .yt-uix-shelfslider-next { position: absolute; top: 40%; z-index: 2; }
+.gy-hh .yt-uix-shelfslider-prev { left: -18px; }
+.gy-hh .yt-uix-shelfslider-next { right: -18px; }
+.gy-hh .multirow-shelf .shelf-content, .gy-hh .expanded-shelf-content-list { list-style: none; margin: 0; padding: 0; }
+.gy-hh .multirow-shelf .shelf-content .yt-shelf-grid-item { display: inline-block; vertical-align: top; width: 196px; margin: 0 4px 25px; }
+.gy-hh .search-header .filter-top { display: table; width: 100%; }
+.gy-hh #filter-dropdown { padding: 15px; }
+.gy-hh #filter-dropdown .filter-col { list-style: none; margin: 0; padding-right: 20px; }
+.gy-hh #filter-dropdown .filter li { padding: 3px 0; font-size: 11px; }
+.gy-hh #filter-dropdown .filter-selected a { font-weight: 500; color: #333; }
+.gy-hh #filter-dropdown .filter-disabled { color: #aaa; }
+.gy-hh .filter-crumb-list { list-style: none; margin: 0; padding: 0 10px; }
+.gy-hh .filter-crumb { display: inline-block; margin-right: 10px; padding: 2px 6px; background: #eee; border-radius: 2px; font-size: 11px; }
+/* the watch page */
+.gy-hh #player { position: relative; }
+.gy-hh #player-api { position: relative; }
+.gy-hh #player-playlist .watch-playlist { position: absolute; top: 0; width: 400px; background: #222; color: #fff; overflow: hidden; }
+.gy-hh #player-playlist .playlist-title a { color: #fff; }
+.gy-hh #player-playlist .playlist-details { list-style: none; margin: 0; padding: 0; color: #aaa; }
+.gy-hh #player-playlist .playlist-details li { display: inline-block; margin-right: 10px; }
+.gy-hh #player-playlist .playlist-videos-list { list-style: none; margin: 0; padding: 0; }
+.gy-hh #player-playlist .playlist-videos-list li { display: flex; align-items: center; padding: 6px 10px; border-bottom: 1px solid #333; }
+.gy-hh #player-playlist .playlist-videos-list li.currently-playing { background: #333; }
+.gy-hh #player-playlist .playlist-videos-list .index { width: 24px; color: #aaa; font-size: 11px; }
+.gy-hh #player-playlist .playlist-video { display: flex; align-items: center; gap: 8px; color: #fff; text-decoration: none; flex: 1; min-width: 0; }
+.gy-hh #player-playlist .playlist-video h4 { margin: 0; font-size: 12px; font-weight: normal; }
+.gy-hh #player-playlist .video-uploader-byline { color: #aaa; font-size: 11px; }
+.gy-hh .watch-stage-mode #player-playlist .watch-playlist { display: none; }
+.gy-hh #watch7-sidebar .video-list { list-style: none; margin: 0; padding: 0; }
+.gy-hh #watch7-sidebar .video-list-item { position: relative; margin-bottom: 8px; min-height: 94px; }
+.gy-hh #watch7-sidebar .video-list-item .thumb-wrapper { float: left; margin-right: 8px; }
+.gy-hh #watch7-sidebar .video-list-item .content-wrapper { margin-left: 176px; }
+.gy-hh #watch7-sidebar .video-list-item .title { display: block; color: #167ac6; font-size: 13px; line-height: 1.3; max-height: 2.6em; overflow: hidden; }
+.gy-hh #watch7-sidebar .video-list-item .stat { display: block; color: #767676; font-size: 11px; line-height: 1.4; }
+.gy-hh #watch7-sidebar .video-list-item .related-playlist { display: block; color: #333; text-decoration: none; }
+.gy-hh #watch7-sidebar .related-playlist .title { margin-left: 176px; }
+.gy-hh #watch7-sidebar .related-playlist .yt-pl-thumb { float: left; margin-right: 8px; }
+.gy-hh #watch7-sidebar .yt-uix-simple-thumb-wrap img { display: block; }
+.gy-hh #watch7-sidebar .load-more-button { display: block; width: 100%; margin-top: 10px; }
+.gy-hh .yt-uix-expander-collapsed .yt-uix-expander-body { display: none; }
+.gy-hh .yt-uix-expander:not(.yt-uix-expander-collapsed) .yt-uix-expander-collapsed-body { display: none; }
+.gy-hh #action-panel-details .yt-uix-button-expander .yt-uix-button-content { color: inherit; }
+.gy-hh #watch8-secondary-actions .yt-uix-button-icon-wrapper .gy-icon { display: none; }
+.gy-hh .like-button-renderer .yt-uix-button-icon-wrapper { display: none; }
+.gy-hh .like-button-renderer .yt-uix-button::before { content: ""; display: inline-block; vertical-align: middle; }
+.gy-hh .gy-like-count { margin-left: 4px; }
+.gy-hh #watch-action-panels .hid { display: none; }
+.gy-hh #watch-action-panels { margin-bottom: 10px; }
+.gy-hh .watch-view-count { font-size: 19px; color: #666; }
+/* comments */
+.gy-hh .comment-section-header-renderer { padding: 0 0 20px; font-size: 13px; color: #555; text-transform: uppercase; }
+.gy-hh .comment-section-sort-menu { float: right; text-transform: none; }
+.gy-hh .comment-simplebox { display: flex; gap: 10px; margin-bottom: 30px; }
+.gy-hh .comment-simplebox-content { flex: 1; }
+.gy-hh .comment-simplebox-text { width: 100%; box-sizing: border-box; font: 13px arial, sans-serif; padding: 6px; border: 1px solid #ccc; resize: vertical; }
+.gy-hh .comment-simplebox-buttons { display: none; margin-top: 8px; text-align: right; }
+.gy-hh .gy-simplebox-active .comment-simplebox-buttons { display: block; }
+.gy-hh .comment-thread-renderer { margin-bottom: 24px; }
+.gy-hh .comment-renderer-content { margin-left: 58px; }
+.gy-hh .comment-replies-renderer .comment-renderer-content { margin-left: 42px; }
+.gy-hh .comment-renderer-header { margin-bottom: 4px; font-size: 13px; }
+.gy-hh .comment-author-text { font-weight: 500; color: #333; }
+.gy-hh .comment-renderer-time a { color: #767676; font-size: 11px; margin-left: 6px; }
+.gy-hh .comment-renderer-text-content { font-size: 13px; line-height: 1.4; white-space: pre-wrap; word-wrap: break-word; }
+.gy-hh .comment-renderer-footer { margin-top: 6px; }
+.gy-hh .comment-action-buttons-toolbar { display: flex; align-items: center; gap: 6px; }
+.gy-hh .comment-action-buttons-toolbar .yt-uix-button-icon-wrapper .gy-icon { width: 16px; height: 16px; display: inline-block; color: #767676; }
+.gy-hh .comment-action-like.yt-uix-button-toggled .gy-icon, .gy-hh .comment-action-dislike.yt-uix-button-toggled .gy-icon { color: #167ac6; }
+.gy-hh .comment-renderer-like-count { color: #767676; font-size: 11px; }
+.gy-hh .comment-renderer-pinned-comment-badge { color: #767676; font-size: 11px; margin-bottom: 4px; }
+.gy-hh .comment-renderer-author-comment-badge.creator .comment-author-text { background: #767676; color: #fff; padding: 1px 4px; border-radius: 2px; }
+.gy-hh .comment-replies-renderer { margin: 10px 0 0 58px; }
+.gy-hh .comment-replies-renderer .comment-renderer { margin-top: 16px; }
+.gy-hh .comment-renderer-creator-heart { display: inline-flex; align-items: center; color: #c00; }
+.gy-hh .comment-renderer-creator-heart .gy-icon { width: 14px; height: 14px; }
+.gy-hh .comment-section-renderer-paginator { display: block; width: 100%; }
+.gy-hh .gy-simplebox-reply { margin: 10px 0 0; }
+/* channel and playlist pages */
+.gy-hh .appbar-nav-owner { display: inline-flex; align-items: center; gap: 8px; margin-right: 15px; color: #333; font-weight: 500; text-decoration: none; }
+.gy-hh .appbar-nav-avatar { border-radius: 50%; }
+.gy-hh #channel-navigation-menu { list-style: none; margin: 0; padding: 0; }
+.gy-hh #channel-navigation-menu li { display: inline-block; }
+.gy-hh .gy-channel-list .shelf-content { padding-top: 15px; }
+.gy-hh .about-stats { list-style: none; padding: 0; color: #555; }
+.gy-hh .about-description pre { white-space: pre-wrap; font: inherit; color: #333; }
+.gy-hh #pl-video-table td { vertical-align: middle; }
+.gy-hh .pl-header-description { color: #555; }
+.gy-hh .c4-player-thumb { display: block; position: relative; }
+.gy-hh .c4-player-thumb img { width: 100%; display: block; }
+.gy-hh .c4-player-thumb .play-icon { position: absolute; left: 50%; top: 50%; width: 60px; height: 60px; margin: -30px 0 0 -30px; background: rgba(0,0,0,.6); border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; }
+.gy-hh .c4-player-thumb .play-icon .gy-icon { display: block; width: 36px; height: 36px; }
+.gy-hh .c4-video-info { margin-left: 482px; }
+.gy-hh .c4-video-info .title a { color: #333; font-size: 16px; }
+.gy-hh .c4-video-info .metadata { color: #767676; font-size: 11px; margin: 4px 0 10px; }
+.gy-hh .c4-video-info .description { color: #555; white-space: pre-wrap; }
+/* the player of these years: the dark bar over the picture, a red progress line */
+.gy-hh .gy-cb { background: linear-gradient(to top, rgba(0,0,0,.8), rgba(0,0,0,0)); padding-top: 20px; }
+.gy-hh .gy-cb-played, .gy-hh .gy-cb-handle { background: #cc181e; }
