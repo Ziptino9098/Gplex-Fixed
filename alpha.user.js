@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended Alpha - Gplex Old Google with its YouTube part rewritten
 // @namespace    http://tampermonkey.net/
-// @version      9.0.0.2
+// @version      9.0.0.3
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube, rewritten: alpha, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -1125,6 +1125,75 @@ function ugf2014V(){
         v=String(v||"");
         return v==="2013N"||v==="2014E"||v==="2014N"?v:"";
     }catch(e){ return ""; }
+}
+// (7.2.30) the right of the bar Google brought in on 19 September 2013 (to June 2015, when +Name went):
+// after +Name and the grid, an outline bell, Share in a small grey speech bubble (an icon from October
+// 2014) and the photo with no border or arrow - square until January 2014, round from then on. Gmail,
+// Calendar, Maps, the settings page and the other Google pages Gplex draws put it together from these,
+// sized and spaced as the search pages draw it (8.3). v is the period: "2013N", "2014E" or "2014N".
+function ugfB13Css() {
+    if (document.getElementById("ugf-b13-css")) {
+        return;
+    }
+    const st = document.createElement("style");
+    st.id = "ugf-b13-css";
+    st.textContent = [
+        ".ugf-b13-grid, .ugf-b13-bell, .ugf-b13-share, .ugf-b13-photo { display: inline-flex !important; align-items: center; justify-content: center; box-sizing: border-box; cursor: pointer; text-decoration: none !important; }",
+        ".ugf-b13-grid { width: 30px; height: 30px; margin: 0 5px; background: url('https://ssl.gstatic.com/gb/images/i1_1967ca6a.png') -132px -38px / 528px 68px no-repeat; opacity: .55; }",
+        ".ugf-b13-grid:hover { opacity: .85; }",
+        ".ugf-b13-bell { width: 30px; height: 30px; margin: 0 5px; color: #000 !important; opacity: .55; }",
+        ".ugf-b13-bell:hover { opacity: .8; }",
+        ".ugf-b13-bell svg, .ugf-b13-share svg { width: 20px; height: 20px; fill: currentColor; }",
+        ".ugf-b13-share { position: relative; min-width: 60px; height: 30px; margin: 0 5px 0 0 !important; padding: 0 10px !important; " +
+            "background: rgba(0,0,0,.04) !important; border: none !important; border-radius: 0 !important; color: #404040 !important; font: 13px arial, sans-serif !important; white-space: nowrap; }",
+        ".ugf-b13-share:hover { background: rgba(0,0,0,.08) !important; }",
+        '.ugf-b13-share::after { content: ""; position: absolute; right: 0; top: 30px; border-top: 6px solid rgba(0,0,0,.04); border-left: 6px solid transparent; }',
+        ".ugf-b13-share:hover::after { border-top-color: rgba(0,0,0,.08); }",
+        // October to December 2014: the grid of 19px, the bell of 28px, Share an icon of 24x21 (all 55% black,
+        // full black under the pointer) and the photo at 34px, with the spacing Google's own screenshot has
+        ".ugf-b13-grid.late { width: 19px; height: 19px; margin: 0 8px 0 0; background: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 19 19'%3E%3Cpath d='M0 0h5v5H0zM7 0h5v5H7zM14 0h5v5h-5zM0 7h5v5H0zM7 7h5v5H7zM14 7h5v5h-5zM0 14h5v5H0zM7 14h5v5H7zM14 14h5v5h-5z'/%3E%3C/svg%3E\") center / 19px 19px no-repeat; }",
+        ".ugf-b13-bell.late { width: 36px; margin: 0 16px 0 8px; }",
+        ".ugf-b13-bell.late svg { width: 28px; height: 28px; }",
+        ".ugf-b13-share.icon { min-width: 24px; width: 24px; margin: 0 8px 0 0 !important; padding: 0 !important; background: none !important; color: #000 !important; opacity: .55; }",
+        ".ugf-b13-share.icon svg { width: 24px; height: 21px; }",
+        ".ugf-b13-share.icon::after { display: none; }",
+        ".ugf-b13-grid.late:hover, .ugf-b13-bell.late:hover, .ugf-b13-share.icon:hover { opacity: 1; }",
+        ".ugf-b13-photo { border: none !important; padding: 0 !important; background: none !important; box-shadow: none !important; }",
+        ".ugf-b13-photo .car { display: none !important; }",
+        ".ugf-b13-photo .pfp { width: 30px !important; height: 30px !important; line-height: 30px !important; border: none !important; border-radius: 50% !important; }",
+        ".ugf-b13-photo.sq .pfp { border-radius: 0 !important; }",
+        ".ugf-b13-photo.late .pfp { width: 34px !important; height: 34px !important; line-height: 34px !important; }"
+    ].join("\n");
+    (document.head || document.documentElement).appendChild(st);
+}
+function ugfB13Bits(v) {
+    ugfB13Css();
+    const late = v === "2014N";
+    return '<span class="ugf-b13-bell' + (late ? " late" : "") + '" title="Notifications"><svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/></svg></span>' +
+        (late ? '<span class="ugf-b13-share icon" title="Share"><svg viewBox="0 0 24 21"><path fill-rule="evenodd" d="M1.5 0h18A1.5 1.5 0 0 1 21 1.5V17l3 4H0V1.5A1.5 1.5 0 0 1 1.5 0zM2 2v15h17V2zm7.25 2.5h2.5v3.75h3.75v2.5h-3.75v3.75h-2.5v-3.75H5.5v-2.5h3.75z"/></svg></span>'
+            : '<span class="ugf-b13-share" title="Share">Share</span>');
+}
+// the grid before them, for a page with no launcher of its own to open
+function ugfB13Grid(v) {
+    ugfB13Css();
+    return '<a class="ugf-b13-grid' + (v === "2014N" ? " late" : "") + '" href="https://www.google.com/intl/en/options/" title="Google apps"></a>';
+}
+function ugfB13PhotoClass(v) {
+    return "ugf-b13-photo" + (v === "2013N" ? " sq" : v === "2014N" ? " late" : "");
+}
+// SIGN IN stayed red until the blue Sign in of 2014
+function ugfB13RedSignIn(v) {
+    return v === "2013N" || v === "2014E";
+}
+// (8.3) the launcher of 2012 to mid 2015, for every page Gplex draws one on: Google a lowercase g, Google+
+// a red square, the older Books, Contacts, Translate and Maps marks, and in 2014 the rest of the sheet
+// Google's bar drew then. Null for any other layout: the era's own sheet.
+function ugfLauncherArt(L) {
+    if (["2012", "2013", "2013L", "2014", "2015"].indexOf(L) < 0) {
+        return null;
+    }
+    const old = { "google-search": UGF_D.i65, plus: UGF_D.i66, books: UGF_D.i67, contacts: UGF_D.i68, translate: UGF_D.i69, maps: UGF_D.i70 };
+    return L === "2014" ? Object.assign({ envelope: UGF_LAUNCHER_2014.gmail }, old, UGF_LAUNCHER_2014) : old;
 }
 // (7.2.31) Google's tab icons, out here so every part of Gplex can use them
 // Inlined favicon SVGs (no Wikimedia hotlinking / HTTP 429). Credit: StonedKhajiit
@@ -13089,7 +13158,7 @@ function ugfIsErrorPage() {
             };
             name = name || shared("UGF_USERNAME");
             mail = mail || shared("UGF_EMAIL");
-            return { name: name, first: name.split(" ")[0] || "", email: mail, mode: shared("UGF_NAME_EMAIL") || "name" };
+            return { name: name, first: name.split(" ")[0] || "", email: mail, mode: shared("UGF_NAME_EMAIL") || "name", photo: shared("UGF_PFP") };
         });
         const gbar = function() {
             const w = who();
@@ -13137,6 +13206,35 @@ function ugfIsErrorPage() {
                 '<a class="gear" href="https://www.google.com/gplex" title="Options"><i>' + A.gear.replace(/width="24" height="24"/, 'width="16" height="16"') + "</i></a>";
             return '<div class="gbar dark' + (plus ? " plus" : "") + '"><div class="left">' + links + '</div><div class="right">' + right + "</div></div>";
         };
+        // (8.3) late 2011 to 2016 put the results header over both pages: the small logo (the strip
+        // the results page draws it from), the box and button of the layout, and the layout's corner
+        // (the +Name bar's grid, bell, Share and photo, or the grid and the photo). The layouts with the
+        // black bar carried the account there, so their white row has no corner.
+        const strip = { "2012": ["nav_logo82", 114, 41], "2013": ["nav_logo124", 95, 37], "2013L": ["nav_logo124", 95, 37],
+            "2014": ["nav_logo225", 95, 37], "2015": ["nav_logo225", 95, 37], "2015L": ["nav_logo225", 95, 37],
+            "2016": ["nav_logo242", 95, 37], "2016L": ["nav_logo242", 95, 37] }[L];
+        const dark = ["2012", "2013", "2013L", "2015L", "2016L"].indexOf(L) > -1;
+        const head = function(q) {
+            if (!strip) {
+                return '<div class="top"><a href="/" class="lg"><img src="' + logo.src + '" width="' + logo.w + '" alt="Google"></a></div>';
+            }
+            const v = L === "2014" ? ugf2014V() : "";
+            const w = who();
+            let corner = "";
+            if (!dark) {
+                const photo = w.photo ? '<img class="pfp" src="' + esc(w.photo) + '" alt="">' : '<span class="pfp letter">' + esc((w.first || w.email || "?").charAt(0)) + "</span>";
+                corner = !(w.name || w.email) ? ugfB13Grid(v) + '<a class="signin' + (ugfB13RedSignIn(v) ? " red" : "") + '" href="https://accounts.google.com/ServiceLogin">Sign in</a>'
+                    : L === "2014" ? '<a class="plus' + (v === "2014N" ? " late" : "") + '" href="' + esc(ugfPlusProfileLink()) + '">+' + esc(ugfPlusFirst()) + "</a>" +
+                        ugfB13Grid(v) + ugfB13Bits(v) + '<a class="' + ugfB13PhotoClass(v) + '" href="https://myaccount.google.com/">' + photo + "</a>"
+                    : ugfB13Grid("") + '<a class="ugf-b13-photo" href="https://myaccount.google.com/">' + photo + "</a>";
+            }
+            return '<div class="top"><a href="/" class="lg"><img src="https://www.google.com/images/' + strip[0] + '.png" alt="Google"></a>' +
+                '<form action="https://www.google.com/search"><input name="q" value="' + esc(q) + '" autocomplete="off" aria-label="Search">' +
+                '<button type="submit" title="Google Search"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></button></form>' +
+                (corner ? '<div class="corner">' + corner + "</div>" : "") + "</div>";
+        };
+        const foot = '<div class="foot">' + (strip ? '<a href="https://support.google.com/websearch/?p=ws_settings">Help</a><a href="https://www.google.com/tools/feedback/survey/html?productId=196">Send feedback</a>' : "") +
+            '<a href="https://policies.google.com/privacy">Privacy</a><a href="https://policies.google.com/terms">Terms</a></div>';
         // ---- the page
         let body = "";
         if (era === "as07") {
@@ -13192,8 +13290,7 @@ function ugfIsErrorPage() {
             const hint = function(t) {
                 return '<td class="h">' + t + "</td>";
             };
-            body = '<div class="top"><a href="/" class="lg"><img src="' + logo.src + '" width="' + logo.w + '" alt="Google"></a></div>' +
-                '<div class="wrap"><h1>Advanced Search</h1><form id="ugf-adv-form">' +
+            body = head(q0) + '<div class="wrap"><h1>Advanced Search</h1><form id="ugf-adv-form">' +
                 '<div class="sec"><span>Find pages with...</span></div><table class="rows">' +
                 '<tr><td class="l">all these words:</td><td class="f"><input name="all" value="' + esc(q0) + '"></td>' + hint("Type the important words: <b>tri-color rat terrier</b>") + "</tr>" +
                 '<tr><td class="l">this exact word or phrase:</td><td class="f"><input name="exact"></td>' + hint("Put exact words in quotes: <b>\"rat terrier\"</b>") + "</tr>" +
@@ -13217,7 +13314,7 @@ function ugfIsErrorPage() {
                 '<li><a href="https://www.google.com/gplex">Customize your search settings</a></li></ul>' +
                 '<div class="relbox"><form data-op="related:">Find pages similar to the URL: <input name="u"> <input type="submit" value="Search"></form>' +
                 '<form data-op="link:">Find pages that link to the URL: <input name="u"> <input type="submit" value="Search"></form></div></div>' +
-                '<div class="foot"><a href="https://policies.google.com/privacy">Privacy</a><a href="https://policies.google.com/terms">Terms</a></div>';
+                foot;
         }
         // ---- the look
         const S = "#ugf-adv";
@@ -13293,6 +13390,27 @@ function ugfIsErrorPage() {
                 S + " .relbox { display: none; margin: 10px 0; padding: 10px; background: #f1f1f1; border: 1px solid #e5e5e5; } " + S + "[rel] .relbox { display: block; }",
                 S + " .relbox form { margin: 4px 0; }",
                 S + " .foot { border-top: 1px solid #e4e4e4; background: #f2f2f2; padding: 12px 28px; margin-top: 30px; } " + S + " .foot a { color: #777; margin-right: 22px; }");
+        }
+        if (strip) {
+            // the header as measured on the results page of each layout; the footer band sits at the foot of the window
+            const tall = dark ? 72 : 60;
+            css.push(S + " { min-height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; } " + S + " .foot { margin-top: auto; }",
+                S + " .top { height: " + tall + "px; padding: 0 30px 0 21px; border-bottom-color: #e5e5e5; }",
+                S + " .top .lg { display: block; position: relative; overflow: hidden; flex: none; width: " + strip[1] + "px; height: " + strip[2] + "px; } " + S + " .top .lg img { position: absolute; left: 0; top: -41px; }",
+                S + " .top form { display: flex; margin: 0 0 0 18px; }",
+                S + " .top form input { box-sizing: border-box; width: " + (dark ? 590 : 589) + "px; height: " + (L === "2016" ? 40 : 30) + "px; margin: 0; padding: 1px 2px 1px 9px; border: 1px solid #d9d9d9; border-top-color: #c0c0c0; background: #fff; font: " + (L === "2012" ? 18 : 16) + "px Arial, sans-serif; outline: none; }",
+                S + " .top form input:focus { border-color: #4d90fe; box-shadow: inset 0 1px 2px rgba(0,0,0,.3); }",
+                S + " .top form button { box-sizing: border-box; display: flex; align-items: center; justify-content: center; margin: 0; padding: 0; cursor: pointer; " +
+                    (L === "2016" ? "width: 40px; height: 40px; border: 0; border-radius: 0 2px 2px 0; background: #4285f4; }"
+                        : dark ? "width: 70px; height: 30px; margin-left: 17px; border: 1px solid #3079ed; border-radius: 2px; background: linear-gradient(#4d90fe, #4787ed); }"
+                        : "width: 60px; height: 30px; border: 1px solid #3079ed; border-radius: 0 2px 2px 0; background: linear-gradient(#4d90fe, #4787ed); }"),
+                S + " .top form button:hover { background: " + (L === "2016" ? "#3b78e7" : "linear-gradient(#4d90fe, #357ae8); border-color: #2f5bb7") + "; }",
+                S + " .top form button svg { width: 15px; height: 15px; fill: #fff; }",
+                S + " .top .corner { margin-left: auto; display: flex; align-items: center; gap: 10px; }",
+                S + " .top .corner .plus { color: #666; font-size: 13px; margin-right: 5px; } " + S + " .top .corner .plus.late { color: #404040; margin-right: 14px; }",
+                S + " .top .corner .pfp { display: block; object-fit: cover; } " + S + " .top .corner .pfp.letter { display: flex; align-items: center; justify-content: center; background: #c62828; color: #fff; font-size: 15px; text-transform: uppercase; }",
+                S + " .top .corner .signin { height: 29px; padding: 0 12px; border: 1px solid #3079ed; border-radius: 2px; background: linear-gradient(#4d90fe, #4787ed); color: #fff; font: bold 11px/29px Arial, sans-serif; text-decoration: none; }",
+                S + " .top .corner .signin.red { border-color: #b0281a; background: linear-gradient(#dd4b39, #d14836); }");
         }
         // ---- what it searches for
         const build = function(form) {
@@ -13434,8 +13552,7 @@ function ugfIsErrorPage() {
             // late 2011 on: "Search Settings", the grey menu on the left
             const nums = [10, 20, 30, 40, 50, 100];
             const numIdx = Math.max(0, nums.indexOf(parseInt(cur.num, 10)));
-            return '<div class="top"><a href="/" class="lg"><img src="' + logo.src + '" width="' + logo.w + '" alt="Google"></a></div>' +
-                '<div class="wrap"><h1>Search Settings</h1><div class="cols"><div class="nav"><a href="#" data-pane="results" class="on">Search results</a><a href="#" data-pane="langs">Languages</a>' +
+            return head("") + '<div class="wrap"><h1>Search Settings</h1><div class="cols"><div class="nav"><a href="#" data-pane="results" class="on">Search results</a><a href="#" data-pane="langs">Languages</a>' +
                 '<a href="https://support.google.com/websearch">Help</a></div><form id="ugf-pf-form" class="panes">' +
                 '<div class="pane" data-pane="results">' +
                 '<div class="blk"><h2>SafeSearch filters</h2><p>Turn on SafeSearch to filter sexually explicit content from your search results.</p>' +
@@ -13451,7 +13568,7 @@ function ugfIsErrorPage() {
                 '<div class="blk"><h2>Currently showing search results in:</h2><p>Choose the languages of the pages you want to see. Leave them all unticked for any language.</p><div class="langs">' + langBoxes + "</div></div></div>" +
                 '<div class="btns"><input type="submit" class="save" value="Save"><a href="#" class="cancel">Cancel</a><span class="saved-note">Saved settings are available whenever you use Gplex in this browser.</span></div>' +
                 '<div id="ugf-pf-note"></div></form></div></div>' +
-                '<div class="foot"><a href="https://policies.google.com/privacy">Privacy</a><a href="https://policies.google.com/terms">Terms</a></div>';
+                foot;
         };
         const prefsCss = function() {
             const S = "#ugf-adv";
@@ -13812,7 +13929,7 @@ function ugfIsErrorPage() {
             return;
         }
         const L = gv("UGF_LAYOUT", "2015");
-        const A = {"check":UGF_D.i62,"nav09":UGF_D.i61,"logo10":UGF_D.i54,"logo13":UGF_D.i55,"logo15":UGF_D.i56,"fav1999":UGF_FAVICON_1999,"fav2009":UGF_FAVICON_2009_G,"fav2010":UGF_FAVICON_2010,"fav2012":UGF_FAVICON_2012,"fav2015":UGF_FAVICON_2015,"mi":{"apps":"<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z\"/></svg>","lock_outline":"<svg xmlns=\"http://www.w3.org/2000/svg\" enable-background=\"new 0 0 24 24\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><g><rect fill=\"none\" height=\"24\" width=\"24\" x=\"0\"/></g><g><g><g><path d=\"M12,17c1.1,0,2-0.9,2-2s-0.9-2-2-2s-2,0.9-2,2S10.9,17,12,17z M18,8h-1V6c0-2.76-2.24-5-5-5S7,3.24,7,6v2H6 c-1.1,0-2,0.9-2,2v10c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V10C20,8.9,19.1,8,18,8z M8.9,6c0-1.71,1.39-3.1,3.1-3.1 s3.1,1.39,3.1,3.1v2H8.9V6z M18,20H6V10h12V20z\"/></g></g></g></svg>","people_outline":"<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M16.5 13c-1.2 0-3.07.34-4.5 1-1.43-.67-3.3-1-4.5-1C5.33 13 1 14.08 1 16.25V19h22v-2.75c0-2.17-4.33-3.25-6.5-3.25zm-4 4.5h-10v-1.25c0-.54 2.56-1.75 5-1.75s5 1.21 5 1.75v1.25zm9 0H14v-1.25c0-.46-.2-.86-.52-1.22.88-.3 1.96-.53 3.02-.53 2.44 0 5 1.21 5 1.75v1.25zM7.5 12c1.93 0 3.5-1.57 3.5-3.5S9.43 5 7.5 5 4 6.57 4 8.5 5.57 12 7.5 12zm0-5.5c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 5.5c1.93 0 3.5-1.57 3.5-3.5S18.43 5 16.5 5 13 6.57 13 8.5s1.57 3.5 3.5 3.5zm0-5.5c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z\"/></svg>","settings":"<svg xmlns=\"http://www.w3.org/2000/svg\" enable-background=\"new 0 0 24 24\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><rect fill=\"none\" height=\"24\" width=\"24\"/><path d=\"M19.5,12c0-0.23-0.01-0.45-0.03-0.68l2.57-1.94l-2.75-4.76l-2.96,1.25c-0.37-0.26-0.76-0.49-1.17-0.68L14.75,2h-5.5 l-0.4,3.19c-0.41,0.19-0.8,0.42-1.17,0.68L4.71,4.62L1.96,9.38l2.57,1.94C4.51,11.55,4.5,11.77,4.5,12s0.01,0.45,0.03,0.68 l-2.57,1.94l2.75,4.76l2.96-1.25c0.37,0.26,0.76,0.49,1.17,0.68L9.25,22h5.5l0.4-3.19c0.41-0.19,0.8-0.42,1.17-0.68l2.96,1.25 l2.75-4.76l-2.57-1.94C19.49,12.45,19.5,12.23,19.5,12z M12.04,15.5c-1.93,0-3.5-1.57-3.5-3.5s1.57-3.5,3.5-3.5s3.5,1.57,3.5,3.5 S13.97,15.5,12.04,15.5z\"/></svg>","check":"<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z\"/></svg>"},"maps14":"data:image/png;base64,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","maps15":"data:image/png;base64,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","chrome14":UGF_D.i64,"grid":{"google-search":UGF_D.i65,"plus":UGF_D.i66,"books":UGF_D.i67,"contacts":UGF_D.i68,"translate":UGF_D.i69,"maps":UGF_D.i70},"appsCss":"#ugf-gmail-appsmenu {position: absolute; z-index: 1401; font: 13px arial, sans-serif;}\n#ugf-gmail-appsmenu #gp-apps-dd-card {scrollbar-width: none; background: #fff; padding: 28px 28px 12px 28px; border: 1px solid rgba(0,0,0,.2); box-shadow: 0 2px 10px rgba(0,0,0,.2); cursor: auto; overflow-y: auto; overscroll-behavior: contain; width: 264px; max-height: 442px; box-sizing: content-box;}\n#ugf-gmail-appsmenu #gp-apps-dd-card::-webkit-scrollbar {width: 0;}\n#ugf-gmail-appsmenu[chrome=\"m2018\"] #gp-apps-dd-card {border-radius: 8px;}\n#ugf-gmail-appsmenu .sector {display: flex; flex-wrap: wrap; justify-content: center;}\n#ugf-gmail-appsmenu .sector:nth-child(1) {padding-bottom: 28px; border-bottom: 1px solid #ebebeb;}\n#ugf-gmail-appsmenu .sector:nth-child(2), #ugf-gmail-appsmenu .sector:nth-child(3) {padding-top: 28px;}\n#ugf-gmail-appsmenu #even-more {color: #737373 !important; font-size: 13px; font-family: arial, sans-serif !important; text-decoration: none !important; margin: 0 auto;}\n#ugf-gmail-appsmenu #even-more:hover {text-decoration: underline !important;}\n#ugf-gmail-appsmenu .gp-app {width: 86px; height: 100px; font-size: 13px; font-family: arial, sans-serif !important; padding: 1px;}\n#ugf-gmail-appsmenu .gp-app-inner {text-decoration: none !important; margin: 7px 0; height: 86px; display: block; border: 1px solid transparent; border-radius: 2px;}\n#ugf-gmail-appsmenu .gp-app:hover .gp-app-inner {border: 1px solid #e5e5e5; background: rgba(255,255,255,.9);}\n#ugf-gmail-appsmenu .gp-app-icon {background-image: url(https://ssl.gstatic.com/gb/images/v1_76783e20.png); -webkit-background-size: 92px 2541px; background-size: 92px 2541px;}\n#ugf-gmail-appsmenu #myaccount .gp-app-icon {background-position: 0 -1451px;}\n#ugf-gmail-appsmenu #google-search .gp-app-icon {background-position: -17px -207px;}\n#ugf-gmail-appsmenu #maps .gp-app-icon {background-position: 0 -450px;}\n#ugf-gmail-appsmenu #youtube .gp-app-icon {background-position: 0 0;}\n#ugf-gmail-appsmenu #play .gp-app-icon {background-position: 0 -1779px;}\n#ugf-gmail-appsmenu #news .gp-app-icon {background-position: 0 -1990px;}\n#ugf-gmail-appsmenu #envelope .gp-app-icon {background-position: 0 -1710px;}\n#ugf-gmail-appsmenu #drive .gp-app-icon {background-position: 0 -138px;}\n#ugf-gmail-appsmenu #calendar .gp-app-icon {background-position: 0 -2059px;}\n#ugf-gmail-appsmenu #plus .gp-app-icon {background-position: 0 -938px;}\n#ugf-gmail-appsmenu #translate .gp-app-icon {background-position: 0 -693px;}\n#ugf-gmail-appsmenu #photos .gp-app-icon {background-position: 0 -1145px;}\n#ugf-gmail-appsmenu #shopping .gp-app-icon {background-position: 0 -1352px;}\n#ugf-gmail-appsmenu #wallet .gp-app-icon, #ugf-gmail-appsmenu #finance .gp-app-icon {background-image: url(https://ssl.gstatic.com/gb/images/p1_a4541be8.png); -webkit-background-size: 64px 2065px; background-size: 64px 2065px; background-position: 0 -966px;}\n#ugf-gmail-appsmenu #finance .gp-app-icon {background-position: 0 -1725px;}\n#ugf-gmail-appsmenu #docs .gp-app-icon {background-position: 0 -1214px;}\n#ugf-gmail-appsmenu #books .gp-app-icon {background-position: 0 -554px;}\n#ugf-gmail-appsmenu #blogger .gp-app-icon {background-position: 0 -1007px;}\n#ugf-gmail-appsmenu #contacts .gp-app-icon {background-position: 0 -69px;}\n#ugf-gmail-appsmenu #hangouts .gp-app-icon {background-position: 0 -2335px;}\n#ugf-gmail-appsmenu #chrome .gp-app-icon {background-image: url(\"" + UGF_D.i71 + "\"); background-size: 48px 48px; background-position: center; background-repeat: no-repeat; margin-top: 0; width: 64px !important; height: 64px !important;}\n#ugf-gmail-appsmenu[layout^=\"2016\"] #chrome .gp-app-icon, #ugf-gmail-appsmenu[layout^=\"2018\"] #chrome .gp-app-icon, #ugf-gmail-appsmenu[layout=\"2019\"] #chrome .gp-app-icon, #ugf-gmail-appsmenu[layout=\"2022\"] #chrome .gp-app-icon {background-image: url(\"" + UGF_D.i64 + "\");}\n#ugf-gmail-appsmenu .gp-app-icon {margin: 0 auto; height: 64px; width: 64px;}\n#ugf-gmail-appsmenu .gp-app-title {width: fit-content; margin: 0 auto; color: #404040 !important; text-decoration: none !important;}\n#ugf-gmail-appsmenu .gp-app-title {width: fit-content; margin: 0 auto; color: #404040 !important; text-decoration: none !important; text-align: center;}\n#ugf-gmail-appsmenu .gp-app-icon {margin: 0 auto; height: 64px; width: 64px;}","accCss":"#ugf-gmail-accfence { position: fixed; inset: 0; z-index: 1400; } #ugf-gmail-accmenu { position: absolute; width: 300px; z-index: 1401; background: #fff; font: 13px arial, sans-serif; color: #222; border: 1px solid #ccc; box-shadow: 0 2px 10px rgba(0,0,0,.2); } #ugf-gmail-accmenu[chrome=\"m2018\"] { border: 0; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,.2), 0 0 0 1px rgba(0,0,0,.05); font-family: \"Google Sans\", Roboto, arial, sans-serif; overflow: hidden; } #ugf-gmail-accmenu[chrome=\"m2013\"] { border-color: #ccc; border-radius: 2px; box-shadow: 0 2px 10px rgba(0,0,0,.2); } #ugf-gmail-accmenu .head { display: flex; gap: 12px; padding: 16px; border-bottom: 1px solid #eee; align-items: flex-start; } #ugf-gmail-accmenu .head img, #ugf-gmail-accmenu .head .letter { width: 64px; height: 64px; border-radius: 2px; flex: 0 0 64px; object-fit: cover; display: block; } #ugf-gmail-accmenu[chrome=\"m2018\"] .head img, #ugf-gmail-accmenu[chrome=\"m2018\"] .head .letter, #ugf-gmail-accmenu[chrome=\"m2013\"] .head img, #ugf-gmail-accmenu[chrome=\"m2013\"] .head .letter { border-radius: 50%; } #ugf-gmail-accmenu .head .letter { background: #c62828; color: #fff; font-size: 30px; display: flex; align-items: center; justify-content: center; text-transform: uppercase; } #ugf-gmail-accmenu .meta { min-width: 0; display: flex; flex-direction: column; gap: 2px; } #ugf-gmail-accmenu .meta b { font-size: 14px; } #ugf-gmail-accmenu .meta span { color: #777; font-size: 12px; overflow: hidden; text-overflow: ellipsis; } #ugf-gmail-accmenu .meta a { font-size: 12px; margin-top: 6px; color: #1a73e8; } #ugf-gmail-accmenu .acts { display: flex; gap: 8px; padding: 12px 16px; background: #fafafa; border-bottom: 1px solid #eee; } #ugf-gmail-accmenu .acts a { flex: 1 1 auto; text-align: center; border: 1px solid #dcdcdc; border-radius: 2px; background: linear-gradient(#f5f5f5, #f1f1f1); color: #444; font: bold 11px arial, sans-serif; line-height: 25px; text-decoration: none; } #ugf-gmail-accmenu .acts a:hover { border-color: #c6c6c6; text-decoration: none; } #ugf-gmail-accmenu[chrome=\"m2018\"] .acts a { border-radius: 18px; font: 500 13px \"Google Sans\", Roboto, arial, sans-serif; line-height: 32px; background: #fff; } #ugf-gmail-accmenu .foot { display: flex; gap: 14px; justify-content: center; padding: 10px 16px; font-size: 11px; } #ugf-gmail-accmenu .foot a { color: #777; } #ugf-gmail-accmenu[chrome=\"classic\"] { border-radius: 0; }"};
+        const A = {"check":UGF_D.i62,"nav09":UGF_D.i61,"logo10":UGF_D.i54,"logo13":UGF_D.i55,"logo15":UGF_D.i56,"fav1999":UGF_FAVICON_1999,"fav2009":UGF_FAVICON_2009_G,"fav2010":UGF_FAVICON_2010,"fav2012":UGF_FAVICON_2012,"fav2015":UGF_FAVICON_2015,"mi":{"apps":"<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z\"/></svg>","lock_outline":"<svg xmlns=\"http://www.w3.org/2000/svg\" enable-background=\"new 0 0 24 24\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><g><rect fill=\"none\" height=\"24\" width=\"24\" x=\"0\"/></g><g><g><g><path d=\"M12,17c1.1,0,2-0.9,2-2s-0.9-2-2-2s-2,0.9-2,2S10.9,17,12,17z M18,8h-1V6c0-2.76-2.24-5-5-5S7,3.24,7,6v2H6 c-1.1,0-2,0.9-2,2v10c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V10C20,8.9,19.1,8,18,8z M8.9,6c0-1.71,1.39-3.1,3.1-3.1 s3.1,1.39,3.1,3.1v2H8.9V6z M18,20H6V10h12V20z\"/></g></g></g></svg>","people_outline":"<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M16.5 13c-1.2 0-3.07.34-4.5 1-1.43-.67-3.3-1-4.5-1C5.33 13 1 14.08 1 16.25V19h22v-2.75c0-2.17-4.33-3.25-6.5-3.25zm-4 4.5h-10v-1.25c0-.54 2.56-1.75 5-1.75s5 1.21 5 1.75v1.25zm9 0H14v-1.25c0-.46-.2-.86-.52-1.22.88-.3 1.96-.53 3.02-.53 2.44 0 5 1.21 5 1.75v1.25zM7.5 12c1.93 0 3.5-1.57 3.5-3.5S9.43 5 7.5 5 4 6.57 4 8.5 5.57 12 7.5 12zm0-5.5c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 5.5c1.93 0 3.5-1.57 3.5-3.5S18.43 5 16.5 5 13 6.57 13 8.5s1.57 3.5 3.5 3.5zm0-5.5c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z\"/></svg>","settings":"<svg xmlns=\"http://www.w3.org/2000/svg\" enable-background=\"new 0 0 24 24\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><rect fill=\"none\" height=\"24\" width=\"24\"/><path d=\"M19.5,12c0-0.23-0.01-0.45-0.03-0.68l2.57-1.94l-2.75-4.76l-2.96,1.25c-0.37-0.26-0.76-0.49-1.17-0.68L14.75,2h-5.5 l-0.4,3.19c-0.41,0.19-0.8,0.42-1.17,0.68L4.71,4.62L1.96,9.38l2.57,1.94C4.51,11.55,4.5,11.77,4.5,12s0.01,0.45,0.03,0.68 l-2.57,1.94l2.75,4.76l2.96-1.25c0.37,0.26,0.76,0.49,1.17,0.68L9.25,22h5.5l0.4-3.19c0.41-0.19,0.8-0.42,1.17-0.68l2.96,1.25 l2.75-4.76l-2.57-1.94C19.49,12.45,19.5,12.23,19.5,12z M12.04,15.5c-1.93,0-3.5-1.57-3.5-3.5s1.57-3.5,3.5-3.5s3.5,1.57,3.5,3.5 S13.97,15.5,12.04,15.5z\"/></svg>","check":"<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z\"/></svg>"},"maps14":"data:image/png;base64,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","maps15":"data:image/png;base64,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","chrome14":UGF_D.i64,"appsCss":"#ugf-gmail-appsmenu {position: absolute; z-index: 1401; font: 13px arial, sans-serif;}\n#ugf-gmail-appsmenu #gp-apps-dd-card {scrollbar-width: none; background: #fff; padding: 28px 28px 12px 28px; border: 1px solid rgba(0,0,0,.2); box-shadow: 0 2px 10px rgba(0,0,0,.2); cursor: auto; overflow-y: auto; overscroll-behavior: contain; width: 264px; max-height: 442px; box-sizing: content-box;}\n#ugf-gmail-appsmenu #gp-apps-dd-card::-webkit-scrollbar {width: 0;}\n#ugf-gmail-appsmenu[chrome=\"m2018\"] #gp-apps-dd-card {border-radius: 8px;}\n#ugf-gmail-appsmenu .sector {display: flex; flex-wrap: wrap; justify-content: center;}\n#ugf-gmail-appsmenu .sector:nth-child(1) {padding-bottom: 28px; border-bottom: 1px solid #ebebeb;}\n#ugf-gmail-appsmenu .sector:nth-child(2), #ugf-gmail-appsmenu .sector:nth-child(3) {padding-top: 28px;}\n#ugf-gmail-appsmenu #even-more {color: #737373 !important; font-size: 13px; font-family: arial, sans-serif !important; text-decoration: none !important; margin: 0 auto;}\n#ugf-gmail-appsmenu #even-more:hover {text-decoration: underline !important;}\n#ugf-gmail-appsmenu .gp-app {width: 86px; height: 100px; font-size: 13px; font-family: arial, sans-serif !important; padding: 1px;}\n#ugf-gmail-appsmenu .gp-app-inner {text-decoration: none !important; margin: 7px 0; height: 86px; display: block; border: 1px solid transparent; border-radius: 2px;}\n#ugf-gmail-appsmenu .gp-app:hover .gp-app-inner {border: 1px solid #e5e5e5; background: rgba(255,255,255,.9);}\n#ugf-gmail-appsmenu .gp-app-icon {background-image: url(https://ssl.gstatic.com/gb/images/v1_76783e20.png); -webkit-background-size: 92px 2541px; background-size: 92px 2541px;}\n#ugf-gmail-appsmenu #myaccount .gp-app-icon {background-position: 0 -1451px;}\n#ugf-gmail-appsmenu #google-search .gp-app-icon {background-position: -17px -207px;}\n#ugf-gmail-appsmenu #maps .gp-app-icon {background-position: 0 -450px;}\n#ugf-gmail-appsmenu #youtube .gp-app-icon {background-position: 0 0;}\n#ugf-gmail-appsmenu #play .gp-app-icon {background-position: 0 -1779px;}\n#ugf-gmail-appsmenu #news .gp-app-icon {background-position: 0 -1990px;}\n#ugf-gmail-appsmenu #envelope .gp-app-icon {background-position: 0 -1710px;}\n#ugf-gmail-appsmenu #drive .gp-app-icon {background-position: 0 -138px;}\n#ugf-gmail-appsmenu #calendar .gp-app-icon {background-position: 0 -2059px;}\n#ugf-gmail-appsmenu #plus .gp-app-icon {background-position: 0 -938px;}\n#ugf-gmail-appsmenu #translate .gp-app-icon {background-position: 0 -693px;}\n#ugf-gmail-appsmenu #photos .gp-app-icon {background-position: 0 -1145px;}\n#ugf-gmail-appsmenu #shopping .gp-app-icon {background-position: 0 -1352px;}\n#ugf-gmail-appsmenu #wallet .gp-app-icon, #ugf-gmail-appsmenu #finance .gp-app-icon {background-image: url(https://ssl.gstatic.com/gb/images/p1_a4541be8.png); -webkit-background-size: 64px 2065px; background-size: 64px 2065px; background-position: 0 -966px;}\n#ugf-gmail-appsmenu #finance .gp-app-icon {background-position: 0 -1725px;}\n#ugf-gmail-appsmenu #docs .gp-app-icon {background-position: 0 -1214px;}\n#ugf-gmail-appsmenu #books .gp-app-icon {background-position: 0 -554px;}\n#ugf-gmail-appsmenu #blogger .gp-app-icon {background-position: 0 -1007px;}\n#ugf-gmail-appsmenu #contacts .gp-app-icon {background-position: 0 -69px;}\n#ugf-gmail-appsmenu #hangouts .gp-app-icon {background-position: 0 -2335px;}\n#ugf-gmail-appsmenu #chrome .gp-app-icon {background-image: url(\"" + UGF_D.i71 + "\"); background-size: 48px 48px; background-position: center; background-repeat: no-repeat; margin-top: 0; width: 64px !important; height: 64px !important;}\n#ugf-gmail-appsmenu[layout^=\"2016\"] #chrome .gp-app-icon, #ugf-gmail-appsmenu[layout^=\"2018\"] #chrome .gp-app-icon, #ugf-gmail-appsmenu[layout=\"2019\"] #chrome .gp-app-icon, #ugf-gmail-appsmenu[layout=\"2022\"] #chrome .gp-app-icon {background-image: url(\"" + UGF_D.i64 + "\");}\n#ugf-gmail-appsmenu .gp-app-icon {margin: 0 auto; height: 64px; width: 64px;}\n#ugf-gmail-appsmenu .gp-app-title {width: fit-content; margin: 0 auto; color: #404040 !important; text-decoration: none !important;}\n#ugf-gmail-appsmenu .gp-app-title {width: fit-content; margin: 0 auto; color: #404040 !important; text-decoration: none !important; text-align: center;}\n#ugf-gmail-appsmenu .gp-app-icon {margin: 0 auto; height: 64px; width: 64px;}","accCss":"#ugf-gmail-accfence { position: fixed; inset: 0; z-index: 1400; } #ugf-gmail-accmenu { position: absolute; width: 300px; z-index: 1401; background: #fff; font: 13px arial, sans-serif; color: #222; border: 1px solid #ccc; box-shadow: 0 2px 10px rgba(0,0,0,.2); } #ugf-gmail-accmenu[chrome=\"m2018\"] { border: 0; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,.2), 0 0 0 1px rgba(0,0,0,.05); font-family: \"Google Sans\", Roboto, arial, sans-serif; overflow: hidden; } #ugf-gmail-accmenu[chrome=\"m2013\"] { border-color: #ccc; border-radius: 2px; box-shadow: 0 2px 10px rgba(0,0,0,.2); } #ugf-gmail-accmenu .head { display: flex; gap: 12px; padding: 16px; border-bottom: 1px solid #eee; align-items: flex-start; } #ugf-gmail-accmenu .head img, #ugf-gmail-accmenu .head .letter { width: 64px; height: 64px; border-radius: 2px; flex: 0 0 64px; object-fit: cover; display: block; } #ugf-gmail-accmenu[chrome=\"m2018\"] .head img, #ugf-gmail-accmenu[chrome=\"m2018\"] .head .letter, #ugf-gmail-accmenu[chrome=\"m2013\"] .head img, #ugf-gmail-accmenu[chrome=\"m2013\"] .head .letter { border-radius: 50%; } #ugf-gmail-accmenu .head .letter { background: #c62828; color: #fff; font-size: 30px; display: flex; align-items: center; justify-content: center; text-transform: uppercase; } #ugf-gmail-accmenu .meta { min-width: 0; display: flex; flex-direction: column; gap: 2px; } #ugf-gmail-accmenu .meta b { font-size: 14px; } #ugf-gmail-accmenu .meta span { color: #777; font-size: 12px; overflow: hidden; text-overflow: ellipsis; } #ugf-gmail-accmenu .meta a { font-size: 12px; margin-top: 6px; color: #1a73e8; } #ugf-gmail-accmenu .acts { display: flex; gap: 8px; padding: 12px 16px; background: #fafafa; border-bottom: 1px solid #eee; } #ugf-gmail-accmenu .acts a { flex: 1 1 auto; text-align: center; border: 1px solid #dcdcdc; border-radius: 2px; background: linear-gradient(#f5f5f5, #f1f1f1); color: #444; font: bold 11px arial, sans-serif; line-height: 25px; text-decoration: none; } #ugf-gmail-accmenu .acts a:hover { border-color: #c6c6c6; text-decoration: none; } #ugf-gmail-accmenu[chrome=\"m2018\"] .acts a { border-radius: 18px; font: 500 13px \"Google Sans\", Roboto, arial, sans-serif; line-height: 32px; background: #fff; } #ugf-gmail-accmenu .foot { display: flex; gap: 14px; justify-content: center; padding: 10px 16px; font-size: 11px; } #ugf-gmail-accmenu .foot a { color: #777; } #ugf-gmail-accmenu[chrome=\"classic\"] { border-radius: 0; }"};
         const OLD = /^(1997|1998|1999|2000|2001|2002|2003|2005|2006|2007|retro)$/.test(L);
         // the account pages of each period
         //   ma07 to early 2011: "Google Accounts", the blue band over "Personal Settings" and "My products"
@@ -14199,9 +14316,7 @@ function ugfIsErrorPage() {
             const r = anchor.getBoundingClientRect();
             menu.style.left = Math.max(8, r.right + window.scrollX - 322) + "px";
             menu.style.top = (r.bottom + window.scrollY + 6) + "px";
-            // before the September 2015 rebrand: the lowercase g, the red g+ square and
-            // the older Maps, Translate, Books and Contacts marks
-            const old = ["2012", "2013", "2013L", "2014", "2015"].indexOf(L) > -1 ? A.grid : null;
+            const old = ugfLauncherArt(L);   // the marks of before the September 2015 rebrand
             const bg = function(el, url, inline) {
                 el.style.setProperty("background-image", 'url("' + url + '")', "important");
                 el.style.setProperty("background-size", inline ? "64px 64px" : "48px 48px", "important");
@@ -14912,7 +15027,8 @@ function ugfIsErrorPage() {
                 return key === "search" ? { url: "https://www.gstatic.com/images/branding/product/2x/googleg_48dp.png" } : null;
             }
             if (L === "2015") {
-                const pre = { maps: A.maps14, search: A.grid["google-search"], translate: A.grid.translate, contacts: A.grid.contacts, books: A.grid.books, plus: A.grid.plus };
+                const art = ugfLauncherArt(L);
+                const pre = { maps: A.maps14, search: art["google-search"], translate: art.translate, contacts: art.contacts, books: art.books, plus: art.plus };
                 if (pre[key]) {
                     return { url: pre[key], full: true };
                 }
@@ -25989,8 +26105,10 @@ html[layout="2014"][gplex2014n] #ugf-fake-share-button::after {
   opacity: .55;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 21'%3E%3Cpath d='M1.5 0h18A1.5 1.5 0 0 1 21 1.5V17l3 4H0V1.5A1.5 1.5 0 0 1 1.5 0zM2 2v15h17V2zm7.25 2.5h2.5v3.75h3.75v2.5h-3.75v3.75h-2.5v-3.75H5.5v-2.5h3.75z' fill-rule='evenodd'/%3E%3C/svg%3E") center / 24px 21px no-repeat;
 }
-html[layout="2014"][gplex2014n] #ugf-fake-share-button:hover::after {
-  opacity: .8;
+html[layout="2014"][gplex2014n] #ugf-fake-share-button:hover::after,
+html[layout="2014"][gplex2014n] #ugf-fake-notifs-button:hover .ugf-plus-button-icon,
+html[layout="2014"][gplex2014n] #waffle:hover .gp-icon {
+  opacity: 1;
 }
 html[layout="2014"][gplex2014n] #ugf-account-button,
 html[layout="2014"][gplex2014n] #ugf-account-button img {
@@ -26027,8 +26145,11 @@ html[layout="2014"]:not([gplex2013n]) #ugf-account-button img {
   top: 53px;
 }
 [layout="2014"] #ugf-notifs-dd {
-  right: 34px;
+  right: 40px;
   top: 45px;
+}
+html[layout="2014"][gplex2014n] #ugf-notifs-dd {
+  right: 9px;
 }
 #ugf-notifs-dd-card {
   width: 400px;
@@ -26237,6 +26358,23 @@ html[gplus-notif-status="failed"] #ugf-notifs-opening {
 #ugf-account-dd:hover #ugf-account-pfp-change span {
   background: #4d90fe;
   opacity: 1;
+}
+[layout="2013"] #ugf-account-pfp-change,
+[layout="2013L"] #ugf-account-pfp-change,
+[layout="2014"] #ugf-account-pfp-change {
+  background: rgba(0,0,0,.4);
+  opacity: 1;
+}
+[layout="2013"] #ugf-account-pfp-change span,
+[layout="2013L"] #ugf-account-pfp-change span,
+[layout="2014"] #ugf-account-pfp-change span {
+  background: none;
+  opacity: 1;
+}
+[layout="2013"] #ugf-account-pfp:hover #ugf-account-pfp-change,
+[layout="2013L"] #ugf-account-pfp:hover #ugf-account-pfp-change,
+[layout="2014"] #ugf-account-pfp:hover #ugf-account-pfp-change {
+  background: #4d90fe;
 }
 #ugf-account-right {
   margin-left: 20px;
@@ -29534,49 +29672,6 @@ html[shopping-results] #ugf-center {
     function ugf14() {
         return String(layout || "") === "2014" ? UGF_2014V : "";
     }
-    // (7.2.30) the right of the bar Google brought in on 19 September 2013 (to June 2015, when +Name went):
-    // after +Name and the grid, an outline bell, Share in a small grey speech bubble (an icon from October
-    // 2014) and the photo with no border or arrow - square until January 2014, round from then on. Gmail,
-    // Calendar, Maps and the other Google pages Gplex draws all put it together from these.
-    function ugfB13Css() {
-        if (document.getElementById("ugf-b13-css")) {
-            return;
-        }
-        const st = document.createElement("style");
-        st.id = "ugf-b13-css";
-        st.textContent = [
-            ".ugf-b13-bell { display: inline-flex !important; align-items: center; justify-content: center; width: 30px; height: 30px; color: #000 !important; opacity: .55; cursor: pointer; }",
-            ".ugf-b13-bell:hover { opacity: .8; }",
-            ".ugf-b13-bell svg, .ugf-b13-share svg { width: 20px; height: 20px; fill: currentColor; }",
-            ".ugf-b13-share { position: relative; display: inline-flex !important; align-items: center; justify-content: center; box-sizing: border-box; min-width: 60px; height: 30px; " +
-                "padding: 0 10px !important; margin: 0 !important; background: rgba(0,0,0,.04) !important; border: none !important; border-radius: 0 !important; color: #404040 !important; " +
-                "font: 13px arial, sans-serif !important; cursor: pointer; white-space: nowrap; }",
-            ".ugf-b13-share:hover { background: rgba(0,0,0,.08) !important; }",
-            '.ugf-b13-share::after { content: ""; position: absolute; right: 0; top: 30px; border-top: 6px solid rgba(0,0,0,.04); border-left: 6px solid transparent; }',
-            ".ugf-b13-share:hover::after { border-top-color: rgba(0,0,0,.08); }",
-            ".ugf-b13-share.icon { min-width: 30px; width: 30px; padding: 0 !important; background: none !important; color: #000 !important; opacity: .7; }",
-            ".ugf-b13-share.icon:hover { background: none !important; opacity: 1; }",
-            ".ugf-b13-share.icon::after { display: none; }",
-            ".ugf-b13-photo { display: inline-flex !important; align-items: center; border: none !important; padding: 0 !important; background: none !important; box-shadow: none !important; }",
-            ".ugf-b13-photo .car { display: none !important; }",
-            ".ugf-b13-photo .pfp { width: 30px !important; height: 30px !important; line-height: 30px !important; border: none !important; border-radius: 50% !important; }",
-            ".ugf-b13-photo.sq .pfp { border-radius: 0 !important; }"
-        ].join("\n");
-        (document.head || document.documentElement).appendChild(st);
-    }
-    function ugfB13Bits() {
-        ugfB13Css();
-        return '<span class="ugf-b13-bell" title="Notifications"><svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/></svg></span>' +
-            (ugf14() === "2014N" ? '<span class="ugf-b13-share icon" title="Google+ Share"><svg viewBox="0 0 20 20"><path fill-rule="evenodd" d="M2 2h16v14h-3v3l-3-3H2zm2 2v10h9l1 1v-1h2V4zm5 1h2v4h4v2h-4v4H9v-4H5V9h4z"/></svg></span>'
-                : '<span class="ugf-b13-share">Share</span>');
-    }
-    function ugfB13PhotoClass() {
-        return "ugf-b13-photo" + (ugf14() === "2013N" ? " sq" : "");
-    }
-    // SIGN IN stayed red until the blue Sign in of 2014
-    function ugfB13RedSignIn() {
-        return ugf14() === "2013N" || ugf14() === "2014E";
-    }
     function ugfRuntimeLayout(value) {
         if (value === "2013N" || value === "2014E" || value === "2014N") {
             UGF_2014V = value;
@@ -32169,7 +32264,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                                         </a>
                                     </div>
                                     <div id="ugf-apps" class="ugf-hide-on-legacy">
-                                        <div id="waffle">
+                                        <div id="waffle" title="Google apps">
                                             <div class="gp-icon"></div>
                                         </div>
                                     <div id="beyond-the-fence" onclick="document.querySelector('html').removeAttribute('apps-dd-open');">
@@ -32217,7 +32312,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                                                             </a>
                                                       </div>
                                                       <div class="gp-app" id="play">
-                                                            <a class="gp-app-inner" href="https://translate.google.com">
+                                                            <a class="gp-app-inner" href="https://play.google.com">
                                                                   <div class="gp-app-icon">
                                                                   </div>
                                                                   <div class="gp-app-title">
@@ -32389,7 +32484,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                                         </div>
                                     </div>
                                     <div class="ugf-plus-buttons flex-bar ugf-logged-in-out ugf-hide-on-legacy">
-                                        <div id="ugf-fake-notifs-button" class="ugf-plus-button flex-bar" title="All caught up!">
+                                        <div id="ugf-fake-notifs-button" class="ugf-plus-button flex-bar" title="Notifications">
                                             <div class="ugf-plus-button-text">
                                                 <span>0</span>
                                             </div>
@@ -32450,7 +32545,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                                                 </div>
                                             </div>
                                         </div>
-                                        <div id="ugf-fake-share-button" class="ugf-plus-button flex-bar">
+                                        <div id="ugf-fake-share-button" class="ugf-plus-button flex-bar" title="Share">
                                             <div class="ugf-plus-button-icon">
                                             </div>
                                             <div class="ugf-plus-button-text">
@@ -41468,6 +41563,84 @@ html[gplex-gmail] body {
 .ugf-gmail-themes .theme.on i {
   border: 2px solid #4d90fe;
 }
+/* (8.3) the themes of 2013-2015: Dark and Soft Grey recolour the header and the left column, High Contrast
+   blackens the words, a picture of your own sits behind them with the mail on white */
+.ugf-gmail-themes .theme[data-theme="dark"] i {
+  background: linear-gradient(#444, #222);
+}
+.ugf-gmail-themes .theme[data-theme="soft-grey"] i {
+  background: linear-gradient(#f1f1f1, #d4d4d4);
+}
+.ugf-gmail-themes .theme[data-theme="high-contrast"] i {
+  background: #fff;
+  border-color: #000;
+}
+.ugf-gmail-themes .theme[data-theme="photo"] i {
+  background: linear-gradient(160deg, #2a6fd6, #8ccdf5 55%, #e9f5ff);
+}
+#ugf-gmail[chrome="m2013"][theme="dark"],
+#ugf-gmail[chrome="m2013"][theme="dark"] #ugf-gmail-top,
+#ugf-gmail[chrome="m2013"][theme="dark"] #ugf-gmail-nav {
+  background: #262626;
+  border-color: #000;
+}
+#ugf-gmail[chrome="m2013"][theme="dark"] #ugf-gmail-nav a,
+#ugf-gmail[chrome="m2013"][theme="dark"] #ugf-gmail-account a,
+#ugf-gmail[chrome="m2013"][theme="dark"] #ugf-gmail-footer {
+  color: #ddd;
+}
+#ugf-gmail[chrome="m2013"][theme="dark"] #ugf-gmail-nav a:hover {
+  background: #333;
+}
+#ugf-gmail[chrome="m2013"][theme="dark"] #ugf-gmail-nav a.active {
+  color: #ff7a66;
+}
+#ugf-gmail[chrome="m2013"][theme="dark"] .ugf-b13-grid,
+#ugf-gmail[chrome="m2013"][theme="dark"] .ugf-b13-bell,
+#ugf-gmail[chrome="m2013"][theme="dark"] .ugf-b13-share,
+#ugf-gmail[chrome="m2013"][theme="dark"] .ic.grid svg {
+  filter: invert(1);
+}
+#ugf-gmail[chrome="m2013"][theme="soft-grey"],
+#ugf-gmail[chrome="m2013"][theme="soft-grey"] #ugf-gmail-top,
+#ugf-gmail[chrome="m2013"][theme="soft-grey"] #ugf-gmail-nav {
+  background: #e5e5e5;
+  border-color: #ccc;
+}
+#ugf-gmail[chrome="m2013"][theme="soft-grey"] #ugf-gmail-nav a:hover {
+  background: #d6d6d6;
+}
+#ugf-gmail[chrome="m2013"][theme="high-contrast"],
+#ugf-gmail[chrome="m2013"][theme="high-contrast"] #ugf-gmail-nav a,
+#ugf-gmail[chrome="m2013"][theme="high-contrast"] #ugf-gmail-list td,
+#ugf-gmail[chrome="m2013"][theme="high-contrast"] #ugf-gmail-footer {
+  color: #000;
+}
+#ugf-gmail[chrome="m2013"][theme="high-contrast"] #ugf-gmail-top {
+  background: #fff;
+  border-bottom-color: #000;
+}
+#ugf-gmail[chrome="m2013"][theme="high-contrast"] a {
+  color: #00c;
+}
+#ugf-gmail[chrome="m2013"][theme="photo"] {
+  background: var(--ugf-gmail-photo) center / cover fixed;
+}
+#ugf-gmail[chrome="m2013"][theme="photo"] #ugf-gmail-top {
+  background: rgba(255,255,255,.75);
+  border-bottom-color: rgba(0,0,0,.1);
+}
+#ugf-gmail[chrome="m2013"][theme="photo"] #ugf-gmail-nav {
+  background: transparent;
+}
+#ugf-gmail[chrome="m2013"][theme="photo"] #ugf-gmail-nav a {
+  color: #000;
+  text-shadow: 0 0 6px #fff, 0 0 2px #fff;
+}
+#ugf-gmail[chrome="m2013"][theme="photo"] #ugf-gmail-main,
+#ugf-gmail[chrome="m2013"][theme="photo"] #ugf-gmail-footer {
+  background: rgba(255,255,255,.92);
+}
 .ugf-gmail-setting .value select {
   font: 12px arial, sans-serif;
   padding: 2px;
@@ -42405,51 +42578,39 @@ html[gplex-gmail] body {
         }
         return ugfGmailAssets.a;
     }
-    function ugfGmailCategoriesOn() {
+    // Gmail's own choices, kept in both stores (this page's and the script's) so either can read them back
+    function ugfGmailPref(key) {
         let v = null;
         try {
-            v = window.localStorage.getItem("UGF_GMAIL_CATS");
+            v = window.localStorage.getItem(key);
         } catch (e) {}
-        if (v === null || v === undefined) {
-            v = ugfGmailShared("UGF_GMAIL_CATS") || null;
-        }
-        return String(v) === "true";
+        return v === null || v === undefined ? ugfGmailShared(key) : String(v);
+    }
+    function ugfGmailSetPref(key, v) {
+        try {
+            window.localStorage.setItem(key, v);
+        } catch (e) {}
+        try {
+            if (typeof GM_setValue === "function") {
+                GM_setValue(key, v);
+            }
+        } catch (e) {}
+    }
+    function ugfGmailCategoriesOn() {
+        return ugfGmailPref("UGF_GMAIL_CATS") === "true";
     }
     function ugfGmailSetCategories(on) {
-        const v = on ? "true" : "false";
-        try {
-            window.localStorage.setItem("UGF_GMAIL_CATS", v);
-        } catch (e) {}
-        try {
-            if (typeof GM_setValue === "function") {
-                GM_setValue("UGF_GMAIL_CATS", v);
-            }
-        } catch (e) {}
+        ugfGmailSetPref("UGF_GMAIL_CATS", on ? "true" : "false");
     }
     function ugfGmailEnabled() {
-        let v = null;
-        try {
-            if (typeof GM_getValue === "function") {
-                v = GM_getValue("UGF_GMAIL_ON", null);
-            }
-        } catch (e) {}
-        if (v === null || v === undefined) {
-            try {
-                v = window.localStorage.getItem("UGF_GMAIL_ON");
-            } catch (e) {}
-        }
-        return String(v) !== "false";
+        return ugfGmailPref("UGF_GMAIL_ON") !== "false";
     }
     function ugfGmailSetEnabled(on) {
-        const v = on ? "true" : "false";
-        try {
-            window.localStorage.setItem("UGF_GMAIL_ON", v);
-        } catch (e) {}
-        try {
-            if (typeof GM_setValue === "function") {
-                GM_setValue("UGF_GMAIL_ON", v);
-            }
-        } catch (e) {}
+        ugfGmailSetPref("UGF_GMAIL_ON", on ? "true" : "false");
+    }
+    // (8.3) the theme of the 2013 look: "" (Light), "dark", "soft-grey", "high-contrast" or the address of a picture
+    function ugfGmailTheme() {
+        return ugfGmailPref("UGF_GMAIL_THEME");
     }
     // Gmail launched 1 Apr 2004, so anything older than that borrows the 2004 skin.
     function ugfGmailEra() {
@@ -44558,14 +44719,24 @@ html[gplex-gmail] body {
                 '<span class="note">Offline Mail uses Gears to store your mail on this computer.</span>']];
         }
         if (tab === "Themes") {
-            const themes = era === "g2018"
-                ? ["Default", "Dark", "Soft Grey", "High Contrast", "Terminal", "Mountains", "Beach", "Tree"]
-                : ["Classic", "Shiny", "Soft Grey", "High Contrast", "Ninja", "Tree", "Beach", "Planets"];
+            // the 2013 look takes one: the colour themes Google offered then, or a picture of your own
+            const live = ugfGmailChrome(era) === "m2013";
+            const cur = ugfGmailTheme();
+            const themes = live ? [["", "Light"], ["dark", "Dark"], ["soft-grey", "Soft Grey"], ["high-contrast", "High Contrast"], ["photo", "My photo"]]
+                : (era === "g2018" ? ["Default", "Dark", "Soft Grey", "High Contrast", "Terminal", "Mountains", "Beach", "Tree"]
+                    : ["Classic", "Shiny", "Soft Grey", "High Contrast", "Ninja", "Tree", "Beach", "Planets"]).map(function(t, i) {
+                        return [i ? "-" : "", t];
+                    });
             let h = '<div class="ugf-gmail-themes">';
-            themes.forEach(function(t, i) {
-                h += '<span class="theme' + (i === 0 ? " on" : "") + '"><i></i>' + esc(t) + "</span>";
+            themes.forEach(function(t) {
+                const on = t[0] === "photo" ? /^https?:/.test(cur) : t[0] === cur;
+                h += '<span class="theme' + (on ? " on" : "") + '"' + (live ? ' data-theme="' + t[0] + '"' : "") + "><i></i>" + esc(t[1]) + "</span>";
             });
             h += "</div>";
+            if (live) {
+                h += '<span class="note">Your own picture: <input type="text" id="ugf-gmail-theme-url" size="40" placeholder="Paste the address of a picture" value="' +
+                    esc(/^https?:/.test(cur) ? cur : "") + '"> <button id="ugf-gmail-theme-set">Set</button></span>';
+            }
             return [["Choose a theme", h]];
         }
         if (tab === "Inbox") {
@@ -44654,6 +44825,22 @@ html[gplex-gmail] body {
                 ugfGmailRender();
             });
         });
+        const setTheme = function(t) {
+            ugfGmailSetPref("UGF_GMAIL_THEME", t);
+            ugfGmailRender();
+        };
+        main.querySelectorAll(".ugf-gmail-themes .theme[data-theme]").forEach(function(t) {
+            t.addEventListener("click", function() {
+                const url = main.querySelector("#ugf-gmail-theme-url");
+                setTheme(t.getAttribute("data-theme") === "photo" ? String(url && url.value || "").trim() : t.getAttribute("data-theme"));
+            });
+        });
+        const setUrl = main.querySelector("#ugf-gmail-theme-set");
+        if (setUrl) {
+            setUrl.addEventListener("click", function() {
+                setTheme(String(main.querySelector("#ugf-gmail-theme-url").value || "").trim());
+            });
+        }
         main.querySelectorAll('input[name="ugfgplex"]').forEach(function(r) {
             r.addEventListener("change", function() {
                 ugfGmailSetEnabled(r.value === "true");
@@ -45380,21 +45567,8 @@ html[gplex-gmail] body {
         const lay = String(layout || "");
         // The four-colour capital G arrived in September 2015, so early 2015 still
         // belongs to the old set - 2015L is the one that gets the new mark.
-        if (["2012", "2013", "2013L", "2014", "2015"].indexOf(lay) > -1) {
-            // Before the 2015 rebrand Google was a lowercase "g", not the four-colour
-            // capital, and Google+ was a red square. Both are carried inline. Books and
-            // Contacts still have their pre-2015 artwork on Google's own legacy path.
-            return {
-                "google-search": UGF_G_2011,
-                plus: UGF_GPLUS_2011,
-                books: UGF_BOOKS_2011,
-                contacts: UGF_CONTACTS_2011,
-                translate: UGF_TRANSLATE_2011,  // the sheet's has a capital G on it
-                maps: UGF_MAPS_2011             // and so does the sheet's Maps mark
-            };
-        }
         if (lay !== "2022") {
-            return null;   // keep the era's own sheet
+            return ugfLauncherArt(lay);   // the marks of before the 2015 rebrand, or the era's own sheet
         }
         const p2 = "https://www.gstatic.com/images/branding/product/2x/";
         const q4 = function(n) {
@@ -45636,6 +45810,15 @@ html[gplex-gmail] body {
         shell.setAttribute("data-view", hereHash);
         shell.setAttribute("skin", era);
         shell.setAttribute("chrome", chrome);
+        const theme = chrome === "m2013" ? ugfGmailTheme() : "";
+        if (/^https?:/.test(theme)) {
+            shell.setAttribute("theme", "photo");
+            shell.style.setProperty("--ugf-gmail-photo", 'url("' + theme.replace(/["\\\s]/g, "") + '")');
+        } else if (theme) {
+            shell.setAttribute("theme", theme);
+        } else {
+            shell.removeAttribute("theme");
+        }
         h.setAttribute("gplex-gmail", era);
         // the ported grid styles key off [layout], which only google.com was setting
         h.setAttribute("layout", String(layout || ""));
@@ -45889,8 +46072,9 @@ html[gplex-gmail] body {
             accountHTML = '<a class="plusname" href="' + esc(ugfPlusProfileLink()) + '">' +
                 "+" + esc(ugfGmailPlusName()) + "</a>" +
                 // 2014: the app grid joined the block, then the new bar's bell, Share and photo
-                (String(layout || "") === "2014" ? '<span class="ic grid" id="ugf-gmail-apps" title="Google apps">' + ugfGmailIcon("apps", 20) + "</span>" + ugfB13Bits() +
-                    '<span class="pfpwrap ' + ugfB13PhotoClass() + '">' + ugfGmailAvatar() + "</span>"
+                (String(layout || "") === "2014" ? '<span class="ic grid' + (ugf14() === "2014N" ? " ugf-b13-grid late" : "") + '" id="ugf-gmail-apps" title="Google apps">' +
+                    (ugf14() === "2014N" ? "" : ugfGmailIcon("apps", 20)) + "</span>" + ugfB13Bits(ugf14()) +
+                    '<span class="pfpwrap ' + ugfB13PhotoClass(ugf14()) + '">' + ugfGmailAvatar() + "</span>"
                     : '<span class="nbox">0</span>' +
                     '<span class="sharebtn"><b>+</b> Share</span>' +
                     '<span class="pfpwrap">' + ugfGmailAvatar() + '<i class="car">&#9662;</i></span>');
@@ -48587,8 +48771,8 @@ html[gplex-gmail] body {
                     searchBox("gsrch", "") + '<button type="submit" class="gbtn">' + ugfNtIcon("search", 20) + "</button></form>" +
                     '<span class="corner">' + (plusRow && signedIn ? '<a class="plusname" href="' + esc(ugfPlusProfileLink()) + '">+' + esc(ugfGmailPlusName()) + "</a>" : "") +
                     '<a href="#" class="ib apps" title="Google apps">' + ugfNtIcon("apps", 24) + "</a>" +
-                    (plusRow && signedIn ? ugfB13Bits() : "") +
-                    (signedIn ? '<a href="#" class="me' + (plusRow ? " " + ugfB13PhotoClass() : "") + '">' + ugfGmailAvatar() + "</a>" : '<a class="ksignin" href="https://accounts.google.com/ServiceLogin">Sign in</a>') + "</span></div>" +
+                    (plusRow && signedIn ? ugfB13Bits(ugf14()) : "") +
+                    (signedIn ? '<a href="#" class="me' + (plusRow ? " " + ugfB13PhotoClass(ugf14()) : "") + '">' + ugfGmailAvatar() + "</a>" : '<a class="ksignin" href="https://accounts.google.com/ServiceLogin">Sign in</a>') + "</span></div>" +
                     '<div class="appbar"><span class="ib ham">' + ugfNtIcon("menu", 24) + '</span><span class="name">' + W.app + '</span><span class="sp"></span>' +
                     viewIcons() + "</div>" + drawer() +
                     '<div class="content"><div class="rhead"><span class="rt">' + (q ? "Search results" : "Recent " + W.nouns) + "</span></div>" +
@@ -57923,12 +58107,12 @@ html[gplex-gmail] body {
         const who = ugfCalWho();
         if (l === "2013" || l === "2014") {
             if (!(who.name || who.email)) {
-                const red = l === "2013" || ugfB13RedSignIn();
+                const red = l === "2013" || ugfB13RedSignIn(ugf14());
                 return '<div class="kcorner"><a class="' + (red ? "ksignin red" : "ksignin") + '" href="https://accounts.google.com/ServiceLogin">' + (red ? "SIGN IN" : "Sign in") + "</a></div>";
             }
             return '<div class="kcorner gplus"><a class="plusname" href="' + ugfEsc(ugfPlusProfileLink()) + '">+' + ugfEsc(ugfGmailPlusName()) + "</a>" +
-                (l === "2014" ? '<a href="#" class="kic apps" title="Google apps">' + ugfNtIcon("apps", 24) + "</a>" + ugfB13Bits() +
-                    '<a href="#" class="pfpwrap me ' + ugfB13PhotoClass() + '">' + ugfGmailAvatar() + "</a></div>"
+                (l === "2014" ? '<a href="#" class="kic apps" title="Google apps">' + ugfNtIcon("apps", 24) + "</a>" + ugfB13Bits(ugf14()) +
+                    '<a href="#" class="pfpwrap me ' + ugfB13PhotoClass(ugf14()) + '">' + ugfGmailAvatar() + "</a></div>"
                     : '<span class="nbox">0</span><span class="sharebtn"><b>+</b> Share</span><a href="#" class="pfpwrap me">' + ugfGmailAvatar() + '<i class="car">&#9662;</i></a></div>');
         }
         if (ugfNtHasGbar() && !ugfNtPlusBar()) {
@@ -64915,8 +65099,8 @@ html[gplex-gmail] body {
         if (l === "2013" || l === "2014") {
             return '<div id="ugf-cal-account" class="gplus"><a class="plusname" href="' + esc(ugfPlusProfileLink()) + '">+' +
                 esc(ugfGmailPlusName()) + "</a>" +
-                (l === "2014" ? '<a class="ic appsg" href="#" title="Google apps">' + ugfCalIcon("apps", 20) + "</a>" + ugfB13Bits() +
-                    '<span class="pfpwrap ' + ugfB13PhotoClass() + '">' + ugfGmailAvatar() + "</span></div>"
+                (l === "2014" ? '<a class="ic appsg" href="#" title="Google apps">' + ugfCalIcon("apps", 20) + "</a>" + ugfB13Bits(ugf14()) +
+                    '<span class="pfpwrap ' + ugfB13PhotoClass(ugf14()) + '">' + ugfGmailAvatar() + "</span></div>"
                     : '<span class="nbox">0</span><span class="sharebtn"><b>+</b> Share</span>' +
                     '<span class="pfpwrap">' + ugfGmailAvatar() + '<i class="car">&#9662;</i></span></div>');
         }
@@ -70207,7 +70391,7 @@ html[gplex-gmail] body {
             '<a class="plusname" href="' + esc(ugfPlusProfileLink()) + '">' +
             "+" + esc(ugfGmailPlusName()) + "</a>" +
             (withApps ? '<a class="ic grid" href="https://www.google.com/intl/en/about/products/" title="Apps">' + ugfGmailIcon("apps", 20) + "</a>" : "") +
-            (String(layout || "") === "2014" ? ugfB13Bits() + '<span class="pfpwrap ' + ugfB13PhotoClass() + '">' + ugfGmailAvatar() + "</span></div>"
+            (String(layout || "") === "2014" ? ugfB13Bits(ugf14()) + '<span class="pfpwrap ' + ugfB13PhotoClass(ugf14()) + '">' + ugfGmailAvatar() + "</span></div>"
                 : '<span class="nbox">0</span>' +
                 '<span class="sharebtn"><b>+</b> Share</span>' +
                 '<span class="pfpwrap">' + ugfGmailAvatar() + '<i class="car">&#9662;</i></span></div>');
