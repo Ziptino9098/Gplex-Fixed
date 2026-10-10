@@ -1,4 +1,4 @@
-
+Official Website: https://gplexextended.com
 Install Gplex Extended:
 https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/main.user.js
 
@@ -6,6 +6,8 @@ Install Gplex Extended Alpha (Gplex Extended with its YouTube part rewritten fro
 https://raw.githubusercontent.com/Ziptino9098/Gplex-Fixed/main/alpha.user.js
 
 The alpha's Chrome (unpacked) and Firefox builds are in releases/alpha/. How the rewritten YouTube part works, and its source, are in youtube/.
+
+Please give me suggestions on what v6.0 should include in discussions 
 
 
 To get any layout: Search Google in [year] so for example, you can get 1998 layout by searching "Google in 1998"
@@ -18,7 +20,7 @@ NOTE: Do not have the original script installed while installing this. This has 
 
 I considered rebranding the entire repo to Gplex Extended, but I don't want to break the existing update URLs.
 
-NEW: Gplex now themes the Gmail webapp UI to match the layout selected
+NEW: Gplex now themes Google News & Translate
 
 This script will always be adding new features back from old google layouts.
 I also will do many bug fixes.
@@ -27,10 +29,6 @@ So when Google updates something and breaks the script, expect me to fix it as s
 
 Recommended Addons:
 
-Gmail 2015 UI
-Recommended if you're using the 2015 theme. I don't have layouts for the other Gmail designs yet.
-
-https://raw.githubusercontent.com/Ziptino9098/Old-Gmail-UI-2015-/main/main.user.css
 
 Geckium (A Firefox theme that makes the browser look like every version of Chrome from 1-58, it is what I use daily and what is used in the screenshots)
 
