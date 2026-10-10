@@ -1,0 +1,6 @@
+{
+  "name": "gplex-extended-youtube",
+  "private": true,
+  "type": "commonjs",
+  "description": "Gplex Extended for YouTube: the YouTube part of Gplex, on the V3 extension. node build.js builds alpha.user.js and the extension packages."
+}
