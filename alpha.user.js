@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended Alpha - Gplex Old Google with its YouTube part rewritten
 // @namespace    http://tampermonkey.net/
-// @version      9.0.0.3
+// @version      9.0.0.9
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube, rewritten: alpha, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -1120,7 +1120,11 @@ function ugfDarkLabel() {
 function ugf2014V(){
     try{
         var v=null;
-        if(window.location.host==="www.google.com"){ try{ v=window.localStorage.getItem("UGF_2014V"); }catch(e){} }
+        if(window.location.host==="www.google.com"){
+            try{ v=window.localStorage.getItem("UGF_2014V"); }catch(e){}
+            // (8.5) the other hosts (Gmail among them) read the shared copy: it is kept in step with this one
+            try{ if(v!==null&&typeof GM_setValue==="function"&&GM_getValue("UGF_2014V",null)!==v){ GM_setValue("UGF_2014V",v); } }catch(e){}
+        }
         if(v===null||v===undefined){ v=typeof GM_getValue==="function"?GM_getValue("UGF_2014V",null):null; }
         v=String(v||"");
         return v==="2013N"||v==="2014E"||v==="2014N"?v:"";
@@ -1141,9 +1145,9 @@ function ugfB13Css() {
         ".ugf-b13-grid, .ugf-b13-bell, .ugf-b13-share, .ugf-b13-photo { display: inline-flex !important; align-items: center; justify-content: center; box-sizing: border-box; cursor: pointer; text-decoration: none !important; }",
         ".ugf-b13-grid { width: 30px; height: 30px; margin: 0 5px; background: url('https://ssl.gstatic.com/gb/images/i1_1967ca6a.png') -132px -38px / 528px 68px no-repeat; opacity: .55; }",
         ".ugf-b13-grid:hover { opacity: .85; }",
-        ".ugf-b13-bell { width: 30px; height: 30px; margin: 0 5px; color: #000 !important; opacity: .55; }",
+        ".ugf-b13-bell { width: 36px; height: 30px; margin: 0 5px; color: #000 !important; opacity: .55; }",
         ".ugf-b13-bell:hover { opacity: .8; }",
-        ".ugf-b13-bell svg, .ugf-b13-share svg { width: 20px; height: 20px; fill: currentColor; }",
+        ".ugf-b13-bell svg { width: 28px; height: 28px; fill: currentColor; }",
         ".ugf-b13-share { position: relative; min-width: 60px; height: 30px; margin: 0 5px 0 0 !important; padding: 0 10px !important; " +
             "background: rgba(0,0,0,.04) !important; border: none !important; border-radius: 0 !important; color: #404040 !important; font: 13px arial, sans-serif !important; white-space: nowrap; }",
         ".ugf-b13-share:hover { background: rgba(0,0,0,.08) !important; }",
@@ -1152,10 +1156,9 @@ function ugfB13Css() {
         // October to December 2014: the grid of 19px, the bell of 28px, Share an icon of 24x21 (all 55% black,
         // full black under the pointer) and the photo at 34px, with the spacing Google's own screenshot has
         ".ugf-b13-grid.late { width: 19px; height: 19px; margin: 0 8px 0 0; background: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 19 19'%3E%3Cpath d='M0 0h5v5H0zM7 0h5v5H7zM14 0h5v5h-5zM0 7h5v5H0zM7 7h5v5H7zM14 7h5v5h-5zM0 14h5v5H0zM7 14h5v5H7zM14 14h5v5h-5z'/%3E%3C/svg%3E\") center / 19px 19px no-repeat; }",
-        ".ugf-b13-bell.late { width: 36px; margin: 0 16px 0 8px; }",
-        ".ugf-b13-bell.late svg { width: 28px; height: 28px; }",
+        ".ugf-b13-bell.late { margin: 0 16px 0 8px; }",
         ".ugf-b13-share.icon { min-width: 24px; width: 24px; margin: 0 8px 0 0 !important; padding: 0 !important; background: none !important; color: #000 !important; opacity: .55; }",
-        ".ugf-b13-share.icon svg { width: 24px; height: 21px; }",
+        ".ugf-b13-share.icon svg { width: 24px; height: 21px; fill: currentColor; }",
         ".ugf-b13-share.icon::after { display: none; }",
         ".ugf-b13-grid.late:hover, .ugf-b13-bell.late:hover, .ugf-b13-share.icon:hover { opacity: 1; }",
         ".ugf-b13-photo { border: none !important; padding: 0 !important; background: none !important; box-shadow: none !important; }",
@@ -1169,11 +1172,18 @@ function ugfB13Css() {
 function ugfB13Bits(v) {
     ugfB13Css();
     const late = v === "2014N";
-    return '<span class="ugf-b13-bell' + (late ? " late" : "") + '" title="Notifications"><svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/></svg></span>' +
+    // (8.9) a solid bell until the October 2014 bar, whose bell is an outline (Google's own screenshots of
+    // October 2013 and October 2014)
+    const bell = "M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" + (late ? "m-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z" : "");
+    return '<span class="ugf-b13-bell' + (late ? " late" : "") + '" title="Notifications"><svg viewBox="0 0 24 24"><path d="' + bell + '"/></svg></span>' +
         (late ? '<span class="ugf-b13-share icon" title="Share"><svg viewBox="0 0 24 21"><path fill-rule="evenodd" d="M1.5 0h18A1.5 1.5 0 0 1 21 1.5V17l3 4H0V1.5A1.5 1.5 0 0 1 1.5 0zM2 2v15h17V2zm7.25 2.5h2.5v3.75h3.75v2.5h-3.75v3.75h-2.5v-3.75H5.5v-2.5h3.75z"/></svg></span>'
             : '<span class="ugf-b13-share" title="Share">Share</span>');
 }
-// the grid before them, for a page with no launcher of its own to open
+// the grid before them; (8.7) ugfB13AppsOpen opens the launcher from it, the address is for a middle click
+// the grid a page draws itself: these classes make it the Late 2014 drawing, with nothing left inside
+function ugfB13GridLate(v) {
+    return v === "2014N" ? " ugf-b13-grid late" : "";
+}
 function ugfB13Grid(v) {
     ugfB13Css();
     return '<a class="ugf-b13-grid' + (v === "2014N" ? " late" : "") + '" href="https://www.google.com/intl/en/options/" title="Google apps"></a>';
@@ -1185,10 +1195,170 @@ function ugfB13PhotoClass(v) {
 function ugfB13RedSignIn(v) {
     return v === "2013N" || v === "2014E";
 }
-// (8.3) the launcher of 2012 to mid 2015, for every page Gplex draws one on: Google a lowercase g, Google+
-// a red square, the older Books, Contacts, Translate and Maps marks, and in 2014 the rest of the sheet
-// Google's bar drew then. Null for any other layout: the era's own sheet.
+function ugfB13AppsCss() {
+    return "#ugf-gmail-appsmenu {position: absolute; z-index: 1401; font: 13px arial, sans-serif;}\n#ugf-gmail-appsmenu #gp-apps-dd-card {scrollbar-width: none; background: #fff; padding: 28px 28px 12px 28px; border: 1px solid rgba(0,0,0,.2); box-shadow: 0 2px 10px rgba(0,0,0,.2); cursor: auto; overflow-y: auto; overscroll-behavior: contain; width: 264px; max-height: 442px; box-sizing: content-box;}\n#ugf-gmail-appsmenu #gp-apps-dd-card::-webkit-scrollbar {width: 0;}\n#ugf-gmail-appsmenu[chrome=\"m2018\"] #gp-apps-dd-card {border-radius: 8px;}\n#ugf-gmail-appsmenu .sector {display: flex; flex-wrap: wrap; justify-content: center;}\n#ugf-gmail-appsmenu .sector:nth-child(1) {padding-bottom: 28px; border-bottom: 1px solid #ebebeb;}\n#ugf-gmail-appsmenu .sector:nth-child(2), #ugf-gmail-appsmenu .sector:nth-child(3) {padding-top: 28px;}\n#ugf-gmail-appsmenu #even-more {color: #737373 !important; font-size: 13px; font-family: arial, sans-serif !important; text-decoration: none !important; margin: 0 auto;}\n#ugf-gmail-appsmenu #even-more:hover {text-decoration: underline !important;}\n#ugf-gmail-appsmenu .gp-app {width: 86px; height: 100px; font-size: 13px; font-family: arial, sans-serif !important; padding: 1px;}\n#ugf-gmail-appsmenu .gp-app-inner {text-decoration: none !important; margin: 7px 0; height: 86px; display: block; border: 1px solid transparent; border-radius: 2px;}\n#ugf-gmail-appsmenu .gp-app:hover .gp-app-inner {border: 1px solid #e5e5e5; background: rgba(255,255,255,.9);}\n#ugf-gmail-appsmenu .gp-app-icon {background-image: url(https://ssl.gstatic.com/gb/images/v1_76783e20.png); -webkit-background-size: 92px 2541px; background-size: 92px 2541px;}\n#ugf-gmail-appsmenu #myaccount .gp-app-icon {background-position: 0 -1451px;}\n#ugf-gmail-appsmenu #google-search .gp-app-icon {background-position: -17px -207px;}\n#ugf-gmail-appsmenu #maps .gp-app-icon {background-position: 0 -450px;}\n#ugf-gmail-appsmenu #youtube .gp-app-icon {background-position: 0 0;}\n#ugf-gmail-appsmenu #play .gp-app-icon {background-position: 0 -1779px;}\n#ugf-gmail-appsmenu #news .gp-app-icon {background-position: 0 -1990px;}\n#ugf-gmail-appsmenu #envelope .gp-app-icon {background-position: 0 -1710px;}\n#ugf-gmail-appsmenu #drive .gp-app-icon {background-position: 0 -138px;}\n#ugf-gmail-appsmenu #calendar .gp-app-icon {background-position: 0 -2059px;}\n#ugf-gmail-appsmenu #plus .gp-app-icon {background-position: 0 -938px;}\n#ugf-gmail-appsmenu #translate .gp-app-icon {background-position: 0 -693px;}\n#ugf-gmail-appsmenu #photos .gp-app-icon {background-position: 0 -1145px;}\n#ugf-gmail-appsmenu #shopping .gp-app-icon {background-position: 0 -1352px;}\n#ugf-gmail-appsmenu #wallet .gp-app-icon, #ugf-gmail-appsmenu #finance .gp-app-icon {background-image: url(https://ssl.gstatic.com/gb/images/p1_a4541be8.png); -webkit-background-size: 64px 2065px; background-size: 64px 2065px; background-position: 0 -966px;}\n#ugf-gmail-appsmenu #finance .gp-app-icon {background-position: 0 -1725px;}\n#ugf-gmail-appsmenu #docs .gp-app-icon {background-position: 0 -1214px;}\n#ugf-gmail-appsmenu #books .gp-app-icon {background-position: 0 -554px;}\n#ugf-gmail-appsmenu #blogger .gp-app-icon {background-position: 0 -1007px;}\n#ugf-gmail-appsmenu #contacts .gp-app-icon {background-position: 0 -69px;}\n#ugf-gmail-appsmenu #hangouts .gp-app-icon {background-position: 0 -2335px;}\n#ugf-gmail-appsmenu #chrome .gp-app-icon {background-image: url(\"" + UGF_D.i71 + "\"); background-size: 48px 48px; background-position: center; background-repeat: no-repeat; margin-top: 0; width: 64px !important; height: 64px !important;}\n#ugf-gmail-appsmenu[layout^=\"2016\"] #chrome .gp-app-icon, #ugf-gmail-appsmenu[layout^=\"2018\"] #chrome .gp-app-icon, #ugf-gmail-appsmenu[layout=\"2019\"] #chrome .gp-app-icon, #ugf-gmail-appsmenu[layout=\"2022\"] #chrome .gp-app-icon {background-image: url(\"" + UGF_D.i64 + "\");}\n#ugf-gmail-appsmenu .gp-app-icon {margin: 0 auto; height: 64px; width: 64px;}\n#ugf-gmail-appsmenu .gp-app-title {width: fit-content; margin: 0 auto; color: #404040 !important; text-decoration: none !important;}\n#ugf-gmail-appsmenu .gp-app-title {width: fit-content; margin: 0 auto; color: #404040 !important; text-decoration: none !important; text-align: center;}\n#ugf-gmail-appsmenu .gp-app-icon {margin: 0 auto; height: 64px; width: 64px;}";
+}
+// Docs, Sheets and Slides in the launcher: Google's product icons (the folded-corner pages, the same as
+// in the Docs menu), the 2020 redraw for 2022
+function ugfLauncherTrio(which, L) {
+    return "https://www.gstatic.com/images/branding/product/2x/" + which + (L === "2022" ? "_2020q4" : "") + "_48dp.png";
+}
+function ugfLauncherTrioStyle(which, L) {
+    return "background-image: url(" + ugfLauncherTrio(which, L) + ") !important; background-size: 48px 48px !important; " +
+        "background-position: center !important; background-repeat: no-repeat !important;";
+}
+// (8.7) the app launcher behind the grid on every page Gplex draws one on but the search pages (Gmail,
+// Calendar, News, Maps, My Account, Keep, Advanced Search, Search settings): Google's own sheet of app
+// icons for 2015-2019 and the artwork above where the period differs. In the 2014 layouts the sheet
+// of September 2013 to mid 2015 (Google+ first, no My Account). base is the "/u/1" of a second account, or "".
+function ugfB13AppsList(base, L) {
+    if (L === "2014") {
+        return [
+            [["plus", ugfPlusLink(), ugfPlusName()],
+             ["google-search", "https://www.google.com", "Search"],
+             ["youtube", "https://youtube.com", "YouTube"],
+             ["maps", "https://maps.google.com", "Maps"],
+             ["play", "https://play.google.com", "Play"],
+             ["news", "https://news.google.com", "News"],
+             ["envelope", "https://mail.google.com", "Gmail"],
+             ["drive", "https://drive.google.com", "Drive"],
+             ["calendar", "https://google.com/calendar", "Calendar"]],
+            [["translate", "https://translate.google.com", "Translate"],
+             ["books", "https://books.google.com", "Books"],
+             ["wallet", "https://wallet.google.com", "Wallet"]]
+        ];
+    }
+    return [
+        [["myaccount", "https://myaccount.google.com" + base + "/", "My Account"],
+         ["google-search", "https://www.google.com", "Search"],
+         ["maps", "https://maps.google.com", "Maps"],
+         ["youtube", "https://youtube.com", "YouTube"],
+         ["play", "https://play.google.com", "Play"],
+         ["news", "https://news.google.com", "News"],
+         ["envelope", "https://mail.google.com", "Gmail"],
+         ["drive", "https://drive.google.com", "Drive"],
+         ["calendar", "https://google.com/calendar", "Calendar"],
+         ["plus", ugfPlusLink(), ugfPlusName()],
+         ["translate", "https://translate.google.com", "Translate"],
+         ["photos", "https://photos.google.com", "Photos"],
+         ["gp-docs", "https://docs.google.com/document/u/0/", "Docs"],
+         ["gp-sheets", "https://docs.google.com/spreadsheets/u/0/", "Sheets"],
+         ["gp-slides", "https://docs.google.com/presentation/u/0/", "Slides"]],
+        [["shopping", "https://www.google.com/shopping", "Shopping"],
+         ["wallet", "https://wallet.google.com", "Wallet"],
+         ["finance", "https://www.google.com/finance", "Finance"],
+         ["books", "https://books.google.com", "Books"],
+         ["blogger", "https://www.blogger.com", "Blogger"],
+         ["contacts", "https://www.google.com/contacts", "Contacts"],
+         ["hangouts", "https://hangouts.google.com", "Hangouts"],
+         ["chrome", "https://www.google.com/chrome/", "Chrome"]]
+    ];
+}
+function ugfB13AppsClose() {
+    document.querySelectorAll("#ugf-gmail-appsmenu, #ugf-ma-appsfence").forEach(function(el) {
+        el.remove();
+    });
+}
+function ugfB13AppsOpen(anchor, L, chrome, base) {
+    if (document.getElementById("ugf-gmail-appsmenu")) {
+        ugfB13AppsClose();
+        return;
+    }
+    if (!document.getElementById("ugf-ma-apps-style")) {
+        const st = document.createElement("style");
+        st.id = "ugf-ma-apps-style";
+        st.textContent = ugfB13AppsCss() +
+            "\n#ugf-ma-appsfence { position: fixed; inset: 0; z-index: 2147483600; }" +
+            "\n#ugf-gmail-appsmenu { z-index: 2147483601 !important; text-align: left; letter-spacing: normal; }" +
+            "\n#ugf-gmail-appsmenu a { text-decoration: none; }";
+        (document.head || document.documentElement).appendChild(st);
+        document.addEventListener("keydown", function(ev) {
+            if (ev.key === "Escape") {
+                ugfB13AppsClose();
+            }
+        });
+    }
+    const el = function(tag, cls, id) {
+        const e = document.createElement(tag);
+        if (cls) {
+            e.className = cls;
+        }
+        if (id) {
+            e.id = id;
+        }
+        return e;
+    };
+    const inner = el("div", "", "gp-apps-dd-inner");
+    ugfB13AppsList(base || "", L).forEach(function(sector) {
+        const s = el("div", "sector");
+        sector.forEach(function(app) {
+            const box = el("div", "gp-app", app[0]);
+            const a = el("a", "gp-app-inner");
+            a.href = app[1];
+            a.appendChild(el("div", "gp-app-icon"));
+            const title = el("div", "gp-app-title");
+            title.textContent = app[2];
+            a.appendChild(title);
+            box.appendChild(a);
+            s.appendChild(box);
+        });
+        inner.appendChild(s);
+    });
+    const last = el("div", "sector");
+    const even = el("a", "", "even-more");
+    even.href = "https://www.google.com/intl/en/options";
+    even.textContent = "Even more from Google";
+    last.appendChild(even);
+    inner.appendChild(last);
+    const card = el("div", "", "gp-apps-dd-card");
+    card.appendChild(inner);
+    const fence = el("div", "", "ugf-ma-appsfence");
+    const menu = el("div", "", "ugf-gmail-appsmenu");
+    menu.setAttribute("chrome", chrome);
+    menu.setAttribute("layout", L);
+    menu.appendChild(card);
+    document.body.appendChild(fence);
+    document.body.appendChild(menu);
+    const r = anchor.getBoundingClientRect();
+    menu.style.left = Math.max(8, r.right + window.scrollX - 322) + "px";
+    menu.style.top = (r.bottom + window.scrollY + 6) + "px";
+    // the period's artwork over the sheet: the inline pictures are already 44px in a 64px cell, as the
+    // sheet is; anything fetched is centred at 48px
+    const art = ugfLauncherArt(L) || {};
+    ["docs", "sheets", "slides"].forEach(function(which) {
+        art["gp-" + which] = ugfLauncherTrio(which, L);
+    });
+    Object.keys(art).forEach(function(id) {
+        const ic = menu.querySelector("#" + id + " .gp-app-icon");
+        const inline = art[id].indexOf("data:") === 0;
+        if (ic) {
+            ic.style.setProperty("background-image", 'url("' + art[id] + '")', "important");
+            ic.style.setProperty("background-size", inline ? "64px 64px" : "48px 48px", "important");
+            ic.style.setProperty("background-position", inline ? "0 0" : "center", "important");
+            ic.style.setProperty("background-repeat", "no-repeat", "important");
+        }
+    });
+    fence.addEventListener("click", ugfB13AppsClose);
+}
+// (8.3) the launcher's artwork for every page Gplex draws one on: 2012 to mid 2015 Google a lowercase g,
+// Google+ a red square, the older Books, Contacts, Translate and Maps marks, and in 2014 the rest of the
+// sheet Google's bar drew then; 2022 the tiles the 2020 refresh redrew. Null for any other layout: the
+// era's own sheet.
 function ugfLauncherArt(L) {
+    if (L === "2022") {
+        // the 2020 refresh redrew part of the set; the rest is still Google's current artwork
+        const p2 = "https://www.gstatic.com/images/branding/product/2x/";
+        const q4 = function(name) {
+            return p2 + name + "_2020q4_48dp.png";
+        };
+        const std = function(name) {
+            return p2 + name + "_48dp.png";
+        };
+        return { envelope: q4("gmail"), drive: q4("drive"), calendar: q4("calendar"), docs: q4("docs"),
+            maps: "https://www.gstatic.com/images/branding/productlogos/maps/v7/192px.svg",
+            "google-search": std("googleg"), youtube: std("youtube"), play: std("play_prism"), news: std("news"), photos: std("photos"),
+            translate: std("translate"), contacts: std("contacts"), shopping: std("shopping"), finance: std("finance"), blogger: std("blogger") };
+    }
     if (["2012", "2013", "2013L", "2014", "2015"].indexOf(L) < 0) {
         return null;
     }
@@ -8230,7 +8400,7 @@ const UGF_PRODUCTS = {"_a": {"a2c685c60e": "data:image/gif;base64,R0lGODlhIwAjAP
 // Google's own Google+ logo and tab icons are used only when the name Gplex+ goes by (Gplex settings,
 // "Gplex+ name") is "Google+"; any other name is written in the period's lettering. The pictures are
 // Google+'s own (kept here); the 2015 look uses Roboto and Material Icons from Google Fonts.
-const UGF_GPX = {"logo12": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHcAAAAlCAYAAAB4f3Z2AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNXG14zYAAAAVdEVYdENyZWF0aW9uIFRpbWUANi8xNC8xMaahqEAAABYsSURBVHja7Vx7fFXVlf72Oeee+8hNckMCCUEIAkqgClSsooiIHUex1c74RmfaKujUTqsV32/bYovW0lbtA7EWLRatWh3pqIhCbXwA8goPSUIS8r65ue977nnvs/f8wY5zDSEyCNWx3b/f/if3nn32Xt9e3/rW2vuG4CDbbcvTISNvjPcYH2W7tIxxTlTiaGB2glG7+7Hbv9QFgIv+d9Fmr5vtkyV1NpPka+WgfzaISrKOhr3tzWa+zbjPfTT5DOuyDQDsk7yH80MzqTLUhz9YmSvK5u3zMhq/uKXNnmVZLOw6rsU5o5wjKEn+sE8NIRSS6Tce7KiXmbneNtJvNG3849r3X1uS/6SL+qw3j3v+1pamcL7dXKMcG5iqVheP13qy0Nel1nmPG/UAwgCsT8sO5ICe+lT6G7EkuzfWax9tZJLb9OSuNcn2tfXJjndi1M65vmCFb9joGaNLK088IVg68Z/84RG14bIgisISmGM2ZBPdj9Wv+dETvU2r8wC8zym+BIAKoHj4kzUvWSPoTKfVBHvLfcH9o/YLAI0AEp8Zz733D9qIrEEf29PufS3VneiJt/zp9p1r7tgAwASgi+4g08ky0a2NAOpkJbB80hnfv9CsPOPafHFZRFakWlOvWHL09JtOi++t+5bnGmkA9HMILgfgAsiRsMIIOCATwC9BeKz1abLXR8C97Ym+sYk8W9XV5R6X6mzb2bD2hsXx9nd6APSJHagDsIUncrFzFY9a6s43bn143IkL1lccfckDnIdrmZuOxduerfNcYxiA/OcUXAjwHMY545wDnEM4Gvu09ceH4N63Ilsc1/mL0V73uHRXd2z3m9/9WaJjQzeAdgGuOcgu5AAc0Y3WTY+vrTh67lrmesPa6xf/ONFWt+vT3r1/M4SZ6ByfGU35IbgJjf48kSPT0r1ZHmtasTzRsaFLABsV3vpxM2Zzrl7t2Xl3R/fOZasSbXU5AL0A4gL8z3XjnO+LjZ+hfEEBgO880ntGxpCuyiUt2LnO5sa3f7oRQD8d2wc73XXLzjYBPAmgVDyTE57LP/+ey8EEwJx9hjw3a8p3mTaDpRnQ4uvfAZAWHmceAjAOgJSgYu/jns/c+50xPGecwi13IjVosRvyJzTm7d6byW6a++zLsYNV2mznt4htJE+XaHYOXGMqIW4lJYGE4SgbU1n3r8de8Nf1Qvwc1HpuXpYKudQqs6gT8FybeB7gMQbXgaTrHvJZFnR0Q6t7akY7AObB+xDYjxO35kO3qCynn+FmzdO4y2pcRUnnPW97SyJZd9azL+89GLsdFLgLHuoZlzX5LMugYK5N461vbBPgHmqe6h0MILmf3lartPUucjc0zsyks+05140rFOVlxD+9qrRUrSgrTuw+76srn2xrfmDxjobYUILM3bHgTJ5vXMITneW9ffr7sQxrUSUvPaqczxpWETyvvKIUudVT6jY1GHefeX3zerEBBzXedb+Oz01n6NWtnfoEBmmM3x8sLSoqshUfZ9RiTLdcpuu27Dq5d8zMrsX9esRjHMzj4GxoVPQfLryE17cuynf3eUnLbIHNiiugXlYRiaiRcDC3Y+4/P3baG2sXZV36iVNIRbdwtkOhUpuCUUPLJRp7BZ0esTipP3DbFfKOtscSu1talmbjN/2woa1RgMcvGFE+5vrsiJtqE8NOrywr+e41wZFnjZiGBQu3NWweLES42+ffLGs7H+zd273uqiXJm1/bbKTF3D0AD6+9p+Tbpx6nX11cXjxr1rHef/9lSeV3z1gYew7ARypHdzyZGZ7J01/u7XLmZKONy3obX/6dz18aiYyafWkwMvYroRI/qOs60cY1yzJd67e2bV2+kzOa6mc/7hEwNrTn6t+/4SGyqfHGHb09S8+v3/VkzHIcAN5FI4ePucus/sHY0oqpRzFy02vHTRlxytYtNwLIFG5qQvYvS1x22WUcAJ555pn9PlQMk830OAejDJw5hp2P50WcPCKFh/xPbrvc19S9ond3a9uXP9h16x7NSItF5ADQP/Ule+rU3NUrR4x7utaiJxaFArXn2uGn60dXXvhkZ6xffe/j//r5NyhW84N9rZ1NtddEf5wzWE6kbDlBwdKZP8jd9969odIvHutc4h8WLDrtaPuXP7s2HL/h1/m/iNSO3/NUpjRh8Fe7onR6x5bf/0f9q7fWA9BEWNp48iUvarYx6TJF9avh8hMubHv/0Tc4oxkRfkwAjDG2D9gDJED5+xfepexov3FrT88LM97fulI8lwBgPB+Nd5f5fdfd5cqrFE8uKc3Try+qGb3+rvbOZwBkDzXbkFyH1XiUg3EGEHDOmSt2y2FPXzIP3VirdCeXWi3deDrRt3KPZlhCUXeJGJ8CkIg7btvbPv3mhKY7NG8irKNmHim9G0AFAB8A2NsWTPbRzh+7qR68sE5flTMYFSKwR4yjCcPElr/Lb0/FaMzTTcjcC140zV1UEkKVqC4hnnO/n8qw6bl4z/b6V29tEyGpB0A3gPY97y66BUzvAOGQ1UjVpDk/WiBYROtnE49jn5AaRExlF3+v1tedvFvvirEl3d2vi2d6xNpTABLL2no2Jl3a/kGfhgbNQpGOswCU96/3kMClLqvw6L5AQSRVVUPDlCOm3nrSt0t9qXCmL+u8lkp3iIXFByhqDsC5b2/Xe4kgfdXUHTDOUJ1Xz728LHIygCIARHY674CT8huJHH11q90mxkoNEk68pWvMjgxVXnQ0B+AM5bI39bbzMQdA8bz7u6vTGubrGoWrx3NiYycLQpOV6tocBU8v5x4DIRyyr2pmpPK4MQACHwq6IVQyiaauQzKnZvNmZkMmlxXjf0i5qSsuPL992oxVqYw9bgfJ170g9f3sF7nYMwBkANIh25szT2PMAwggK6GS4vJjSi2tVxLVp8Om6fN3zR8mtaTO9ZIaNMN1+qibFwa0D6S69YD3nKOzrykewCnxTSXBf/oDMpvX/fYURbITZ8HTYeYdms5TQ3jRgXQCzbjkBUbJNZwyibkcJ1ThDADrcnlvkqwg7NoMhMhBQefOAOai3Mv8CYTfzhh8jJGiYOnosZnYzqZ+4ckZH9Rg/M75stmamM01Ew7zaMx2dABG05UXlFRY+CbtylyR3Nga2Wloa55miWXPa5m+gowjIeZzaOAyz+phUCBJBJDUQPmYU8bF2+reETvmsMVd1td3EunNV1DLAWOcKIQwMfED0T/PErbRk7jleTxAOUexK48HUFIeNkcSagzn1AE4k4qCkvRxoeTdZrZx0nAS5dQbxShQ5UctgBIjnxvhU9V9xvCXVRJJljjbf9mOlelQwzxFKatk1GaOlZEErZMhN3U2WyEltWpmU0iU+C6rrjzqhpoxs8M7es/pzevGJif/hwd6e97bZZiGADUvNqpRIAw/Ip4Ga4N9JoFZO7hH91VXCEHZqJmnC+rzHQ5Qpy/Y47/nP5ZLTjRdw7IGmOVB5sRfrapFH2eYFfF4uyfzvYwBLjg8SwoDCHj5xDC4OgFzoMrcVzNCCYvNeMDxbvqdkecKOjjnoA4HsVACIGSmW5Ke7YB5DJK/rPrYU799/GCghYrLLSIR03NtuGY8lo3WpwatHw8wsRHPFdGMEWCmC5+HojE+/8h1ieSWh+Od35ncUD//660tr+8yzD4RfzsKNIP5iVMh14y+TnzhOzkhhEgS1KJxXyoZUVuV62uIFirTwdpXb90j+YhzoiT7b3NcfFHxgQeDkuVX4Tq2h2TcJvF0qn7Fe8sWXljj0dG6C6LI8HOi1AaDVauR7o8pg3rc66mc+2A17+IMkyyPIS87DiiUVJa57jAbvoAEnwpy4jh5wmP7UpKh4hOTFfSBA47OEc8hBUDu2rJ0x4RZP+uRmFpNZJ9UNfHCixrffuR1ket/GDKGj5pUlEyi3LUMpHtef4m6RvYjWuEAZce4bWfKTaoVESmgUqIywtXvNTTvEAD21+bNggOZA7bB0p2hUiGpa9fzWxjVWzzqghCAKKGyiaffOQ/7DpqHFFfUtienU84lPW2duWhz/Zr2Xe/+V7QjZmazfEomw6akE+bx0Q9++2Zr8zslHfl0i+ZwRl0GHyeY6g9NFoJEHqpkKxOYlHNoHkNUsrsBeJsb7E4jRzXPcuHzc0wbS6YBCH3cfH1+QhnlsLLA7jiaALhdH7ySpube+x0jD88xoYSOnnXKpb+bB6C4cLOoanChlTeLbW378y0bHnlTFC+M/cAdAPLtGz/I5jzWbZseFAKcJRefI+aZF2OkxDiHPfVUWt9fblbXznuceb7FhEiQFBmhii/NG3/SVataNj7xluD/Qbl+2ys37e5teu0+AMMAlACQp1/wp4jrhE/wqAsnn8wmGlcZAKRFTV3bfhMZ38JNfoyPEEzxgjMDslRieUwdQlRBIUqp4VGkucu3MnM7AOuWx5Jd844v3SZ5zqxAsYyxI7wvfKHGN2JXu9spDDV4aiCRMifPoWc4W92CLf1HmG8/dc6TJ1/87BjPqble9hUFAuWz7/vazZuPi4S0laXlI1yK0sv2NNuXm6lNS+pfuWa1EDq9+zHbIOCu6ol7d5RX16k5Mi0clHGMq079Ye240+9uaO0WAB+xQrQEgLVt+fUy5mUaqGWCMwZZVsNjpl17/7Cjph3VnwsO1nqbXmMFyq4DQKsvUGZRyuC5HgDGJdnPAZgb0no+6nNXpgwKh3EMd+TRN40ZNUvE90HpdM/sGaUylSf3uRStUn5zHbV29+eWHSnyqBajsDUPkRCLPPDN4AWCbQZlAr52VMjH2cR0F0dDCu/9eTf2iDzYAWBueO7SxX3NT12Rj2/4ox7/YFtOwxTHP+F3Oq94ubOHX56LbX9665+v+m8AMXFapn0knPSXpRjZD67dTH8i6VInb3pQQMglKLv57KqKcYWp1JECF127Xspa2S3fdZ285eh5MM+D7C8//oSv/uo3oyaeOWYIccULFF4OgCb7gq4kASD7jr/IPgMwAOypbPSX3bK9M6a7cF2Oi1B27dFFgUoA/kEHt+V/yeSc4e3czL3spVcKj8kAcGfem3k5mpFeSu11YOc9zJlIr7j2vNBxgp73iz+u5c7PdzmjersRW7QRvxdjZQtUttay8VdvbHtlwa0bn/vq/HW/mX5lrCsdjfXYyGdtpLvqWgQrdA8sC+6bLOHgpF/WfURDXLWreVenz17RoznQbA8RWz7qpxUTHrtl8rFTxNrJEQMXgLf1z9e/7epbF7qmRq1cFq7lgPirZk09d8lzsy79+Wlil33sJBQfGOccjLpg3kcPYZ6JZVJvSpn5ba7d3WE58GcxfkXVhIdGB/wjBm6gplNnTbOajV/scQ19tZRYssV1dwol2U9lzg/WeP/ZlSB/ie2mcJJOyaKL+SMPXB0+caDB6JrqubQrtaRjN+/56Tb8aGs39giQCmnRE97YA6CpZERts0clVdcoQAgqJ14876jJXwkfSPhIfkWBC8BPgJG+yABb0UfzvXd0Svam5pyFmGYhkvGmfFuq/K+6WWfc+sSpM449PhLxASCtc+ZEdk2a/m/rx9ReKlhTGnhmXNhXrlxJVq5cSQb7rHACBEDR5DMXXx4smXY/UYor1GARAuEQgiGSVxB/2so0Ll392yt39hf5BwN31pXrl+kZuoCaGXBm2c3rb/x3M9f+johRDIB/XnFk+gwe/vFYFjp9pOyDv1RpSkWUx0mxujECtdifd882uvSvN5qZxhUs/vgrjtEKoFOUKY2Cdys15aTqJ1+W7jgmwq+orEZJyWjFzvuCL3I1uCmoQvW75kwnps1uamBr7lqDZ1fvQUyM1fNxZ81zvrXp+55XcrckS0RRZciS0alF3/3eu89e/aoAmQEA+dUxs3hv31pEHQUegIjCg+XlWznDditOl+DhrgYAmBsqPvocueTnw93A3HJZwXCfirBfhRRSLU+WotSl3NLtUIZpbz1OE/evzGW7AeQ454d0RYkM4snh6kn/8sXy0edcp/hr5kq+oqAvEII/FEQgJJt+1Xlfld33iUSbCUgShIDAN8xxeW0uw2ZmErkvOkbapHZfu210NnbWP7rMtbP1Ilb137sKABj+jVDkvPEInDmO+L8wUvaP9Cmy7nKvO+PabZu49tcH9dRmb5+XxAvU6cC0yQeg7F+/QKbNHkPOmjCcTx5djapgEShnvC+exZ5V9XjvgTfRKUJIXFDyfsDe/HhfSDfck3XdOzmdtsdlUrkxjsHOBidQQyEEigOQiGfo8U231K2Y95QQZAx3Vp2AnblpSLJK2LwYEpHg5xyyvBcf0LWIOTHxXQVAxVWhyAWjuf+8MuY7tgRKxM9BPMLSOcnd3SCZrz+qZ94WISMOQOOce4cD3H6AgwCGjZx4/vTSypPO9gXHnir7SkfJSlEpUfyKpMiQJQkg4GA0T5mT8hyjxzGi9flE/a5099t92d4tOQFGXFBgoeomApTifqU92qeU+kBIq+tmReXKEwBkC+q8B/IyWcTaUtGD/XRY0E0xjj7w0P6WpR1H6VS5ua+PXZxJmcWWkWtw9NgOJx+NmtlOUy2qnuEvnvwVNVSCQDgE5lE30/Xagq1//t6LYjxJZAuRAv3AxXvzYg39m6l/3RUyUDZS8g2n4Eovo4ZgA13E9P7DD/dQr7aSIf6uCCVbCiASKq2pDJaMrpR9kRJAIURiFnWzmq1Fs3q6RePc6z9NcsUkzYJ+oCNESSzWL+KLUgBK/zjOQZ5QEQGyT/T+sVhBvXi/cHLT0uj5aUNa2tmuV2Wijc93bH1kZW/TK9GCd3sA5NrT7z63ePiZd/pCw0oknx+em2zd9tJF55latFV8VxZ9oE3ZIKXRwnX7C56j/YcVhaXZww3uQIP5C3q/4frr5F4BGHSAIf+v1zvJ4EW8I9Ouf6TjSxnb/9dYtxGIt733zOYXL19ecMUoj49e4w1NmHHdrGE1Fz8hqyURzijv3rHkys7tT78iaP6TzHnIdR+Rn5MUUAsVdEEKarhkQNp+OM5//2Y3y65+qJPE0myR6bgBLZU1mt/90RuCPtsEwAO93Gpe//Ca6SNPXCzJxy1mjBJCgtWC3T7ppfsjsm7pECYx0FM9/D+8lxxPeRXpDDvF1FxwzzbNXE9GiLY0Br9IxwDoVr7zBSJxm1MXjtFjFrDYZ65J+Dtt2WSfammO7FgMshoqLq+ZETmI4j0fXnMS5VxSPDcbTXa+2zlUWvgPcD+llul5K07tTJNrmYDkV8efvPCbQmUPGaqC4cpvuJYh5+JvPeVamfQB0rPPRCP4+23kpIt//68gE16Q1QDUYAh+X3Kdmdx0T92z120cSM3X/KSZJFPOf3a3GY8Y6a3Ltr929R9FIaRtqMOKw9GOlFr+vLfAlLm/vEbxj79H9pWU+4JFKCoJ0IDf3uhX+XYiIQ4uKa6LGj3Pp+cyekiLv/erD95Y+LbImTvxCW4n/gPcIx+WwlXHzJ1aVn36pb7gqBMV//CxkhIulxSfTAh3GXN6PTfbYGlt67u2L/1Lrm+XJooLfQLgI/7b43+A+8kADgIoE9WyYvzvIYk3oKBiCEBzGPxXj/8A9zOqPWRRJesv1EgDCjX9xRkbf+P/FHCo4P4PuR2cLdGHXMYAAAAASUVORK5CYII=", "fav11": "data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AJubm3guLi7/Ly8v/zExMf8yMjL/MjIy/zMzM/8yMjL/MjIy/zExMf8vLy//Li4u/y0tLf+enp50////AP///wAvLy//MTEx/zMzM/80NDT/NTU1/zY2Nv8mJib/JiYm/zU1Nf80NDT/MjIy/zAwMP8uLi7/LS0t/////wD///8AMjIy/zQ0NP82Njb/ODg4/zo6Ov87Ozv/09HR/9PR0f86Ojr/ODg4/zY2Nv80NDT/MjIy/y8vL/////8A////ADU1Nf84ODj/Ozs7/z09Pf8/Pz//QEBA/+Pi4v/j4uL/Pz8//z09Pf87Ozv/ODg4/zU1Nf8yMjL/////AP///wA5OTn/PDw8/z8/P/8tLS3/Ly8v/y8vL//o5+f/6Ofn/y8vL/8tLS3/LCws/zw8PP85OTn/NTU1/////wD///8APDw8/0BAQP9CQkL/7ezs/+3s7P/t7Oz/7ezs/+3s7P/t7Oz/7ezs/+3s7P8/Pz//Ozs7/zg4OP////8A////AD8/P/9CQkL/RUVF//Hx8f/x8fH/8fHx//Hx8f/x8fH/8fHx//Hx8f/x8fH/QkJC/z4+Pv86Ojr/////AP///wBAQED/RERE/0dHR/9JSUn/SUlJ/0lJSf/29fX/9vX1/0lJSf9JSUn/R0dH/0RERP9AQED/PDw8/////wD///8AQkJC/0ZGRv9ISEj/SUlJ/0lJSf9JSUn/+fn5//n5+f9ISEj/SEhI/0dHR/9GRkb/QkJC/z4+Pv////8A////AENDQ/9HR0f/SUlJ/0lJSf9JSUn/SUlJ//39/f/9/f3/SUlJ/0lJSf9JSUn/R0dH/0NDQ/8/Pz//////AP///wBERET/R0dH/0lJSf9JSUn/SUlJ/0lJSf9JSUn/SUlJ/0lJSf9JSUn/SUlJ/0dHR/9DQ0P/Pz8//////wD///8ANzc3/zo6Ov88PDz/PDw8/zw8PP88PDz/PDw8/zw8PP88PDz/PDw8/zw8PP86Ojr/Nzc3/zQ0NP////8A////AA8P1f8PD9X/Dw/V/+hpM//oaTP/6Gkz/+hpM/8lmQD/JZkA/yWZAP8mkwP/EbLu/xGy7v8Rsu7/////AP///wCHh+p+Dw/V/w8P1f/oaTP/6Gkz/+hpM//oaTP/JZkA/yWZAP8lmQD/JpQE/xGy7v8Rsu7/jNr2ef///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A//8AAMADAACAAQAAgAEAAIABAACAAQAAgAEAAIABAACAAQAAgAEAAIABAACAAQAAgAEAAIABAADAAwAA//8AAA==", "favRed": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAIRklEQVR42p2Xa6xcVRXHf2ufPe97575vn0ghglDaopReqiAvFTSBBP2AUYMRC6LEkABFv9ikkUc0ohAIMYCFEBNFUbGSqCBIBEqhNH2IYEsp0NL3ffY+Zuacs/defjhzpy0tLXFPVvbM2WuvtWY9/msdefa8OYt6+nofKRQLi11QFRBa67Cvx116nDM5gkdBrRFJ4mTD0IHBa2X95We9Mberff5UnKgxkSACwaMhQNATKtagIGBs7uhTPUyGEUQMAEFVK8W87Bqb2GKtd/OnpurBO2/S+hQhjTHFMlIsYQrF1qXDhaoPmVJjyJUrqPckYyMgkv1RAVSRXB7JFbJ7aYKmjSaPymSahpz3Z9g0qPqpSaO5PG3nXUznhZdTOn0hZtZcKJYJjTqIaQoFUyyCiTKhLmXna2sZfWIVbaPDqDGAIpHFjQ7Ru2w53VdfB8DI73/F0Kq7sV29qHcAJvFBbajXpHLpF+m55iai0xeya+M6hl9ZQ5TLM/czF9F70rxWBAXY+/oG3nvub9hqB/HO7fiXnqbbx4RyGUI45KkQkHwBU65kmZAvoCGggKqiIgBiu7/5fWZ/94eMj4yw4XtXYza/TCk4nDFserCDGdctZ+HXl4FzqDF0zpxD184tHHz2z1S7eqhUKgRTIRymHNWmogCqh0I3rXx6V8X0fuNGQgj8d+VN9Gx+gTm9PXT2z6C7t49TCsL4fSt468nfINaCKqW+GZzx88eY/bkryefzpBLhvc/CEkXZbiKIbBbvwymyR/GZKMoxtuV1Cv95lUJXH3HqcKnDpSmJGPo7qgw/9FNGdr6LRBHqUhBD97LlBAUNHlUlHRkkHTpAOpxRMrgXX5tqOcXXpkgG92bnTb5k+ACWfJ7kna2QNHDFAjRdld3ypFGeytgQ+/74GF03r8wsV6Wy4BwKiwaov/YiUVcP/dffhuTyWfabiFCfojJwYcuAtoELmX3rXZhSBdWAAIVaHasiWJeAd1lsPljM3mHLJRprnyO54TYK5QrqHRJZygvOYfLFp7H5WfRfe/NxEaOyaIDKooEjnpUVDEGRchk1EepDlixHkCcYiwztYfSNja0MB7CdPQQRgn44YGkILf4PLgtYXEp+9imQLxC8P7aUyOBrNdIdb8OSC1rl5uKYoIqLY9bf/xPIF7IzY0hrU5x0/iXMOffTAOxat4b31zyfAVcIGGOYqNWwIW1QPe1Mcn2zSPfvzpBLj7RYFHAOMz6a/TYZOtb370HEEOKY+NG70aYnxFqSoQOkhTth4HwA0vX/onHfCkJvP+ocRoSpOMGGJMVUO2hbeilDjz+IzRczfD8Sf7PcaBomUUSSxAy++gL5YhHVQHtv3yGDI4szhkKpzLRPC6Uynf0zsd0ZEhoRXCPGTHerGV++BlPtxCcx2oyrqmY7ihpDfvbJWTxNxPYnf4vf/ibkiqj3pGl6BCVpgktdC3Bc6kjSpHk2zecw042jdMppzL5+OenEGME5MAaNMtBIRocpnPxxqksvRozhvXVr2P3AHRRLJXxwLWOPpKxhiQgiWZPPkvoQT9CAzZXKIIJPE2Z+9Xp8vcbuR+7FjwyhGjA2R/m0szj1R/dQ6Orl7TXPs23FjfT5GJ8vQPDHbsMIjXqNg2NjADTqNUAI09WFoKrIS3ev1E9+5xYq7e0tAemeHYy89CzJyBDFj51K10Vfwlba2Pr31by14kZm5gTNF1DvM4g9xjKqjItlXLLOWVVPVR1BBAUiEYYbCfK7T7Rr+cxFdH3hKmYsWkz7rLmQy9HW00elUmkJHNy+lfXXXkFvWsM3lct0jz5W/YtgNGCalRFECGKQZkJHIgzHKbatWqVnz3ZGH/gxQ8UKvlAirdcYuOuXzLvsSlzcIFeqML5hLZWJEXxHJyFNQQQlfPgYFgJeBH+4h0JARVAUIRuWrHMOrRTp6CliNKCugVQr9M5fhEQ2G7VE6Dp9PrtzOXyjgeRyh9yvx5kRj4WQ0+1YIBAwqpqVkXMkXnFRjlqjwfj+fS0ZPk3pOnuAU5ffifce36ijUdQcMJqk/wcFxQSRrNwQ1DtCmhLGhtm26l4atVoLz30cM+fqZcy//3Fs3yzc+BgaRYSQoW9ouvSjkjZ345OYZGQINzVJQIg6uuk+9wJKwTH27jZsoUAInqCBtF6je+nFLHpoNdUlF5KOjWZ40ZyOlWPhwfFJVn9+oZ5xyWVUF59P18LFmJ4ZxElMCIqLG6gI7d09WBGSeg0BomKZENfZevvN7H/qcWxb9aj+caK3CCvCgThF3n19k85bcDYjo2O8/cxTDG98hfp724gH9+Frk2ia0rX0IpbcdgczTp5HY3KiNXKbnOWt229lzxOPYturWWJ+ZAPgQOyRHTvf173PPMm2h39BcXgfJQP5fB5rLcZEiAiTk5OM95/EmT+4iwVXfAVfq+Gdw+TzaAhsvuEqJjatyybgED6yAftjR7Rk5+aVjb/8mj5NqVSr5IolsJZgIgKCQyiUylRqB9nx1z9x4OAEs5d+Fpuz+EaDXFs7Um5n8B+rkcg2YfbEH0GZcgETNq3V7rY2nM2Tpg7nHME3pxhVRDV7lisws73C+Kqf8dwt36bRSDCRJa3VaD/rU9iOrgygaGLDCUg124wtV8R5HzSEozI0TLdjVYL3xMHT2dePf+YP/Pvhe5BiieA9UaEIUY6goXXnRIRqMKpiplL3phVMJGgkcDyyQPCejmoHtX+upjE2Sr5UZmLvLkJ9EhtFRBxfRpM0EjETLmyx++P0a4I+UoxksVM+8Hp+LJg3hCShlHr27dtL0XneefVldo6MkS+V0OBOlIBqBYl92Lg/9t/6H8/1VCmn2DYcAAAAAElFTkSuQmCC", "fav15": "data:image/png;base64,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", "sil": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAABvFBMVEX////N2vCRrd17lL+OqtmKpdORrdxthKtzia99l8J8lcBxh63M2e99lsHL2O6Bm8earMtzi7SPq9rH1eyAmsZyiK59kraMp9afsc9/lLiJpNKktdLG1OtvhqzI1u3K1+6qutaClrp0irCAmcW6yeKLp9V8kbaUp8ejtNKdr81+mMN1jba2xuBuhaySpcWLptV+l8O+zeWNocKesM6Ln8CQrNyQrNt6j7Scrs17lL6/zuZ7kLV0jLWNqNd5kryPq9uvv9vE0ummt9SFoM2Jnb+KptSEnsvF0+qCnMh/mcSOqdi7yuPC0OiOosPD0el2jLF5jrOru9eis9GPo8SIo9B5kr1thKyuvtp3kLq4yOGTpsanuNWVqMiNqdh6k76Zq8q8y+R4kLq3x+CDncmzwt2Hoc+Goc6Wqch+k7eXqsmywdybrcy9zORvh6+GoM1/mMSKnr+Ensp3jbKHnL60w952jrelttN1i7GEmLtvhq6En8ywwNusvNh3j7l1jbdwiLCoudZzirN5kbuMoMGGm72DncqDl7p2jrhsg6q1xd+CnMlyibJ2j7iBlbmIo9HAz+eMqNagstB6k71yirJPE2z9AAAAAXRSTlMAQObYZgAAAy5JREFUeF7t1uWOJDcUgNG5LoRmZu5hZmZmZmZYZgwzwwtHUUar3YZyje36Eam/FziyJd/rMmRuZf8zoASUgBJQAoSHNc4T3hwgtOZ03r/srM2syD+sf7UqCALPEOA9XdFEJjME/xV/lwwGgykPM0CRD4ZPIbfuR19OsgG4ejcU7FAbYAC0qdtQLFkZoQZcdQu2okBToJWjBdKOY9DrOy5LBfDOGdCvUqUClE7A5BujAUTJjQEskkgDhMoBVz3NFY15E1jAdimQA9wLwBdWyYH3bwHfxhE50L9k8gmqqwDfzOg5MfCmGQxUf0IMNJQbAa48xMCAZgRoaSQG0Hrc3CtC94cAXzJEDLTVTQA+mScGVl8BvshrRAzwsgUPPHtODqDNQTxwYacAzvB3FPO6yIHxnvAsDqid0/zEQE0tGGjZSgwcbRgBvviLYpqaPCqEoBFgbpwYQJ/PAr6eLA6gW8oxSSQHzkdNfsntUfy8DigUAFpLYIHWERog1BHTn3c2m8zTAMjaUaEL/OpTERWA/C8tustgDFEA+IE0uImoAfuuDuBI0wPTendU3kAPoM9+LApknIgGwH8gKyZZAKI0i1mXlABKF3sKnVbEBBClpoLAhMazAZD9m4KP7Wk1YgQg1QH5BTjEDHBxVXlnaOH62AFoWn2UA+zs7yEKAL//K1XEFBhpzQFOv6cC8F+kiCRSAfih/fUkS+CBN2/7H0ohVoD4bW/yGvJKLPb/xgLgp6TmLSjYku+XB7SA3yofzEPRrpM14zRAg5pajoFutU+dP5ECDepCOA7YZuZ+trcRAELXQtgGhmrarptqvyMgdC0O28Bw8xfR6oE7AFn1ybAF7tTEldbIGwR4Ra60wZ2L3HiVPQOA+FC7cQNR7hbZ6scBHqliCIiLLaesfXrA497mbqAqFvAqrmJAVvUdA3Vuh+YpDNi1Sguw6PdR7o8CgNLTBKz6k+vLA6Z8bmBXgJvOATyL88CyKu5T4CzVDWxbsX4MiJuDwLhYuf0jwLoLzLtX5/oACE/iwD5H4wdgfwdMKBJtvwX8HRYwo5XHt0DaAaa01H8L9G6ZA9z7+1/A9P4BpZmXQrYA7EUAAAAASUVORK5CYII=", "icons": "data:image/png;base64,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", "iconOrder": ["home", "profile", "explore", "people", "circles", "notifications", "settings", "admin", "caret"]};
+const UGF_GPX = {"logo12": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHcAAAAlCAYAAAB4f3Z2AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABx0RVh0U29mdHdhcmUAQWRvYmUgRmlyZXdvcmtzIENTNXG14zYAAAAVdEVYdENyZWF0aW9uIFRpbWUANi8xNC8xMaahqEAAABYsSURBVHja7Vx7fFXVlf72Oeee+8hNckMCCUEIAkqgClSsooiIHUex1c74RmfaKujUTqsV32/bYovW0lbtA7EWLRatWh3pqIhCbXwA8goPSUIS8r65ue977nnvs/f8wY5zDSEyCNWx3b/f/if3nn32Xt9e3/rW2vuG4CDbbcvTISNvjPcYH2W7tIxxTlTiaGB2glG7+7Hbv9QFgIv+d9Fmr5vtkyV1NpPka+WgfzaISrKOhr3tzWa+zbjPfTT5DOuyDQDsk7yH80MzqTLUhz9YmSvK5u3zMhq/uKXNnmVZLOw6rsU5o5wjKEn+sE8NIRSS6Tce7KiXmbneNtJvNG3849r3X1uS/6SL+qw3j3v+1pamcL7dXKMcG5iqVheP13qy0Nel1nmPG/UAwgCsT8sO5ICe+lT6G7EkuzfWax9tZJLb9OSuNcn2tfXJjndi1M65vmCFb9joGaNLK088IVg68Z/84RG14bIgisISmGM2ZBPdj9Wv+dETvU2r8wC8zym+BIAKoHj4kzUvWSPoTKfVBHvLfcH9o/YLAI0AEp8Zz733D9qIrEEf29PufS3VneiJt/zp9p1r7tgAwASgi+4g08ky0a2NAOpkJbB80hnfv9CsPOPafHFZRFakWlOvWHL09JtOi++t+5bnGmkA9HMILgfgAsiRsMIIOCATwC9BeKz1abLXR8C97Ym+sYk8W9XV5R6X6mzb2bD2hsXx9nd6APSJHagDsIUncrFzFY9a6s43bn143IkL1lccfckDnIdrmZuOxduerfNcYxiA/OcUXAjwHMY545wDnEM4Gvu09ceH4N63Ilsc1/mL0V73uHRXd2z3m9/9WaJjQzeAdgGuOcgu5AAc0Y3WTY+vrTh67lrmesPa6xf/ONFWt+vT3r1/M4SZ6ByfGU35IbgJjf48kSPT0r1ZHmtasTzRsaFLABsV3vpxM2Zzrl7t2Xl3R/fOZasSbXU5AL0A4gL8z3XjnO+LjZ+hfEEBgO880ntGxpCuyiUt2LnO5sa3f7oRQD8d2wc73XXLzjYBPAmgVDyTE57LP/+ey8EEwJx9hjw3a8p3mTaDpRnQ4uvfAZAWHmceAjAOgJSgYu/jns/c+50xPGecwi13IjVosRvyJzTm7d6byW6a++zLsYNV2mznt4htJE+XaHYOXGMqIW4lJYGE4SgbU1n3r8de8Nf1Qvwc1HpuXpYKudQqs6gT8FybeB7gMQbXgaTrHvJZFnR0Q6t7akY7AObB+xDYjxO35kO3qCynn+FmzdO4y2pcRUnnPW97SyJZd9azL+89GLsdFLgLHuoZlzX5LMugYK5N461vbBPgHmqe6h0MILmf3lartPUucjc0zsyks+05140rFOVlxD+9qrRUrSgrTuw+76srn2xrfmDxjobYUILM3bHgTJ5vXMITneW9ffr7sQxrUSUvPaqczxpWETyvvKIUudVT6jY1GHefeX3zerEBBzXedb+Oz01n6NWtnfoEBmmM3x8sLSoqshUfZ9RiTLdcpuu27Dq5d8zMrsX9esRjHMzj4GxoVPQfLryE17cuynf3eUnLbIHNiiugXlYRiaiRcDC3Y+4/P3baG2sXZV36iVNIRbdwtkOhUpuCUUPLJRp7BZ0esTipP3DbFfKOtscSu1talmbjN/2woa1RgMcvGFE+5vrsiJtqE8NOrywr+e41wZFnjZiGBQu3NWweLES42+ffLGs7H+zd273uqiXJm1/bbKTF3D0AD6+9p+Tbpx6nX11cXjxr1rHef/9lSeV3z1gYew7ARypHdzyZGZ7J01/u7XLmZKONy3obX/6dz18aiYyafWkwMvYroRI/qOs60cY1yzJd67e2bV2+kzOa6mc/7hEwNrTn6t+/4SGyqfHGHb09S8+v3/VkzHIcAN5FI4ePucus/sHY0oqpRzFy02vHTRlxytYtNwLIFG5qQvYvS1x22WUcAJ555pn9PlQMk830OAejDJw5hp2P50WcPCKFh/xPbrvc19S9ond3a9uXP9h16x7NSItF5ADQP/Ule+rU3NUrR4x7utaiJxaFArXn2uGn60dXXvhkZ6xffe/j//r5NyhW84N9rZ1NtddEf5wzWE6kbDlBwdKZP8jd9969odIvHutc4h8WLDrtaPuXP7s2HL/h1/m/iNSO3/NUpjRh8Fe7onR6x5bf/0f9q7fWA9BEWNp48iUvarYx6TJF9avh8hMubHv/0Tc4oxkRfkwAjDG2D9gDJED5+xfepexov3FrT88LM97fulI8lwBgPB+Nd5f5fdfd5cqrFE8uKc3Try+qGb3+rvbOZwBkDzXbkFyH1XiUg3EGEHDOmSt2y2FPXzIP3VirdCeXWi3deDrRt3KPZlhCUXeJGJ8CkIg7btvbPv3mhKY7NG8irKNmHim9G0AFAB8A2NsWTPbRzh+7qR68sE5flTMYFSKwR4yjCcPElr/Lb0/FaMzTTcjcC140zV1UEkKVqC4hnnO/n8qw6bl4z/b6V29tEyGpB0A3gPY97y66BUzvAOGQ1UjVpDk/WiBYROtnE49jn5AaRExlF3+v1tedvFvvirEl3d2vi2d6xNpTABLL2no2Jl3a/kGfhgbNQpGOswCU96/3kMClLqvw6L5AQSRVVUPDlCOm3nrSt0t9qXCmL+u8lkp3iIXFByhqDsC5b2/Xe4kgfdXUHTDOUJ1Xz728LHIygCIARHY674CT8huJHH11q90mxkoNEk68pWvMjgxVXnQ0B+AM5bI39bbzMQdA8bz7u6vTGubrGoWrx3NiYycLQpOV6tocBU8v5x4DIRyyr2pmpPK4MQACHwq6IVQyiaauQzKnZvNmZkMmlxXjf0i5qSsuPL992oxVqYw9bgfJ170g9f3sF7nYMwBkANIh25szT2PMAwggK6GS4vJjSi2tVxLVp8Om6fN3zR8mtaTO9ZIaNMN1+qibFwa0D6S69YD3nKOzrykewCnxTSXBf/oDMpvX/fYURbITZ8HTYeYdms5TQ3jRgXQCzbjkBUbJNZwyibkcJ1ThDADrcnlvkqwg7NoMhMhBQefOAOai3Mv8CYTfzhh8jJGiYOnosZnYzqZ+4ckZH9Rg/M75stmamM01Ew7zaMx2dABG05UXlFRY+CbtylyR3Nga2Wloa55miWXPa5m+gowjIeZzaOAyz+phUCBJBJDUQPmYU8bF2+reETvmsMVd1td3EunNV1DLAWOcKIQwMfED0T/PErbRk7jleTxAOUexK48HUFIeNkcSagzn1AE4k4qCkvRxoeTdZrZx0nAS5dQbxShQ5UctgBIjnxvhU9V9xvCXVRJJljjbf9mOlelQwzxFKatk1GaOlZEErZMhN3U2WyEltWpmU0iU+C6rrjzqhpoxs8M7es/pzevGJif/hwd6e97bZZiGADUvNqpRIAw/Ip4Ga4N9JoFZO7hH91VXCEHZqJmnC+rzHQ5Qpy/Y47/nP5ZLTjRdw7IGmOVB5sRfrapFH2eYFfF4uyfzvYwBLjg8SwoDCHj5xDC4OgFzoMrcVzNCCYvNeMDxbvqdkecKOjjnoA4HsVACIGSmW5Ke7YB5DJK/rPrYU799/GCghYrLLSIR03NtuGY8lo3WpwatHw8wsRHPFdGMEWCmC5+HojE+/8h1ieSWh+Od35ncUD//660tr+8yzD4RfzsKNIP5iVMh14y+TnzhOzkhhEgS1KJxXyoZUVuV62uIFirTwdpXb90j+YhzoiT7b3NcfFHxgQeDkuVX4Tq2h2TcJvF0qn7Fe8sWXljj0dG6C6LI8HOi1AaDVauR7o8pg3rc66mc+2A17+IMkyyPIS87DiiUVJa57jAbvoAEnwpy4jh5wmP7UpKh4hOTFfSBA47OEc8hBUDu2rJ0x4RZP+uRmFpNZJ9UNfHCixrffuR1ket/GDKGj5pUlEyi3LUMpHtef4m6RvYjWuEAZce4bWfKTaoVESmgUqIywtXvNTTvEAD21+bNggOZA7bB0p2hUiGpa9fzWxjVWzzqghCAKKGyiaffOQ/7DpqHFFfUtienU84lPW2duWhz/Zr2Xe/+V7QjZmazfEomw6akE+bx0Q9++2Zr8zslHfl0i+ZwRl0GHyeY6g9NFoJEHqpkKxOYlHNoHkNUsrsBeJsb7E4jRzXPcuHzc0wbS6YBCH3cfH1+QhnlsLLA7jiaALhdH7ySpube+x0jD88xoYSOnnXKpb+bB6C4cLOoanChlTeLbW378y0bHnlTFC+M/cAdAPLtGz/I5jzWbZseFAKcJRefI+aZF2OkxDiHPfVUWt9fblbXznuceb7FhEiQFBmhii/NG3/SVataNj7xluD/Qbl+2ys37e5teu0+AMMAlACQp1/wp4jrhE/wqAsnn8wmGlcZAKRFTV3bfhMZ38JNfoyPEEzxgjMDslRieUwdQlRBIUqp4VGkucu3MnM7AOuWx5Jd844v3SZ5zqxAsYyxI7wvfKHGN2JXu9spDDV4aiCRMifPoWc4W92CLf1HmG8/dc6TJ1/87BjPqble9hUFAuWz7/vazZuPi4S0laXlI1yK0sv2NNuXm6lNS+pfuWa1EDq9+zHbIOCu6ol7d5RX16k5Mi0clHGMq079Ye240+9uaO0WAB+xQrQEgLVt+fUy5mUaqGWCMwZZVsNjpl17/7Cjph3VnwsO1nqbXmMFyq4DQKsvUGZRyuC5HgDGJdnPAZgb0no+6nNXpgwKh3EMd+TRN40ZNUvE90HpdM/sGaUylSf3uRStUn5zHbV29+eWHSnyqBajsDUPkRCLPPDN4AWCbQZlAr52VMjH2cR0F0dDCu/9eTf2iDzYAWBueO7SxX3NT12Rj2/4ox7/YFtOwxTHP+F3Oq94ubOHX56LbX9665+v+m8AMXFapn0knPSXpRjZD67dTH8i6VInb3pQQMglKLv57KqKcYWp1JECF127Xspa2S3fdZ285eh5MM+D7C8//oSv/uo3oyaeOWYIccULFF4OgCb7gq4kASD7jr/IPgMwAOypbPSX3bK9M6a7cF2Oi1B27dFFgUoA/kEHt+V/yeSc4e3czL3spVcKj8kAcGfem3k5mpFeSu11YOc9zJlIr7j2vNBxgp73iz+u5c7PdzmjersRW7QRvxdjZQtUttay8VdvbHtlwa0bn/vq/HW/mX5lrCsdjfXYyGdtpLvqWgQrdA8sC+6bLOHgpF/WfURDXLWreVenz17RoznQbA8RWz7qpxUTHrtl8rFTxNrJEQMXgLf1z9e/7epbF7qmRq1cFq7lgPirZk09d8lzsy79+Wlil33sJBQfGOccjLpg3kcPYZ6JZVJvSpn5ba7d3WE58GcxfkXVhIdGB/wjBm6gplNnTbOajV/scQ19tZRYssV1dwol2U9lzg/WeP/ZlSB/ie2mcJJOyaKL+SMPXB0+caDB6JrqubQrtaRjN+/56Tb8aGs39giQCmnRE97YA6CpZERts0clVdcoQAgqJ14876jJXwkfSPhIfkWBC8BPgJG+yABb0UfzvXd0Svam5pyFmGYhkvGmfFuq/K+6WWfc+sSpM449PhLxASCtc+ZEdk2a/m/rx9ReKlhTGnhmXNhXrlxJVq5cSQb7rHACBEDR5DMXXx4smXY/UYor1GARAuEQgiGSVxB/2so0Ll392yt39hf5BwN31pXrl+kZuoCaGXBm2c3rb/x3M9f+johRDIB/XnFk+gwe/vFYFjp9pOyDv1RpSkWUx0mxujECtdifd882uvSvN5qZxhUs/vgrjtEKoFOUKY2Cdys15aTqJ1+W7jgmwq+orEZJyWjFzvuCL3I1uCmoQvW75kwnps1uamBr7lqDZ1fvQUyM1fNxZ81zvrXp+55XcrckS0RRZciS0alF3/3eu89e/aoAmQEA+dUxs3hv31pEHQUegIjCg+XlWznDditOl+DhrgYAmBsqPvocueTnw93A3HJZwXCfirBfhRRSLU+WotSl3NLtUIZpbz1OE/evzGW7AeQ454d0RYkM4snh6kn/8sXy0edcp/hr5kq+oqAvEII/FEQgJJt+1Xlfld33iUSbCUgShIDAN8xxeW0uw2ZmErkvOkbapHZfu210NnbWP7rMtbP1Ilb137sKABj+jVDkvPEInDmO+L8wUvaP9Cmy7nKvO+PabZu49tcH9dRmb5+XxAvU6cC0yQeg7F+/QKbNHkPOmjCcTx5djapgEShnvC+exZ5V9XjvgTfRKUJIXFDyfsDe/HhfSDfck3XdOzmdtsdlUrkxjsHOBidQQyEEigOQiGfo8U231K2Y95QQZAx3Vp2AnblpSLJK2LwYEpHg5xyyvBcf0LWIOTHxXQVAxVWhyAWjuf+8MuY7tgRKxM9BPMLSOcnd3SCZrz+qZ94WISMOQOOce4cD3H6AgwCGjZx4/vTSypPO9gXHnir7SkfJSlEpUfyKpMiQJQkg4GA0T5mT8hyjxzGi9flE/a5099t92d4tOQFGXFBgoeomApTifqU92qeU+kBIq+tmReXKEwBkC+q8B/IyWcTaUtGD/XRY0E0xjj7w0P6WpR1H6VS5ua+PXZxJmcWWkWtw9NgOJx+NmtlOUy2qnuEvnvwVNVSCQDgE5lE30/Xagq1//t6LYjxJZAuRAv3AxXvzYg39m6l/3RUyUDZS8g2n4Eovo4ZgA13E9P7DD/dQr7aSIf6uCCVbCiASKq2pDJaMrpR9kRJAIURiFnWzmq1Fs3q6RePc6z9NcsUkzYJ+oCNESSzWL+KLUgBK/zjOQZ5QEQGyT/T+sVhBvXi/cHLT0uj5aUNa2tmuV2Wijc93bH1kZW/TK9GCd3sA5NrT7z63ePiZd/pCw0oknx+em2zd9tJF55latFV8VxZ9oE3ZIKXRwnX7C56j/YcVhaXZww3uQIP5C3q/4frr5F4BGHSAIf+v1zvJ4EW8I9Ouf6TjSxnb/9dYtxGIt733zOYXL19ecMUoj49e4w1NmHHdrGE1Fz8hqyURzijv3rHkys7tT78iaP6TzHnIdR+Rn5MUUAsVdEEKarhkQNp+OM5//2Y3y65+qJPE0myR6bgBLZU1mt/90RuCPtsEwAO93Gpe//Ca6SNPXCzJxy1mjBJCgtWC3T7ppfsjsm7pECYx0FM9/D+8lxxPeRXpDDvF1FxwzzbNXE9GiLY0Br9IxwDoVr7zBSJxm1MXjtFjFrDYZ65J+Dtt2WSfammO7FgMshoqLq+ZETmI4j0fXnMS5VxSPDcbTXa+2zlUWvgPcD+llul5K07tTJNrmYDkV8efvPCbQmUPGaqC4cpvuJYh5+JvPeVamfQB0rPPRCP4+23kpIt//68gE16Q1QDUYAh+X3Kdmdx0T92z120cSM3X/KSZJFPOf3a3GY8Y6a3Ltr929R9FIaRtqMOKw9GOlFr+vLfAlLm/vEbxj79H9pWU+4JFKCoJ0IDf3uhX+XYiIQ4uKa6LGj3Pp+cyekiLv/erD95Y+LbImTvxCW4n/gPcIx+WwlXHzJ1aVn36pb7gqBMV//CxkhIulxSfTAh3GXN6PTfbYGlt67u2L/1Lrm+XJooLfQLgI/7b43+A+8kADgIoE9WyYvzvIYk3oKBiCEBzGPxXj/8A9zOqPWRRJesv1EgDCjX9xRkbf+P/FHCo4P4PuR2cLdGHXMYAAAAASUVORK5CYII=", "logo13": "data:image/png;base64,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", "fav11": "data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AJubm3guLi7/Ly8v/zExMf8yMjL/MjIy/zMzM/8yMjL/MjIy/zExMf8vLy//Li4u/y0tLf+enp50////AP///wAvLy//MTEx/zMzM/80NDT/NTU1/zY2Nv8mJib/JiYm/zU1Nf80NDT/MjIy/zAwMP8uLi7/LS0t/////wD///8AMjIy/zQ0NP82Njb/ODg4/zo6Ov87Ozv/09HR/9PR0f86Ojr/ODg4/zY2Nv80NDT/MjIy/y8vL/////8A////ADU1Nf84ODj/Ozs7/z09Pf8/Pz//QEBA/+Pi4v/j4uL/Pz8//z09Pf87Ozv/ODg4/zU1Nf8yMjL/////AP///wA5OTn/PDw8/z8/P/8tLS3/Ly8v/y8vL//o5+f/6Ofn/y8vL/8tLS3/LCws/zw8PP85OTn/NTU1/////wD///8APDw8/0BAQP9CQkL/7ezs/+3s7P/t7Oz/7ezs/+3s7P/t7Oz/7ezs/+3s7P8/Pz//Ozs7/zg4OP////8A////AD8/P/9CQkL/RUVF//Hx8f/x8fH/8fHx//Hx8f/x8fH/8fHx//Hx8f/x8fH/QkJC/z4+Pv86Ojr/////AP///wBAQED/RERE/0dHR/9JSUn/SUlJ/0lJSf/29fX/9vX1/0lJSf9JSUn/R0dH/0RERP9AQED/PDw8/////wD///8AQkJC/0ZGRv9ISEj/SUlJ/0lJSf9JSUn/+fn5//n5+f9ISEj/SEhI/0dHR/9GRkb/QkJC/z4+Pv////8A////AENDQ/9HR0f/SUlJ/0lJSf9JSUn/SUlJ//39/f/9/f3/SUlJ/0lJSf9JSUn/R0dH/0NDQ/8/Pz//////AP///wBERET/R0dH/0lJSf9JSUn/SUlJ/0lJSf9JSUn/SUlJ/0lJSf9JSUn/SUlJ/0dHR/9DQ0P/Pz8//////wD///8ANzc3/zo6Ov88PDz/PDw8/zw8PP88PDz/PDw8/zw8PP88PDz/PDw8/zw8PP86Ojr/Nzc3/zQ0NP////8A////AA8P1f8PD9X/Dw/V/+hpM//oaTP/6Gkz/+hpM/8lmQD/JZkA/yWZAP8mkwP/EbLu/xGy7v8Rsu7/////AP///wCHh+p+Dw/V/w8P1f/oaTP/6Gkz/+hpM//oaTP/JZkA/yWZAP8lmQD/JpQE/xGy7v8Rsu7/jNr2ef///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A//8AAMADAACAAQAAgAEAAIABAACAAQAAgAEAAIABAACAAQAAgAEAAIABAACAAQAAgAEAAIABAADAAwAA//8AAA==", "favRed": "data:image/png;base64,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", "fav15": "data:image/png;base64,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", "sil": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAMAAADVRocKAAABvFBMVEX////N2vCRrd17lL+OqtmKpdORrdxthKtzia99l8J8lcBxh63M2e99lsHL2O6Bm8earMtzi7SPq9rH1eyAmsZyiK59kraMp9afsc9/lLiJpNKktdLG1OtvhqzI1u3K1+6qutaClrp0irCAmcW6yeKLp9V8kbaUp8ejtNKdr81+mMN1jba2xuBuhaySpcWLptV+l8O+zeWNocKesM6Ln8CQrNyQrNt6j7Scrs17lL6/zuZ7kLV0jLWNqNd5kryPq9uvv9vE0ummt9SFoM2Jnb+KptSEnsvF0+qCnMh/mcSOqdi7yuPC0OiOosPD0el2jLF5jrOru9eis9GPo8SIo9B5kr1thKyuvtp3kLq4yOGTpsanuNWVqMiNqdh6k76Zq8q8y+R4kLq3x+CDncmzwt2Hoc+Goc6Wqch+k7eXqsmywdybrcy9zORvh6+GoM1/mMSKnr+Ensp3jbKHnL60w952jrelttN1i7GEmLtvhq6En8ywwNusvNh3j7l1jbdwiLCoudZzirN5kbuMoMGGm72DncqDl7p2jrhsg6q1xd+CnMlyibJ2j7iBlbmIo9HAz+eMqNagstB6k71yirJPE2z9AAAAAXRSTlMAQObYZgAAAy5JREFUeF7t1uWOJDcUgNG5LoRmZu5hZmZmZmZYZgwzwwtHUUar3YZyje36Eam/FziyJd/rMmRuZf8zoASUgBJQAoSHNc4T3hwgtOZ03r/srM2syD+sf7UqCALPEOA9XdFEJjME/xV/lwwGgykPM0CRD4ZPIbfuR19OsgG4ejcU7FAbYAC0qdtQLFkZoQZcdQu2okBToJWjBdKOY9DrOy5LBfDOGdCvUqUClE7A5BujAUTJjQEskkgDhMoBVz3NFY15E1jAdimQA9wLwBdWyYH3bwHfxhE50L9k8gmqqwDfzOg5MfCmGQxUf0IMNJQbAa48xMCAZgRoaSQG0Hrc3CtC94cAXzJEDLTVTQA+mScGVl8BvshrRAzwsgUPPHtODqDNQTxwYacAzvB3FPO6yIHxnvAsDqid0/zEQE0tGGjZSgwcbRgBvviLYpqaPCqEoBFgbpwYQJ/PAr6eLA6gW8oxSSQHzkdNfsntUfy8DigUAFpLYIHWERog1BHTn3c2m8zTAMjaUaEL/OpTERWA/C8tustgDFEA+IE0uImoAfuuDuBI0wPTendU3kAPoM9+LApknIgGwH8gKyZZAKI0i1mXlABKF3sKnVbEBBClpoLAhMazAZD9m4KP7Wk1YgQg1QH5BTjEDHBxVXlnaOH62AFoWn2UA+zs7yEKAL//K1XEFBhpzQFOv6cC8F+kiCRSAfih/fUkS+CBN2/7H0ohVoD4bW/yGvJKLPb/xgLgp6TmLSjYku+XB7SA3yofzEPRrpM14zRAg5pajoFutU+dP5ECDepCOA7YZuZ+trcRAELXQtgGhmrarptqvyMgdC0O28Bw8xfR6oE7AFn1ybAF7tTEldbIGwR4Ra60wZ2L3HiVPQOA+FC7cQNR7hbZ6scBHqliCIiLLaesfXrA497mbqAqFvAqrmJAVvUdA3Vuh+YpDNi1Sguw6PdR7o8CgNLTBKz6k+vLA6Z8bmBXgJvOATyL88CyKu5T4CzVDWxbsX4MiJuDwLhYuf0jwLoLzLtX5/oACE/iwD5H4wdgfwdMKBJtvwX8HRYwo5XHt0DaAaa01H8L9G6ZA9z7+1/A9P4BpZmXQrYA7EUAAAAASUVORK5CYII=", "icons": "data:image/png;base64,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", "iconOrder": ["home", "profile", "explore", "people", "circles", "notifications", "settings", "admin", "caret"]};
 (function ugfGplexPlusTheme() {
     try {
         if (!/^plus\.gplexextended\.com$/i.test(window.location.hostname) || window.top !== window.self) {
@@ -8501,10 +8671,13 @@ const UGF_GPX = {"logo12": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHcAAA
                     return a + name;
                 });
             }
-            // the logo and the tab icon
+            // the logo and the tab icon: Google+'s own logo, the glossy one until 2013 and the flat one of
+            // September 2013 from Late 2013 on
             const logo = document.querySelector(".gp-logo") || document.querySelector("#logo a");
             if (logo) {
-                logo.innerHTML = real && era !== "g2015" ? '<img src="' + A.logo12 + '" width="119" height="37" alt="Google+">' : wordmark();
+                const flat = ["2014", "2015", "2015L"].indexOf(L) > -1;
+                logo.innerHTML = real && era !== "g2015" ? '<img src="' + (flat ? A.logo13 : A.logo12) + '" width="' + (flat ? 109 : 119) +
+                    '" height="' + (flat ? 34 : 37) + '" alt="Google+">' : wordmark();
             }
             if (real) {
                 document.querySelectorAll('link[rel~="icon"]').forEach(function(l) {
@@ -13319,7 +13492,7 @@ function ugfIsErrorPage() {
         // ---- the look
         const S = "#ugf-adv";
         const css = [
-            "html[gplex-adv] body > *:not(#ugf-adv) { display: none !important; }",
+            "html[gplex-adv] body > *:not(#ugf-adv):not(#ugf-gmail-appsmenu):not(#ugf-ma-appsfence) { display: none !important; }",
             "html[gplex-adv], html[gplex-adv] body { background: #fff !important; margin: 0 !important; }",
             S + " { font: 13px Arial, sans-serif; color: #000; }",
             S + " a { color: #00c; }",
@@ -13644,6 +13817,16 @@ function ugfIsErrorPage() {
                     });
                 });
             });
+            // (8.7) the pane the address names: the gear menu's Languages link ends in #languages
+            const paneFromHash = function() {
+                const name = { "#languages": "langs", "#langs": "langs", "#results": "results" }[window.location.hash];
+                const a = name && root.querySelector('.nav a[data-pane="' + name + '"]');
+                if (a) {
+                    a.click();
+                }
+            };
+            paneFromHash();
+            window.addEventListener("hashchange", paneFromHash);
             const back = function() {
                 const r = document.referrer || "";
                 window.location.href = /^https:\/\/www\.google\.com\/(search|webhp|\?|$)/.test(r) ? r : "https://www.google.com/";
@@ -13681,6 +13864,17 @@ function ugfIsErrorPage() {
                 setTimeout(back, 700);
             });
         };
+        // (8.7) the grid in the corner opens the launcher, as it does on Gmail, Maps and My Account
+        document.addEventListener("click", function(ev) {
+            if (ev.button !== 0 || ev.ctrlKey || ev.metaKey || ev.shiftKey || !ev.target || !ev.target.closest) {
+                return;
+            }
+            const a = ev.target.closest(".ugf-b13-grid");
+            if (a) {
+                ev.preventDefault();
+                ugfB13AppsOpen(a, L, "m2013", "");
+            }
+        }, true);
         const PAGE = /^\/preferences/.test(window.location.pathname || "") ? "prefs" : "adv";
         const render = function() {
             if (document.getElementById("ugf-adv")) {
@@ -13805,7 +13999,7 @@ function ugfIsErrorPage() {
         }
         // Google's page never shows: hidden from the first moment, then Gplex's is put up
         const veil = document.createElement("style");
-        veil.textContent = "html { background: #fff !important; } body > *:not(#ugf-adv) { display: none !important; }";
+        veil.textContent = "html { background: #fff !important; } body > *:not(#ugf-adv):not(#ugf-gmail-appsmenu):not(#ugf-ma-appsfence) { display: none !important; }";
         const putVeil = function() {
             const at = document.head || document.documentElement;
             if (!at) {
@@ -13929,7 +14123,7 @@ function ugfIsErrorPage() {
             return;
         }
         const L = gv("UGF_LAYOUT", "2015");
-        const A = {"check":UGF_D.i62,"nav09":UGF_D.i61,"logo10":UGF_D.i54,"logo13":UGF_D.i55,"logo15":UGF_D.i56,"fav1999":UGF_FAVICON_1999,"fav2009":UGF_FAVICON_2009_G,"fav2010":UGF_FAVICON_2010,"fav2012":UGF_FAVICON_2012,"fav2015":UGF_FAVICON_2015,"mi":{"apps":"<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z\"/></svg>","lock_outline":"<svg xmlns=\"http://www.w3.org/2000/svg\" enable-background=\"new 0 0 24 24\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><g><rect fill=\"none\" height=\"24\" width=\"24\" x=\"0\"/></g><g><g><g><path d=\"M12,17c1.1,0,2-0.9,2-2s-0.9-2-2-2s-2,0.9-2,2S10.9,17,12,17z M18,8h-1V6c0-2.76-2.24-5-5-5S7,3.24,7,6v2H6 c-1.1,0-2,0.9-2,2v10c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V10C20,8.9,19.1,8,18,8z M8.9,6c0-1.71,1.39-3.1,3.1-3.1 s3.1,1.39,3.1,3.1v2H8.9V6z M18,20H6V10h12V20z\"/></g></g></g></svg>","people_outline":"<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M16.5 13c-1.2 0-3.07.34-4.5 1-1.43-.67-3.3-1-4.5-1C5.33 13 1 14.08 1 16.25V19h22v-2.75c0-2.17-4.33-3.25-6.5-3.25zm-4 4.5h-10v-1.25c0-.54 2.56-1.75 5-1.75s5 1.21 5 1.75v1.25zm9 0H14v-1.25c0-.46-.2-.86-.52-1.22.88-.3 1.96-.53 3.02-.53 2.44 0 5 1.21 5 1.75v1.25zM7.5 12c1.93 0 3.5-1.57 3.5-3.5S9.43 5 7.5 5 4 6.57 4 8.5 5.57 12 7.5 12zm0-5.5c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 5.5c1.93 0 3.5-1.57 3.5-3.5S18.43 5 16.5 5 13 6.57 13 8.5s1.57 3.5 3.5 3.5zm0-5.5c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z\"/></svg>","settings":"<svg xmlns=\"http://www.w3.org/2000/svg\" enable-background=\"new 0 0 24 24\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><rect fill=\"none\" height=\"24\" width=\"24\"/><path d=\"M19.5,12c0-0.23-0.01-0.45-0.03-0.68l2.57-1.94l-2.75-4.76l-2.96,1.25c-0.37-0.26-0.76-0.49-1.17-0.68L14.75,2h-5.5 l-0.4,3.19c-0.41,0.19-0.8,0.42-1.17,0.68L4.71,4.62L1.96,9.38l2.57,1.94C4.51,11.55,4.5,11.77,4.5,12s0.01,0.45,0.03,0.68 l-2.57,1.94l2.75,4.76l2.96-1.25c0.37,0.26,0.76,0.49,1.17,0.68L9.25,22h5.5l0.4-3.19c0.41-0.19,0.8-0.42,1.17-0.68l2.96,1.25 l2.75-4.76l-2.57-1.94C19.49,12.45,19.5,12.23,19.5,12z M12.04,15.5c-1.93,0-3.5-1.57-3.5-3.5s1.57-3.5,3.5-3.5s3.5,1.57,3.5,3.5 S13.97,15.5,12.04,15.5z\"/></svg>","check":"<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z\"/></svg>"},"maps14":"data:image/png;base64,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","maps15":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAGi0lEQVR4nI2Xf2wcxRXHv2929+7si+9HNvhHQtKY1DTEDTQRYJs0MSHYiRRA4L+RKiSC2yDRv5qqf1RVkVAURJtWaUKEWgKVkCoZIpAKcQIBVLVJFVtNZESLQm2fW2hsh3PN5Wzf7c7O44+93dvdu4sypzvvvpl5n/d982Z2TQCwaeRgN9nqRQXu14AkADAzAMD9BRh8cxtXLEqh1SIMTRXRN1vGuiULMQWQEQM1N4OaWkqUXpqPd339CwCv0aaRg91COheIKeU5jQZQzxYKgCt9zNh9zcJPLi+guVT2ovInMDPI0KG3dYCSBowtc08JstWLHjzauJ4xAA8bGLtmLfz87/MuvNE824b95RfgG2XYX6z6rVDg/qhTT+ktNTdFSJcZhy7nIVjdwhwFOXcNmE806RqQDKphZmxKdeDQtiH0tW0GEeHi3Gc4/I8R/Pvra/WzwoxHZ5awasUOmS3FmCmuwAHQ2RxHTIjqFCmhbhQNPezHhY/s/SlWpIXXr34IxQr7N9yLTCxZh1sNp3d2OdRnM2P0Wh4FSwIA/rko8EiHCUMjf4wqFqBH031o2xAsR+Lx0Rcwt7IIAPjVlbfdgvPAdfKwdkmG7r8sllCwHf9+yXGQWy6hq6WpGkDZgp8Bz2Vf22aMTP3Nhx///g/9CbniPI5cfqsGDgDV5LuehKCaMYIqtopohxwpGOFqZzBUpZCYGZIdSHZwX2sXdrTfVbslK3//m9RCsHVNMZhxw/eZNQx8KxkLjSmb7brwBnifC7Of4bGN96M1kQYAPPfXV/DL8T8hpumYyE+HoMGgL7YnENjw0Iiwt201+lsz6L8tg30dq6GTCM1b6bwTdMcbB0LeOlvacHrvz2ApidNTF+GwwhOdvVhlJLD/vecxU7wePpCUewAll228c/5/0O1qioMHkG+oXCshMPODZ2uLcKowi6Gzh3Hoe0N48s4HQSBcmr+Kw5ffrIVX1BOAI1sLSEgN8n3ZGB5o+e294HQGoW3oDZsszGL4Lyd8gN8XgXvtlbsWsDNpYamXUJggiLmbH2Qr6SwW792BmKbBL8J6xRgsuHpwZsYftixgT7YMIYBYDKD9Simq9kfSAQeEuYcfgZZIQAiBUFUEizGquh781e4FDKy2QAQQMQQRSmufEAu9uxuqz2+7H3LdBmia5gZQDxpV3RCedR86gghCE/iKHscN1YPyA/0oma016kvp1Vjs2eWChYBhGBAeKPoNgjkAjsJd9YRi/EkUnD7oug4jHsfiQ/tCcACY7+sHGQY0TfO/4Y0ZgUZVAwjB3UYopZ6GnnkUpmn6jtUdXVhZ3+mPWr6tHaVvb/b7dV33liAMjEKDGXm1Ox+AMxQTllc9DRkfABEhlUr5Qei6juXtPb76wt3bq6qFqNZAjfoGy+DCLd/isMDxK8/gyMd7ISvPHC+INWvWQNM02N/ZAmnEoITAcle3D9Z1vRpMo7UPLsUpH84+/MSVZzA6OYDxHHD0HEE6bgBCCLS0tMA0TejxBKz1G1Fuvx2iuTmknojc8Y3W3gvllJ/2yhMsAPfmjM9QJQj2M5FOp2GaJlT77ZAda6HrulughuHvAgDhGggHw/j95uscLDiHqQbutfEc4eg5AUdVM5FOp9HUvRX2+k4YhhFOvRDuuOA5EPyc6s7LfWts70yrwIcxOjkQDjhwM5Yj/PqcgMPuNE3TkN2xCy07d7OnPgivWQKv/fG7+dJgtqx73m1JfOLKMM5U4KE1i1yO5whHzwpYUrGXCdM0KZvNOl4GPLi7BJEifGPL9aU9mXLCc2zZxC9PDNOZStqjqsMHlfsdyxGOfRgny3bYKzrTNDXTNK0gHEA4AyNb5/7/YNZOel4tm/jkJ8M0OjVYSwtfgiP2sRzh2EcJsmxHeeueSqVimUxmyQuAmatF+M49X83uSKus58R2lDr5yTCNTg7WBUdV1wTFwNg04dhHCWHZ0vGUZzKZpGmaeW/LCwe8fHb79dx9LVa751o60nl54qAYnRysgd5MdagwK+3SNOE3H8Q1y7L91+ZkMmm2trb+x7ZtS7x7z9y5u5vtjV6ndBzndxM/UqOTgw2hQdU1W7hONi5NE146I5Qtpf/y3NTUtKGjo+MtUrmdD6hy7LymU0JKxzn56YHiu58/lkakRf9bq3nnuYXa6OtU+R8P2CnD0A0AiwB6xI3sny+IuLXHUXLs1KcHpjx4UGnDVNcx3GyJLkwL8/h5/V+S+TSAHgBXvwHdldDiaVcuBgAAAABJRU5ErkJggg==","chrome14":UGF_D.i64,"appsCss":"#ugf-gmail-appsmenu {position: absolute; z-index: 1401; font: 13px arial, sans-serif;}\n#ugf-gmail-appsmenu #gp-apps-dd-card {scrollbar-width: none; background: #fff; padding: 28px 28px 12px 28px; border: 1px solid rgba(0,0,0,.2); box-shadow: 0 2px 10px rgba(0,0,0,.2); cursor: auto; overflow-y: auto; overscroll-behavior: contain; width: 264px; max-height: 442px; box-sizing: content-box;}\n#ugf-gmail-appsmenu #gp-apps-dd-card::-webkit-scrollbar {width: 0;}\n#ugf-gmail-appsmenu[chrome=\"m2018\"] #gp-apps-dd-card {border-radius: 8px;}\n#ugf-gmail-appsmenu .sector {display: flex; flex-wrap: wrap; justify-content: center;}\n#ugf-gmail-appsmenu .sector:nth-child(1) {padding-bottom: 28px; border-bottom: 1px solid #ebebeb;}\n#ugf-gmail-appsmenu .sector:nth-child(2), #ugf-gmail-appsmenu .sector:nth-child(3) {padding-top: 28px;}\n#ugf-gmail-appsmenu #even-more {color: #737373 !important; font-size: 13px; font-family: arial, sans-serif !important; text-decoration: none !important; margin: 0 auto;}\n#ugf-gmail-appsmenu #even-more:hover {text-decoration: underline !important;}\n#ugf-gmail-appsmenu .gp-app {width: 86px; height: 100px; font-size: 13px; font-family: arial, sans-serif !important; padding: 1px;}\n#ugf-gmail-appsmenu .gp-app-inner {text-decoration: none !important; margin: 7px 0; height: 86px; display: block; border: 1px solid transparent; border-radius: 2px;}\n#ugf-gmail-appsmenu .gp-app:hover .gp-app-inner {border: 1px solid #e5e5e5; background: rgba(255,255,255,.9);}\n#ugf-gmail-appsmenu .gp-app-icon {background-image: url(https://ssl.gstatic.com/gb/images/v1_76783e20.png); -webkit-background-size: 92px 2541px; background-size: 92px 2541px;}\n#ugf-gmail-appsmenu #myaccount .gp-app-icon {background-position: 0 -1451px;}\n#ugf-gmail-appsmenu #google-search .gp-app-icon {background-position: -17px -207px;}\n#ugf-gmail-appsmenu #maps .gp-app-icon {background-position: 0 -450px;}\n#ugf-gmail-appsmenu #youtube .gp-app-icon {background-position: 0 0;}\n#ugf-gmail-appsmenu #play .gp-app-icon {background-position: 0 -1779px;}\n#ugf-gmail-appsmenu #news .gp-app-icon {background-position: 0 -1990px;}\n#ugf-gmail-appsmenu #envelope .gp-app-icon {background-position: 0 -1710px;}\n#ugf-gmail-appsmenu #drive .gp-app-icon {background-position: 0 -138px;}\n#ugf-gmail-appsmenu #calendar .gp-app-icon {background-position: 0 -2059px;}\n#ugf-gmail-appsmenu #plus .gp-app-icon {background-position: 0 -938px;}\n#ugf-gmail-appsmenu #translate .gp-app-icon {background-position: 0 -693px;}\n#ugf-gmail-appsmenu #photos .gp-app-icon {background-position: 0 -1145px;}\n#ugf-gmail-appsmenu #shopping .gp-app-icon {background-position: 0 -1352px;}\n#ugf-gmail-appsmenu #wallet .gp-app-icon, #ugf-gmail-appsmenu #finance .gp-app-icon {background-image: url(https://ssl.gstatic.com/gb/images/p1_a4541be8.png); -webkit-background-size: 64px 2065px; background-size: 64px 2065px; background-position: 0 -966px;}\n#ugf-gmail-appsmenu #finance .gp-app-icon {background-position: 0 -1725px;}\n#ugf-gmail-appsmenu #docs .gp-app-icon {background-position: 0 -1214px;}\n#ugf-gmail-appsmenu #books .gp-app-icon {background-position: 0 -554px;}\n#ugf-gmail-appsmenu #blogger .gp-app-icon {background-position: 0 -1007px;}\n#ugf-gmail-appsmenu #contacts .gp-app-icon {background-position: 0 -69px;}\n#ugf-gmail-appsmenu #hangouts .gp-app-icon {background-position: 0 -2335px;}\n#ugf-gmail-appsmenu #chrome .gp-app-icon {background-image: url(\"" + UGF_D.i71 + "\"); background-size: 48px 48px; background-position: center; background-repeat: no-repeat; margin-top: 0; width: 64px !important; height: 64px !important;}\n#ugf-gmail-appsmenu[layout^=\"2016\"] #chrome .gp-app-icon, #ugf-gmail-appsmenu[layout^=\"2018\"] #chrome .gp-app-icon, #ugf-gmail-appsmenu[layout=\"2019\"] #chrome .gp-app-icon, #ugf-gmail-appsmenu[layout=\"2022\"] #chrome .gp-app-icon {background-image: url(\"" + UGF_D.i64 + "\");}\n#ugf-gmail-appsmenu .gp-app-icon {margin: 0 auto; height: 64px; width: 64px;}\n#ugf-gmail-appsmenu .gp-app-title {width: fit-content; margin: 0 auto; color: #404040 !important; text-decoration: none !important;}\n#ugf-gmail-appsmenu .gp-app-title {width: fit-content; margin: 0 auto; color: #404040 !important; text-decoration: none !important; text-align: center;}\n#ugf-gmail-appsmenu .gp-app-icon {margin: 0 auto; height: 64px; width: 64px;}","accCss":"#ugf-gmail-accfence { position: fixed; inset: 0; z-index: 1400; } #ugf-gmail-accmenu { position: absolute; width: 300px; z-index: 1401; background: #fff; font: 13px arial, sans-serif; color: #222; border: 1px solid #ccc; box-shadow: 0 2px 10px rgba(0,0,0,.2); } #ugf-gmail-accmenu[chrome=\"m2018\"] { border: 0; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,.2), 0 0 0 1px rgba(0,0,0,.05); font-family: \"Google Sans\", Roboto, arial, sans-serif; overflow: hidden; } #ugf-gmail-accmenu[chrome=\"m2013\"] { border-color: #ccc; border-radius: 2px; box-shadow: 0 2px 10px rgba(0,0,0,.2); } #ugf-gmail-accmenu .head { display: flex; gap: 12px; padding: 16px; border-bottom: 1px solid #eee; align-items: flex-start; } #ugf-gmail-accmenu .head img, #ugf-gmail-accmenu .head .letter { width: 64px; height: 64px; border-radius: 2px; flex: 0 0 64px; object-fit: cover; display: block; } #ugf-gmail-accmenu[chrome=\"m2018\"] .head img, #ugf-gmail-accmenu[chrome=\"m2018\"] .head .letter, #ugf-gmail-accmenu[chrome=\"m2013\"] .head img, #ugf-gmail-accmenu[chrome=\"m2013\"] .head .letter { border-radius: 50%; } #ugf-gmail-accmenu .head .letter { background: #c62828; color: #fff; font-size: 30px; display: flex; align-items: center; justify-content: center; text-transform: uppercase; } #ugf-gmail-accmenu .meta { min-width: 0; display: flex; flex-direction: column; gap: 2px; } #ugf-gmail-accmenu .meta b { font-size: 14px; } #ugf-gmail-accmenu .meta span { color: #777; font-size: 12px; overflow: hidden; text-overflow: ellipsis; } #ugf-gmail-accmenu .meta a { font-size: 12px; margin-top: 6px; color: #1a73e8; } #ugf-gmail-accmenu .acts { display: flex; gap: 8px; padding: 12px 16px; background: #fafafa; border-bottom: 1px solid #eee; } #ugf-gmail-accmenu .acts a { flex: 1 1 auto; text-align: center; border: 1px solid #dcdcdc; border-radius: 2px; background: linear-gradient(#f5f5f5, #f1f1f1); color: #444; font: bold 11px arial, sans-serif; line-height: 25px; text-decoration: none; } #ugf-gmail-accmenu .acts a:hover { border-color: #c6c6c6; text-decoration: none; } #ugf-gmail-accmenu[chrome=\"m2018\"] .acts a { border-radius: 18px; font: 500 13px \"Google Sans\", Roboto, arial, sans-serif; line-height: 32px; background: #fff; } #ugf-gmail-accmenu .foot { display: flex; gap: 14px; justify-content: center; padding: 10px 16px; font-size: 11px; } #ugf-gmail-accmenu .foot a { color: #777; } #ugf-gmail-accmenu[chrome=\"classic\"] { border-radius: 0; }"};
+        const A = {"check":UGF_D.i62,"nav09":UGF_D.i61,"logo10":UGF_D.i54,"logo13":UGF_D.i55,"logo15":UGF_D.i56,"fav1999":UGF_FAVICON_1999,"fav2009":UGF_FAVICON_2009_G,"fav2010":UGF_FAVICON_2010,"fav2012":UGF_FAVICON_2012,"fav2015":UGF_FAVICON_2015,"mi":{"apps":"<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z\"/></svg>","lock_outline":"<svg xmlns=\"http://www.w3.org/2000/svg\" enable-background=\"new 0 0 24 24\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><g><rect fill=\"none\" height=\"24\" width=\"24\" x=\"0\"/></g><g><g><g><path d=\"M12,17c1.1,0,2-0.9,2-2s-0.9-2-2-2s-2,0.9-2,2S10.9,17,12,17z M18,8h-1V6c0-2.76-2.24-5-5-5S7,3.24,7,6v2H6 c-1.1,0-2,0.9-2,2v10c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V10C20,8.9,19.1,8,18,8z M8.9,6c0-1.71,1.39-3.1,3.1-3.1 s3.1,1.39,3.1,3.1v2H8.9V6z M18,20H6V10h12V20z\"/></g></g></g></svg>","people_outline":"<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M16.5 13c-1.2 0-3.07.34-4.5 1-1.43-.67-3.3-1-4.5-1C5.33 13 1 14.08 1 16.25V19h22v-2.75c0-2.17-4.33-3.25-6.5-3.25zm-4 4.5h-10v-1.25c0-.54 2.56-1.75 5-1.75s5 1.21 5 1.75v1.25zm9 0H14v-1.25c0-.46-.2-.86-.52-1.22.88-.3 1.96-.53 3.02-.53 2.44 0 5 1.21 5 1.75v1.25zM7.5 12c1.93 0 3.5-1.57 3.5-3.5S9.43 5 7.5 5 4 6.57 4 8.5 5.57 12 7.5 12zm0-5.5c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 5.5c1.93 0 3.5-1.57 3.5-3.5S18.43 5 16.5 5 13 6.57 13 8.5s1.57 3.5 3.5 3.5zm0-5.5c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z\"/></svg>","settings":"<svg xmlns=\"http://www.w3.org/2000/svg\" enable-background=\"new 0 0 24 24\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><rect fill=\"none\" height=\"24\" width=\"24\"/><path d=\"M19.5,12c0-0.23-0.01-0.45-0.03-0.68l2.57-1.94l-2.75-4.76l-2.96,1.25c-0.37-0.26-0.76-0.49-1.17-0.68L14.75,2h-5.5 l-0.4,3.19c-0.41,0.19-0.8,0.42-1.17,0.68L4.71,4.62L1.96,9.38l2.57,1.94C4.51,11.55,4.5,11.77,4.5,12s0.01,0.45,0.03,0.68 l-2.57,1.94l2.75,4.76l2.96-1.25c0.37,0.26,0.76,0.49,1.17,0.68L9.25,22h5.5l0.4-3.19c0.41-0.19,0.8-0.42,1.17-0.68l2.96,1.25 l2.75-4.76l-2.57-1.94C19.49,12.45,19.5,12.23,19.5,12z M12.04,15.5c-1.93,0-3.5-1.57-3.5-3.5s1.57-3.5,3.5-3.5s3.5,1.57,3.5,3.5 S13.97,15.5,12.04,15.5z\"/></svg>","check":"<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z\"/></svg>"},"maps14":"data:image/png;base64,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","maps15":"data:image/png;base64,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","chrome14":UGF_D.i64,"accCss":"#ugf-gmail-accfence { position: fixed; inset: 0; z-index: 1400; } #ugf-gmail-accmenu { position: absolute; width: 300px; z-index: 1401; background: #fff; font: 13px arial, sans-serif; color: #222; border: 1px solid #ccc; box-shadow: 0 2px 10px rgba(0,0,0,.2); } #ugf-gmail-accmenu[chrome=\"m2018\"] { border: 0; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,.2), 0 0 0 1px rgba(0,0,0,.05); font-family: \"Google Sans\", Roboto, arial, sans-serif; overflow: hidden; } #ugf-gmail-accmenu[chrome=\"m2013\"] { border-color: #ccc; border-radius: 2px; box-shadow: 0 2px 10px rgba(0,0,0,.2); } #ugf-gmail-accmenu .head { display: flex; gap: 12px; padding: 16px; border-bottom: 1px solid #eee; align-items: flex-start; } #ugf-gmail-accmenu .head img, #ugf-gmail-accmenu .head .letter { width: 64px; height: 64px; border-radius: 2px; flex: 0 0 64px; object-fit: cover; display: block; } #ugf-gmail-accmenu[chrome=\"m2018\"] .head img, #ugf-gmail-accmenu[chrome=\"m2018\"] .head .letter, #ugf-gmail-accmenu[chrome=\"m2013\"] .head img, #ugf-gmail-accmenu[chrome=\"m2013\"] .head .letter { border-radius: 50%; } #ugf-gmail-accmenu .head .letter { background: #c62828; color: #fff; font-size: 30px; display: flex; align-items: center; justify-content: center; text-transform: uppercase; } #ugf-gmail-accmenu .meta { min-width: 0; display: flex; flex-direction: column; gap: 2px; } #ugf-gmail-accmenu .meta b { font-size: 14px; } #ugf-gmail-accmenu .meta span { color: #777; font-size: 12px; overflow: hidden; text-overflow: ellipsis; } #ugf-gmail-accmenu .meta a { font-size: 12px; margin-top: 6px; color: #1a73e8; } #ugf-gmail-accmenu .acts { display: flex; gap: 8px; padding: 12px 16px; background: #fafafa; border-bottom: 1px solid #eee; } #ugf-gmail-accmenu .acts a { flex: 1 1 auto; text-align: center; border: 1px solid #dcdcdc; border-radius: 2px; background: linear-gradient(#f5f5f5, #f1f1f1); color: #444; font: bold 11px arial, sans-serif; line-height: 25px; text-decoration: none; } #ugf-gmail-accmenu .acts a:hover { border-color: #c6c6c6; text-decoration: none; } #ugf-gmail-accmenu[chrome=\"m2018\"] .acts a { border-radius: 18px; font: 500 13px \"Google Sans\", Roboto, arial, sans-serif; line-height: 32px; background: #fff; } #ugf-gmail-accmenu .foot { display: flex; gap: 14px; justify-content: center; padding: 10px 16px; font-size: 11px; } #ugf-gmail-accmenu .foot a { color: #777; } #ugf-gmail-accmenu[chrome=\"classic\"] { border-radius: 0; }"};
         const OLD = /^(1997|1998|1999|2000|2001|2002|2003|2005|2006|2007|retro)$/.test(L);
         // the account pages of each period
         //   ma07 to early 2011: "Google Accounts", the blue band over "Personal Settings" and "My products"
@@ -14247,98 +14441,6 @@ function ugfIsErrorPage() {
                 '<div class="card wide"><h2>Security Checkup</h2><p>Protect your account in just a few minutes by reviewing your security settings and activity.</p><a class="go" href="' + U("/security-checkup") + '">GET STARTED</a></div>' +
                 '<div class="card wide"><h2>Privacy Checkup</h2><p>Take this quick checkup to review important privacy settings and adjust them to your preference.</p><a class="go" href="' + U("/privacycheckup") + '">GET STARTED</a></div></div>';
         };
-        // ---- the app launcher behind the nine dots: the same menu Gplex gives Gmail, Maps
-        // and the rest (Google's own sheet of app icons for 2015-2019, the pre-rebrand
-        // artwork carried inline for 2014 and early 2015)
-        const appsList = function() {
-            return [
-                [["myaccount", "https://myaccount.google.com" + base + "/", "My Account"],
-                 ["google-search", "https://www.google.com", "Search"],
-                 ["maps", "https://maps.google.com", "Maps"],
-                 ["youtube", "https://youtube.com", "YouTube"],
-                 ["play", "https://play.google.com", "Play"],
-                 ["news", "https://news.google.com", "News"],
-                 ["envelope", "https://mail.google.com", "Gmail"],
-                 ["drive", "https://drive.google.com", "Drive"],
-                 ["calendar", "https://google.com/calendar", "Calendar"],
-                 ["plus", ugfPlusLink(), ugfPlusName()],
-                 ["translate", "https://translate.google.com", "Translate"],
-                 ["photos", "https://photos.google.com", "Photos"],
-                 ["gp-docs", "https://docs.google.com/document/u/0/", "Docs"],
-                 ["gp-sheets", "https://docs.google.com/spreadsheets/u/0/", "Sheets"],
-                 ["gp-slides", "https://docs.google.com/presentation/u/0/", "Slides"]],
-                [["shopping", "https://www.google.com/shopping", "Shopping"],
-                 ["wallet", "https://wallet.google.com", "Wallet"],
-                 ["finance", "https://www.google.com/finance", "Finance"],
-                 ["books", "https://books.google.com", "Books"],
-                 ["blogger", "https://www.blogger.com", "Blogger"],
-                 ["contacts", "https://www.google.com/contacts", "Contacts"],
-                 ["hangouts", "https://hangouts.google.com", "Hangouts"],
-                 ["chrome", "https://www.google.com/chrome/", "Chrome"]]
-            ];
-        };
-        const closeApps = function() {
-            document.querySelectorAll("#ugf-gmail-appsmenu, #ugf-ma-appsfence").forEach(function(el) {
-                el.remove();
-            });
-        };
-        const openApps = function(anchor, chrome) {
-            if (document.getElementById("ugf-gmail-appsmenu")) {
-                closeApps();
-                return;
-            }
-            if (!document.getElementById("ugf-ma-apps-style")) {
-                const st = document.createElement("style");
-                st.id = "ugf-ma-apps-style";
-                st.textContent = A.appsCss +
-                    "\n#ugf-ma-appsfence { position: fixed; inset: 0; z-index: 2147483600; }" +
-                    "\n#ugf-gmail-appsmenu { z-index: 2147483601 !important; text-align: left; letter-spacing: normal; }" +
-                    "\n#ugf-gmail-appsmenu a { text-decoration: none; }";
-                (document.head || document.documentElement).appendChild(st);
-            }
-            let h = "";
-            appsList().forEach(function(sector) {
-                h += '<div class="sector">' + sector.map(function(a) {
-                    return '<div class="gp-app" id="' + esc(a[0]) + '"><a class="gp-app-inner" href="' + esc(a[1]) + '">' +
-                        '<div class="gp-app-icon"></div><div class="gp-app-title">' + esc(a[2]) + "</div></a></div>";
-                }).join("") + "</div>";
-            });
-            h += '<div class="sector"><a id="even-more" href="https://www.google.com/intl/en/options">Even more from Google</a></div>';
-            const fence = document.createElement("div");
-            fence.id = "ugf-ma-appsfence";
-            const menu = document.createElement("div");
-            menu.id = "ugf-gmail-appsmenu";
-            menu.setAttribute("chrome", chrome);
-            menu.setAttribute("layout", L);
-            menu.appendChild(frag('<div id="gp-apps-dd-card"><div id="gp-apps-dd-inner">' + h + "</div></div>"));
-            document.body.appendChild(fence);
-            document.body.appendChild(menu);
-            const r = anchor.getBoundingClientRect();
-            menu.style.left = Math.max(8, r.right + window.scrollX - 322) + "px";
-            menu.style.top = (r.bottom + window.scrollY + 6) + "px";
-            const old = ugfLauncherArt(L);   // the marks of before the September 2015 rebrand
-            const bg = function(el, url, inline) {
-                el.style.setProperty("background-image", 'url("' + url + '")', "important");
-                el.style.setProperty("background-size", inline ? "64px 64px" : "48px 48px", "important");
-                el.style.setProperty("background-position", inline ? "0 0" : "center", "important");
-                el.style.setProperty("background-repeat", "no-repeat", "important");
-            };
-            if (old) {
-                Object.keys(old).forEach(function(id) {
-                    const ic = menu.querySelector("#" + id + " .gp-app-icon");
-                    if (ic) {
-                        bg(ic, old[id], true);
-                    }
-                });
-            }
-            ["docs", "sheets", "slides"].forEach(function(n) {
-                const ic = menu.querySelector("#gp-" + n + " .gp-app-icon");
-                if (ic) {
-                    bg(ic, "https://www.gstatic.com/images/branding/product/2x/" + n + "_48dp.png", false);
-                }
-            });
-            fence.addEventListener("click", closeApps);
-        };
         // ---- the account menu behind the photo: the one Gplex gives Gmail and Maps (name,
         // address, Google Account settings, Add account, Sign out) in place of today's pop-up
         const closeAcc = function() {
@@ -14351,7 +14453,7 @@ function ugfIsErrorPage() {
                 closeAcc();
                 return;
             }
-            closeApps();
+            ugfB13AppsClose();
             if (!document.getElementById("ugf-ma-acc-style")) {
                 const st = document.createElement("style");
                 st.id = "ugf-ma-acc-style";
@@ -14384,7 +14486,7 @@ function ugfIsErrorPage() {
         };
         document.addEventListener("keydown", function(ev) {
             if (ev.key === "Escape") {
-                closeApps();
+                ugfB13AppsClose();
                 closeAcc();
             }
         });
@@ -14419,7 +14521,7 @@ function ugfIsErrorPage() {
             }
             ev.preventDefault();
             ev.stopImmediatePropagation();
-            openApps(a, chrome);
+            ugfB13AppsOpen(a, L, chrome, base);
         }, true);
         // ---- the look
         const css = [];
@@ -17425,7 +17527,7 @@ html:not([layout="2016"]):not([layout="2016C"]):not([layout="2016L"]):not([layou
   color: #1A73E8 !important;
   border-bottom-color: #1A73E8;
 }
-[layout="2016C"] .ugf-tab {
+[layout="2016C"] .ugf-tab:not(.active) {
   border-bottom-color: transparent !important;
 }
 [layout="retro"] .ugf-tab {
@@ -17539,13 +17641,14 @@ html[layout="2019"] #ugf-personal-buttons {
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
   color: #333;
 }
-#ugf-personal-buttons .ugf-buttofn:focus,
+#ugf-personal-buttons .ugf-button:focus,
 #ugf-settings-button:focus,
-[layout="2012"] #ugf-hp-buttons a:active,
-[layout="2013"] #ugf-hp-buttons a:active,
-[layout="2014"] #ugf-hp-buttons a:active,
-[layout="2015"] #ugf-hp-buttons a:active {
+[layout="2012"] #ugf-hp-buttons a:focus,
+[layout="2013"] #ugf-hp-buttons a:focus,
+[layout="2014"] #ugf-hp-buttons a:focus,
+[layout="2015"] #ugf-hp-buttons a:focus {
   border: 1px solid #4d90fe;
+  outline: none;
 }
 #ugf-personal-buttons .ugf-button {
   min-width: 26px;
@@ -17668,7 +17771,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
 }
 [layout="2012"] #ugf-search-results-header {
   position: absolute;
-  top: 66px;
+  top: 71px;
   color: #000;
   font-size: 11px;
   margin-left: 2px;
@@ -18891,8 +18994,8 @@ html[ugf-more-open] #ugf-more-dd {
 #ugf-tools-row {
   display: none;
   align-items: center;
-  height: 28px;
-  margin: 0 0 8px 0;
+  height: 45px;
+  margin: 0;
   padding-left: 8px;
   font-size: 13px;
   color: #777;
@@ -18900,7 +19003,14 @@ html[ugf-more-open] #ugf-more-dd {
 html[ugf-tools-open] #ugf-tools-row {
   display: flex;
 }
-html[ugf-tools-open] #ugf-search-results-header {
+/* (8.5) the count stays, at the right of the tools row, and the row is as tall as the count's line was,
+   so the results do not move when the tools open (Images has no count line: nothing to keep) */
+html[ugf-tools-open] #ugf-tools-row:not(.ugf-tools-images) + #ugf-search-results-header {
+  margin-top: -45px;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+html[ugf-tools-open] #ugf-tools-row.ugf-tools-images ~ #ugf-search-results-header {
   display: none !important;
 }
 /* the Search tools tab pressed in, as Google's was while the row is open */
@@ -19689,7 +19799,7 @@ html[gplex2010]:not([location="home"]) #ugf-homepage-links {
 [gplex2010] #ugf-hp-footer a[href="https://www.google.com/services/"]:after {
   content: " Solutions";
 }
-[gplex2010] #ugf-hp-footer a[href="https://www.about.google/"]:after {
+[gplex2010] #ugf-hp-footer a[href="https://www.google.com/intl/en/about/"]:after {
   content: " Google";
 }
 [gplex2010] #gp-gbar-search span {
@@ -25998,7 +26108,7 @@ html[layout="2014"] #ugf-fake-notifs-button {
   background: none;
   border: none;
   box-shadow: none;
-  padding: 0 8px;
+  padding: 0 4px;
   height: 30px;
   align-items: center;
 }
@@ -26007,10 +26117,10 @@ html[layout="2014"] #ugf-fake-notifs-button .ugf-plus-button-text {
 }
 html[layout="2014"] #ugf-fake-notifs-button .ugf-plus-button-icon {
   display: block;
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
   opacity: .55;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z'/%3E%3C/svg%3E") center / 20px 20px no-repeat;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z'/%3E%3C/svg%3E") center / 28px 28px no-repeat;
 }
 html[layout="2014"] #ugf-fake-notifs-button:hover .ugf-plus-button-icon {
   opacity: .8;
@@ -26085,13 +26195,8 @@ html[layout="2014"][gplex2014n] #waffle .gp-icon {
   align-self: center;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 19 19'%3E%3Cpath d='M0 0h5v5H0zM7 0h5v5H7zM14 0h5v5h-5zM0 7h5v5H0zM7 7h5v5H7zM14 7h5v5h-5zM0 14h5v5H0zM7 14h5v5H7zM14 14h5v5h-5z'/%3E%3C/svg%3E") center / 19px 19px no-repeat;
 }
-html[layout="2014"][gplex2014n] #ugf-fake-notifs-button {
-  padding: 0 4px;
-}
 html[layout="2014"][gplex2014n] #ugf-fake-notifs-button .ugf-plus-button-icon {
-  width: 28px;
-  height: 28px;
-  background-size: 28px 28px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z'/%3E%3C/svg%3E");
 }
 html[layout="2014"][gplex2014n] #ugf-fake-share-button {
   width: 24px;
@@ -26327,6 +26432,12 @@ html[gplus-notif-status="failed"] #ugf-notifs-opening {
   text-decoration: none !important;
   position: relative;
   height: 96px;
+}
+#ugf-account-pfp img {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  display: block;
 }
 #ugf-account-normal-pfp {
   display: none;
@@ -26584,6 +26695,37 @@ background: linear-gradient(to bottom,#fff,#f8f8f8);
   position: fixed;
   bottom: 0;
 }
+/* (8.7) Late 2011 to 2013: the footer of the time, centred under the buttons; the grey strip is 2014's */
+[layout="2012"] #ugf-hp-footer,
+[layout="2013"] #ugf-hp-footer,
+[layout="2013L"] #ugf-hp-footer {
+  position: static;
+  display: block;
+  margin-top: 90px;
+  background: none;
+  border: 0;
+  line-height: normal;
+  text-align: center;
+  font-family: arial, sans-serif;
+}
+#ugf-hp-footer-links {
+  font-size: 13px;
+}
+#ugf-hp-footer-links .ugf-hp-footer-link {
+  margin: 0 12px;
+}
+#ugf-hp-footer-copy {
+  margin-top: 18px;
+  font-size: 11px;
+  color: #777;
+}
+.ugf-hp-footer-link {
+  color: #12c !important;
+  text-decoration: none;
+}
+.ugf-hp-footer-link:hover {
+  text-decoration: underline;
+}
 
 [location="home"] #ugf-topbar,
 [layout="2016"][location="home"] #ugf-topbar,
@@ -26601,7 +26743,7 @@ background: linear-gradient(to bottom,#fff,#f8f8f8);
 [location="home"] #ugf-logo-cont {
   display: none;
 }
-html:not([layout="2013L"]):not([layout="2015L"]):not([layout="2016L"]) #ugf-hp-search-links,
+html:not([layout="2012"]):not([layout="2013"]):not([layout="2013L"]):not([layout="2015L"]):not([layout="2016L"]) #ugf-hp-search-links,
 [layout="2012"] #ugf-homepage-links,
 [layout="2013"] #ugf-homepage-links,
 [layout="2013L"] #ugf-homepage-links,
@@ -28450,6 +28592,10 @@ html[news-results] #ugf-search-results-container .ugf-news-result .ugf-news-resu
 [shopping-results] .ugf-shop-main {
   flex: 1 1 auto !important;
 }
+/* (8.8) links turned red while pressed on the pages of late 2011 to 2016 (Google's own a:active{color:#dd4b39}) */
+html:is([layout="2012"], [layout="2013"], [layout="2013L"], [layout="2014"], [layout="2015"], [layout="2015L"], [layout="2016"], [layout="2016L"]) :is(#ugf-search-results-container, #ugf-sidebar, #ugf-right, #ugf-footer, #ugf-hp-footer, #ugf-hp-search-links) a:active {
+  color: #dd4b39 !important;
+}
 /* 2.6.1: Google Images / Google Video homepages */
 html:not([home-vertical]) #ugf-hp-vertical-label {
   display: none;
@@ -28479,6 +28625,33 @@ html:not([home-vertical]) #ugf-hp-vertical-label {
   font-size: 18px;
   font-weight: bold;
   color: #555;
+}
+/* (8.8) the word at the logo's baseline under its second o, as the imghp pages had it: inside the
+   picture until September 2013 (the 276x110 images_logo_lg.gif, swapped in by ugfVerticalHome; the
+   Shopping page gets the same lettering), then 16px bold #1370E5, 70px down and 115px in from the
+   right of the 276px logo box (the pages of December 2013 to October 2014) */
+html[layout="2012"][home-vertical="images"] #ugf-hp-logo img,
+html[layout="2013"][home-vertical="images"] #ugf-hp-logo img,
+html[layout="2013L"][home-vertical="images"] #ugf-hp-logo img {
+  width: 276px;
+  height: 110px;
+}
+html[layout="2012"][home-vertical="shopping"] #ugf-hp-vertical-label,
+html[layout="2013"][home-vertical="shopping"] #ugf-hp-vertical-label,
+html[layout="2013L"][home-vertical="shopping"] #ugf-hp-vertical-label {
+  top: -18px;
+  right: 69px;
+  font-size: 20px;
+  font-weight: normal;
+  color: #1b3dbc;
+}
+html[layout="2014"][home-vertical] #ugf-hp-vertical-label,
+html[layout="2015"][home-vertical] #ugf-hp-vertical-label {
+  top: -22px;
+  right: 111px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #1370e5;
 }
 [home-vertical] #ugf-lucky-btn {
   display: none !important;
@@ -29354,32 +29527,408 @@ html[ugf-lang] .ugf-era-nav.ugf-classic-tabs a {
   width: 80px;
   height: 80px;
 }
-/* card grid for the Google Shopping era */
-html[shopping-results]:not([gplex1997]):not([gplex1998]):not([gplex1999]):not([gplex2000]):not([gplex2001]):not([gplex2002]):not([gplex2003]):not([gplex2005]):not([gplex2006]):not([gplex2007]):not([gplex2009]):not([gplex2010]) #ugf-search-results-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-  gap: 16px;
-  max-width: 900px;
+/* (8.4) Shopping results in the period's look */
+/* Google's Shopping results on a desktop were a list until Early 2016 (Product Search's bordered rows, then
+   rows like the web results with the price in a column on the right, then rows with a 120px picture), a grid
+   of 180px tiles with hairline borders from mid-2016, list cards with a ring shadow in 2019 and a grid of
+   rounded cards from 2021. The rounded cards had been Gplex's own look for every layout after 2010. */
+/* the star strip of a rating is the knowledge panel's; the layouts before Late 2011 keep the figure alone */
+[shopping-results] .ugf-shop-rating .ugf-kp-stars {
+  display: none;
 }
-html[shopping-results]:not([gplex1997]):not([gplex1998]):not([gplex1999]):not([gplex2000]):not([gplex2001]):not([gplex2002]):not([gplex2003]):not([gplex2005]):not([gplex2006]):not([gplex2007]):not([gplex2009]):not([gplex2010]) .ugf-shop-result {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 12px;
+[shopping-results][layout="2012"] .ugf-shop-rating .ugf-kp-stars,
+[shopping-results][layout="2013"] .ugf-shop-rating .ugf-kp-stars,
+[shopping-results][layout="2013L"] .ugf-shop-rating .ugf-kp-stars,
+[shopping-results][layout="2014"] .ugf-shop-rating .ugf-kp-stars,
+[shopping-results][layout="2015"] .ugf-shop-rating .ugf-kp-stars,
+[shopping-results][layout="2015L"] .ugf-shop-rating .ugf-kp-stars,
+[shopping-results][gplex2015n] .ugf-shop-rating .ugf-kp-stars,
+[shopping-results][layout="2016"]:not([gplex2015n]) .ugf-shop-rating .ugf-kp-stars,
+[shopping-results][layout="2016C"] .ugf-shop-rating .ugf-kp-stars,
+[shopping-results][layout="2016L"] .ugf-shop-rating .ugf-kp-stars,
+[shopping-results][layout^="2018"] .ugf-shop-rating .ugf-kp-stars,
+[shopping-results][layout="2019"]:not([gplex2022]) .ugf-shop-rating .ugf-kp-stars,
+[shopping-results][gplex2022] .ugf-shop-rating .ugf-kp-stars {
+  display: inline-block;
+  vertical-align: top;
+  margin-right: 5px;
+}
+/* Late 2011 to 2015 and the old-browser pages: Google's rows, a 90px picture on the left, the title and the
+   rating in the middle, the price in bold with the store under it in a 7em column on the right */
+[shopping-results][layout="2012"] .ugf-shop-result-inner,
+[shopping-results][layout="2013"] .ugf-shop-result-inner,
+[shopping-results][layout="2013L"] .ugf-shop-result-inner,
+[shopping-results][layout="2014"] .ugf-shop-result-inner,
+[shopping-results][layout="2015L"] .ugf-shop-result-inner,
+[shopping-results][layout="2016L"] .ugf-shop-result-inner {
+  gap: 10px !important;
+}
+[shopping-results][layout="2012"] .ugf-shop-main,
+[shopping-results][layout="2013"] .ugf-shop-main,
+[shopping-results][layout="2013L"] .ugf-shop-main,
+[shopping-results][layout="2014"] .ugf-shop-main,
+[shopping-results][layout="2015L"] .ugf-shop-main,
+[shopping-results][layout="2016L"] .ugf-shop-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 7em;
+  grid-template-rows: auto auto;
+  column-gap: 2em;
+  align-items: start;
+  align-content: start;
+}
+[shopping-results][layout="2012"] .ugf-shop-title,
+[shopping-results][layout="2013"] .ugf-shop-title,
+[shopping-results][layout="2013L"] .ugf-shop-title,
+[shopping-results][layout="2014"] .ugf-shop-title,
+[shopping-results][layout="2015L"] .ugf-shop-title,
+[shopping-results][layout="2016L"] .ugf-shop-title {
+  grid-column: 1;
+  grid-row: 1;
+  font-size: 16px;
+  line-height: 1.2;
+}
+[shopping-results][layout="2012"] .ugf-shop-offer,
+[shopping-results][layout="2013"] .ugf-shop-offer,
+[shopping-results][layout="2013L"] .ugf-shop-offer,
+[shopping-results][layout="2014"] .ugf-shop-offer,
+[shopping-results][layout="2015L"] .ugf-shop-offer,
+[shopping-results][layout="2016L"] .ugf-shop-offer {
+  grid-column: 2;
+  grid-row: 1 / 3;
+}
+[shopping-results][layout="2012"] .ugf-shop-price,
+[shopping-results][layout="2013"] .ugf-shop-price,
+[shopping-results][layout="2013L"] .ugf-shop-price,
+[shopping-results][layout="2014"] .ugf-shop-price,
+[shopping-results][layout="2015L"] .ugf-shop-price,
+[shopping-results][layout="2016L"] .ugf-shop-price {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.2;
+  font-weight: bold;
+  color: #000;
+  white-space: nowrap;
+}
+[shopping-results][layout="2012"] .ugf-shop-merchant,
+[shopping-results][layout="2013"] .ugf-shop-merchant,
+[shopping-results][layout="2013L"] .ugf-shop-merchant,
+[shopping-results][layout="2014"] .ugf-shop-merchant,
+[shopping-results][layout="2015L"] .ugf-shop-merchant,
+[shopping-results][layout="2016L"] .ugf-shop-merchant {
+  color: #006621;
+  font-size: 13px;
+  line-height: 1.2;
+}
+[shopping-results][layout="2012"] .ugf-shop-rating,
+[shopping-results][layout="2013"] .ugf-shop-rating,
+[shopping-results][layout="2013L"] .ugf-shop-rating,
+[shopping-results][layout="2014"] .ugf-shop-rating,
+[shopping-results][layout="2015L"] .ugf-shop-rating,
+[shopping-results][layout="2016L"] .ugf-shop-rating {
+  grid-column: 1;
+  grid-row: 2;
+  margin-top: 4px;
+  color: #777;
+  font-size: 13px;
+  line-height: 13px;
+}
+/* Late 2011 to Early 2012: Product Search's list was 70em at most, its rows had a hairline under each, the
+   price column was wider and the seller line was plain text */
+[shopping-results][layout="2012"] #ugf-search-results-container {
+  max-width: 70em;
+}
+[shopping-results][layout="2012"] .ugf-shop-result {
   margin: 0 !important;
+  padding: 10px 0 10px 6px;
+  border-bottom: 1px solid #ddd;
+}
+[shopping-results][layout="2012"] .ugf-shop-main {
+  grid-template-columns: minmax(0, 1fr) 17em;
+}
+[shopping-results][layout="2012"] .ugf-shop-merchant {
+  color: #000;
+}
+/* Late 2015 (flagged gplex2015n on the 2016 layout): Google's rows with a 120px picture, the title on one line, the price in bold with the
+   store after it on the next line and the rating under them, all in grey */
+[shopping-results][layout="2015"] .ugf-shop-result-inner,
+[shopping-results][gplex2015n] .ugf-shop-result-inner {
+  gap: 18px !important;
+}
+[shopping-results][layout="2015"] .ugf-shop-thumb,
+[shopping-results][gplex2015n] .ugf-shop-thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+}
+[shopping-results][layout="2015"] .ugf-shop-thumb img,
+[shopping-results][gplex2015n] .ugf-shop-thumb img {
+  max-width: 120px;
+  max-height: 120px;
+}
+[shopping-results][layout="2015"] .ugf-shop-main,
+[shopping-results][gplex2015n] .ugf-shop-main {
+  min-height: 120px;
+}
+[shopping-results][layout="2015"] .ugf-shop-title,
+[shopping-results][gplex2015n] .ugf-shop-title {
+  display: block;
+  padding-bottom: 5px;
+  font-size: 18px;
+  line-height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+[shopping-results][layout="2015"] .ugf-shop-offer,
+[shopping-results][gplex2015n] .ugf-shop-offer,
+[shopping-results][layout="2015"] .ugf-shop-rating,
+[shopping-results][gplex2015n] .ugf-shop-rating {
+  color: #666;
+  font-size: 13px;
+  line-height: 23px;
+}
+[shopping-results][layout="2015"] .ugf-shop-price,
+[shopping-results][gplex2015n] .ugf-shop-price {
+  display: inline;
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #222;
+}
+[shopping-results][layout="2015"] .ugf-shop-merchant,
+[shopping-results][gplex2015n] .ugf-shop-merchant {
+  display: inline;
+  margin-left: 4px;
+  color: #666;
+  font-size: 13px;
+}
+[shopping-results][layout="2015"] .ugf-shop-rating .ugf-kp-stars,
+[shopping-results][gplex2015n] .ugf-shop-rating .ugf-kp-stars {
+  vertical-align: middle;
+}
+/* mid-2016 to 2018: Google's grid of 180px tiles with hairline borders that share their edges, the picture
+   on top, the title in dark grey, the price in bold with the store after it and the rating, in grey */
+[shopping-results][layout="2016"]:not([gplex2015n]) #ugf-search-results-container,
+[shopping-results][layout="2016C"] #ugf-search-results-container,
+[shopping-results][layout^="2018"] #ugf-search-results-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  padding-bottom: 20px;
+}
+[shopping-results][layout="2016"]:not([gplex2015n]) .ugf-shop-result,
+[shopping-results][layout="2016C"] .ugf-shop-result,
+[shopping-results][layout^="2018"] .ugf-shop-result {
+  width: 180px;
+  box-sizing: content-box;
+  margin: 0 -1px -1px 0 !important;
+  padding: 20px 5px 14px;
+  border: 1px solid #ebebeb;
+  box-shadow: none;
+  background: #fff;
+  color: #666;
+  font-size: 13px;
+}
+[shopping-results][layout="2016"]:not([gplex2015n]) .ugf-search-result-inner.ugf-shop-result-inner,
+[shopping-results][layout="2016C"] .ugf-search-result-inner.ugf-shop-result-inner,
+[shopping-results][layout^="2018"] .ugf-search-result-inner.ugf-shop-result-inner {
+  display: block !important;
+}
+[shopping-results][layout="2016"]:not([gplex2015n]) .ugf-shop-thumb,
+[shopping-results][layout="2016C"] .ugf-shop-thumb,
+[shopping-results][layout^="2018"] .ugf-shop-thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 180px;
+  height: 180px;
+  margin: 0 0 10px;
+  background: #fff;
+}
+[shopping-results][layout="2016"]:not([gplex2015n]) .ugf-shop-thumb img,
+[shopping-results][layout="2016C"] .ugf-shop-thumb img,
+[shopping-results][layout^="2018"] .ugf-shop-thumb img {
+  max-width: 180px;
+  max-height: 180px;
+}
+[shopping-results][layout="2016"]:not([gplex2015n]) .ugf-shop-title,
+[shopping-results][layout="2016C"] .ugf-shop-title,
+[shopping-results][layout^="2018"] .ugf-shop-title {
+  display: block;
+  margin-bottom: 3px;
+  color: #222 !important;
+  font-size: 13px;
+  line-height: 16px;
+  text-decoration: none !important;
+  overflow-wrap: break-word;
+}
+[shopping-results][layout="2016"]:not([gplex2015n]) .ugf-shop-offer,
+[shopping-results][layout="2016C"] .ugf-shop-offer,
+[shopping-results][layout^="2018"] .ugf-shop-offer {
+  margin-bottom: 3px;
+  color: #666;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+[shopping-results][layout="2016"]:not([gplex2015n]) .ugf-shop-price,
+[shopping-results][layout="2016C"] .ugf-shop-price,
+[shopping-results][layout^="2018"] .ugf-shop-price {
+  display: inline;
+  margin: 0;
+  font-size: 13px;
+  font-weight: bold;
+  color: #222;
+}
+[shopping-results][layout="2016"]:not([gplex2015n]) .ugf-shop-merchant,
+[shopping-results][layout="2016C"] .ugf-shop-merchant,
+[shopping-results][layout^="2018"] .ugf-shop-merchant {
+  display: inline;
+  margin-left: 4px;
+  color: #666;
+  font-size: 13px;
+}
+[shopping-results][layout="2016"]:not([gplex2015n]) .ugf-shop-rating,
+[shopping-results][layout="2016C"] .ugf-shop-rating,
+[shopping-results][layout^="2018"] .ugf-shop-rating {
+  padding-bottom: 3px;
+  color: #666;
+  font-size: 13px;
+  line-height: 16px;
+}
+[shopping-results][layout="2016"]:not([gplex2015n]) .ugf-shop-rating .ugf-kp-stars,
+[shopping-results][layout="2016C"] .ugf-shop-rating .ugf-kp-stars,
+[shopping-results][layout^="2018"] .ugf-shop-rating .ugf-kp-stars {
+  vertical-align: middle;
+}
+/* 2019: Google's list cards with a ring shadow, the picture in a padded cell on the left, an 18px title, the
+   price in bold with the store after it and the rating, in grey */
+[shopping-results][layout="2019"]:not([gplex2022]) .ugf-shop-result {
+  margin: 0 0 12px !important;
+  border-radius: 2px;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,.16), 0 0 0 1px rgba(0,0,0,.08);
+  background: #fff;
+}
+[shopping-results][layout="2019"]:not([gplex2022]) .ugf-shop-result-inner {
+  gap: 0 !important;
+  align-items: center !important;
+}
+[shopping-results][layout="2019"]:not([gplex2022]) .ugf-shop-thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  height: 150px;
+  margin: 12px;
+}
+[shopping-results][layout="2019"]:not([gplex2022]) .ugf-shop-thumb img {
+  max-width: 150px;
+  max-height: 150px;
+}
+[shopping-results][layout="2019"]:not([gplex2022]) .ugf-shop-main {
+  padding: 12px 12px 12px 0;
+}
+[shopping-results][layout="2019"]:not([gplex2022]) .ugf-shop-title {
+  font-size: 18px;
+  line-height: 24px;
+}
+[shopping-results][layout="2019"]:not([gplex2022]) .ugf-shop-offer,
+[shopping-results][layout="2019"]:not([gplex2022]) .ugf-shop-rating {
+  color: #777;
+  font-size: 14px;
+  line-height: 20px;
+}
+[shopping-results][layout="2019"]:not([gplex2022]) .ugf-shop-price {
+  display: inline;
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #222;
+}
+[shopping-results][layout="2019"]:not([gplex2022]) .ugf-shop-merchant {
+  display: inline;
+  margin-left: 4px;
+  color: #777;
+  font-size: 14px;
+}
+[shopping-results][layout="2019"]:not([gplex2022]) .ugf-shop-rating .ugf-kp-stars {
+  vertical-align: middle;
+}
+/* 2021 to 2022: Google's grid of 256px rounded cards, a square picture box on top, the title in Google Sans {
+   the price in bold and the store as a blue link */
+[shopping-results][gplex2022] #ugf-search-results-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 256px);
+  gap: 16px;
+  max-width: 1122px;
+}
+[shopping-results][gplex2022] .ugf-shop-result {
+  margin: 0 !important;
+  padding: 0;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  overflow: hidden;
   background: #fff;
   box-sizing: border-box;
 }
-html[shopping-results]:not([gplex1997]):not([gplex1998]):not([gplex1999]):not([gplex2000]):not([gplex2001]):not([gplex2002]):not([gplex2003]):not([gplex2005]):not([gplex2006]):not([gplex2007]):not([gplex2009]):not([gplex2010]) .ugf-shop-result-inner {
+[shopping-results][gplex2022] .ugf-search-result-inner.ugf-shop-result-inner {
   display: block !important;
 }
-html[shopping-results]:not([gplex1997]):not([gplex1998]):not([gplex1999]):not([gplex2000]):not([gplex2001]):not([gplex2002]):not([gplex2003]):not([gplex2005]):not([gplex2006]):not([gplex2007]):not([gplex2009]):not([gplex2010]) .ugf-shop-thumb {
-  width: 100%;
-  height: 150px;
-  margin-bottom: 10px;
+[shopping-results][gplex2022] .ugf-shop-thumb {
+  display: block;
+  position: relative;
+  width: auto;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  margin: 16px 16px 0;
 }
-html[shopping-results]:not([gplex1997]):not([gplex1998]):not([gplex1999]):not([gplex2000]):not([gplex2001]):not([gplex2002]):not([gplex2003]):not([gplex2005]):not([gplex2006]):not([gplex2007]):not([gplex2009]):not([gplex2010]) .ugf-shop-thumb img {
-  max-width: 100%;
-  max-height: 150px;
+[shopping-results][gplex2022] .ugf-shop-thumb img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: contain;
+}
+[shopping-results][gplex2022] .ugf-shop-main {
+  padding: 12px 16px 16px;
+}
+[shopping-results][gplex2022] .ugf-shop-title {
+  display: block;
+  margin-bottom: 4px;
+  color: #202124 !important;
+  font: 500 13px/18px "Google Sans", Roboto, Arial, sans-serif;
+  letter-spacing: .28px;
+  text-decoration: none !important;
+}
+[shopping-results][gplex2022] .ugf-shop-offer {
+  margin-bottom: 5px;
+}
+[shopping-results][gplex2022] .ugf-shop-price {
+  margin: 0;
+  color: #202124;
+  font: 700 16px/16px "Google Sans", Roboto, Arial, sans-serif;
+}
+[shopping-results][gplex2022] .ugf-shop-merchant {
+  color: #1967d2;
+  font: 400 14px/22px Roboto, Arial, sans-serif;
+  letter-spacing: .2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+[shopping-results][gplex2022] .ugf-shop-rating {
+  color: #5f6368;
+  font-size: 14px;
+  line-height: 20px;
+}
+[shopping-results][gplex2022] .ugf-shop-rating .ugf-kp-stars {
+  vertical-align: middle;
 }
 /* the no-JavaScript page puts its content in center/table/form elements, not the #main div */
 html[basic-html]:not([disabled]) body > *:not(#ugf):not(#ugf-styles):not(script):not(style) {
@@ -31846,27 +32395,34 @@ html[shopping-results] #ugf-center {
                         </div>
                         <div id="ugf-hp-buttons-row">
                             <div id="ugf-hp-buttons" class="flex-bar">
-                                <a id="ugf-search-btn-2">
+                                <a id="ugf-search-btn-2" tabindex="0">
                                     <span>Google Search</span>
                                 </a>
-                                <a id="ugf-lucky-btn">
+                                <a id="ugf-lucky-btn" tabindex="0">
                                     <span>I'm Feeling Lucky</span>
                                 </a>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div id="ugf-hp-footer" class="flex">
+                <div id="ugf-hp-footer" class="flex">${/^(2012|2013|2013L)$/.test(layout) ? `
+                    <div id="ugf-hp-footer-links">
+                        <a class="ugf-hp-footer-link" href="https://www.google.com/intl/en/ads/">Advertising Programs</a>
+                        <a class="ugf-hp-footer-link" href="https://www.google.com/services/">Business Solutions</a>
+                        <a class="ugf-hp-footer-link" href="${ugfPlusLinkHtml()}">+${ugfPlusHtml(ugfPlusName().replace(/\+$/, ""))}</a>
+                        <a class="ugf-hp-footer-link" href="https://www.google.com/intl/en/about/">About Google</a>
+                    </div>
+                    <div id="ugf-hp-footer-copy">&copy; ${layout === "2012" ? "2012" : "2013"} - <a class="ugf-hp-footer-link" href="https://www.google.com/intl/en/policies/">Privacy &amp; Terms</a></div>` : `
                     <div id="ugf-structured-hp-footer-left" class="flex-bar">
                         <a class="ugf-structured-hp-footer-link" href="https://www.google.com/intl/en/ads/">Advertising</a>
                         <a class="ugf-structured-hp-footer-link" href="https://www.google.com/services/">Business</a>
-                        <a class="ugf-structured-hp-footer-link" href="https://www.about.google/">About</a>
+                        <a class="ugf-structured-hp-footer-link" href="https://www.google.com/intl/en/about/">About</a>
                     </div>
                     <div id="ugf-structured-hp-footer-right" class="flex-bar">
                         <a class="ugf-structured-hp-footer-link" href="https://www.google.com/intl/en/policies/privacy/">Privacy</a>
                         <a class="ugf-structured-hp-footer-link" href="https://www.google.com/intl/en/policies/terms/">Terms</a>
                         <a class="ugf-structured-hp-footer-link" href="https://www.google.com/preferences">Settings</a>
-                    </div>
+                    </div>`}
                 </div>
             </div>
         </div>
@@ -32385,19 +32941,19 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                                                       </div>
                                                       <div class="gp-app" id="gp-docs">
                                                       	<a class="gp-app-inner" href="https://docs.google.com/document/u/0/">
-                                                      		<div class="gp-app-icon" style="${ugfLauncherTrioStyle("docs")}"></div>
+                                                      		<div class="gp-app-icon" style="${ugfLauncherTrioStyle("docs", layout)}"></div>
                                                       		<div class="gp-app-title">Docs</div>
                                                       	</a>
                                                       </div>
                                                       <div class="gp-app" id="gp-sheets">
                                                       	<a class="gp-app-inner" href="https://docs.google.com/spreadsheets/u/0/">
-                                                      		<div class="gp-app-icon" style="${ugfLauncherTrioStyle("sheets")}"></div>
+                                                      		<div class="gp-app-icon" style="${ugfLauncherTrioStyle("sheets", layout)}"></div>
                                                       		<div class="gp-app-title">Sheets</div>
                                                       	</a>
                                                       </div>
                                                       <div class="gp-app" id="gp-slides">
                                                       	<a class="gp-app-inner" href="https://docs.google.com/presentation/u/0/">
-                                                      		<div class="gp-app-icon" style="${ugfLauncherTrioStyle("slides")}"></div>
+                                                      		<div class="gp-app-icon" style="${ugfLauncherTrioStyle("slides", layout)}"></div>
                                                       		<div class="gp-app-title">Slides</div>
                                                       	</a>
                                                       </div>
@@ -34277,7 +34833,11 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 sidebarTitle = mode == 3 ? ugfEscapeHtml(String(itemRoot.textContent || "").trim()) : itemRoot.innerHTML;
             }
             if (itemId == "subtitle" && !sidebarSubtitle) {
-                sidebarSubtitle = mode == 3 ? ugfEscapeHtml(String(itemRoot.textContent || "").trim()) : itemRoot.innerHTML;
+                const sub = String(itemRoot.textContent || "").replace(/\s+/g, " ").trim();
+                // (8.5) a product's stars and their count ("(7.1K)") came in 2017; before that the line said what the thing was
+                if (!(mode == 3 && ugfKpEra() === "k" && /^[\d.,]*\s*(?:\u2605+|stars?)?\s*\(?[\d.,]+[KkMm]?\)?$/.test(sub))) {
+                    sidebarSubtitle = mode == 3 ? ugfEscapeHtml(sub) : itemRoot.innerHTML;
+                }
             }
             if ((itemId == "image" || itemId == "VisualDigestFirstImageResult") && !sbImg && itemRoot.querySelector("img")) {
                 const im = itemRoot.querySelector("img");
@@ -36192,6 +36752,11 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             if (!t || t.length > 48 || !ugfKpOwnText(el)) {
                 continue;
             }
+            // (8.5) a heading only screen readers get ("Image Carousel") is no heading here
+            const r = el.getBoundingClientRect();
+            if (r.width <= 1 || r.height <= 1) {
+                continue;
+            }
             const s = getComputedStyle(el);
             const fs = parseFloat(s.fontSize) || 0;
             const fw = parseInt(s.fontWeight, 10) || 400;
@@ -36322,6 +36887,19 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         }
         return null;
     }
+    // (8.5) what the panel only has today: a row of tabs or chips (Details, Reviews, Stores; Color,
+    // Storage) and a list of offers with prices. The panel of 2012-2016 had none of it.
+    function ugfKpModern(kc) {
+        const text = ugfKpText(kc);
+        const buttons = Array.prototype.filter.call(kc.querySelectorAll('[role="button"], [role="tab"], button'), function(b) {
+            const t = ugfKpText(b);
+            return t && t.length <= 14 && !b.querySelector("img");
+        });
+        if (buttons.length >= 2 && text.length < 24 * buttons.length) {
+            return true;
+        }
+        return (text.match(/[$\u20ac\u00a3]\s?\d/g) || []).length >= 2;
+    }
     function ugfKpRebuild(root, tries) {
         if (!root) {
             return;
@@ -36354,7 +36932,8 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         };
         const facts = [];
         root.querySelectorAll(".ugf-kc").forEach(function(kc) {
-            if (!ugfKpText(kc)) {
+            if (!ugfKpText(kc) || ugfKpModern(kc)) {
+                kc.remove();
                 return;
             }
             try {
@@ -39685,9 +40264,6 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
   align-items: center;
   padding-left: 6px;
 }
-#ugf-gmail[chrome="m2013"] #ugf-gmail-logo img.google-mark {
-  height: 28px;
-}
 #ugf-gmail[chrome="m2013"] #ugf-gmail-searchrow {
   flex: 1 1 auto;
   padding: 0;
@@ -39725,10 +40301,6 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
 }
 #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield button svg {
   fill: #fff;
-}
-#ugf-gmail[chrome="m2013"] #ugf-gmail-account {
-  flex: 0 0 auto;
-  padding-top: 8px;
 }
 /* the red Gmail mark sits in the sidebar column, level with the toolbar */
 #ugf-gmail-gmark {
@@ -40120,6 +40692,9 @@ html[layout="2022"] #ugf-gmail[chrome="m2018"] .ugf-gmail-searchfield {
 }
 .ugf-gmail-from {
   width: 180px;
+}
+#ugf-gmail[chrome="m2013"] .ugf-gmail-from {
+  width: 200px;
 }
 .ugf-gmail-date {
   width: 80px;
@@ -40813,6 +41388,13 @@ html[layout="2022"] #ugf-gmail[chrome="m2018"] .ugf-gmail-searchfield {
   width: 34px;
   padding: 0;
 }
+#ugf-gmail[chrome="m2013"] #ugf-gmail-toolbar button {
+  height: 29px;
+}
+#ugf-gmail[chrome="m2013"] #ugf-gmail-toolbar button[data-act="settings"] {
+  width: 70px;
+  padding: 0;
+}
 #ugf-gmail[chrome="m2013"] #ugf-gmail-toolbar button svg,
 #ugf-gmail[chrome="kennedy"] #ugf-gmail-toolbar button svg {
   fill: #666;
@@ -40989,7 +41571,7 @@ html[layout="2022"] #ugf-gmail[chrome="m2018"] .ugf-gmail-searchfield {
   border-top: 1px solid #ebebeb;
   color: #222;
   font-size: 11px;
-  padding: 14px 16px 30px 30px;
+  padding: 14px 0 30px 0;
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-footer .mid,
 #ugf-gmail[chrome="kennedy"] #ugf-gmail-footer .mid {
@@ -41034,16 +41616,13 @@ html[layout="2022"] #ugf-gmail[chrome="m2018"] .ugf-gmail-searchfield {
   box-shadow: 0 1px 1px rgba(0,0,0,.1);
 }
 /* header proportions measured off the 2014 template */
-#ugf-gmail[chrome="m2013"] #ugf-gmail-logo img.google-mark {
-  height: 26px;
-}
 #ugf-gmail[chrome="m2013"] #ugf-gmail-gmark {
   padding-left: 30px;
   height: 46px;
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-compose {
   width: 117px;
-  margin-left: 30px;
+  margin: 0 0 10px 30px;
   line-height: 32px;
 }
 
@@ -41339,12 +41918,14 @@ html[layout="2022"] #ugf-gmail[chrome="m2018"] .ugf-gmail-searchfield {
 #ugf-gmail[chrome="m2013"] #ugf-gmail-top {
   justify-content: flex-start;
   gap: 0;
-  padding: 14px 0;
+  padding: 0;
+  height: 62px;
+  box-sizing: border-box;
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-logo {
   flex: 0 0 200px;
   width: 200px;
-  padding-left: 31px;
+  padding-left: 29px;
   margin: 0;
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-searchrow {
@@ -41360,14 +41941,6 @@ html[layout="2022"] #ugf-gmail[chrome="m2018"] .ugf-gmail-searchfield {
 #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield input {
   flex: 1 1 auto;
   min-width: 0;
-}
-#ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield button {
-  flex: 0 0 60px;
-  width: 60px;
-}
-#ugf-gmail[chrome="m2013"] #ugf-gmail-account {
-  flex: 1 1 auto;
-  padding-right: 16px;
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-nav {
   width: 200px;
@@ -41388,12 +41961,13 @@ html[layout="2013L"] #ugf-gmail[chrome="m2013"] #ugf-gmail-compose.shot {
   margin-top: 8px !important;
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-nav a {
-  padding: 0 8px 0 26px;
-  border-left: 5px solid transparent;
+  padding: 0 8px 0 24px;
+  border-left: 4px solid transparent;
   margin: 0;
+  line-height: 19px;
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-main {
-  padding: 0 16px 20px 0;
+  padding: 0 28px 20px 0;
   margin: 0;
 }
 
@@ -41477,7 +42051,7 @@ html[gplex-gmail] body {
   border-radius: 2px;
   flex: 0 0 60px;
   width: 60px;
-  height: 32px;
+  height: 30px;
 }
 
 /* ---------- selecting a row ---------- */
@@ -41499,10 +42073,27 @@ html[gplex-gmail] body {
   background: #fef7e0 !important;
 }
 
-/* the 2015 search button is far wider than the 2014 template's - matched to the crop */
-#ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield button {
+/* the 2015 search button is far wider than the 2014 template's - matched to the crop; (8.5) 2013 and
+   2014 keep the 60px button, flat against the box, as the October 2014 reference shows it */
+html:not([layout="2013"]):not([layout="2013L"]):not([layout="2014"]) #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield button {
   flex: 0 0 124px;
   width: 124px;
+}
+html[layout="2013"] #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield .box,
+html[layout="2013L"] #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield .box,
+html[layout="2014"] #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield .box {
+  border-radius: 2px 0 0 2px;
+  border-right: 0;
+}
+html[layout="2013"] #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield,
+html[layout="2013L"] #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield,
+html[layout="2014"] #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield {
+  gap: 0;
+}
+html[layout="2013"] #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield button,
+html[layout="2013L"] #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield button,
+html[layout="2014"] #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield button {
+  border-radius: 0 2px 2px 0;
 }
 
 /* settings tables, labs rows and theme swatches */
@@ -41901,6 +42492,24 @@ html[gplex-gmail] body {
   color: #666;
   font-size: 13px;
 }
+/* (8.5) 2014: the colour the search page's +Name has; (8.9) +Name 24px from the grid and the Share bubble
+   white on the grey band, as the inbox of October 2013 has them */
+html[layout="2014"] #ugf-gmail-account .plusname {
+  color: #404040;
+  margin-right: 9px;
+}
+#ugf-gmail[chrome="m2013"] .ugf-b13-share {
+  background: #fff !important;
+}
+#ugf-gmail[chrome="m2013"] .ugf-b13-share::after {
+  border-top-color: #fff;
+}
+#ugf-gmail[chrome="m2013"] .ugf-b13-share:hover {
+  background: #f8f8f8 !important;
+}
+#ugf-gmail[chrome="m2013"] .ugf-b13-share:hover::after {
+  border-top-color: #f8f8f8;
+}
 #ugf-gmail-account .nbox {
   min-width: 26px;
   height: 26px;
@@ -42009,7 +42618,7 @@ html[gplex-gmail] body {
 #ugf-gmail[chrome="kennedy"] #ugf-gmail-account,
 #ugf-gmail[chrome="m2013"] #ugf-gmail-account {
   flex: 1 1 auto;
-  padding-right: 14px;
+  padding-right: 28px;
 }
 
 #ugf-gmail-gmark img {
@@ -42149,8 +42758,8 @@ html[gplex-gmail] body {
   overflow: visible;
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-logo img.google-mark {
-  height: 31px;
-  width: 90px;
+  height: auto;
+  width: 116px;
   max-height: none;
   align-self: center;
 }
@@ -42278,186 +42887,6 @@ html[gplex-gmail] body {
   padding: 8px 0;
 }
 #ugf-gmail-movemenu[chrome="m2018"] a { padding: 7px 18px; }
-#ugf-gmail-appsmenu {
-  position: absolute;
-  z-index: 1401;
-  font: 13px arial, sans-serif;
-}
-#ugf-gmail-appsmenu #gp-apps-dd-card {
-  scrollbar-width: none;
-  background: #fff;
-  padding: 28px 28px 12px 28px;
-  border: 1px solid rgba(0,0,0,.2);
-  box-shadow: 0 2px 10px rgba(0,0,0,.2);
-  cursor: auto;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  /* three 88px columns - the same as google.com's own card */
-  width: 264px;
-  max-height: 442px;
-  box-sizing: content-box;
-}
-#ugf-gmail-appsmenu #gp-apps-dd-card::-webkit-scrollbar {
-  width: 0;
-}
-#ugf-gmail-appsmenu[chrome="m2018"] #gp-apps-dd-card {
-  border-radius: 8px;
-}
-.sector {
-  display: flex;
-  flex-wrap: wrap;
-  /* centre the rows: the card is wider than three columns on some browsers, and
-     without this the whole grid hugged the left edge */
-  justify-content: center;
-}
-.sector:nth-child(1) {
-  padding-bottom: 28px;
-  border-bottom: 1px solid #ebebeb;
-}
-.sector:nth-child(2),
-.sector:nth-child(3) {
-  padding-top: 28px;
-}
-#even-more {
-  color: #737373 !important;
-  font-size: 13px;
-  font-family: arial, sans-serif !important;
-  text-decoration: none !important;
-  margin: 0 auto;
-}
-#even-more:hover {
-  text-decoration: underline !important;
-}
-.gp-app {
-  width: 86px;
-  height: 100px;
-  font-size: 13px;
-  font-family: arial, sans-serif !important;
-  padding: 1px;
-}
-.gp-app-inner {
-  text-decoration: none !important;
-  margin: 7px 0;
-  height: 86px;
-  display: block;
-  border: 1px solid transparent;
-  border-radius: 2px;
-}
-.gp-app:hover .gp-app-inner {
-  border: 1px solid #e5e5e5;
-  background: rgba(255,255,255,.9);
-}
-.gp-app-icon {
-   background-image: url(https://ssl.gstatic.com/gb/images/v1_76783e20.png);
-   -webkit-background-size: 92px 2541px;
-  background-size: 92px 2541px;
-}
-#myaccount .gp-app-icon {
-  background-position: 0 -1451px;
-}
-#google-search .gp-app-icon {
-  background-position: -17px -207px;
-}
-#maps .gp-app-icon {
-  background-position: 0 -450px;
-}
-#youtube .gp-app-icon {
-  background-position: 0 0;
-}
-#play .gp-app-icon {
-  background-position: 0 -1779px;
-}
-#news .gp-app-icon {
-  background-position: 0 -1990px;
-}
-#envelope .gp-app-icon {
-  background-position: 0 -1710px;
-}
-#drive .gp-app-icon {
-  background-position: 0 -138px;
-}
-#calendar .gp-app-icon {
-  background-position: 0 -2059px;
-}
-#plus .gp-app-icon {
-  background-position: 0 -938px;
-}
-#translate .gp-app-icon {
-  background-position: 0 -693px;
-}
-#photos .gp-app-icon {
-  background-position: 0 -1145px;
-}
-#shopping .gp-app-icon {
-  background-position: 0 -1352px;
-}
-#wallet .gp-app-icon,
-#finance .gp-app-icon {
-  background-image: url(https://ssl.gstatic.com/gb/images/p1_a4541be8.png);
-  -webkit-background-size: 64px 2065px;
-  background-size: 64px 2065px;
-  background-position: 0 -966px;
-}
-#finance .gp-app-icon {
-  background-position: 0 -1725px;
-}
-#docs .gp-app-icon {
-  background-position: 0 -1214px;
-}
-#books .gp-app-icon {
-  background-position: 0 -554px;
-}
-#blogger .gp-app-icon {
-  background-position: 0 -1007px;
-}
-#contacts .gp-app-icon {
-  background-position: 0 -69px;
-}
-#hangouts .gp-app-icon {
-  background-position: 0 -2335px;
-}
-#chrome .gp-app-icon {
-  background-image: url("${UGF_CHROME_ICON_2011}");
-  /* the same 64px box as every other icon, with the logo drawn at the sheet's
-     48px glyph size - a 56px box with an 8px offset left it oversized, and the
-     offset got lost in one copy of this rule, lifting the label out of line */
-  background-size: 48px 48px;
-  background-position: center;
-  background-repeat: no-repeat;
-  margin-top: 0;
-  width: 64px !important;
-  height: 64px !important;
-}
-[layout^="2016"] #chrome .gp-app-icon,
-[layout^="2018"] #chrome .gp-app-icon,
-[layout="2019"] #chrome .gp-app-icon,
-[layout="2022"] #chrome .gp-app-icon {
-  background-image: url("${UGF_CHROME_ICON_2014}");
-}
-.gp-app-icon {
-  margin: 0 auto;
-  height: 64px;
-  width: 64px;
-}
-.gp-app-title {
-  width: fit-content;
-  margin: 0 auto;
-  color: #404040 !important;
-  text-decoration: none !important;
-}
-#ugf-gmail-appsmenu .gp-app-title {
-  width: fit-content;
-  margin: 0 auto;
-  color: #404040 !important;
-  text-decoration: none !important;
-  text-align: center;
-}
-#ugf-gmail-appsmenu .gp-app-icon {
-  margin: 0 auto;
-  height: 64px;
-  width: 64px;
-}
-
 /* late 2012-2013: no name on the bar, text centred, and selection is just the
    highlight - the red rule over the current product belongs to the 2011 bar */
 #ugf-gmail #ugf-gmail-gbar.dark.late a {
@@ -43184,6 +43613,12 @@ html[gplex-gmail] body {
         const target = row.querySelector(".bog span") || row.querySelector(".bog") ||
             row.querySelector(".xT") || row.querySelector(".y6") || row;
         return ugfGmailRealClick(target);
+    }
+    // (8.5) Gmail's own boxes of 2018 on, which the lists before 2018 never had; (8.6) a function, not a
+    // constant: the page's code is started above this point, where a constant here is not initialised yet
+    function ugfGmailNewerBox(name) {
+        return ["snoozed", "scheduled", "purchases", "categories", "social", "promotions", "updates",
+            "forums", "outbox", "manage labels", "create new label", "less", "more"].indexOf(String(name).toLowerCase()) > -1;
     }
     function ugfGmailLabels() {
         const out = [];
@@ -45483,7 +45918,8 @@ html[gplex-gmail] body {
         }, 0);
     }
     function ugfGmailCloseMenus() {
-        document.querySelectorAll("#ugf-gmail-accmenu, #ugf-gmail-appsmenu, #ugf-gmail-accfence, #ugf-gmail-movemenu").forEach(function(el) {
+        ugfB13AppsClose();
+        document.querySelectorAll("#ugf-gmail-accmenu, #ugf-gmail-accfence, #ugf-gmail-movemenu").forEach(function(el) {
             el.remove();
         });
     }
@@ -45528,143 +45964,13 @@ html[gplex-gmail] body {
         menu.style.top = (r.bottom + window.scrollY + 4) + "px";
         fence.addEventListener("click", ugfGmailCloseMenus);
     }
-    // the app launcher, with the same set google.com's grid offers
-    // The launcher is the same grid google.com gets, ported across with its ids so
-    // the sprite icons and sector layout come along unchanged.
-    function ugfGmailAppsList() {
-        return [
-            [["myaccount", "https://myaccount.google.com/", "My Account"],
-             ["google-search", "https://www.google.com", "Search"],
-             ["maps", "https://maps.google.com", "Maps"],
-             ["youtube", "https://youtube.com", "YouTube"],
-             ["play", "https://play.google.com", "Play"],
-             ["news", "https://news.google.com", "News"],
-             ["envelope", "https://mail.google.com", "Gmail"],
-             ["drive", "https://drive.google.com", "Drive"],
-             ["calendar", "https://google.com/calendar", "Calendar"],
-             ["plus", ugfPlusLink(), ugfPlusName()],
-             ["translate", "https://translate.google.com", "Translate"],
-             ["photos", "https://photos.google.com", "Photos"],
-             // Docs, Sheets and Slides: a row of their own
-             ["gp-docs", "https://docs.google.com/document/u/0/", "Docs"],
-             ["gp-sheets", "https://docs.google.com/spreadsheets/u/0/", "Sheets"],
-             ["gp-slides", "https://docs.google.com/presentation/u/0/", "Slides"]],
-            [["shopping", "https://www.google.com/shopping", "Shopping"],
-             ["wallet", "https://wallet.google.com", "Wallet"],
-             ["finance", "https://www.google.com/finance", "Finance"],
-             ["books", "https://books.google.com", "Books"],
-             ["blogger", "https://www.blogger.com", "Blogger"],
-             ["contacts", "https://www.google.com/contacts", "Contacts"],
-             ["hangouts", "https://hangouts.google.com", "Hangouts"],
-             ["chrome", "https://www.google.com/chrome/", "Chrome"]]
-        ];
-    }
-    // The sheet the grid already uses is Google's Material-era artwork, which is the
-    // right generation for 2015-2019. 2020 is when Google redrew part of the set - and
-    // only part of it, which is why the rest still comes from the same place Google
-    // serves it from today. Earlier generations are not reachable from here.
-    function ugfGmailGridArt() {
-        const lay = String(layout || "");
-        // The four-colour capital G arrived in September 2015, so early 2015 still
-        // belongs to the old set - 2015L is the one that gets the new mark.
-        if (lay !== "2022") {
-            return ugfLauncherArt(lay);   // the marks of before the 2015 rebrand, or the era's own sheet
-        }
-        const p2 = "https://www.gstatic.com/images/branding/product/2x/";
-        const q4 = function(n) {
-            return p2 + n + "_2020q4_48dp.png";
-        };
-        const std = function(n) {
-            return p2 + n + "_48dp.png";
-        };
-        return {
-            // redrawn in the 2020 refresh
-            envelope: q4("gmail"), drive: q4("drive"), calendar: q4("calendar"), docs: q4("docs"),
-            maps: "https://www.gstatic.com/images/branding/productlogos/maps/v7/192px.svg",
-            // untouched by it, so these are still the current artwork
-            "google-search": std("googleg"), youtube: std("youtube"), play: std("play_prism"),
-            news: std("news"), photos: std("photos"), translate: std("translate"),
-            contacts: std("contacts"), shopping: std("shopping"), finance: std("finance"),
-            blogger: std("blogger")
-        };
-    }
-    // Docs, Sheets and Slides in the app launcher: Google's product icons (the folded-
-    // corner pages, the same as in the Docs menu), the 2020 redraw for 2020-2022
-    function ugfLauncherTrio(which) {
-        const lay = String(layout || "");
-        return { url: "https://www.gstatic.com/images/branding/product/2x/" + which + (lay === "2022" ? "_2020q4" : "") + "_48dp.png", inline: false };
-    }
-    function ugfLauncherTrioStyle(which) {
-        const t = ugfLauncherTrio(which);
-        return "background-image: url(" + t.url + ") !important; background-size: " + (t.inline ? "64px 64px" : "48px 48px") +
-            " !important; background-position: " + (t.inline ? "0 0" : "center") + " !important; background-repeat: no-repeat !important;";
-    }
-    function ugfGmailAppsMenu(anchor, chrome) {
-        if (document.querySelector("#ugf-gmail-appsmenu")) {
-            ugfGmailCloseMenus();
-            return;
-        }
-        const esc = ugfEscapeHtml;
-        let html = "";
-        ugfGmailAppsList().forEach(function(sector) {
-            html += '<div class="sector">';
-            sector.forEach(function(a) {
-                html += '<div class="gp-app" id="' + esc(a[0]) + '">' +
-                    '<a class="gp-app-inner" href="' + esc(a[1]) + '">' +
-                    '<div class="gp-app-icon"></div>' +
-                    '<div class="gp-app-title">' + esc(a[2]) + "</div></a></div>";
-            });
-            html += "</div>";
-        });
-        html += '<div class="sector"><a id="even-more" href="https://www.google.com/intl/en/options">' +
-            "Even more from Google</a></div>";
-        const fence = document.createElement("div");
-        fence.id = "ugf-gmail-accfence";
-        const menu = document.createElement("div");
-        menu.id = "ugf-gmail-appsmenu";
-        menu.setAttribute("chrome", chrome);
-        menu.innerHTML = trusted_policy.createHTML('<div id="gp-apps-dd-card"><div id="gp-apps-dd-inner">' + html + "</div></div>");
-        document.body.appendChild(fence);
-        document.body.appendChild(menu);
-        const r = anchor.getBoundingClientRect();
-        let left = r.right - 322;
-        if (left < 8) {
-            left = 8;
-        }
-        menu.style.left = left + "px";
-        menu.style.top = (r.bottom + window.scrollY + 6) + "px";
-        const art = ugfGmailGridArt();
-        if (art) {
-            menu.querySelectorAll(".gp-app").forEach(function(el) {
-                const url = art[el.id];
-                const ic = url && el.querySelector(".gp-app-icon");
-                if (!ic) {
-                    return;   // no period artwork for this one: leave the sheet alone
-                }
-                ic.style.setProperty("background-image", 'url("' + url + '")', "important");
-                const inline = url.indexOf("data:") === 0;
-                // the inline ones are already trimmed to 44px inside a 64px cell, the
-                // same as the sheet; anything fetched gets centred at 48px instead
-                ic.style.setProperty("background-size", inline ? "64px 64px" : "48px 48px", "important");
-                ic.style.setProperty("background-position", inline ? "0 0" : "center", "important");
-                ic.style.setProperty("background-repeat", "no-repeat", "important");
-            });
-        }
-        ["docs", "sheets", "slides"].forEach(function(w) {
-            const ic = menu.querySelector("#gp-" + w + " .gp-app-icon");
-            if (ic) {
-                ic.setAttribute("style", ugfLauncherTrioStyle(w));
-            }
-        });
-        fence.addEventListener("click", ugfGmailCloseMenus);
-    }
     function ugfGmailWireAccount(shell, chrome) {
         const apps = shell.querySelector("#ugf-gmail-apps");
         if (apps) {
             apps.addEventListener("click", function(ev) {
                 ev.preventDefault();
                 ev.stopPropagation();
-                ugfGmailAppsMenu(apps, chrome);
+                ugfB13AppsOpen(apps, String(layout || ""), chrome, "");
             });
         }
         // The name on the Google bar (late 2011-2012 and earlier, and the legacy layouts
@@ -45833,7 +46139,7 @@ html[gplex-gmail] body {
             listHTML += '<tr data-i="' + i + '" class="' + (r.unread ? "unread" : "") + '">' +
                 '<td class="ugf-gmail-check"><input type="checkbox"></td>' +
                 '<td class="ugf-gmail-star' + (r.starred ? " on" : "") + '">&#9733;</td>' +
-                (feat.tabs ? '<td class="ugf-gmail-imp' + (r.unread ? " on" : "") + '">&raquo;</td>' : "") +
+                (feat.tabs ? '<td class="ugf-gmail-imp">&raquo;</td>' : "") +
                 '<td class="ugf-gmail-from">' + esc(r.from) + "</td>" +
                 '<td class="ugf-gmail-subject">' + esc(r.subject) +
                 (r.snippet ? ' <span class="snippet">- ' + esc(r.snippet) + "</span>" : "") + "</td>" +
@@ -45883,6 +46189,9 @@ html[gplex-gmail] body {
                     known = true;
                 }
             });
+            if (!known && chrome !== "m2018" && ugfGmailNewerBox(l.name)) {
+                known = true;
+            }
             if (!known && navItems.length < 24) {
                 navItems.push({ name: l.name, real: l, custom: true });
             }
@@ -46072,8 +46381,8 @@ html[gplex-gmail] body {
             accountHTML = '<a class="plusname" href="' + esc(ugfPlusProfileLink()) + '">' +
                 "+" + esc(ugfGmailPlusName()) + "</a>" +
                 // 2014: the app grid joined the block, then the new bar's bell, Share and photo
-                (String(layout || "") === "2014" ? '<span class="ic grid' + (ugf14() === "2014N" ? " ugf-b13-grid late" : "") + '" id="ugf-gmail-apps" title="Google apps">' +
-                    (ugf14() === "2014N" ? "" : ugfGmailIcon("apps", 20)) + "</span>" + ugfB13Bits(ugf14()) +
+                (String(layout || "") === "2014" ? '<span class="ic grid' + ugfB13GridLate(ugf14()) + '" id="ugf-gmail-apps" title="Google apps">' +
+                    (ugfB13GridLate(ugf14()) ? "" : ugfGmailIcon("apps", 20)) + "</span>" + ugfB13Bits(ugf14()) +
                     '<span class="pfpwrap ' + ugfB13PhotoClass(ugf14()) + '">' + ugfGmailAvatar() + "</span>"
                     : '<span class="nbox">0</span>' +
                     '<span class="sharebtn"><b>+</b> Share</span>' +
@@ -46126,17 +46435,18 @@ html[gplex-gmail] body {
                               '<button class="icon cap" data-act="density" title="Display density">' + ugfGmailIcon("density") + '<i class="dd">&#9662;</i></button>' +
                               '<button class="icon cap" data-act="tools" title="Input tools">' + ugfGmailIcon("keyboard") + '<i class="dd">&#9662;</i></button>'
                             : "") +
-                        (chrome === "classic" ? "" : '<button class="icon" data-act="settings" title="Settings">' + ugfGmailIcon("gear") + "</button>") +
+                        (chrome === "classic" ? "" : chrome === "m2013"
+                            ? '<button data-act="settings" title="Settings">' + ugfGmailIcon("gear") + '<i class="dd">&#9662;</i></button>'
+                            : '<button class="icon" data-act="settings" title="Settings">' + ugfGmailIcon("gear") + "</button>") +
                     "</div>" + selectHTML + tabsHTML +
                     '<table id="ugf-gmail-list">' + (listHTML ||
                         '<tr class="ugf-gmail-empty"><td colspan="6">' +
                         (ugfGmailIsRealSearch()
                             ? (ugfGmailListSettled() ? "No conversations matched your search." : "Searching\u2026")
                             : (ugfGmailListSettled() ? "0 Messages" : "Loading\u2026")) +
-                        "</td></tr>") + "</table>" +
+                        "</td></tr>") + "</table>" + footerHTML +
                 "</div>" +
-            "</div>" +
-            footerHTML);
+            "</div>");
         if (settingsView) {
             ugfGmailRenderSettings(shell, era, feat);
         } else if (threadView) {
@@ -58111,7 +58421,7 @@ html[gplex-gmail] body {
                 return '<div class="kcorner"><a class="' + (red ? "ksignin red" : "ksignin") + '" href="https://accounts.google.com/ServiceLogin">' + (red ? "SIGN IN" : "Sign in") + "</a></div>";
             }
             return '<div class="kcorner gplus"><a class="plusname" href="' + ugfEsc(ugfPlusProfileLink()) + '">+' + ugfEsc(ugfGmailPlusName()) + "</a>" +
-                (l === "2014" ? '<a href="#" class="kic apps" title="Google apps">' + ugfNtIcon("apps", 24) + "</a>" + ugfB13Bits(ugf14()) +
+                (l === "2014" ? '<a href="#" class="kic apps' + ugfB13GridLate(ugf14()) + '" title="Google apps">' + (ugfB13GridLate(ugf14()) ? "" : ugfNtIcon("apps", 24)) + "</a>" + ugfB13Bits(ugf14()) +
                     '<a href="#" class="pfpwrap me ' + ugfB13PhotoClass(ugf14()) + '">' + ugfGmailAvatar() + "</a></div>"
                     : '<span class="nbox">0</span><span class="sharebtn"><b>+</b> Share</span><a href="#" class="pfpwrap me">' + ugfGmailAvatar() + '<i class="car">&#9662;</i></a></div>');
         }
@@ -58179,7 +58489,7 @@ html[gplex-gmail] body {
             el.addEventListener("click", function(ev) {
                 ev.preventDefault();
                 ev.stopPropagation();
-                ugfGmailAppsMenu(el, chrome);
+                ugfB13AppsOpen(el, String(layout || ""), chrome, "");
             });
         });
     }
@@ -65099,7 +65409,7 @@ html[gplex-gmail] body {
         if (l === "2013" || l === "2014") {
             return '<div id="ugf-cal-account" class="gplus"><a class="plusname" href="' + esc(ugfPlusProfileLink()) + '">+' +
                 esc(ugfGmailPlusName()) + "</a>" +
-                (l === "2014" ? '<a class="ic appsg" href="#" title="Google apps">' + ugfCalIcon("apps", 20) + "</a>" + ugfB13Bits(ugf14()) +
+                (l === "2014" ? '<a class="ic appsg' + ugfB13GridLate(ugf14()) + '" href="#" title="Google apps">' + (ugfB13GridLate(ugf14()) ? "" : ugfCalIcon("apps", 20)) + "</a>" + ugfB13Bits(ugf14()) +
                     '<span class="pfpwrap ' + ugfB13PhotoClass(ugf14()) + '">' + ugfGmailAvatar() + "</span></div>"
                     : '<span class="nbox">0</span><span class="sharebtn"><b>+</b> Share</span>' +
                     '<span class="pfpwrap">' + ugfGmailAvatar() + '<i class="car">&#9662;</i></span></div>');
@@ -67679,7 +67989,7 @@ html[gplex-gmail] body {
             el.addEventListener("click", function(ev) {
                 ev.preventDefault();
                 ev.stopPropagation();
-                ugfGmailAppsMenu(el, menuChrome);
+                ugfB13AppsOpen(el, String(layout || ""), menuChrome, "");
             });
         });
         const burger = shell.querySelector(".burger");
@@ -70390,7 +70700,7 @@ html[gplex-gmail] body {
         return '<div id="ugf-maps-account">' +
             '<a class="plusname" href="' + esc(ugfPlusProfileLink()) + '">' +
             "+" + esc(ugfGmailPlusName()) + "</a>" +
-            (withApps ? '<a class="ic grid" href="https://www.google.com/intl/en/about/products/" title="Apps">' + ugfGmailIcon("apps", 20) + "</a>" : "") +
+            (withApps ? '<a class="ic grid' + ugfB13GridLate(ugf14()) + '" href="https://www.google.com/intl/en/about/products/" title="Google apps">' + (ugfB13GridLate(ugf14()) ? "" : ugfGmailIcon("apps", 20)) + "</a>" : "") +
             (String(layout || "") === "2014" ? ugfB13Bits(ugf14()) + '<span class="pfpwrap ' + ugfB13PhotoClass(ugf14()) + '">' + ugfGmailAvatar() + "</span></div>"
                 : '<span class="nbox">0</span>' +
                 '<span class="sharebtn"><b>+</b> Share</span>' +
@@ -71433,7 +71743,7 @@ html[gplex-gmail] body {
                 }
                 ev.preventDefault();
                 ev.stopPropagation();
-                ugfGmailAppsMenu(el, menuChrome);
+                ugfB13AppsOpen(el, String(layout || ""), menuChrome, "");
             });
         });
         ugfMapsLinks(shell, map);
@@ -72242,6 +72552,8 @@ html[gplex-gmail] body {
     // ---- Shopping results (Froogle on the older layouts, Google Shopping from 2012) ----
     const UGF_PRICE_RE = /(?:[$£€¥₹]\s?\d[\d.,]*|\d[\d.,]*\s?(?:USD|EUR|GBP|CAD|AUD))/;
     const UGF_RATING_RE = /^\d(?:\.\d)?\s*(?:★|stars?)?\s*(?:\(\d[\d,]*\))?$/i;
+    // Google's own words on a product card (its menu and badges): never a title, a store or a rating
+    const UGF_SHOP_UI_RE = /^(About this result|Sponsored|Ad|Compare prices|More options|View all|Free shipping|Free delivery|In stock|Sale)$/i;
     function ugfShopText(el) {
         const out = [];
         el.querySelectorAll("span, div, h3, h4, a").forEach(function(n) {
@@ -72249,7 +72561,7 @@ html[gplex-gmail] body {
                 return;
             }
             const t = (n.textContent || "").replace(/\s+/g, " ").trim();
-            if (t && out.indexOf(t) === -1) {
+            if (t && !UGF_SHOP_UI_RE.test(t) && out.indexOf(t) === -1) {
                 out.push(t);
             }
         });
@@ -72639,6 +72951,21 @@ html[gplex-gmail] body {
             }
         });
     }
+    // the star strip of a rating ("4.6", "4.6 (1,234)", "92%"): the knowledge panel's stars, shown in
+    // front of the figure by the layouts from Late 2011 on
+    function ugfShopStars(text) {
+        const m = String(text).match(/(\d+(?:\.\d+)?)\s*(%|\/\s*(?:5|10))?/);
+        if (!m) {
+            return "";
+        }
+        const v = parseFloat(m[1]);
+        const kind = (m[2] || "").replace(/\s/g, "");
+        const stars = kind === "%" ? v / 20 : kind === "/10" ? v / 2 : v <= 5 ? v : v <= 10 ? v / 2 : v / 20;
+        if (!(stars > 0)) {
+            return "";
+        }
+        return '<span class="ugf-kp-stars"><span style="width:' + Math.round(Math.min(5, stars) * 20) + '%"></span></span>';
+    }
     function ugfRenderShoppingItem(item) {
         const container = document.querySelector("#ugf-search-results-container");
         if (!container) {
@@ -72652,9 +72979,12 @@ html[gplex-gmail] body {
                 (hasThumb ? '<a class="ugf-shop-thumb" href="' + ugfEscapeHtml(item.href) + '"><img src="' + ugfEscapeHtml(item.thumbnail) + '"></a>' : '<span class="ugf-shop-thumb ugf-shop-thumb-empty"></span>') +
                 '<div class="ugf-shop-main">' +
                     '<a class="ugf-search-result-title ugf-shop-title" href="' + ugfEscapeHtml(item.href) + '"><span>' + ugfEscapeHtml(item.title) + '</span></a>' +
-                    (item.price ? '<div class="ugf-shop-price">' + ugfEscapeHtml(item.price) + '</div>' : '') +
-                    (item.merchant ? '<div class="ugf-shop-merchant">' + ugfEscapeHtml(item.merchant) + '</div>' : '') +
-                    (item.rating ? '<div class="ugf-shop-rating">' + ugfEscapeHtml(item.rating) + '</div>' : '') +
+                    (item.price || item.merchant ? '<div class="ugf-shop-offer">' +
+                        (item.price ? '<div class="ugf-shop-price">' + ugfEscapeHtml(item.price) + '</div>' : '') +
+                        (item.merchant ? '<div class="ugf-shop-merchant">' + ugfEscapeHtml(item.merchant) + '</div>' : '') +
+                    '</div>' : '') +
+                    (item.rating ? '<div class="ugf-shop-rating">' + ugfShopStars(item.rating) + '<span>' +
+                        ugfEscapeHtml(String(item.rating).replace(/\s*(?:\u2605|stars?)\s*/i, " ").replace(/\s+/g, " ").trim()) + '</span></div>' : '') +
                 '</div>' +
             '</div>');
         container.insertBefore(el, container.children[item.itemNo] || null);
@@ -74154,14 +74484,21 @@ html[gplex-gmail] body {
         const shopName = froogle ? "Froogle" : (productSearch ? "Product Search" : "Shopping");
         document.title = isShopping ? (froogle ? "Froogle" : (productSearch ? "Google Product Search" : "Google Shopping")) : (isImages ? "Google Images" : "Google Videos");
         ugf2009WaitFor("#ugf-hp-logo-companion", function(comp) {
+            const lay = String(layout || "");
+            // (8.8) until September 2013 Images drew its logo with the word inside the picture (276x110)
+            if (isImages && /^(2012|2013|2013L)$/.test(lay)) {
+                document.querySelector("#melvin-hp-logo").src = "https://www.google.com/intl/en_ALL/images/logos/images_logo_lg.gif";
+                return;
+            }
             if (!comp.querySelector("#ugf-hp-vertical-label")) {
                 const lab = document.createElement("div");
                 lab.id = "ugf-hp-vertical-label";
                 const old = document.querySelector("html").hasAttribute("legacy-gbar");
+                const cap = old || lay === "2014" || lay === "2015";   // "Images" again from late 2013
                 if (isShopping) {
-                    lab.textContent = (froogle || productSearch) ? shopName : (old ? "Shopping" : "shopping");
+                    lab.textContent = (froogle || productSearch) ? shopName : lay === "2012" ? "product search" : (cap ? "Shopping" : "shopping");
                 } else {
-                    lab.textContent = isImages ? (old ? "Images" : "images") : (old ? "Video" : "videos");
+                    lab.textContent = isImages ? (cap ? "Images" : "images") : (old ? "Video" : "videos");
                 }
                 comp.appendChild(lab);
             }
