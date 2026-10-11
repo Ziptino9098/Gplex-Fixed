@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended Alpha - Gplex Old Google with its YouTube part rewritten
 // @namespace    http://tampermonkey.net/
-// @version      9.0.0.8
+// @version      9.0.0.9
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube, rewritten: alpha, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -1145,9 +1145,9 @@ function ugfB13Css() {
         ".ugf-b13-grid, .ugf-b13-bell, .ugf-b13-share, .ugf-b13-photo { display: inline-flex !important; align-items: center; justify-content: center; box-sizing: border-box; cursor: pointer; text-decoration: none !important; }",
         ".ugf-b13-grid { width: 30px; height: 30px; margin: 0 5px; background: url('https://ssl.gstatic.com/gb/images/i1_1967ca6a.png') -132px -38px / 528px 68px no-repeat; opacity: .55; }",
         ".ugf-b13-grid:hover { opacity: .85; }",
-        ".ugf-b13-bell { width: 30px; height: 30px; margin: 0 5px; color: #000 !important; opacity: .55; }",
+        ".ugf-b13-bell { width: 36px; height: 30px; margin: 0 5px; color: #000 !important; opacity: .55; }",
         ".ugf-b13-bell:hover { opacity: .8; }",
-        ".ugf-b13-bell svg, .ugf-b13-share svg { width: 20px; height: 20px; fill: currentColor; }",
+        ".ugf-b13-bell svg { width: 28px; height: 28px; fill: currentColor; }",
         ".ugf-b13-share { position: relative; min-width: 60px; height: 30px; margin: 0 5px 0 0 !important; padding: 0 10px !important; " +
             "background: rgba(0,0,0,.04) !important; border: none !important; border-radius: 0 !important; color: #404040 !important; font: 13px arial, sans-serif !important; white-space: nowrap; }",
         ".ugf-b13-share:hover { background: rgba(0,0,0,.08) !important; }",
@@ -1156,10 +1156,9 @@ function ugfB13Css() {
         // October to December 2014: the grid of 19px, the bell of 28px, Share an icon of 24x21 (all 55% black,
         // full black under the pointer) and the photo at 34px, with the spacing Google's own screenshot has
         ".ugf-b13-grid.late { width: 19px; height: 19px; margin: 0 8px 0 0; background: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 19 19'%3E%3Cpath d='M0 0h5v5H0zM7 0h5v5H7zM14 0h5v5h-5zM0 7h5v5H0zM7 7h5v5H7zM14 7h5v5h-5zM0 14h5v5H0zM7 14h5v5H7zM14 14h5v5h-5z'/%3E%3C/svg%3E\") center / 19px 19px no-repeat; }",
-        ".ugf-b13-bell.late { width: 36px; margin: 0 16px 0 8px; }",
-        ".ugf-b13-bell.late svg { width: 28px; height: 28px; }",
+        ".ugf-b13-bell.late { margin: 0 16px 0 8px; }",
         ".ugf-b13-share.icon { min-width: 24px; width: 24px; margin: 0 8px 0 0 !important; padding: 0 !important; background: none !important; color: #000 !important; opacity: .55; }",
-        ".ugf-b13-share.icon svg { width: 24px; height: 21px; }",
+        ".ugf-b13-share.icon svg { width: 24px; height: 21px; fill: currentColor; }",
         ".ugf-b13-share.icon::after { display: none; }",
         ".ugf-b13-grid.late:hover, .ugf-b13-bell.late:hover, .ugf-b13-share.icon:hover { opacity: 1; }",
         ".ugf-b13-photo { border: none !important; padding: 0 !important; background: none !important; box-shadow: none !important; }",
@@ -1173,7 +1172,10 @@ function ugfB13Css() {
 function ugfB13Bits(v) {
     ugfB13Css();
     const late = v === "2014N";
-    return '<span class="ugf-b13-bell' + (late ? " late" : "") + '" title="Notifications"><svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/></svg></span>' +
+    // (8.9) a solid bell until the October 2014 bar, whose bell is an outline (Google's own screenshots of
+    // October 2013 and October 2014)
+    const bell = "M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" + (late ? "m-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z" : "");
+    return '<span class="ugf-b13-bell' + (late ? " late" : "") + '" title="Notifications"><svg viewBox="0 0 24 24"><path d="' + bell + '"/></svg></span>' +
         (late ? '<span class="ugf-b13-share icon" title="Share"><svg viewBox="0 0 24 21"><path fill-rule="evenodd" d="M1.5 0h18A1.5 1.5 0 0 1 21 1.5V17l3 4H0V1.5A1.5 1.5 0 0 1 1.5 0zM2 2v15h17V2zm7.25 2.5h2.5v3.75h3.75v2.5h-3.75v3.75h-2.5v-3.75H5.5v-2.5h3.75z"/></svg></span>'
             : '<span class="ugf-b13-share" title="Share">Share</span>');
 }
@@ -26106,7 +26108,7 @@ html[layout="2014"] #ugf-fake-notifs-button {
   background: none;
   border: none;
   box-shadow: none;
-  padding: 0 8px;
+  padding: 0 4px;
   height: 30px;
   align-items: center;
 }
@@ -26115,10 +26117,10 @@ html[layout="2014"] #ugf-fake-notifs-button .ugf-plus-button-text {
 }
 html[layout="2014"] #ugf-fake-notifs-button .ugf-plus-button-icon {
   display: block;
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
   opacity: .55;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z'/%3E%3C/svg%3E") center / 20px 20px no-repeat;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z'/%3E%3C/svg%3E") center / 28px 28px no-repeat;
 }
 html[layout="2014"] #ugf-fake-notifs-button:hover .ugf-plus-button-icon {
   opacity: .8;
@@ -26193,13 +26195,8 @@ html[layout="2014"][gplex2014n] #waffle .gp-icon {
   align-self: center;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 19 19'%3E%3Cpath d='M0 0h5v5H0zM7 0h5v5H7zM14 0h5v5h-5zM0 7h5v5H0zM7 7h5v5H7zM14 7h5v5h-5zM0 14h5v5H0zM7 14h5v5H7zM14 14h5v5h-5z'/%3E%3C/svg%3E") center / 19px 19px no-repeat;
 }
-html[layout="2014"][gplex2014n] #ugf-fake-notifs-button {
-  padding: 0 4px;
-}
 html[layout="2014"][gplex2014n] #ugf-fake-notifs-button .ugf-plus-button-icon {
-  width: 28px;
-  height: 28px;
-  background-size: 28px 28px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z'/%3E%3C/svg%3E");
 }
 html[layout="2014"][gplex2014n] #ugf-fake-share-button {
   width: 24px;
@@ -40305,10 +40302,6 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
 #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield button svg {
   fill: #fff;
 }
-#ugf-gmail[chrome="m2013"] #ugf-gmail-account {
-  flex: 0 0 auto;
-  padding-top: 8px;
-}
 /* the red Gmail mark sits in the sidebar column, level with the toolbar */
 #ugf-gmail-gmark {
   display: flex;
@@ -40699,6 +40692,9 @@ html[layout="2022"] #ugf-gmail[chrome="m2018"] .ugf-gmail-searchfield {
 }
 .ugf-gmail-from {
   width: 180px;
+}
+#ugf-gmail[chrome="m2013"] .ugf-gmail-from {
+  width: 200px;
 }
 .ugf-gmail-date {
   width: 80px;
@@ -41392,6 +41388,13 @@ html[layout="2022"] #ugf-gmail[chrome="m2018"] .ugf-gmail-searchfield {
   width: 34px;
   padding: 0;
 }
+#ugf-gmail[chrome="m2013"] #ugf-gmail-toolbar button {
+  height: 29px;
+}
+#ugf-gmail[chrome="m2013"] #ugf-gmail-toolbar button[data-act="settings"] {
+  width: 70px;
+  padding: 0;
+}
 #ugf-gmail[chrome="m2013"] #ugf-gmail-toolbar button svg,
 #ugf-gmail[chrome="kennedy"] #ugf-gmail-toolbar button svg {
   fill: #666;
@@ -41568,7 +41571,7 @@ html[layout="2022"] #ugf-gmail[chrome="m2018"] .ugf-gmail-searchfield {
   border-top: 1px solid #ebebeb;
   color: #222;
   font-size: 11px;
-  padding: 14px 16px 30px 30px;
+  padding: 14px 0 30px 0;
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-footer .mid,
 #ugf-gmail[chrome="kennedy"] #ugf-gmail-footer .mid {
@@ -41619,7 +41622,7 @@ html[layout="2022"] #ugf-gmail[chrome="m2018"] .ugf-gmail-searchfield {
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-compose {
   width: 117px;
-  margin-left: 30px;
+  margin: 0 0 10px 30px;
   line-height: 32px;
 }
 
@@ -41915,12 +41918,14 @@ html[layout="2022"] #ugf-gmail[chrome="m2018"] .ugf-gmail-searchfield {
 #ugf-gmail[chrome="m2013"] #ugf-gmail-top {
   justify-content: flex-start;
   gap: 0;
-  padding: 14px 0;
+  padding: 0;
+  height: 62px;
+  box-sizing: border-box;
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-logo {
   flex: 0 0 200px;
   width: 200px;
-  padding-left: 31px;
+  padding-left: 29px;
   margin: 0;
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-searchrow {
@@ -41936,10 +41941,6 @@ html[layout="2022"] #ugf-gmail[chrome="m2018"] .ugf-gmail-searchfield {
 #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield input {
   flex: 1 1 auto;
   min-width: 0;
-}
-#ugf-gmail[chrome="m2013"] #ugf-gmail-account {
-  flex: 1 1 auto;
-  padding-right: 16px;
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-nav {
   width: 200px;
@@ -41960,12 +41961,13 @@ html[layout="2013L"] #ugf-gmail[chrome="m2013"] #ugf-gmail-compose.shot {
   margin-top: 8px !important;
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-nav a {
-  padding: 0 8px 0 26px;
-  border-left: 5px solid transparent;
+  padding: 0 8px 0 24px;
+  border-left: 4px solid transparent;
   margin: 0;
+  line-height: 19px;
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-main {
-  padding: 0 16px 20px 0;
+  padding: 0 28px 20px 0;
   margin: 0;
 }
 
@@ -42049,7 +42051,7 @@ html[gplex-gmail] body {
   border-radius: 2px;
   flex: 0 0 60px;
   width: 60px;
-  height: 32px;
+  height: 30px;
 }
 
 /* ---------- selecting a row ---------- */
@@ -42082,6 +42084,11 @@ html[layout="2013L"] #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield .box,
 html[layout="2014"] #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield .box {
   border-radius: 2px 0 0 2px;
   border-right: 0;
+}
+html[layout="2013"] #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield,
+html[layout="2013L"] #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield,
+html[layout="2014"] #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield {
+  gap: 0;
 }
 html[layout="2013"] #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield button,
 html[layout="2013L"] #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield button,
@@ -42485,9 +42492,23 @@ html[layout="2014"] #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield button {
   color: #666;
   font-size: 13px;
 }
-/* (8.5) 2014: the colour the search page's +Name has */
+/* (8.5) 2014: the colour the search page's +Name has; (8.9) +Name 24px from the grid and the Share bubble
+   white on the grey band, as the inbox of October 2013 has them */
 html[layout="2014"] #ugf-gmail-account .plusname {
   color: #404040;
+  margin-right: 9px;
+}
+#ugf-gmail[chrome="m2013"] .ugf-b13-share {
+  background: #fff !important;
+}
+#ugf-gmail[chrome="m2013"] .ugf-b13-share::after {
+  border-top-color: #fff;
+}
+#ugf-gmail[chrome="m2013"] .ugf-b13-share:hover {
+  background: #f8f8f8 !important;
+}
+#ugf-gmail[chrome="m2013"] .ugf-b13-share:hover::after {
+  border-top-color: #f8f8f8;
 }
 #ugf-gmail-account .nbox {
   min-width: 26px;
@@ -42597,7 +42618,7 @@ html[layout="2014"] #ugf-gmail-account .plusname {
 #ugf-gmail[chrome="kennedy"] #ugf-gmail-account,
 #ugf-gmail[chrome="m2013"] #ugf-gmail-account {
   flex: 1 1 auto;
-  padding-right: 14px;
+  padding-right: 28px;
 }
 
 #ugf-gmail-gmark img {
@@ -42737,8 +42758,8 @@ html[layout="2014"] #ugf-gmail-account .plusname {
   overflow: visible;
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-logo img.google-mark {
-  height: 31px;
-  width: 90px;
+  height: auto;
+  width: 116px;
   max-height: none;
   align-self: center;
 }
@@ -46118,7 +46139,7 @@ html[gplex-gmail] body {
             listHTML += '<tr data-i="' + i + '" class="' + (r.unread ? "unread" : "") + '">' +
                 '<td class="ugf-gmail-check"><input type="checkbox"></td>' +
                 '<td class="ugf-gmail-star' + (r.starred ? " on" : "") + '">&#9733;</td>' +
-                (feat.tabs ? '<td class="ugf-gmail-imp' + (r.unread ? " on" : "") + '">&raquo;</td>' : "") +
+                (feat.tabs ? '<td class="ugf-gmail-imp">&raquo;</td>' : "") +
                 '<td class="ugf-gmail-from">' + esc(r.from) + "</td>" +
                 '<td class="ugf-gmail-subject">' + esc(r.subject) +
                 (r.snippet ? ' <span class="snippet">- ' + esc(r.snippet) + "</span>" : "") + "</td>" +
@@ -46414,17 +46435,18 @@ html[gplex-gmail] body {
                               '<button class="icon cap" data-act="density" title="Display density">' + ugfGmailIcon("density") + '<i class="dd">&#9662;</i></button>' +
                               '<button class="icon cap" data-act="tools" title="Input tools">' + ugfGmailIcon("keyboard") + '<i class="dd">&#9662;</i></button>'
                             : "") +
-                        (chrome === "classic" ? "" : '<button class="icon" data-act="settings" title="Settings">' + ugfGmailIcon("gear") + "</button>") +
+                        (chrome === "classic" ? "" : chrome === "m2013"
+                            ? '<button data-act="settings" title="Settings">' + ugfGmailIcon("gear") + '<i class="dd">&#9662;</i></button>'
+                            : '<button class="icon" data-act="settings" title="Settings">' + ugfGmailIcon("gear") + "</button>") +
                     "</div>" + selectHTML + tabsHTML +
                     '<table id="ugf-gmail-list">' + (listHTML ||
                         '<tr class="ugf-gmail-empty"><td colspan="6">' +
                         (ugfGmailIsRealSearch()
                             ? (ugfGmailListSettled() ? "No conversations matched your search." : "Searching\u2026")
                             : (ugfGmailListSettled() ? "0 Messages" : "Loading\u2026")) +
-                        "</td></tr>") + "</table>" +
+                        "</td></tr>") + "</table>" + footerHTML +
                 "</div>" +
-            "</div>" +
-            footerHTML);
+            "</div>");
         if (settingsView) {
             ugfGmailRenderSettings(shell, era, feat);
         } else if (threadView) {
