@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      8.5
+// @version      8.6
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube: StarTube by lightbeam24, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -76108,9 +76108,12 @@ html[gplex-gmail] body {
             row.querySelector(".xT") || row.querySelector(".y6") || row;
         return ugfGmailRealClick(target);
     }
-    // (8.5) Gmail's own boxes of 2018 on, which the lists before 2018 never had
-    const UGF_GMAIL_NEWER_BOXES = ["snoozed", "scheduled", "purchases", "categories", "social", "promotions", "updates",
-        "forums", "outbox", "manage labels", "create new label", "less", "more"];
+    // (8.5) Gmail's own boxes of 2018 on, which the lists before 2018 never had; (8.6) a function, not a
+    // constant: the page's code is started above this point, where a constant here is not initialised yet
+    function ugfGmailNewerBox(name) {
+        return ["snoozed", "scheduled", "purchases", "categories", "social", "promotions", "updates",
+            "forums", "outbox", "manage labels", "create new label", "less", "more"].indexOf(String(name).toLowerCase()) > -1;
+    }
     function ugfGmailLabels() {
         const out = [];
         const seen = {};
@@ -78809,7 +78812,7 @@ html[gplex-gmail] body {
                     known = true;
                 }
             });
-            if (!known && chrome !== "m2018" && UGF_GMAIL_NEWER_BOXES.indexOf(l.name.toLowerCase()) > -1) {
+            if (!known && chrome !== "m2018" && ugfGmailNewerBox(l.name)) {
                 known = true;
             }
             if (!known && navItems.length < 24) {
