@@ -345,35 +345,45 @@ MAIN_ADD = ("    global FILES\n"
             "                            log=lambda m: (sys.stdout.write(m + \"\\n\"), sys.stdout.flush()))\n")
 
 
-def install(path):
-    with open(path, "rb") as f:
-        raw = f.read()
-    crlf = b"\r\n" in raw
-    text = raw.decode("utf-8").replace("\r\n", "\n")
+def patched(text):
+    """server.py's text (LF line ends) with the four pieces, or None and why not: (text, reason)."""
     if IMPORT_ADD in text:
         done = all(x in text for x in (GLOBAL_ADD, MAIN_ADD)) and text.count(METHOD_ADD) == 2
-        return "%s already has the site files link%s." % (path, "" if done else ", but only in part: send me the file")
+        return None, "already has the site files link" + ("" if done else ", but only in part: send me the file")
     anchors = ((IMPORT_AT, text.count(IMPORT_AT)), ("CYDIA = None", len(GLOBAL_AT.findall(text))),
                ("def do_GET", text.count("    def do_GET(self):\n")), ("def do_POST", text.count("    def do_POST(self):\n")),
                (MAIN_AT.strip(), text.count(MAIN_AT)))
     missing = [a for a, n in anchors if n != 1]
     if missing:
-        return "%s has changed where the site files link goes (%s): send me the file." % (path, ", ".join(missing))
+        return None, "has changed where the site files link goes (%s): send me the file" % ", ".join(missing)
     text = text.replace(IMPORT_AT, IMPORT_AT + IMPORT_ADD)
     text = GLOBAL_AT.sub(lambda m: m.group(0) + GLOBAL_ADD, text)
     for method in ("    def do_GET(self):\n", "    def do_POST(self):\n"):
         text = text.replace(method, method + METHOD_ADD)
     text = text.replace(OLD_COMMENT, NEW_COMMENT)
     text = text.replace(MAIN_AT, MAIN_ADD + MAIN_AT)
-    compile(text, path, "exec")
-    backup = path + ".before-sitefiles"
-    if not os.path.exists(backup):
-        os.replace(path, backup)
-    with open(path, "wb") as f:
+    compile(text, "server.py", "exec")
+    return text, ""
+
+
+def install(path, backup=True):
+    """Puts the four pieces into server.py at path (keeping the old file as server.py.before-sitefiles,
+    unless backup is off); says what it did."""
+    with open(path, "rb") as f:
+        raw = f.read()
+    crlf = b"\r\n" in raw
+    text, reason = patched(raw.decode("utf-8").replace("\r\n", "\n"))
+    if text is None:
+        return "%s %s." % (path, reason)
+    if backup and not os.path.exists(path + ".before-sitefiles"):
+        os.replace(path, path + ".before-sitefiles")
+    tmp = path + ".updating"
+    with open(tmp, "wb") as f:
         f.write(text.replace("\n", "\r\n").encode("utf-8") if crlf else text.encode("utf-8"))
-    return ("Done: %s now answers the site files link (the old file is %s).\n"
+    os.replace(tmp, path)
+    return ("Done: %s now answers the site files link%s.\n"
             "Start the server as usual; it prints the link, which also lists the files when opened in a browser."
-            % (path, os.path.basename(backup)))
+            % (path, " (the old file is server.py.before-sitefiles)" if backup else ""))
 
 
 # ---------------------------------------------------------------- the command, from the cloud session
