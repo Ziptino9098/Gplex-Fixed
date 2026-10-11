@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      8.7
+// @version      8.8
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube: StarTube by lightbeam24, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -1178,6 +1178,10 @@ function ugfB13Bits(v) {
             : '<span class="ugf-b13-share" title="Share">Share</span>');
 }
 // the grid before them; (8.7) ugfB13AppsOpen opens the launcher from it, the address is for a middle click
+// the grid a page draws itself: these classes make it the Late 2014 drawing, with nothing left inside
+function ugfB13GridLate(v) {
+    return v === "2014N" ? " ugf-b13-grid late" : "";
+}
 function ugfB13Grid(v) {
     ugfB13Css();
     return '<a class="ugf-b13-grid' + (v === "2014N" ? " late" : "") + '" href="https://www.google.com/intl/en/options/" title="Google apps"></a>';
@@ -1192,11 +1196,36 @@ function ugfB13RedSignIn(v) {
 function ugfB13AppsCss() {
     return "#ugf-gmail-appsmenu {position: absolute; z-index: 1401; font: 13px arial, sans-serif;}\n#ugf-gmail-appsmenu #gp-apps-dd-card {scrollbar-width: none; background: #fff; padding: 28px 28px 12px 28px; border: 1px solid rgba(0,0,0,.2); box-shadow: 0 2px 10px rgba(0,0,0,.2); cursor: auto; overflow-y: auto; overscroll-behavior: contain; width: 264px; max-height: 442px; box-sizing: content-box;}\n#ugf-gmail-appsmenu #gp-apps-dd-card::-webkit-scrollbar {width: 0;}\n#ugf-gmail-appsmenu[chrome=\"m2018\"] #gp-apps-dd-card {border-radius: 8px;}\n#ugf-gmail-appsmenu .sector {display: flex; flex-wrap: wrap; justify-content: center;}\n#ugf-gmail-appsmenu .sector:nth-child(1) {padding-bottom: 28px; border-bottom: 1px solid #ebebeb;}\n#ugf-gmail-appsmenu .sector:nth-child(2), #ugf-gmail-appsmenu .sector:nth-child(3) {padding-top: 28px;}\n#ugf-gmail-appsmenu #even-more {color: #737373 !important; font-size: 13px; font-family: arial, sans-serif !important; text-decoration: none !important; margin: 0 auto;}\n#ugf-gmail-appsmenu #even-more:hover {text-decoration: underline !important;}\n#ugf-gmail-appsmenu .gp-app {width: 86px; height: 100px; font-size: 13px; font-family: arial, sans-serif !important; padding: 1px;}\n#ugf-gmail-appsmenu .gp-app-inner {text-decoration: none !important; margin: 7px 0; height: 86px; display: block; border: 1px solid transparent; border-radius: 2px;}\n#ugf-gmail-appsmenu .gp-app:hover .gp-app-inner {border: 1px solid #e5e5e5; background: rgba(255,255,255,.9);}\n#ugf-gmail-appsmenu .gp-app-icon {background-image: url(https://ssl.gstatic.com/gb/images/v1_76783e20.png); -webkit-background-size: 92px 2541px; background-size: 92px 2541px;}\n#ugf-gmail-appsmenu #myaccount .gp-app-icon {background-position: 0 -1451px;}\n#ugf-gmail-appsmenu #google-search .gp-app-icon {background-position: -17px -207px;}\n#ugf-gmail-appsmenu #maps .gp-app-icon {background-position: 0 -450px;}\n#ugf-gmail-appsmenu #youtube .gp-app-icon {background-position: 0 0;}\n#ugf-gmail-appsmenu #play .gp-app-icon {background-position: 0 -1779px;}\n#ugf-gmail-appsmenu #news .gp-app-icon {background-position: 0 -1990px;}\n#ugf-gmail-appsmenu #envelope .gp-app-icon {background-position: 0 -1710px;}\n#ugf-gmail-appsmenu #drive .gp-app-icon {background-position: 0 -138px;}\n#ugf-gmail-appsmenu #calendar .gp-app-icon {background-position: 0 -2059px;}\n#ugf-gmail-appsmenu #plus .gp-app-icon {background-position: 0 -938px;}\n#ugf-gmail-appsmenu #translate .gp-app-icon {background-position: 0 -693px;}\n#ugf-gmail-appsmenu #photos .gp-app-icon {background-position: 0 -1145px;}\n#ugf-gmail-appsmenu #shopping .gp-app-icon {background-position: 0 -1352px;}\n#ugf-gmail-appsmenu #wallet .gp-app-icon, #ugf-gmail-appsmenu #finance .gp-app-icon {background-image: url(https://ssl.gstatic.com/gb/images/p1_a4541be8.png); -webkit-background-size: 64px 2065px; background-size: 64px 2065px; background-position: 0 -966px;}\n#ugf-gmail-appsmenu #finance .gp-app-icon {background-position: 0 -1725px;}\n#ugf-gmail-appsmenu #docs .gp-app-icon {background-position: 0 -1214px;}\n#ugf-gmail-appsmenu #books .gp-app-icon {background-position: 0 -554px;}\n#ugf-gmail-appsmenu #blogger .gp-app-icon {background-position: 0 -1007px;}\n#ugf-gmail-appsmenu #contacts .gp-app-icon {background-position: 0 -69px;}\n#ugf-gmail-appsmenu #hangouts .gp-app-icon {background-position: 0 -2335px;}\n#ugf-gmail-appsmenu #chrome .gp-app-icon {background-image: url(\"" + UGF_D.i71 + "\"); background-size: 48px 48px; background-position: center; background-repeat: no-repeat; margin-top: 0; width: 64px !important; height: 64px !important;}\n#ugf-gmail-appsmenu[layout^=\"2016\"] #chrome .gp-app-icon, #ugf-gmail-appsmenu[layout^=\"2018\"] #chrome .gp-app-icon, #ugf-gmail-appsmenu[layout=\"2019\"] #chrome .gp-app-icon, #ugf-gmail-appsmenu[layout=\"2022\"] #chrome .gp-app-icon {background-image: url(\"" + UGF_D.i64 + "\");}\n#ugf-gmail-appsmenu .gp-app-icon {margin: 0 auto; height: 64px; width: 64px;}\n#ugf-gmail-appsmenu .gp-app-title {width: fit-content; margin: 0 auto; color: #404040 !important; text-decoration: none !important;}\n#ugf-gmail-appsmenu .gp-app-title {width: fit-content; margin: 0 auto; color: #404040 !important; text-decoration: none !important; text-align: center;}\n#ugf-gmail-appsmenu .gp-app-icon {margin: 0 auto; height: 64px; width: 64px;}";
 }
-// (8.7) the app launcher behind the grid on the pages outside the main function (My Account, Keep,
-// Advanced Search, Search settings): the menu Gplex gives Gmail and Maps, with Google's own sheet of app
-// icons for 2015-2019 and the pre-rebrand artwork carried inline for 2014 and early 2015. It lived in the
-// My Account page until 8.7; base is the "/u/1" of a second account, or "".
-function ugfB13AppsList(base) {
+// Docs, Sheets and Slides in the launcher: Google's product icons (the folded-corner pages, the same as
+// in the Docs menu), the 2020 redraw for 2022
+function ugfLauncherTrio(which, L) {
+    return "https://www.gstatic.com/images/branding/product/2x/" + which + (L === "2022" ? "_2020q4" : "") + "_48dp.png";
+}
+function ugfLauncherTrioStyle(which, L) {
+    return "background-image: url(" + ugfLauncherTrio(which, L) + ") !important; background-size: 48px 48px !important; " +
+        "background-position: center !important; background-repeat: no-repeat !important;";
+}
+// (8.7) the app launcher behind the grid on every page Gplex draws one on but the search pages (Gmail,
+// Calendar, News, Maps, My Account, Keep, Advanced Search, Search settings): Google's own sheet of app
+// icons for 2015-2019 and the artwork above where the period differs. In the 2014 layouts the sheet
+// of September 2013 to mid 2015 (Google+ first, no My Account). base is the "/u/1" of a second account, or "".
+function ugfB13AppsList(base, L) {
+    if (L === "2014") {
+        return [
+            [["plus", ugfPlusLink(), ugfPlusName()],
+             ["google-search", "https://www.google.com", "Search"],
+             ["youtube", "https://youtube.com", "YouTube"],
+             ["maps", "https://maps.google.com", "Maps"],
+             ["play", "https://play.google.com", "Play"],
+             ["news", "https://news.google.com", "News"],
+             ["envelope", "https://mail.google.com", "Gmail"],
+             ["drive", "https://drive.google.com", "Drive"],
+             ["calendar", "https://google.com/calendar", "Calendar"]],
+            [["translate", "https://translate.google.com", "Translate"],
+             ["books", "https://books.google.com", "Books"],
+             ["wallet", "https://wallet.google.com", "Wallet"]]
+        ];
+    }
     return [
         [["myaccount", "https://myaccount.google.com" + base + "/", "My Account"],
          ["google-search", "https://www.google.com", "Search"],
@@ -1258,7 +1287,7 @@ function ugfB13AppsOpen(anchor, L, chrome, base) {
         return e;
     };
     const inner = el("div", "", "gp-apps-dd-inner");
-    ugfB13AppsList(base || "").forEach(function(sector) {
+    ugfB13AppsList(base || "", L).forEach(function(sector) {
         const s = el("div", "sector");
         sector.forEach(function(app) {
             const box = el("div", "gp-app", app[0]);
@@ -1291,33 +1320,43 @@ function ugfB13AppsOpen(anchor, L, chrome, base) {
     const r = anchor.getBoundingClientRect();
     menu.style.left = Math.max(8, r.right + window.scrollX - 322) + "px";
     menu.style.top = (r.bottom + window.scrollY + 6) + "px";
-    const old = ugfLauncherArt(L);   // the marks of before the September 2015 rebrand
-    const bg = function(ic, url, inline) {
-        ic.style.setProperty("background-image", 'url("' + url + '")', "important");
-        ic.style.setProperty("background-size", inline ? "64px 64px" : "48px 48px", "important");
-        ic.style.setProperty("background-position", inline ? "0 0" : "center", "important");
-        ic.style.setProperty("background-repeat", "no-repeat", "important");
-    };
-    if (old) {
-        Object.keys(old).forEach(function(id) {
-            const ic = menu.querySelector("#" + id + " .gp-app-icon");
-            if (ic) {
-                bg(ic, old[id], true);
-            }
-        });
-    }
-    ["docs", "sheets", "slides"].forEach(function(n) {
-        const ic = menu.querySelector("#gp-" + n + " .gp-app-icon");
+    // the period's artwork over the sheet: the inline pictures are already 44px in a 64px cell, as the
+    // sheet is; anything fetched is centred at 48px
+    const art = ugfLauncherArt(L) || {};
+    ["docs", "sheets", "slides"].forEach(function(which) {
+        art["gp-" + which] = ugfLauncherTrio(which, L);
+    });
+    Object.keys(art).forEach(function(id) {
+        const ic = menu.querySelector("#" + id + " .gp-app-icon");
+        const inline = art[id].indexOf("data:") === 0;
         if (ic) {
-            bg(ic, "https://www.gstatic.com/images/branding/product/2x/" + n + "_48dp.png", false);
+            ic.style.setProperty("background-image", 'url("' + art[id] + '")', "important");
+            ic.style.setProperty("background-size", inline ? "64px 64px" : "48px 48px", "important");
+            ic.style.setProperty("background-position", inline ? "0 0" : "center", "important");
+            ic.style.setProperty("background-repeat", "no-repeat", "important");
         }
     });
     fence.addEventListener("click", ugfB13AppsClose);
 }
-// (8.3) the launcher of 2012 to mid 2015, for every page Gplex draws one on: Google a lowercase g, Google+
-// a red square, the older Books, Contacts, Translate and Maps marks, and in 2014 the rest of the sheet
-// Google's bar drew then. Null for any other layout: the era's own sheet.
+// (8.3) the launcher's artwork for every page Gplex draws one on: 2012 to mid 2015 Google a lowercase g,
+// Google+ a red square, the older Books, Contacts, Translate and Maps marks, and in 2014 the rest of the
+// sheet Google's bar drew then; 2022 the tiles the 2020 refresh redrew. Null for any other layout: the
+// era's own sheet.
 function ugfLauncherArt(L) {
+    if (L === "2022") {
+        // the 2020 refresh redrew part of the set; the rest is still Google's current artwork
+        const p2 = "https://www.gstatic.com/images/branding/product/2x/";
+        const q4 = function(name) {
+            return p2 + name + "_2020q4_48dp.png";
+        };
+        const std = function(name) {
+            return p2 + name + "_48dp.png";
+        };
+        return { envelope: q4("gmail"), drive: q4("drive"), calendar: q4("calendar"), docs: q4("docs"),
+            maps: "https://www.gstatic.com/images/branding/productlogos/maps/v7/192px.svg",
+            "google-search": std("googleg"), youtube: std("youtube"), play: std("play_prism"), news: std("news"), photos: std("photos"),
+            translate: std("translate"), contacts: std("contacts"), shopping: std("shopping"), finance: std("finance"), blogger: std("blogger") };
+    }
     if (["2012", "2013", "2013L", "2014", "2015"].indexOf(L) < 0) {
         return null;
     }
@@ -61107,6 +61146,10 @@ html[news-results] #ugf-search-results-container .ugf-news-result .ugf-news-resu
 [shopping-results] .ugf-shop-main {
   flex: 1 1 auto !important;
 }
+/* (8.8) links turned red while pressed on the pages of late 2011 to 2016 (Google's own a:active{color:#dd4b39}) */
+html:is([layout="2012"], [layout="2013"], [layout="2013L"], [layout="2014"], [layout="2015"], [layout="2015L"], [layout="2016"], [layout="2016L"]) :is(#ugf-search-results-container, #ugf-sidebar, #ugf-right, #ugf-footer, #ugf-hp-footer, #ugf-hp-search-links) a:active {
+  color: #dd4b39 !important;
+}
 /* 2.6.1: Google Images / Google Video homepages */
 html:not([home-vertical]) #ugf-hp-vertical-label {
   display: none;
@@ -61136,6 +61179,33 @@ html:not([home-vertical]) #ugf-hp-vertical-label {
   font-size: 18px;
   font-weight: bold;
   color: #555;
+}
+/* (8.8) the word at the logo's baseline under its second o, as the imghp pages had it: inside the
+   picture until September 2013 (the 276x110 images_logo_lg.gif, swapped in by ugfVerticalHome; the
+   Shopping page gets the same lettering), then 16px bold #1370E5, 70px down and 115px in from the
+   right of the 276px logo box (the pages of December 2013 to October 2014) */
+html[layout="2012"][home-vertical="images"] #ugf-hp-logo img,
+html[layout="2013"][home-vertical="images"] #ugf-hp-logo img,
+html[layout="2013L"][home-vertical="images"] #ugf-hp-logo img {
+  width: 276px;
+  height: 110px;
+}
+html[layout="2012"][home-vertical="shopping"] #ugf-hp-vertical-label,
+html[layout="2013"][home-vertical="shopping"] #ugf-hp-vertical-label,
+html[layout="2013L"][home-vertical="shopping"] #ugf-hp-vertical-label {
+  top: -18px;
+  right: 69px;
+  font-size: 20px;
+  font-weight: normal;
+  color: #1b3dbc;
+}
+html[layout="2014"][home-vertical] #ugf-hp-vertical-label,
+html[layout="2015"][home-vertical] #ugf-hp-vertical-label {
+  top: -22px;
+  right: 111px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #1370e5;
 }
 [home-vertical] #ugf-lucky-btn {
   display: none !important;
@@ -65374,19 +65444,19 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                                                       </div>
                                                       <div class="gp-app" id="gp-docs">
                                                       	<a class="gp-app-inner" href="https://docs.google.com/document/u/0/">
-                                                      		<div class="gp-app-icon" style="${ugfLauncherTrioStyle("docs")}"></div>
+                                                      		<div class="gp-app-icon" style="${ugfLauncherTrioStyle("docs", layout)}"></div>
                                                       		<div class="gp-app-title">Docs</div>
                                                       	</a>
                                                       </div>
                                                       <div class="gp-app" id="gp-sheets">
                                                       	<a class="gp-app-inner" href="https://docs.google.com/spreadsheets/u/0/">
-                                                      		<div class="gp-app-icon" style="${ugfLauncherTrioStyle("sheets")}"></div>
+                                                      		<div class="gp-app-icon" style="${ugfLauncherTrioStyle("sheets", layout)}"></div>
                                                       		<div class="gp-app-title">Sheets</div>
                                                       	</a>
                                                       </div>
                                                       <div class="gp-app" id="gp-slides">
                                                       	<a class="gp-app-inner" href="https://docs.google.com/presentation/u/0/">
-                                                      		<div class="gp-app-icon" style="${ugfLauncherTrioStyle("slides")}"></div>
+                                                      		<div class="gp-app-icon" style="${ugfLauncherTrioStyle("slides", layout)}"></div>
                                                       		<div class="gp-app-title">Slides</div>
                                                       	</a>
                                                       </div>
@@ -75294,186 +75364,6 @@ html[layout="2014"] #ugf-gmail-account .plusname {
   padding: 8px 0;
 }
 #ugf-gmail-movemenu[chrome="m2018"] a { padding: 7px 18px; }
-#ugf-gmail-appsmenu {
-  position: absolute;
-  z-index: 1401;
-  font: 13px arial, sans-serif;
-}
-#ugf-gmail-appsmenu #gp-apps-dd-card {
-  scrollbar-width: none;
-  background: #fff;
-  padding: 28px 28px 12px 28px;
-  border: 1px solid rgba(0,0,0,.2);
-  box-shadow: 0 2px 10px rgba(0,0,0,.2);
-  cursor: auto;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  /* three 88px columns - the same as google.com's own card */
-  width: 264px;
-  max-height: 442px;
-  box-sizing: content-box;
-}
-#ugf-gmail-appsmenu #gp-apps-dd-card::-webkit-scrollbar {
-  width: 0;
-}
-#ugf-gmail-appsmenu[chrome="m2018"] #gp-apps-dd-card {
-  border-radius: 8px;
-}
-.sector {
-  display: flex;
-  flex-wrap: wrap;
-  /* centre the rows: the card is wider than three columns on some browsers, and
-     without this the whole grid hugged the left edge */
-  justify-content: center;
-}
-.sector:nth-child(1) {
-  padding-bottom: 28px;
-  border-bottom: 1px solid #ebebeb;
-}
-.sector:nth-child(2),
-.sector:nth-child(3) {
-  padding-top: 28px;
-}
-#even-more {
-  color: #737373 !important;
-  font-size: 13px;
-  font-family: arial, sans-serif !important;
-  text-decoration: none !important;
-  margin: 0 auto;
-}
-#even-more:hover {
-  text-decoration: underline !important;
-}
-.gp-app {
-  width: 86px;
-  height: 100px;
-  font-size: 13px;
-  font-family: arial, sans-serif !important;
-  padding: 1px;
-}
-.gp-app-inner {
-  text-decoration: none !important;
-  margin: 7px 0;
-  height: 86px;
-  display: block;
-  border: 1px solid transparent;
-  border-radius: 2px;
-}
-.gp-app:hover .gp-app-inner {
-  border: 1px solid #e5e5e5;
-  background: rgba(255,255,255,.9);
-}
-.gp-app-icon {
-   background-image: url(https://ssl.gstatic.com/gb/images/v1_76783e20.png);
-   -webkit-background-size: 92px 2541px;
-  background-size: 92px 2541px;
-}
-#myaccount .gp-app-icon {
-  background-position: 0 -1451px;
-}
-#google-search .gp-app-icon {
-  background-position: -17px -207px;
-}
-#maps .gp-app-icon {
-  background-position: 0 -450px;
-}
-#youtube .gp-app-icon {
-  background-position: 0 0;
-}
-#play .gp-app-icon {
-  background-position: 0 -1779px;
-}
-#news .gp-app-icon {
-  background-position: 0 -1990px;
-}
-#envelope .gp-app-icon {
-  background-position: 0 -1710px;
-}
-#drive .gp-app-icon {
-  background-position: 0 -138px;
-}
-#calendar .gp-app-icon {
-  background-position: 0 -2059px;
-}
-#plus .gp-app-icon {
-  background-position: 0 -938px;
-}
-#translate .gp-app-icon {
-  background-position: 0 -693px;
-}
-#photos .gp-app-icon {
-  background-position: 0 -1145px;
-}
-#shopping .gp-app-icon {
-  background-position: 0 -1352px;
-}
-#wallet .gp-app-icon,
-#finance .gp-app-icon {
-  background-image: url(https://ssl.gstatic.com/gb/images/p1_a4541be8.png);
-  -webkit-background-size: 64px 2065px;
-  background-size: 64px 2065px;
-  background-position: 0 -966px;
-}
-#finance .gp-app-icon {
-  background-position: 0 -1725px;
-}
-#docs .gp-app-icon {
-  background-position: 0 -1214px;
-}
-#books .gp-app-icon {
-  background-position: 0 -554px;
-}
-#blogger .gp-app-icon {
-  background-position: 0 -1007px;
-}
-#contacts .gp-app-icon {
-  background-position: 0 -69px;
-}
-#hangouts .gp-app-icon {
-  background-position: 0 -2335px;
-}
-#chrome .gp-app-icon {
-  background-image: url("${UGF_CHROME_ICON_2011}");
-  /* the same 64px box as every other icon, with the logo drawn at the sheet's
-     48px glyph size - a 56px box with an 8px offset left it oversized, and the
-     offset got lost in one copy of this rule, lifting the label out of line */
-  background-size: 48px 48px;
-  background-position: center;
-  background-repeat: no-repeat;
-  margin-top: 0;
-  width: 64px !important;
-  height: 64px !important;
-}
-[layout^="2016"] #chrome .gp-app-icon,
-[layout^="2018"] #chrome .gp-app-icon,
-[layout="2019"] #chrome .gp-app-icon,
-[layout="2022"] #chrome .gp-app-icon {
-  background-image: url("${UGF_CHROME_ICON_2014}");
-}
-.gp-app-icon {
-  margin: 0 auto;
-  height: 64px;
-  width: 64px;
-}
-.gp-app-title {
-  width: fit-content;
-  margin: 0 auto;
-  color: #404040 !important;
-  text-decoration: none !important;
-}
-#ugf-gmail-appsmenu .gp-app-title {
-  width: fit-content;
-  margin: 0 auto;
-  color: #404040 !important;
-  text-decoration: none !important;
-  text-align: center;
-}
-#ugf-gmail-appsmenu .gp-app-icon {
-  margin: 0 auto;
-  height: 64px;
-  width: 64px;
-}
-
 /* late 2012-2013: no name on the bar, text centred, and selection is just the
    highlight - the red rule over the current product belongs to the 2011 bar */
 #ugf-gmail #ugf-gmail-gbar.dark.late a {
@@ -78505,7 +78395,8 @@ html[gplex-gmail] body {
         }, 0);
     }
     function ugfGmailCloseMenus() {
-        document.querySelectorAll("#ugf-gmail-accmenu, #ugf-gmail-appsmenu, #ugf-gmail-accfence, #ugf-gmail-movemenu").forEach(function(el) {
+        ugfB13AppsClose();
+        document.querySelectorAll("#ugf-gmail-accmenu, #ugf-gmail-accfence, #ugf-gmail-movemenu").forEach(function(el) {
             el.remove();
         });
     }
@@ -78550,143 +78441,13 @@ html[gplex-gmail] body {
         menu.style.top = (r.bottom + window.scrollY + 4) + "px";
         fence.addEventListener("click", ugfGmailCloseMenus);
     }
-    // the app launcher, with the same set google.com's grid offers
-    // The launcher is the same grid google.com gets, ported across with its ids so
-    // the sprite icons and sector layout come along unchanged.
-    function ugfGmailAppsList() {
-        return [
-            [["myaccount", "https://myaccount.google.com/", "My Account"],
-             ["google-search", "https://www.google.com", "Search"],
-             ["maps", "https://maps.google.com", "Maps"],
-             ["youtube", "https://youtube.com", "YouTube"],
-             ["play", "https://play.google.com", "Play"],
-             ["news", "https://news.google.com", "News"],
-             ["envelope", "https://mail.google.com", "Gmail"],
-             ["drive", "https://drive.google.com", "Drive"],
-             ["calendar", "https://google.com/calendar", "Calendar"],
-             ["plus", ugfPlusLink(), ugfPlusName()],
-             ["translate", "https://translate.google.com", "Translate"],
-             ["photos", "https://photos.google.com", "Photos"],
-             // Docs, Sheets and Slides: a row of their own
-             ["gp-docs", "https://docs.google.com/document/u/0/", "Docs"],
-             ["gp-sheets", "https://docs.google.com/spreadsheets/u/0/", "Sheets"],
-             ["gp-slides", "https://docs.google.com/presentation/u/0/", "Slides"]],
-            [["shopping", "https://www.google.com/shopping", "Shopping"],
-             ["wallet", "https://wallet.google.com", "Wallet"],
-             ["finance", "https://www.google.com/finance", "Finance"],
-             ["books", "https://books.google.com", "Books"],
-             ["blogger", "https://www.blogger.com", "Blogger"],
-             ["contacts", "https://www.google.com/contacts", "Contacts"],
-             ["hangouts", "https://hangouts.google.com", "Hangouts"],
-             ["chrome", "https://www.google.com/chrome/", "Chrome"]]
-        ];
-    }
-    // The sheet the grid already uses is Google's Material-era artwork, which is the
-    // right generation for 2015-2019. 2020 is when Google redrew part of the set - and
-    // only part of it, which is why the rest still comes from the same place Google
-    // serves it from today. Earlier generations are not reachable from here.
-    function ugfGmailGridArt() {
-        const lay = String(layout || "");
-        // The four-colour capital G arrived in September 2015, so early 2015 still
-        // belongs to the old set - 2015L is the one that gets the new mark.
-        if (lay !== "2022") {
-            return ugfLauncherArt(lay);   // the marks of before the 2015 rebrand, or the era's own sheet
-        }
-        const p2 = "https://www.gstatic.com/images/branding/product/2x/";
-        const q4 = function(n) {
-            return p2 + n + "_2020q4_48dp.png";
-        };
-        const std = function(n) {
-            return p2 + n + "_48dp.png";
-        };
-        return {
-            // redrawn in the 2020 refresh
-            envelope: q4("gmail"), drive: q4("drive"), calendar: q4("calendar"), docs: q4("docs"),
-            maps: "https://www.gstatic.com/images/branding/productlogos/maps/v7/192px.svg",
-            // untouched by it, so these are still the current artwork
-            "google-search": std("googleg"), youtube: std("youtube"), play: std("play_prism"),
-            news: std("news"), photos: std("photos"), translate: std("translate"),
-            contacts: std("contacts"), shopping: std("shopping"), finance: std("finance"),
-            blogger: std("blogger")
-        };
-    }
-    // Docs, Sheets and Slides in the app launcher: Google's product icons (the folded-
-    // corner pages, the same as in the Docs menu), the 2020 redraw for 2020-2022
-    function ugfLauncherTrio(which) {
-        const lay = String(layout || "");
-        return { url: "https://www.gstatic.com/images/branding/product/2x/" + which + (lay === "2022" ? "_2020q4" : "") + "_48dp.png", inline: false };
-    }
-    function ugfLauncherTrioStyle(which) {
-        const t = ugfLauncherTrio(which);
-        return "background-image: url(" + t.url + ") !important; background-size: " + (t.inline ? "64px 64px" : "48px 48px") +
-            " !important; background-position: " + (t.inline ? "0 0" : "center") + " !important; background-repeat: no-repeat !important;";
-    }
-    function ugfGmailAppsMenu(anchor, chrome) {
-        if (document.querySelector("#ugf-gmail-appsmenu")) {
-            ugfGmailCloseMenus();
-            return;
-        }
-        const esc = ugfEscapeHtml;
-        let html = "";
-        ugfGmailAppsList().forEach(function(sector) {
-            html += '<div class="sector">';
-            sector.forEach(function(a) {
-                html += '<div class="gp-app" id="' + esc(a[0]) + '">' +
-                    '<a class="gp-app-inner" href="' + esc(a[1]) + '">' +
-                    '<div class="gp-app-icon"></div>' +
-                    '<div class="gp-app-title">' + esc(a[2]) + "</div></a></div>";
-            });
-            html += "</div>";
-        });
-        html += '<div class="sector"><a id="even-more" href="https://www.google.com/intl/en/options">' +
-            "Even more from Google</a></div>";
-        const fence = document.createElement("div");
-        fence.id = "ugf-gmail-accfence";
-        const menu = document.createElement("div");
-        menu.id = "ugf-gmail-appsmenu";
-        menu.setAttribute("chrome", chrome);
-        menu.innerHTML = trusted_policy.createHTML('<div id="gp-apps-dd-card"><div id="gp-apps-dd-inner">' + html + "</div></div>");
-        document.body.appendChild(fence);
-        document.body.appendChild(menu);
-        const r = anchor.getBoundingClientRect();
-        let left = r.right - 322;
-        if (left < 8) {
-            left = 8;
-        }
-        menu.style.left = left + "px";
-        menu.style.top = (r.bottom + window.scrollY + 6) + "px";
-        const art = ugfGmailGridArt();
-        if (art) {
-            menu.querySelectorAll(".gp-app").forEach(function(el) {
-                const url = art[el.id];
-                const ic = url && el.querySelector(".gp-app-icon");
-                if (!ic) {
-                    return;   // no period artwork for this one: leave the sheet alone
-                }
-                ic.style.setProperty("background-image", 'url("' + url + '")', "important");
-                const inline = url.indexOf("data:") === 0;
-                // the inline ones are already trimmed to 44px inside a 64px cell, the
-                // same as the sheet; anything fetched gets centred at 48px instead
-                ic.style.setProperty("background-size", inline ? "64px 64px" : "48px 48px", "important");
-                ic.style.setProperty("background-position", inline ? "0 0" : "center", "important");
-                ic.style.setProperty("background-repeat", "no-repeat", "important");
-            });
-        }
-        ["docs", "sheets", "slides"].forEach(function(w) {
-            const ic = menu.querySelector("#gp-" + w + " .gp-app-icon");
-            if (ic) {
-                ic.setAttribute("style", ugfLauncherTrioStyle(w));
-            }
-        });
-        fence.addEventListener("click", ugfGmailCloseMenus);
-    }
     function ugfGmailWireAccount(shell, chrome) {
         const apps = shell.querySelector("#ugf-gmail-apps");
         if (apps) {
             apps.addEventListener("click", function(ev) {
                 ev.preventDefault();
                 ev.stopPropagation();
-                ugfGmailAppsMenu(apps, chrome);
+                ugfB13AppsOpen(apps, String(layout || ""), chrome, "");
             });
         }
         // The name on the Google bar (late 2011-2012 and earlier, and the legacy layouts
@@ -79097,8 +78858,8 @@ html[gplex-gmail] body {
             accountHTML = '<a class="plusname" href="' + esc(ugfPlusProfileLink()) + '">' +
                 "+" + esc(ugfGmailPlusName()) + "</a>" +
                 // 2014: the app grid joined the block, then the new bar's bell, Share and photo
-                (String(layout || "") === "2014" ? '<span class="ic grid' + (ugf14() === "2014N" ? " ugf-b13-grid late" : "") + '" id="ugf-gmail-apps" title="Google apps">' +
-                    (ugf14() === "2014N" ? "" : ugfGmailIcon("apps", 20)) + "</span>" + ugfB13Bits(ugf14()) +
+                (String(layout || "") === "2014" ? '<span class="ic grid' + ugfB13GridLate(ugf14()) + '" id="ugf-gmail-apps" title="Google apps">' +
+                    (ugfB13GridLate(ugf14()) ? "" : ugfGmailIcon("apps", 20)) + "</span>" + ugfB13Bits(ugf14()) +
                     '<span class="pfpwrap ' + ugfB13PhotoClass(ugf14()) + '">' + ugfGmailAvatar() + "</span>"
                     : '<span class="nbox">0</span>' +
                     '<span class="sharebtn"><b>+</b> Share</span>' +
@@ -91136,7 +90897,7 @@ html[gplex-gmail] body {
                 return '<div class="kcorner"><a class="' + (red ? "ksignin red" : "ksignin") + '" href="https://accounts.google.com/ServiceLogin">' + (red ? "SIGN IN" : "Sign in") + "</a></div>";
             }
             return '<div class="kcorner gplus"><a class="plusname" href="' + ugfEsc(ugfPlusProfileLink()) + '">+' + ugfEsc(ugfGmailPlusName()) + "</a>" +
-                (l === "2014" ? '<a href="#" class="kic apps" title="Google apps">' + ugfNtIcon("apps", 24) + "</a>" + ugfB13Bits(ugf14()) +
+                (l === "2014" ? '<a href="#" class="kic apps' + ugfB13GridLate(ugf14()) + '" title="Google apps">' + (ugfB13GridLate(ugf14()) ? "" : ugfNtIcon("apps", 24)) + "</a>" + ugfB13Bits(ugf14()) +
                     '<a href="#" class="pfpwrap me ' + ugfB13PhotoClass(ugf14()) + '">' + ugfGmailAvatar() + "</a></div>"
                     : '<span class="nbox">0</span><span class="sharebtn"><b>+</b> Share</span><a href="#" class="pfpwrap me">' + ugfGmailAvatar() + '<i class="car">&#9662;</i></a></div>');
         }
@@ -91204,7 +90965,7 @@ html[gplex-gmail] body {
             el.addEventListener("click", function(ev) {
                 ev.preventDefault();
                 ev.stopPropagation();
-                ugfGmailAppsMenu(el, chrome);
+                ugfB13AppsOpen(el, String(layout || ""), chrome, "");
             });
         });
     }
@@ -98124,7 +97885,7 @@ html[gplex-gmail] body {
         if (l === "2013" || l === "2014") {
             return '<div id="ugf-cal-account" class="gplus"><a class="plusname" href="' + esc(ugfPlusProfileLink()) + '">+' +
                 esc(ugfGmailPlusName()) + "</a>" +
-                (l === "2014" ? '<a class="ic appsg" href="#" title="Google apps">' + ugfCalIcon("apps", 20) + "</a>" + ugfB13Bits(ugf14()) +
+                (l === "2014" ? '<a class="ic appsg' + ugfB13GridLate(ugf14()) + '" href="#" title="Google apps">' + (ugfB13GridLate(ugf14()) ? "" : ugfCalIcon("apps", 20)) + "</a>" + ugfB13Bits(ugf14()) +
                     '<span class="pfpwrap ' + ugfB13PhotoClass(ugf14()) + '">' + ugfGmailAvatar() + "</span></div>"
                     : '<span class="nbox">0</span><span class="sharebtn"><b>+</b> Share</span>' +
                     '<span class="pfpwrap">' + ugfGmailAvatar() + '<i class="car">&#9662;</i></span></div>');
@@ -100704,7 +100465,7 @@ html[gplex-gmail] body {
             el.addEventListener("click", function(ev) {
                 ev.preventDefault();
                 ev.stopPropagation();
-                ugfGmailAppsMenu(el, menuChrome);
+                ugfB13AppsOpen(el, String(layout || ""), menuChrome, "");
             });
         });
         const burger = shell.querySelector(".burger");
@@ -103415,7 +103176,7 @@ html[gplex-gmail] body {
         return '<div id="ugf-maps-account">' +
             '<a class="plusname" href="' + esc(ugfPlusProfileLink()) + '">' +
             "+" + esc(ugfGmailPlusName()) + "</a>" +
-            (withApps ? '<a class="ic grid" href="https://www.google.com/intl/en/about/products/" title="Apps">' + ugfGmailIcon("apps", 20) + "</a>" : "") +
+            (withApps ? '<a class="ic grid' + ugfB13GridLate(ugf14()) + '" href="https://www.google.com/intl/en/about/products/" title="Google apps">' + (ugfB13GridLate(ugf14()) ? "" : ugfGmailIcon("apps", 20)) + "</a>" : "") +
             (String(layout || "") === "2014" ? ugfB13Bits(ugf14()) + '<span class="pfpwrap ' + ugfB13PhotoClass(ugf14()) + '">' + ugfGmailAvatar() + "</span></div>"
                 : '<span class="nbox">0</span>' +
                 '<span class="sharebtn"><b>+</b> Share</span>' +
@@ -104458,7 +104219,7 @@ html[gplex-gmail] body {
                 }
                 ev.preventDefault();
                 ev.stopPropagation();
-                ugfGmailAppsMenu(el, menuChrome);
+                ugfB13AppsOpen(el, String(layout || ""), menuChrome, "");
             });
         });
         ugfMapsLinks(shell, map);
@@ -107199,14 +106960,21 @@ html[gplex-gmail] body {
         const shopName = froogle ? "Froogle" : (productSearch ? "Product Search" : "Shopping");
         document.title = isShopping ? (froogle ? "Froogle" : (productSearch ? "Google Product Search" : "Google Shopping")) : (isImages ? "Google Images" : "Google Videos");
         ugf2009WaitFor("#ugf-hp-logo-companion", function(comp) {
+            const lay = String(layout || "");
+            // (8.8) until September 2013 Images drew its logo with the word inside the picture (276x110)
+            if (isImages && /^(2012|2013|2013L)$/.test(lay)) {
+                document.querySelector("#melvin-hp-logo").src = "https://www.google.com/intl/en_ALL/images/logos/images_logo_lg.gif";
+                return;
+            }
             if (!comp.querySelector("#ugf-hp-vertical-label")) {
                 const lab = document.createElement("div");
                 lab.id = "ugf-hp-vertical-label";
                 const old = document.querySelector("html").hasAttribute("legacy-gbar");
+                const cap = old || lay === "2014" || lay === "2015";   // "Images" again from late 2013
                 if (isShopping) {
-                    lab.textContent = (froogle || productSearch) ? shopName : (old ? "Shopping" : "shopping");
+                    lab.textContent = (froogle || productSearch) ? shopName : lay === "2012" ? "product search" : (cap ? "Shopping" : "shopping");
                 } else {
-                    lab.textContent = isImages ? (old ? "Images" : "images") : (old ? "Video" : "videos");
+                    lab.textContent = isImages ? (cap ? "Images" : "images") : (old ? "Video" : "videos");
                 }
                 comp.appendChild(lab);
             }
