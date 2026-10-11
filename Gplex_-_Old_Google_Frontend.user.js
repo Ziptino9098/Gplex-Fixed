@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      8.4
+// @version      8.5
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube: StarTube by lightbeam24, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -1120,7 +1120,11 @@ function ugfDarkLabel() {
 function ugf2014V(){
     try{
         var v=null;
-        if(window.location.host==="www.google.com"){ try{ v=window.localStorage.getItem("UGF_2014V"); }catch(e){} }
+        if(window.location.host==="www.google.com"){
+            try{ v=window.localStorage.getItem("UGF_2014V"); }catch(e){}
+            // (8.5) the other hosts (Gmail among them) read the shared copy: it is kept in step with this one
+            try{ if(v!==null&&typeof GM_setValue==="function"&&GM_getValue("UGF_2014V",null)!==v){ GM_setValue("UGF_2014V",v); } }catch(e){}
+        }
         if(v===null||v===undefined){ v=typeof GM_getValue==="function"?GM_getValue("UGF_2014V",null):null; }
         v=String(v||"");
         return v==="2013N"||v==="2014E"||v==="2014N"?v:"";
@@ -51449,8 +51453,8 @@ html[ugf-more-open] #ugf-more-dd {
 #ugf-tools-row {
   display: none;
   align-items: center;
-  height: 28px;
-  margin: 0 0 8px 0;
+  height: 45px;
+  margin: 0;
   padding-left: 8px;
   font-size: 13px;
   color: #777;
@@ -51458,7 +51462,14 @@ html[ugf-more-open] #ugf-more-dd {
 html[ugf-tools-open] #ugf-tools-row {
   display: flex;
 }
-html[ugf-tools-open] #ugf-search-results-header {
+/* (8.5) the count stays, at the right of the tools row, and the row is as tall as the count's line was,
+   so the results do not move when the tools open (Images has no count line: nothing to keep) */
+html[ugf-tools-open] #ugf-tools-row:not(.ugf-tools-images) + #ugf-search-results-header {
+  margin-top: -45px;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+html[ugf-tools-open] #ugf-tools-row.ugf-tools-images ~ #ugf-search-results-header {
   display: none !important;
 }
 /* the Search tools tab pressed in, as Google's was while the row is open */
@@ -67162,7 +67173,11 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 sidebarTitle = mode == 3 ? ugfEscapeHtml(String(itemRoot.textContent || "").trim()) : itemRoot.innerHTML;
             }
             if (itemId == "subtitle" && !sidebarSubtitle) {
-                sidebarSubtitle = mode == 3 ? ugfEscapeHtml(String(itemRoot.textContent || "").trim()) : itemRoot.innerHTML;
+                const sub = String(itemRoot.textContent || "").replace(/\s+/g, " ").trim();
+                // (8.5) a product's stars and their count ("(7.1K)") came in 2017; before that the line said what the thing was
+                if (!(mode == 3 && ugfKpEra() === "k" && /^[\d.,]*\s*(?:\u2605+|stars?)?\s*\(?[\d.,]+[KkMm]?\)?$/.test(sub))) {
+                    sidebarSubtitle = mode == 3 ? ugfEscapeHtml(sub) : itemRoot.innerHTML;
+                }
             }
             if ((itemId == "image" || itemId == "VisualDigestFirstImageResult") && !sbImg && itemRoot.querySelector("img")) {
                 const im = itemRoot.querySelector("img");
@@ -69075,6 +69090,11 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             if (!t || t.length > 48 || !ugfKpOwnText(el)) {
                 continue;
             }
+            // (8.5) a heading only screen readers get ("Image Carousel") is no heading here
+            const r = el.getBoundingClientRect();
+            if (r.width <= 1 || r.height <= 1) {
+                continue;
+            }
             const s = getComputedStyle(el);
             const fs = parseFloat(s.fontSize) || 0;
             const fw = parseInt(s.fontWeight, 10) || 400;
@@ -69205,6 +69225,19 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         }
         return null;
     }
+    // (8.5) what the panel only has today: a row of tabs or chips (Details, Reviews, Stores; Color,
+    // Storage) and a list of offers with prices. The panel of 2012-2016 had none of it.
+    function ugfKpModern(kc) {
+        const text = ugfKpText(kc);
+        const buttons = Array.prototype.filter.call(kc.querySelectorAll('[role="button"], [role="tab"], button'), function(b) {
+            const t = ugfKpText(b);
+            return t && t.length <= 14 && !b.querySelector("img");
+        });
+        if (buttons.length >= 2 && text.length < 24 * buttons.length) {
+            return true;
+        }
+        return (text.match(/[$\u20ac\u00a3]\s?\d/g) || []).length >= 2;
+    }
     function ugfKpRebuild(root, tries) {
         if (!root) {
             return;
@@ -69237,7 +69270,8 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         };
         const facts = [];
         root.querySelectorAll(".ugf-kc").forEach(function(kc) {
-            if (!ugfKpText(kc)) {
+            if (!ugfKpText(kc) || ugfKpModern(kc)) {
+                kc.remove();
                 return;
             }
             try {
@@ -72568,9 +72602,6 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
   align-items: center;
   padding-left: 6px;
 }
-#ugf-gmail[chrome="m2013"] #ugf-gmail-logo img.google-mark {
-  height: 28px;
-}
 #ugf-gmail[chrome="m2013"] #ugf-gmail-searchrow {
   flex: 1 1 auto;
   padding: 0;
@@ -73917,9 +73948,6 @@ html[layout="2022"] #ugf-gmail[chrome="m2018"] .ugf-gmail-searchfield {
   box-shadow: 0 1px 1px rgba(0,0,0,.1);
 }
 /* header proportions measured off the 2014 template */
-#ugf-gmail[chrome="m2013"] #ugf-gmail-logo img.google-mark {
-  height: 26px;
-}
 #ugf-gmail[chrome="m2013"] #ugf-gmail-gmark {
   padding-left: 30px;
   height: 46px;
@@ -74244,10 +74272,6 @@ html[layout="2022"] #ugf-gmail[chrome="m2018"] .ugf-gmail-searchfield {
   flex: 1 1 auto;
   min-width: 0;
 }
-#ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield button {
-  flex: 0 0 60px;
-  width: 60px;
-}
 #ugf-gmail[chrome="m2013"] #ugf-gmail-account {
   flex: 1 1 auto;
   padding-right: 16px;
@@ -74382,10 +74406,22 @@ html[gplex-gmail] body {
   background: #fef7e0 !important;
 }
 
-/* the 2015 search button is far wider than the 2014 template's - matched to the crop */
-#ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield button {
+/* the 2015 search button is far wider than the 2014 template's - matched to the crop; (8.5) 2013 and
+   2014 keep the 60px button, flat against the box, as the October 2014 reference shows it */
+html:not([layout="2013"]):not([layout="2013L"]):not([layout="2014"]) #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield button {
   flex: 0 0 124px;
   width: 124px;
+}
+html[layout="2013"] #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield .box,
+html[layout="2013L"] #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield .box,
+html[layout="2014"] #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield .box {
+  border-radius: 2px 0 0 2px;
+  border-right: 0;
+}
+html[layout="2013"] #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield button,
+html[layout="2013L"] #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield button,
+html[layout="2014"] #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield button {
+  border-radius: 0 2px 2px 0;
 }
 
 /* settings tables, labs rows and theme swatches */
@@ -74783,6 +74819,10 @@ html[gplex-gmail] body {
 #ugf-gmail-account .plusname {
   color: #666;
   font-size: 13px;
+}
+/* (8.5) 2014: the colour the search page's +Name has */
+html[layout="2014"] #ugf-gmail-account .plusname {
+  color: #404040;
 }
 #ugf-gmail-account .nbox {
   min-width: 26px;
@@ -76068,6 +76108,9 @@ html[gplex-gmail] body {
             row.querySelector(".xT") || row.querySelector(".y6") || row;
         return ugfGmailRealClick(target);
     }
+    // (8.5) Gmail's own boxes of 2018 on, which the lists before 2018 never had
+    const UGF_GMAIL_NEWER_BOXES = ["snoozed", "scheduled", "purchases", "categories", "social", "promotions", "updates",
+        "forums", "outbox", "manage labels", "create new label", "less", "more"];
     function ugfGmailLabels() {
         const out = [];
         const seen = {};
@@ -78766,6 +78809,9 @@ html[gplex-gmail] body {
                     known = true;
                 }
             });
+            if (!known && chrome !== "m2018" && UGF_GMAIL_NEWER_BOXES.indexOf(l.name.toLowerCase()) > -1) {
+                known = true;
+            }
             if (!known && navItems.length < 24) {
                 navItems.push({ name: l.name, real: l, custom: true });
             }
