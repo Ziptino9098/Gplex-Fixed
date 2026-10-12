@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Gplex Legacy - Gplex Extended for old browsers (Firefox 52, Windows XP era)
 // @namespace    http://tampermonkey.net/
-// @version      7.2.29.1
-// @description  Gplex Extended 7.2.29 (with the Gplex+ part of 8.15) built for old browsers such as Firefox 52 ESR on Windows XP and Safari 9 on iOS 9: 1997-2024 Old Google Frontend, plus YouTube (with the V3 extension)
+// @version      7.2.29.2
+// @description  Gplex Extended 7.2.29 (with the Gplex+ part of 8.15 and the Phone layout setting of 8.16) built for old browsers such as Firefox 52 ESR on Windows XP and Safari 9 on iOS 9: 1997-2024 Old Google Frontend, plus YouTube (with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
 // @match        *://www.google.com/
@@ -2208,6 +2208,19 @@ var ugfWk = function () {
       on: "On",
       system: "Same as my device"
     }[ugfDarkMode()] || "Off";
+  }
+  function ugfMobileSetting() {
+    try {
+      return String(GM_getValue("UGF_MOBILE", "auto") || "auto");
+    } catch (e) {
+      return "auto";
+    }
+  }
+  function ugfMobileLabel() {
+    return {
+      on: "On",
+      off: "Off"
+    }[ugfMobileSetting()] || "Automatic (on phones)";
   }
   (function () {
     if (ugfOnYouTube || /(^|\.)youtube\.com$/i.test(location.hostname)) {
@@ -69564,6 +69577,8 @@ html:not([settings-display-dd-open]) #ugf-settings-display-dd,
 html:not([settings-display-dd-open]) #ugf-settings-display-fence,
 html:not([dark-dd-open]) #ugf-dark-dd,
 html:not([dark-dd-open]) #ugf-dark-fence,
+html:not([mobile-dd-open]) #ugf-mobile-dd,
+html:not([mobile-dd-open]) #ugf-mobile-fence,
 html:not([name-email-dd-open]) #ugf-name-email-dd,
 html:not([name-email-dd-open]) #ugf-name-email-fence,
 html:not([apps-dd-open]) #gp-apps-dd,
@@ -74479,6 +74494,8 @@ html[shopping-results] #ugf-center {
             </div>
             <div id="ugf-dark-fence" class="ugf-fence">
             </div>
+            <div id="ugf-mobile-fence" class="ugf-fence">
+            </div>
             <div id="ugf-neuro-fence" class="ugf-fence">
             </div>
             <div id="ugf-gmailon-fence" class="ugf-fence">
@@ -74805,6 +74822,36 @@ html[shopping-results] #ugf-center {
                                                 </a>
                                                 <a id="" class="ugf-dropdown-item" value="system">
                                                     <span>Same as my device</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ugf-gplex-section">
+                            <div class="ugf-gplex-section-inner">
+                                <div class="ugf-gplex-section-title">
+                                    <span>Phone layout</span>
+                                </div>
+                                <div class="ugf-gplex-section-content">
+                                    <div id="ugf-option-mobile" class="ugf-gplex-option flex" value="${ugfMobileSetting()}">
+                                        <a class="ugf-dropdown-button" id="ugf-mobile-dd-btn">
+                                            <span>${ugfMobileLabel()}</span>
+                                        </a>
+                                        <div class="ugf-gplex-text">
+                                            <span>Google's search pages and Maps in the look of Google's mobile site in the year of your layout: the first iPhone-era google.com up to 2010, the 2011-2012 tab bar, the late 2012 menu and big logo, the 2013-2015 cards, then the 2015-2016 look with the new logo. <b>Automatic</b> shows it on phones; <b>On</b> shows it on any screen; <b>Off</b> keeps the desktop pages on a phone too. "Desktop" at the bottom of a mobile page shows the desktop look for the rest of the visit.</span>
+                                        </div>
+                                        <div class="ugf-dropdown" id="ugf-mobile-dd">
+                                            <div class="ugf-dropdown-inner">
+                                                <a id="" class="ugf-dropdown-item" value="auto">
+                                                    <span>Automatic (on phones)</span>
+                                                </a>
+                                                <a id="" class="ugf-dropdown-item" value="on">
+                                                    <span>On</span>
+                                                </a>
+                                                <a id="" class="ugf-dropdown-item" value="off">
+                                                    <span>Off</span>
                                                 </a>
                                             </div>
                                         </div>
@@ -78108,7 +78155,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                       document.querySelector("#ugf-calon-fence").addEventListener("click", function () {
                         document.querySelector("html").removeAttribute("calon-dd-open");
                       });
-                      ["newson", "tron", "docson", "sheetson", "slideson", "drawingson", "signinon", "accounton", "keepon", "formson", "driveon", "photoson", "startubeon", "ytclassicon"].forEach(function (k) {
+                      ["mobile", "newson", "tron", "docson", "sheetson", "slideson", "drawingson", "signinon", "accounton", "keepon", "formson", "driveon", "photoson", "startubeon", "ytclassicon"].forEach(function (k) {
                         document.querySelector("#ugf-" + k + "-dd-btn").addEventListener("click", function () {
                           document.querySelector("html").setAttribute(k + "-dd-open", "");
                           document.title = "Gplex Settings";
@@ -78317,6 +78364,22 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                           document.querySelector("#ugf-option-dark .ugf-dropdown-button span").textContent = itemRoot.textContent.trim();
                           document.querySelector("html").removeAttribute("dark-dd-open");
                           ugfDarkSet(value);
+                        });
+                      });
+                      document.querySelectorAll("#ugf-option-mobile .ugf-dropdown-item").forEach(function (itemRoot) {
+                        itemRoot.addEventListener("click", function () {
+                          var value = itemRoot.getAttribute("value");
+                          try {
+                            if (typeof GM_setValue === "function") {
+                              GM_setValue("UGF_MOBILE", value);
+                            }
+                          } catch (e) {}
+                          try {
+                            sessionStorage.removeItem("ugf_m_classic");
+                          } catch (e) {}
+                          document.querySelector("#ugf-option-mobile").setAttribute("value", value);
+                          document.querySelector("#ugf-option-mobile .ugf-dropdown-button span").textContent = itemRoot.textContent.trim();
+                          document.querySelector("html").removeAttribute("mobile-dd-open");
                         });
                       });
                       var neuroBtns = document.querySelectorAll("#ugf-option-neuro .ugf-dropdown-item");
