@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended Alpha - Gplex Old Google with its YouTube part rewritten
 // @namespace    http://tampermonkey.net/
-// @version      9.0.0.11
+// @version      9.0.0.12
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube, rewritten: alpha, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -1134,6 +1134,252 @@ function ugf2014V(){
 // after +Name and the grid, an outline bell, Share in a small grey speech bubble (an icon from October
 // 2014) and the photo with no border or arrow - square until January 2014, round from then on. Gmail,
 // Calendar, Maps, the settings page and the other Google pages Gplex draws put it together from these,
+// (8.12) "Atari Breakout" in Image Search (Google's from 13 May 2013, the game's 37th birthday, until 2020): the
+// pictures become the bricks of a game of Breakout drawn in the grid's place. The paddle follows the mouse or the
+// arrow keys, a click or the space bar serves, five balls a game, the wall comes back a little faster each time it
+// is cleared, and Esc or the link under the game brings the pictures back. pics: the grid's loaded pictures.
+function ugfBreakout(area, pics) {
+    const html = document.documentElement;
+    const grid = area.querySelector("#ugf-image-results-container");
+    const W = Math.max(400, grid.clientWidth);
+    const cv = document.createElement("canvas");
+    cv.id = "ugf-breakout";
+    cv.setAttribute("tabindex", "0");
+    const back = document.createElement("a");
+    back.id = "ugf-breakout-back";
+    back.href = "#";
+    back.textContent = "Back to the pictures";
+    area.insertBefore(back, grid);
+    area.insertBefore(cv, back);
+    html.setAttribute("ugf-breakout", "");
+    const H = Math.max(420, Math.min(720, window.innerHeight - cv.getBoundingClientRect().top - 50));
+    cv.width = W;
+    cv.height = H;
+    const ctx = cv.getContext("2d");
+    const cols = Math.max(6, Math.min(14, Math.round(W / 96)));
+    const bw = Math.floor((W - 16) / cols);
+    const bh = Math.round(bw * 0.45);
+    const rows = Math.max(3, Math.min(7, Math.ceil(pics.length / cols)));
+    const left = Math.floor((W - bw * cols) / 2);
+    const top = 44;
+    const pw = Math.max(80, Math.min(140, Math.round(W / 9)));
+    const ph = 12;
+    const py = H - 34;
+    const r = 6;
+    const colours = ["#4285f4", "#db4437", "#f4b400", "#0f9d58"];
+    const g = { bricks: [], score: 0, lives: 5, level: 1, speed: 360, px: (W - pw) / 2, bx: 0, by: 0, vx: 0, vy: 0, held: true, over: false, keys: {}, raf: 0, last: 0 };
+    function wall() {
+        const order = pics.slice();
+        for (let i = g.level > 1 ? order.length - 1 : 0; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const t = order[i];
+            order[i] = order[j];
+            order[j] = t;
+        }
+        g.bricks = [];
+        for (let i = 0; i < rows * cols; i++) {
+            g.bricks.push({ x: left + (i % cols) * bw, y: top + Math.floor(i / cols) * bh, img: order[i % order.length], i: i });
+        }
+    }
+    function reset() {
+        g.score = 0;
+        g.lives = 5;
+        g.level = 1;
+        g.speed = 360;
+        g.over = false;
+        g.held = true;
+        wall();
+    }
+    function serve() {
+        if (g.over || !g.held) {
+            return;
+        }
+        const a = -Math.PI / 2 + (Math.random() * 0.8 - 0.4);
+        g.vx = g.speed * Math.cos(a);
+        g.vy = g.speed * Math.sin(a);
+        g.held = false;
+    }
+    function bounce(dir) {
+        const a = -Math.PI / 2 + dir * (Math.PI / 3);
+        g.vx = g.speed * Math.cos(a);
+        g.vy = g.speed * Math.sin(a);
+    }
+    function move(dt) {
+        g.bx += g.vx * dt;
+        g.by += g.vy * dt;
+        if (g.bx - r < 0) {
+            g.bx = r;
+            g.vx = Math.abs(g.vx);
+        } else if (g.bx + r > W) {
+            g.bx = W - r;
+            g.vx = -Math.abs(g.vx);
+        }
+        if (g.by - r < 36) {
+            g.by = 36 + r;
+            g.vy = Math.abs(g.vy);
+        }
+        if (g.vy > 0 && g.by + r >= py && g.by - r <= py + ph && g.bx >= g.px - r && g.bx <= g.px + pw + r) {
+            g.by = py - r;
+            bounce(Math.max(-1, Math.min(1, (g.bx - (g.px + pw / 2)) / (pw / 2))));
+            return;
+        }
+        if (g.by - r > H) {
+            g.lives--;
+            g.held = true;
+            g.over = g.lives === 0;
+            return;
+        }
+        for (let i = 0; i < g.bricks.length; i++) {
+            const b = g.bricks[i];
+            if (g.bx + r > b.x && g.bx - r < b.x + bw && g.by + r > b.y && g.by - r < b.y + bh) {
+                const ox = Math.min(g.bx + r - b.x, b.x + bw - (g.bx - r));
+                const oy = Math.min(g.by + r - b.y, b.y + bh - (g.by - r));
+                if (ox < oy) {
+                    g.vx = g.bx < b.x + bw / 2 ? -Math.abs(g.vx) : Math.abs(g.vx);
+                } else {
+                    g.vy = g.by < b.y + bh / 2 ? -Math.abs(g.vy) : Math.abs(g.vy);
+                }
+                g.bricks.splice(i, 1);
+                g.score++;
+                if (!g.bricks.length) {
+                    g.level++;
+                    g.speed = Math.round(g.speed * 1.12);
+                    g.held = true;
+                    wall();
+                }
+                return;
+            }
+        }
+    }
+    function step(dt) {
+        if (g.keys.ArrowLeft) {
+            g.px -= 560 * dt;
+        }
+        if (g.keys.ArrowRight) {
+            g.px += 560 * dt;
+        }
+        g.px = Math.max(0, Math.min(W - pw, g.px));
+        if (g.held) {
+            g.bx = g.px + pw / 2;
+            g.by = py - r - 1;
+            return;
+        }
+        const steps = Math.ceil(g.speed * dt / 4);
+        for (let i = 0; i < steps && !g.held; i++) {
+            move(dt / steps);
+        }
+    }
+    function draw() {
+        ctx.clearRect(0, 0, W, H);
+        ctx.fillStyle = "#222";
+        ctx.font = "bold 13px arial, sans-serif";
+        ctx.textAlign = "left";
+        ctx.fillText("Score " + g.score, 10, 24);
+        ctx.textAlign = "center";
+        ctx.fillText("Level " + g.level, W / 2, 24);
+        for (let i = 0; i < g.lives; i++) {
+            ctx.beginPath();
+            ctx.arc(W - 14 - i * 16, 19, 5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        g.bricks.forEach(function(b) {
+            let drawn = false;
+            if (b.img) {
+                try {
+                    ctx.drawImage(b.img, b.x + 1, b.y + 1, bw - 2, bh - 2);
+                    drawn = true;
+                } catch (e) {}
+            }
+            if (!drawn) {
+                ctx.fillStyle = colours[b.i % colours.length];
+                ctx.fillRect(b.x + 1, b.y + 1, bw - 2, bh - 2);
+            }
+        });
+        ctx.fillStyle = "#222";
+        ctx.fillRect(g.px + ph / 2, py, pw - ph, ph);
+        ctx.beginPath();
+        ctx.arc(g.px + ph / 2, py + ph / 2, ph / 2, 0, Math.PI * 2);
+        ctx.arc(g.px + pw - ph / 2, py + ph / 2, ph / 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(g.bx, g.by, r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.textAlign = "center";
+        if (g.over) {
+            ctx.font = "bold 28px arial, sans-serif";
+            ctx.fillText("Game over", W / 2, H / 2 - 8);
+            ctx.font = "14px arial, sans-serif";
+            ctx.fillText("Score " + g.score + " - click to play again", W / 2, H / 2 + 22);
+        } else if (g.held) {
+            ctx.fillStyle = "#666";
+            ctx.font = "13px arial, sans-serif";
+            ctx.fillText("Move with the mouse or the arrow keys; click or press the space bar to serve", W / 2, top + rows * bh + 40);
+        }
+    }
+    function frame(t) {
+        const dt = Math.min(0.05, g.last ? (t - g.last) / 1000 : 0);
+        g.last = t;
+        if (!g.over) {
+            step(dt);
+        }
+        draw();
+        g.raf = window.requestAnimationFrame(frame);
+    }
+    function typing() {
+        const el = document.activeElement;
+        return el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable);
+    }
+    function onMove(ev) {
+        g.px = Math.max(0, Math.min(W - pw, ev.clientX - cv.getBoundingClientRect().left - pw / 2));
+    }
+    function onClick() {
+        cv.focus();
+        if (g.over) {
+            reset();
+        } else {
+            serve();
+        }
+    }
+    function onKey(ev) {
+        if (typing()) {
+            return;
+        }
+        if (ev.key === "ArrowLeft" || ev.key === "ArrowRight") {
+            g.keys[ev.key] = ev.type === "keydown";
+            ev.preventDefault();
+        } else if (ev.type === "keydown" && ev.key === " ") {
+            ev.preventDefault();
+            if (g.over) {
+                reset();
+            } else {
+                serve();
+            }
+        } else if (ev.type === "keydown" && ev.key === "Escape") {
+            exit();
+        }
+    }
+    function exit(ev) {
+        if (ev) {
+            ev.preventDefault();
+        }
+        window.cancelAnimationFrame(g.raf);
+        cv.removeEventListener("mousemove", onMove);
+        cv.removeEventListener("click", onClick);
+        document.removeEventListener("keydown", onKey);
+        document.removeEventListener("keyup", onKey);
+        back.removeEventListener("click", exit);
+        cv.remove();
+        back.remove();
+        html.removeAttribute("ugf-breakout");
+    }
+    cv.addEventListener("mousemove", onMove);
+    cv.addEventListener("click", onClick);
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("keyup", onKey);
+    back.addEventListener("click", exit);
+    reset();
+    g.raf = window.requestAnimationFrame(frame);
+}
 // (8.11) the green arrow after a result's address on the 2013 and 2014 layouts, with the menu Google's had from
 // 24 April 2013 (Cached, Similar, Share); Cached is the Wayback Machine's copy and Share goes to Gplex+
 function ugfResultArrow(href) {
@@ -19097,6 +19343,33 @@ html[layout="2014"][gplex2014e] .ugf-result-arrow::before {
 .ugf-result-menu a:hover {
   background: #eee;
 }
+/* (8.12) "Atari Breakout" in Image Search: the game in the grid's place */
+html[ugf-breakout] #ugf-image-results-container,
+html[ugf-breakout] #ugf-image-viewer {
+  display: none !important;
+}
+#ugf-breakout {
+  display: block;
+  margin: 0 auto;
+  outline: none;
+}
+#ugf-breakout-back {
+  display: block;
+  text-align: center;
+  font-size: 13px;
+  padding: 8px 0 14px;
+}
+/* (8.12) 2013-2014: a title is one line, cut with an ellipsis at the column's width (about 55 characters at the
+   18px of 12 March 2014, more at 16px); the March 2014 redesign's snippet line height of 1.4 (recorded June 2014) */
+html[layout="2013"] #ugf-search-results-container .ugf-search-result-title,
+html[layout="2014"] #ugf-search-results-container .ugf-search-result-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+html[layout="2014"][gplex2014n] .ugf-search-result-desc {
+  line-height: 1.4;
+}
 /* (8.1) the search tools of 2013-2016: the row and its menus, Images' swatches and sizes, Custom range, the gear's menu */
 #ugf-tools-row {
   display: none;
@@ -35791,6 +36064,33 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         }
         setLayout();
         createTop();
+        ugfBreakoutMaybe();
+    }
+    // (8.12) "Atari Breakout" in Image Search on the 2013-2019 layouts (Google's from 13 May 2013 to 2020): the game
+    // starts once the pictures have come in, which is when their count has held still for a second
+    function ugfBreakoutMaybe() {
+        const h = document.documentElement;
+        if (location !== "images" || String(searchValue || "").trim().toLowerCase() !== "atari breakout" ||
+            !/^201[3-9]/.test(h.getAttribute("layout") || "") || h.hasAttribute("ugf-mobile") || h.hasAttribute("ugf-breakout")) {
+            return;
+        }
+        let seen = -1;
+        let still = 0;
+        let ticks = 0;
+        const t = window.setInterval(function() {
+            const area = document.querySelector("#ugf-image-results");
+            const pics = area ? Array.prototype.filter.call(area.querySelectorAll(".ugf-image-result img"), function(im) {
+                return im.complete && im.naturalWidth > 0;
+            }) : [];
+            still = pics.length && pics.length === seen ? still + 1 : 0;
+            seen = pics.length;
+            if (still >= 3 || ++ticks > 60) {
+                window.clearInterval(t);
+                if (pics.length >= 6 && !h.hasAttribute("ugf-breakout")) {
+                    ugfBreakout(area, pics);
+                }
+            }
+        }, 300);
     }
     function fixSidebar() {
         let encodedSearchValue = encodeURIComponent(searchValue);
