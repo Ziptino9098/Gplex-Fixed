@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended Alpha - Gplex Old Google with its YouTube part rewritten
 // @namespace    http://tampermonkey.net/
-// @version      9.0.0.13
+// @version      9.0.0.14
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube, rewritten: alpha, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -8865,7 +8865,7 @@ const UGF_GPX = {"logo12": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHcAAA
                 ".comments form .btn{display:none;margin-top:8px}.comments form:focus-within .btn{display:inline-block}",
                 ".btn{border:0!important;border-radius:2px;background:#4285f4;font:500 14px Roboto,Arial,sans-serif;text-transform:uppercase;padding:8px 16px;" +
                     "box-shadow:0 2px 2px 0 rgba(0,0,0,.14),0 1px 5px 0 rgba(0,0,0,.12)}",
-                ".btn.share,.btn.red{background:#db4437}.btn.grey{background:#fff;color:#212121}",
+                ".btn.share,.btn.red{background:#db4437}a.btn{color:#fff}.btn.grey,a.btn.grey{background:#fff;color:#212121}",
                 "textarea,input.t{border:0;border-bottom:1px solid #bdbdbd;font:14px Roboto,Arial,sans-serif;background:transparent}",
                 "textarea:focus,input.t:focus{outline:0;border-bottom:2px solid #db4437}",
                 ".share-box .aud{background:#fafafa;border:0}",
