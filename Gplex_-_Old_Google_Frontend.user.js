@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      8.9
+// @version      8.10
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube: StarTube by lightbeam24, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -1161,6 +1161,14 @@ function ugfB13Css() {
         ".ugf-b13-share.icon svg { width: 24px; height: 21px; fill: currentColor; }",
         ".ugf-b13-share.icon::after { display: none; }",
         ".ugf-b13-grid.late:hover, .ugf-b13-bell.late:hover, .ugf-b13-share.icon:hover { opacity: 1; }",
+        // January and February 2014 (an inbox of 27 February 2014): the grid of 16px, the bell an outline of 24px,
+        // Share a flat grey block with no tail, the photo round at 32px, with the spacing that inbox has
+        ".ugf-b13-grid.e14 { width: 16px; height: 16px; margin: 0 6px 0 4px; background: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M0 0h4v4H0zM6 0h4v4H6zM12 0h4v4h-4zM0 6h4v4H0zM6 6h4v4H6zM12 6h4v4h-4zM0 12h4v4H0zM6 12h4v4H6zM12 12h4v4h-4z'/%3E%3C/svg%3E\") center / 16px 16px no-repeat; }",
+        ".ugf-b13-bell.e14 { margin: 0 6px 0 0; }",
+        ".ugf-b13-bell.e14 svg { width: 24px; height: 24px; }",
+        ".ugf-b13-share.e14 { margin-right: 4px !important; }",
+        ".ugf-b13-share.e14::after { display: none; }",
+        ".ugf-b13-photo.e14 .pfp { width: 32px !important; height: 32px !important; line-height: 32px !important; }",
         ".ugf-b13-photo { border: none !important; padding: 0 !important; background: none !important; box-shadow: none !important; }",
         ".ugf-b13-photo .car { display: none !important; }",
         ".ugf-b13-photo .pfp { width: 30px !important; height: 30px !important; line-height: 30px !important; border: none !important; border-radius: 50% !important; }",
@@ -1172,24 +1180,25 @@ function ugfB13Css() {
 function ugfB13Bits(v) {
     ugfB13Css();
     const late = v === "2014N";
-    // (8.9) a solid bell until the October 2014 bar, whose bell is an outline (Google's own screenshots of
-    // October 2013 and October 2014)
-    const bell = "M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" + (late ? "m-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z" : "");
-    return '<span class="ugf-b13-bell' + (late ? " late" : "") + '" title="Notifications"><svg viewBox="0 0 24 24"><path d="' + bell + '"/></svg></span>' +
+    const early = v === "2014E";
+    // (8.9) the solid bell of Google's bar of October 2013; (8.10) an outline from Early 2014 on (an inbox of
+    // 27 February 2014, 24px), 28px from the October 2014 bar
+    const bell = "M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" + (late || early ? "m-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z" : "");
+    return '<span class="ugf-b13-bell' + (late ? " late" : early ? " e14" : "") + '" title="Notifications"><svg viewBox="0 0 24 24"><path d="' + bell + '"/></svg></span>' +
         (late ? '<span class="ugf-b13-share icon" title="Share"><svg viewBox="0 0 24 21"><path fill-rule="evenodd" d="M1.5 0h18A1.5 1.5 0 0 1 21 1.5V17l3 4H0V1.5A1.5 1.5 0 0 1 1.5 0zM2 2v15h17V2zm7.25 2.5h2.5v3.75h3.75v2.5h-3.75v3.75h-2.5v-3.75H5.5v-2.5h3.75z"/></svg></span>'
-            : '<span class="ugf-b13-share" title="Share">Share</span>');
+            : '<span class="ugf-b13-share' + (early ? " e14" : "") + '" title="Share">Share</span>');
 }
 // the grid before them; (8.7) ugfB13AppsOpen opens the launcher from it, the address is for a middle click
-// the grid a page draws itself: these classes make it the Late 2014 drawing, with nothing left inside
-function ugfB13GridLate(v) {
-    return v === "2014N" ? " ugf-b13-grid late" : "";
+// the grid a page draws itself: these classes make it the Early 2014 or the Late 2014 drawing, with nothing left inside
+function ugfB13GridClass(v) {
+    return v === "2014N" ? " ugf-b13-grid late" : v === "2014E" ? " ugf-b13-grid e14" : "";
 }
 function ugfB13Grid(v) {
     ugfB13Css();
-    return '<a class="ugf-b13-grid' + (v === "2014N" ? " late" : "") + '" href="https://www.google.com/intl/en/options/" title="Google apps"></a>';
+    return '<a class="ugf-b13-grid' + (v === "2014N" ? " late" : v === "2014E" ? " e14" : "") + '" href="https://www.google.com/intl/en/options/" title="Google apps"></a>';
 }
 function ugfB13PhotoClass(v) {
-    return "ugf-b13-photo" + (v === "2013N" ? " sq" : v === "2014N" ? " late" : "");
+    return "ugf-b13-photo" + (v === "2013N" ? " sq" : v === "2014E" ? " e14" : v === "2014N" ? " late" : "");
 }
 // SIGN IN stayed red until the blue Sign in of 2014
 function ugfB13RedSignIn(v) {
@@ -58749,6 +58758,21 @@ html[layout="2014"][gplex2014n] #waffle .gp-icon {
 html[layout="2014"][gplex2014n] #ugf-fake-notifs-button .ugf-plus-button-icon {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z'/%3E%3C/svg%3E");
 }
+html[layout="2014"][gplex2014e] #ugf-fake-notifs-button .ugf-plus-button-icon {
+  width: 24px;
+  height: 24px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z'/%3E%3C/svg%3E");
+  background-size: 24px 24px;
+}
+html[layout="2014"][gplex2014e] #ugf-fake-share-button::after {
+  display: none;
+}
+html[layout="2014"][gplex2014e] #ugf-account-button,
+html[layout="2014"][gplex2014e] #ugf-account-button img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
 html[layout="2014"][gplex2014n] #ugf-fake-share-button {
   width: 24px;
   margin-left: 11px;
@@ -72849,7 +72873,9 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
   padding: 0 16px 20px 0;
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-toolbar {
-  padding: 0;
+  padding: 9px 0;
+  min-height: 48px;
+  border-bottom: 1px solid #e5e5e5;
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-nav {
   background: #fff;
@@ -73888,6 +73914,23 @@ html[layout="2022"] #ugf-gmail[chrome="m2018"] .ugf-gmail-searchfield {
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-toolbar button {
   height: 29px;
+  border-color: #d9d9d9;
+  background: linear-gradient(#f4f4f4, #f1f1f1);
+}
+#ugf-gmail[chrome="m2013"] #ugf-gmail-toolbar button.sq[data-act],
+#ugf-gmail[chrome="m2013"] #ugf-gmail-toolbar button[data-act="more"],
+#ugf-gmail[chrome="m2013"] .ugf-gmail-selectall.btn {
+  width: 72px;
+}
+#ugf-gmail[chrome="m2013"] .ugf-gmail-selectall.btn {
+  height: 29px;
+  padding: 0 0 0 10px;
+  gap: 17px;
+  border-color: #d9d9d9;
+  background: linear-gradient(#f4f4f4, #f1f1f1);
+}
+#ugf-gmail[chrome="m2013"] #ugf-gmail-toolbar .grp {
+  margin-right: 16px;
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-toolbar button[data-act="settings"] {
   width: 70px;
@@ -74116,7 +74159,8 @@ html[layout="2022"] #ugf-gmail[chrome="m2018"] .ugf-gmail-searchfield {
 /* header proportions measured off the 2014 template */
 #ugf-gmail[chrome="m2013"] #ugf-gmail-gmark {
   padding-left: 30px;
-  height: 46px;
+  height: 48px;
+  border-bottom: 1px solid #e5e5e5;
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-compose {
   width: 117px;
@@ -74410,21 +74454,23 @@ html[layout="2022"] #ugf-gmail[chrome="m2018"] .ugf-gmail-searchfield {
   display: none;
 }
 
-/* ---------- 2014 header/sidebar columns, measured off the template ----------
-   logo 31, sidebar column 200 wide, search control 202 -> 852 (input + 60px button),
-   COMPOSE and the label text both starting at 31.                                */
+/* ---------- 2013-2017 header and sidebar columns ----------
+   (8.10) measured on an inbox of 27 February 2014 at 1366px: the band 59px over its 1px line, the logo
+   92x32 at 28px from the left and 17px from the top, the sidebar 200 wide, the search box 30px tall from
+   200 to 850 with its 60x29 button, the toolbar row 47px over its 1px line with the buttons 9px down. */
 #ugf-gmail[chrome="m2013"] #ugf-gmail-top {
   justify-content: flex-start;
   gap: 0;
   padding: 0;
-  height: 62px;
+  height: 60px;
   box-sizing: border-box;
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-logo {
   flex: 0 0 200px;
   width: 200px;
-  padding-left: 29px;
+  padding-left: 28px;
   margin: 0;
+  align-self: stretch;
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-searchrow {
   flex: 0 1 650px;
@@ -74450,7 +74496,7 @@ html[layout="2022"] #ugf-gmail[chrome="m2018"] .ugf-gmail-searchfield {
   margin: 0;
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-compose.shot {
-  margin: 0 0 16px 31px !important;
+  margin: 9px 0 16px 31px !important;
 }
 /* 2012-2013 have no Gmail wordmark row above the button, so it sat flush against
    the top of the sidebar; give it the breathing room it had */
@@ -74522,16 +74568,15 @@ html[gplex-gmail] body {
   display: flex;
   align-items: center;
   background: #fff;
-  border: 1px solid #d9d9d9;
-  border-top-color: #c0c0c0;
+  border: 1px solid #cdcdcd;
   border-radius: 2px;
   min-width: 0;
-  height: 32px;
+  height: 30px;
 }
 #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield .box input {
   flex: 1 1 auto;
   border: 0 !important;
-  height: 30px;
+  height: 28px;
   background: none;
   outline: none;
   min-width: 0;
@@ -74549,7 +74594,10 @@ html[gplex-gmail] body {
   border-radius: 2px;
   flex: 0 0 60px;
   width: 60px;
-  height: 30px;
+  height: 29px;
+  align-self: flex-start;
+  border: 0;
+  background: linear-gradient(#4386fc, #437fe3);
 }
 
 /* ---------- selecting a row ---------- */
@@ -74991,21 +75039,22 @@ html[layout="2014"] #ugf-gmail[chrome="m2013"] .ugf-gmail-searchfield button {
   font-size: 13px;
 }
 /* (8.5) 2014: the colour the search page's +Name has; (8.9) +Name 24px from the grid and the Share bubble
-   white on the grey band, as the inbox of October 2013 has them */
+   white on the grey band, as the inbox of October 2013 has them; (8.10) not in Early 2014, whose Share is the
+   flat grey block of the shared corner */
 html[layout="2014"] #ugf-gmail-account .plusname {
   color: #404040;
   margin-right: 9px;
 }
-#ugf-gmail[chrome="m2013"] .ugf-b13-share {
+#ugf-gmail[chrome="m2013"] .ugf-b13-share:not(.e14) {
   background: #fff !important;
 }
-#ugf-gmail[chrome="m2013"] .ugf-b13-share::after {
+#ugf-gmail[chrome="m2013"] .ugf-b13-share:not(.e14)::after {
   border-top-color: #fff;
 }
-#ugf-gmail[chrome="m2013"] .ugf-b13-share:hover {
+#ugf-gmail[chrome="m2013"] .ugf-b13-share:not(.e14):hover {
   background: #f8f8f8 !important;
 }
-#ugf-gmail[chrome="m2013"] .ugf-b13-share:hover::after {
+#ugf-gmail[chrome="m2013"] .ugf-b13-share:not(.e14):hover::after {
   border-top-color: #f8f8f8;
 }
 #ugf-gmail-account .nbox {
@@ -75112,6 +75161,10 @@ html[layout="2014"] #ugf-gmail-account .plusname {
 }
 #ugf-gmail-account.g\+ .ic.grid:hover svg {
   fill: #333;
+}
+#ugf-gmail-account .ic.grid.e14 {
+  width: 16px;
+  height: 16px;
 }
 #ugf-gmail[chrome="kennedy"] #ugf-gmail-account,
 #ugf-gmail[chrome="m2013"] #ugf-gmail-account {
@@ -75257,9 +75310,10 @@ html[layout="2014"] #ugf-gmail-account .plusname {
 }
 #ugf-gmail[chrome="m2013"] #ugf-gmail-logo img.google-mark {
   height: auto;
-  width: 116px;
+  width: 92px;
   max-height: none;
-  align-self: center;
+  align-self: flex-start;
+  margin-top: 17px;
 }
 #ugf-gmail #ugf-gmail-logo img {
   max-height: none;
@@ -78879,8 +78933,8 @@ html[gplex-gmail] body {
             accountHTML = '<a class="plusname" href="' + esc(ugfPlusProfileLink()) + '">' +
                 "+" + esc(ugfGmailPlusName()) + "</a>" +
                 // 2014: the app grid joined the block, then the new bar's bell, Share and photo
-                (String(layout || "") === "2014" ? '<span class="ic grid' + ugfB13GridLate(ugf14()) + '" id="ugf-gmail-apps" title="Google apps">' +
-                    (ugfB13GridLate(ugf14()) ? "" : ugfGmailIcon("apps", 20)) + "</span>" + ugfB13Bits(ugf14()) +
+                (String(layout || "") === "2014" ? '<span class="ic grid' + ugfB13GridClass(ugf14()) + '" id="ugf-gmail-apps" title="Google apps">' +
+                    (ugfB13GridClass(ugf14()) ? "" : ugfGmailIcon("apps", 20)) + "</span>" + ugfB13Bits(ugf14()) +
                     '<span class="pfpwrap ' + ugfB13PhotoClass(ugf14()) + '">' + ugfGmailAvatar() + "</span>"
                     : '<span class="nbox">0</span>' +
                     '<span class="sharebtn"><b>+</b> Share</span>' +
@@ -90919,7 +90973,7 @@ html[gplex-gmail] body {
                 return '<div class="kcorner"><a class="' + (red ? "ksignin red" : "ksignin") + '" href="https://accounts.google.com/ServiceLogin">' + (red ? "SIGN IN" : "Sign in") + "</a></div>";
             }
             return '<div class="kcorner gplus"><a class="plusname" href="' + ugfEsc(ugfPlusProfileLink()) + '">+' + ugfEsc(ugfGmailPlusName()) + "</a>" +
-                (l === "2014" ? '<a href="#" class="kic apps' + ugfB13GridLate(ugf14()) + '" title="Google apps">' + (ugfB13GridLate(ugf14()) ? "" : ugfNtIcon("apps", 24)) + "</a>" + ugfB13Bits(ugf14()) +
+                (l === "2014" ? '<a href="#" class="kic apps' + ugfB13GridClass(ugf14()) + '" title="Google apps">' + (ugfB13GridClass(ugf14()) ? "" : ugfNtIcon("apps", 24)) + "</a>" + ugfB13Bits(ugf14()) +
                     '<a href="#" class="pfpwrap me ' + ugfB13PhotoClass(ugf14()) + '">' + ugfGmailAvatar() + "</a></div>"
                     : '<span class="nbox">0</span><span class="sharebtn"><b>+</b> Share</span><a href="#" class="pfpwrap me">' + ugfGmailAvatar() + '<i class="car">&#9662;</i></a></div>');
         }
@@ -97907,7 +97961,7 @@ html[gplex-gmail] body {
         if (l === "2013" || l === "2014") {
             return '<div id="ugf-cal-account" class="gplus"><a class="plusname" href="' + esc(ugfPlusProfileLink()) + '">+' +
                 esc(ugfGmailPlusName()) + "</a>" +
-                (l === "2014" ? '<a class="ic appsg' + ugfB13GridLate(ugf14()) + '" href="#" title="Google apps">' + (ugfB13GridLate(ugf14()) ? "" : ugfCalIcon("apps", 20)) + "</a>" + ugfB13Bits(ugf14()) +
+                (l === "2014" ? '<a class="ic appsg' + ugfB13GridClass(ugf14()) + '" href="#" title="Google apps">' + (ugfB13GridClass(ugf14()) ? "" : ugfCalIcon("apps", 20)) + "</a>" + ugfB13Bits(ugf14()) +
                     '<span class="pfpwrap ' + ugfB13PhotoClass(ugf14()) + '">' + ugfGmailAvatar() + "</span></div>"
                     : '<span class="nbox">0</span><span class="sharebtn"><b>+</b> Share</span>' +
                     '<span class="pfpwrap">' + ugfGmailAvatar() + '<i class="car">&#9662;</i></span></div>');
@@ -103198,7 +103252,7 @@ html[gplex-gmail] body {
         return '<div id="ugf-maps-account">' +
             '<a class="plusname" href="' + esc(ugfPlusProfileLink()) + '">' +
             "+" + esc(ugfGmailPlusName()) + "</a>" +
-            (withApps ? '<a class="ic grid' + ugfB13GridLate(ugf14()) + '" href="https://www.google.com/intl/en/about/products/" title="Google apps">' + (ugfB13GridLate(ugf14()) ? "" : ugfGmailIcon("apps", 20)) + "</a>" : "") +
+            (withApps ? '<a class="ic grid' + ugfB13GridClass(ugf14()) + '" href="https://www.google.com/intl/en/about/products/" title="Google apps">' + (ugfB13GridClass(ugf14()) ? "" : ugfGmailIcon("apps", 20)) + "</a>" : "") +
             (String(layout || "") === "2014" ? ugfB13Bits(ugf14()) + '<span class="pfpwrap ' + ugfB13PhotoClass(ugf14()) + '">' + ugfGmailAvatar() + "</span></div>"
                 : '<span class="nbox">0</span>' +
                 '<span class="sharebtn"><b>+</b> Share</span>' +
