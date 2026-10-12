@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended Alpha - Gplex Old Google with its YouTube part rewritten
 // @namespace    http://tampermonkey.net/
-// @version      9.0.0.12
+// @version      9.0.0.13
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube, rewritten: alpha, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -10581,7 +10581,7 @@ if (ugfOnYouTube && ugfYtmTakesOver()) {
         const api = function(cfg, ep, body) {
             body.context = { client: { clientName: "MWEB", clientVersion: cfg.ver, hl: cfg.hl, gl: cfg.gl } };
             // (signed out on purpose: Gplex sends no account details along)
-            return fetch("/youtubei/v1/" + ep + "?prettyPrint=false", { method: "POST", credentials: "omit", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
+            return fetch(window.location.origin + "/youtubei/v1/" + ep + "?prettyPrint=false", { method: "POST", credentials: "omit", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
                 .then(function(r) { return r.json(); });
         };
         const contItems = function(resp) {
@@ -10787,7 +10787,7 @@ if (ugfOnYouTube && ugfYtmTakesOver()) {
                 return Promise.resolve(cache.v);
             }
             const one = function(id, name) {
-                return fetch("/channel/" + id, { credentials: "omit" }).then(function(r) { return r.text(); }).then(function(s) {
+                return fetch(window.location.origin + "/channel/" + id, { credentials: "omit" }).then(function(r) { return r.text(); }).then(function(s) {
                     const d = fromText(s, "ytInitialData");
                     if (!d) {
                         return [];
@@ -59218,7 +59218,7 @@ html[gplex-gmail] body {
         if (!c[qs]) {
             const mine = document.querySelector("a[href^='./topics/'], a[href^='/topics/']");
             const m0 = mine && !mine.closest("#ugf-news") ? String(mine.getAttribute("href")).match(/topics\/([\w-]+)/) : null;
-            c[qs] = m0 ? Promise.resolve(m0[1]) : fetch("/?" + qs, { credentials: "include" }).then(function(r) {
+            c[qs] = m0 ? Promise.resolve(m0[1]) : fetch(window.location.origin + "/?" + qs, { credentials: "include" }).then(function(r) {
                 return r.text();
             }).then(function(h) {
                 const m = h.match(/href="\.\/topics\/([\w-]+)/);
@@ -70247,7 +70247,7 @@ html[gplex-gmail] body {
         const mpp = 156543.03392 * Math.cos(v.lat * Math.PI / 180) / Math.pow(2, v.z);
         const pb = "!4m8!1m3!1d" + (mpp * h * 4.35).toFixed(2) + "!2d" + v.lng.toFixed(6) + "!3d" + v.lat.toFixed(6) +
             "!3m2!1i" + w + "!2i" + h + "!4f13.1!7i20!10b1";
-        const url = "/search?tbm=map&authuser=0&hl=" + encodeURIComponent(ugfMapsLang()) +
+        const url = "https://www.google.com/search?tbm=map&authuser=0&hl=" + encodeURIComponent(ugfMapsLang()) +
             "&q=" + encodeURIComponent(q) + "&pb=" + encodeURIComponent(pb);
         ugfMapsGet(url, function(t, why) {
             let res = null;
@@ -70274,7 +70274,11 @@ html[gplex-gmail] body {
         return JSON.parse(t.slice(i));
     }
     // One request to Google, by whichever way gets through from a userscript: its own
-    // fetch, the page's fetch, then XMLHttpRequest. cb(text) or cb(null, why).
+    // fetch, the page's fetch, then XMLHttpRequest. cb(text) or cb(null, why). url is
+    // absolute: in a Firefox add-on (Manifest V2) a content script's request is the
+    // extension's, so a relative one never reaches Google (8.13). The script's own fetch
+    // asks with the cookies; the page's ways are the page's own and get nothing else
+    // handed over, as Firefox keeps the page from reading an add-on's objects.
     function ugfMapsGet(url, cb) {
         const ways = [];
         let own = null;
@@ -70282,8 +70286,14 @@ html[gplex-gmail] body {
             own = typeof fetch === "function" ? fetch : null;
         } catch (e) {}
         if (own) {
-            ways.push(["fetch", own]);
+            ways.push(["fetch", own, true]);
         }
+        // (8.13) a Firefox add-on's content.fetch asks as the page does
+        try {
+            if (typeof content !== "undefined" && content && typeof content.fetch === "function") {
+                ways.push(["content fetch", content.fetch.bind(content)]);
+            }
+        } catch (e) {}
         try {
             const pw = typeof unsafeWindow !== "undefined" ? unsafeWindow : null;
             if (pw && pw !== window && typeof pw.fetch === "function" && pw.fetch !== own) {
@@ -70319,7 +70329,7 @@ html[gplex-gmail] body {
             const f = ways[i][1];
             if (f) {
                 try {
-                    f(url, { credentials: "include" }).then(function(r) {
+                    f(url, ways[i][2] ? { credentials: "include" } : undefined).then(function(r) {
                         if (!r.ok) {
                             throw new Error("HTTP " + r.status);
                         }
@@ -70457,7 +70467,7 @@ html[gplex-gmail] body {
             "!3m12!1m3!1d" + (mpp * h * 4.35).toFixed(2) + "!2d" + v.lng.toFixed(6) + "!3d" + v.lat.toFixed(6) +
             "!2m3!1f0.0!2f0.0!3f0.0!3m2!1i" + w + "!2i" + h + "!4f13.1" +
             ugfMapsDirPb().replace("!20m5!1e0!", "!20m5!1e" + (parseInt(mode, 10) || 0) + "!") + "!15m1!7e81";
-        const url = "/maps/preview/directions?authuser=0&hl=" + encodeURIComponent(ugfMapsLang()) + "&pb=" + encodeURIComponent(pb);
+        const url = "https://www.google.com/maps/preview/directions?authuser=0&hl=" + encodeURIComponent(ugfMapsLang()) + "&pb=" + encodeURIComponent(pb);
         ugfMapsGetRoute(url, done);
     }
     // the reply for a directions request (ours, or the one Google's page asked for)
@@ -71695,7 +71705,7 @@ html[gplex-gmail] body {
         let dirPreload = null;
         if (url.kind === "dir") {
             const ln = document.querySelector('link[href*="/maps/preview/directions"]');
-            dirPreload = ln ? ln.getAttribute("href") : null;
+            dirPreload = ln ? ln.href : null;   // (8.13) the absolute address
         }
         const dirKey = function() {
             const enc = function(t) {
