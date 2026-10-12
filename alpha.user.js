@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended Alpha - Gplex Old Google with its YouTube part rewritten
 // @namespace    http://tampermonkey.net/
-// @version      9.0.0.10
+// @version      9.0.0.11
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube, rewritten: alpha, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -1134,6 +1134,15 @@ function ugf2014V(){
 // after +Name and the grid, an outline bell, Share in a small grey speech bubble (an icon from October
 // 2014) and the photo with no border or arrow - square until January 2014, round from then on. Gmail,
 // Calendar, Maps, the settings page and the other Google pages Gplex draws put it together from these,
+// (8.11) the green arrow after a result's address on the 2013 and 2014 layouts, with the menu Google's had from
+// 24 April 2013 (Cached, Similar, Share); Cached is the Wayback Machine's copy and Share goes to Gplex+
+function ugfResultArrow(href) {
+    const bare = String(href).replace(/^https?:\/\//, "");
+    return '<span class="ugf-result-arrow" title="More"><span class="ugf-result-menu">' +
+        '<a href="https://web.archive.org/web/2/' + href + '">Cached</a>' +
+        '<a href="https://www.google.com/search?q=' + encodeURIComponent("related:" + bare) + '">Similar</a>' +
+        '<a href="' + UGF_PLUS_HOME + "?share=" + encodeURIComponent(href) + '">Share</a></span></span>';
+}
 // sized and spaced as the search pages draw it (8.3). v is the period: "2013N", "2014E" or "2014N".
 function ugfB13Css() {
     if (document.getElementById("ugf-b13-css")) {
@@ -18999,6 +19008,95 @@ html[ugf-more-open] #ugf-more-dd {
 #ugf-more-dd a:hover {
   background: #eee;
 }
+/* (8.11) until the query-dependent tabs of 22 January 2014, Videos and News lived in the More menu with Books,
+   Places (gone in April 2013), Blogs, Discussions, Recipes, Patents, Flights and Apps */
+#ugf-more-dd .ugf-more-2013 {
+  display: none;
+}
+html[layout="2013"] #ugf-videos-tab,
+html[layout="2013"] #ugf-news-tab,
+html[layout="2014"][gplex2013n] #ugf-videos-tab,
+html[layout="2014"][gplex2013n] #ugf-news-tab {
+  display: none;
+}
+html[layout="2013"] #ugf-more-dd .ugf-more-2013,
+html[layout="2014"][gplex2013n] #ugf-more-dd .ugf-more-2013 {
+  display: block;
+}
+html[layout="2014"][gplex2013n] #ugf-more-dd .ugf-more-places {
+  display: none;
+}
+/* (8.11) the green arrow after each address, 2013 and 2014 (Google's from 24 April 2013): Cached, Similar, Share */
+.ugf-result-url {
+  display: contents;
+}
+html[layout="2013"] .ugf-result-url,
+html[layout="2014"] .ugf-result-url {
+  display: flex;
+  align-items: flex-start;
+}
+html[layout="2013"] .ugf-result-url .ugf-search-result-link,
+html[layout="2014"] .ugf-result-url .ugf-search-result-link {
+  min-width: 0;
+  flex: 0 1 auto;
+}
+html[ugf-mobile] .ugf-result-url {
+  display: contents !important;
+}
+.ugf-result-arrow,
+html[ugf-mobile] .ugf-result-arrow {
+  display: none !important;
+}
+html[layout="2013"]:not([ugf-mobile]) .ugf-result-arrow,
+html[layout="2014"]:not([ugf-mobile]) .ugf-result-arrow {
+  display: inline-block !important;
+  position: relative;
+  vertical-align: top;
+  width: 12px;
+  height: 17px;
+  margin-left: 2px;
+  cursor: pointer;
+}
+.ugf-result-arrow::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 7px;
+  border-top: 4px solid #006621;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+}
+html[layout="2013"] .ugf-result-arrow::before,
+html[layout="2014"][gplex2013n] .ugf-result-arrow::before,
+html[layout="2014"][gplex2014e] .ugf-result-arrow::before {
+  border-top-color: #093;
+}
+.ugf-result-menu {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 17px;
+  z-index: 1000;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.2);
+  box-shadow: 0 2px 4px rgba(0,0,0,.2);
+  padding: 6px 0;
+  min-width: 100px;
+}
+.ugf-result-arrow[open] .ugf-result-menu {
+  display: block;
+}
+.ugf-result-menu a {
+  display: block;
+  padding: 5px 16px;
+  color: #333 !important;
+  font-size: 13px;
+  text-decoration: none !important;
+  white-space: nowrap;
+}
+.ugf-result-menu a:hover {
+  background: #eee;
+}
 /* (8.1) the search tools of 2013-2016: the row and its menus, Images' swatches and sizes, Custom range, the gear's menu */
 #ugf-tools-row {
   display: none;
@@ -33219,7 +33317,14 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                                             <span>More</span><span class="ugf-k-caret"></span>
                                         </div>
                                         <div id="ugf-more-dd">
+                                            <a id="ugf-videos-more" class="ugf-more-2013" href="https://www.google.com/search?udm=7">Videos</a>
+                                            <a id="ugf-news-more" class="ugf-more-2013" href="https://news.google.com/">News</a>
                                             <a id="ugf-books-more" href="https://www.google.com/search?tbm=bks">Books</a>
+                                            <a id="ugf-places-more" class="ugf-more-2013 ugf-more-places" href="https://www.google.com/maps">Places</a>
+                                            <a id="ugf-blogs-more" class="ugf-more-2013" href="https://www.google.com/search?tbm=blg">Blogs</a>
+                                            <a id="ugf-discussions-more" class="ugf-more-2013" href="https://www.google.com/search?tbm=dsc">Discussions</a>
+                                            <a id="ugf-recipes-more" class="ugf-more-2013" href="https://www.google.com/search?tbm=rcp">Recipes</a>
+                                            <a id="ugf-patents-more" class="ugf-more-2013" href="https://patents.google.com/">Patents</a>
                                             <a id="ugf-flights-more" href="https://www.google.com/flights">Flights</a>
                                             <a id="ugf-apps-more" href="https://play.google.com/store/apps">Apps</a>
                                         </div>
@@ -37655,10 +37760,16 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
         }
         const q = encodeURIComponent(searchValue || "");
         shop.href = "https://www.google.com/search?q=" + q + "&udm=28";
-        const books = document.querySelector("#ugf-books-more");
-        if (books) {
-            books.href = "https://www.google.com/search?q=" + q + "&tbm=bks";
-        }
+        [["books", "https://www.google.com/search?q=" + q + "&tbm=bks"], ["videos", "https://www.google.com/search?q=" + q + "&udm=7"],
+         ["news", "https://www.google.com/search?q=" + q + "&tbm=nws"], ["places", "https://www.google.com/maps?q=" + q],
+         ["blogs", "https://www.google.com/search?q=" + q + "&tbm=blg"], ["discussions", "https://www.google.com/search?q=" + q + "&tbm=dsc"],
+         ["recipes", "https://www.google.com/search?q=" + q + "&tbm=rcp"], ["patents", "https://patents.google.com/?q=" + q],
+         ["apps", "https://play.google.com/store/search?q=" + q + "&c=apps"]].forEach(function(e) {
+            const a = document.querySelector("#ugf-" + e[0] + "-more");
+            if (a) {
+                a.href = e[1];
+            }
+        });
         if (location == "shopping") {
             document.querySelectorAll("#ugf-navbar-middle .ugf-tab.active").forEach(function(t) {
                 t.classList.remove("active");
@@ -37686,6 +37797,15 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     document.querySelectorAll(".ugf-tool[open]").forEach(function(t) {
                         t.removeAttribute("open");
                     });
+                }
+                const arrow = ev.target.closest(".ugf-result-arrow");
+                document.querySelectorAll(".ugf-result-arrow[open]").forEach(function(a) {
+                    if (a !== arrow) {
+                        a.removeAttribute("open");
+                    }
+                });
+                if (arrow && !ev.target.closest(".ugf-result-menu")) {
+                    arrow.toggleAttribute("open");
                 }
             });
         }
@@ -37787,7 +37907,10 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 { strip: /^sur:/, label: "Usage rights", sur: true, items: [["not filtered by license", []], ["labeled for reuse", ["sur:cl"]], ["labeled for commercial reuse", ["sur:cl"]],
                     ["labeled for reuse with modification", ["sur:cl"]], ["labeled for commercial reuse with modification", ["sur:cl"]]] },
                 { label: "More tools", more: true, items: [["Show sizes", null]] }
-            ],
+            ].filter(function(m) {
+                // (8.11) Usage rights joined the image tools on 14 January 2014; before, it was on Advanced Image Search only
+                return !(m.sur && (String(layout || "") === "2013" || ugf14() === "2013N"));
+            }),
             videos: [
                 { strip: /^dur:/, items: [["Any duration", []], ["Short (0-4 min)", ["dur:s"]], ["Medium (4-20 min)", ["dur:m"]], ["Long (20+ min)", ["dur:l"]]] },
                 { strip: TIME, items: timeItems(false) },
@@ -38931,14 +39054,15 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             let container = document.querySelector("#ugf-search-results-container");
             let newElem = document.createElement("div");
             newElem.classList.add("ugf-search-result");
+            const arrow = ugfResultArrow(SRA.href);
             newElem.innerHTML = ugfTT(`
                     <div class="ugf-search-result-inner">
                         <a class="ugf-search-result-title" title='${SRA.unmoddedTitle}' href="${SRA.href}">
                             <span>${SRA.title}</span>
                         </a>
-                        <a class="ugf-search-result-link" title="${SRA.href}" href="${SRA.href}">
+                        <span class="ugf-result-url"><a class="ugf-search-result-link" title="${SRA.href}" href="${SRA.href}">
                             <span>${SRA.href}</span>
-                        </a>
+                        </a>${arrow}</span>
                         <div class="ugf-search-result-desc">
                             <span>${SRA.description}</span>
                         </div>
@@ -38952,6 +39076,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             newElem.classList.add("ugf-search-result");
             newElem.classList.add("ugf-video-result");
             newElem.setAttribute("thumb-url",SRA.thumbnail);
+            const arrow = ugfResultArrow(SRA.href);
             newElem.innerHTML = ugfTT(`
                     <div class="ugf-search-result-inner">
                         <a class="ugf-search-result-title" title='${SRA.unmoddedTitle}' href="${SRA.href}">
@@ -38967,9 +39092,9 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                                 </div>
                      		</a>
                             <div class="ugf-video-result-right">
-                                <a class="ugf-search-result-link" title="${SRA.href}" href="${SRA.href}">
+                                <span class="ugf-result-url"><a class="ugf-search-result-link" title="${SRA.href}" href="${SRA.href}">
                                 	<span>${SRA.href}</span>
-                        	    </a>
+                        	    </a>${arrow}</span>
                         	    <div class="ugf-search-result-desc">
                             		<span>${SRA.description}</span>
                      		    </div>

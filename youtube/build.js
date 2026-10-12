@@ -14,7 +14,7 @@ const HERE = __dirname;
 const ROOT = path.join(HERE, "..");
 const MAIN = path.join(ROOT, "Gplex_-_Old_Google_Frontend.user.js");
 const ALPHA = path.join(ROOT, "alpha.user.js");
-const VERSION = "9.0.0.10";
+const VERSION = "9.0.0.11";
 const args = process.argv.slice(2);
 const read = function(p) {
     return fs.readFileSync(p, "utf8").replace(/\r\n/g, "\n");
