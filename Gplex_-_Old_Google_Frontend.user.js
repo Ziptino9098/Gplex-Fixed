@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      8.14
+// @version      8.15
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube: StarTube by lightbeam24, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -41235,6 +41235,13 @@ const UGF_GPX = {"logo12": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHcAAA
             : /^(2015N|2016|2017|2018|2019|202)/.test(L) ? "g2015" : "g2011";
         const root = document.documentElement;
         root.setAttribute("gplex-plus", era);
+        const phone = function() {
+            return !!(window.matchMedia && window.matchMedia("(max-width:760px)").matches);
+        };
+        // (8.15) on a phone the 2015 look's drawer starts closed; its button slides it over the page
+        if (era === "g2015" && phone()) {
+            root.classList.add("gpx-closed");
+        }
         const A = UGF_GPX;
         const ico = function(n) {
             const i = A.iconOrder.indexOf(n);
@@ -41440,6 +41447,55 @@ const UGF_GPX = {"logo12": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHcAAA
                 (document.head || root).appendChild(l);
             });
         }
+        // (8.15) narrow windows and phones: Gplex+ itself stacks its page below 760px (the bar in two lines,
+        // the navigation as a row of tabs, the side column under the stream); these keep the looks' fixed
+        // widths out of its way and shorten what they add to the bar. [largest width, rules]
+        const narrow = [];
+        if (era === "g2013") {
+            narrow.push([1140, ["#top table{width:calc(100% - 24px)}#layout{width:auto;margin:12px 12px 0}"]], [900, ["#search input.q{width:260px}"]]);
+        }
+        if (era === "g2015") {
+            narrow.push([1040, ["#logo{width:auto}#search input.q{width:300px}body.out #top table{width:100%}"]]);
+        }
+        const small = [
+            "#top{height:auto}#top table,body.out #top table{width:auto;height:auto;margin:0;padding:0}",
+            "#me{overflow:visible}"
+        ];
+        if (black) {
+            small.push(
+                // the bar: the apps scroll sideways; More and the name go, the count, Share and the photo stay in view
+                "#gpx-gbar .l{flex:1;min-width:0;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none}",
+                "#gpx-gbar .l::-webkit-scrollbar{display:none}",
+                "#gpx-gbar .l>a{flex:none}#gpx-gbar .more,#gpx-gbar .r>a.n{display:none}#gpx-gbar .r{flex:none}"
+            );
+        }
+        if (era === "g2012" || era === "g2012w") {
+            small.push("#nav a.on{box-shadow:none}");
+        }
+        if (era === "g2012w" || era === "g2013") {
+            small.push("#me .gpx-corner{gap:8px}.gpx-corner a.pn{display:none}");
+        }
+        if (era === "g2013") {
+            small.push(
+                "#layout{margin:10px 10px 0}",
+                "#gpx-home{margin-left:8px}#gpx-home .hb{font-size:16px;padding:6px 2px}",
+                "#search input.q{width:70%;width:calc(100% - 88px)}",
+                ".stream{column-count:auto}.card{padding:12px}"
+            );
+        }
+        if (era === "g2015") {
+            small.push(
+                // the bar scrolls with the page; the drawer (closed at first, see above) slides over it
+                "body{padding-top:0}#top{position:relative;height:auto}",
+                "#logo #gpx-burger{margin:0 12px 0 0}",
+                "#search{text-align:left}#search input.q{float:none;width:100%;height:40px}",
+                "#layout,html.gpx-closed #layout,body.bare #layout,body.out #layout{margin:0;padding:12px 10px 0}",
+                "#nav{top:0;bottom:0;width:256px!important;margin:0;z-index:40;box-shadow:0 0 16px rgba(0,0,0,.4)}",
+                ".stream{column-count:auto}.card{padding:12px}",
+                "#gpx-fab{right:16px;bottom:16px}"
+            );
+        }
+        narrow.push([760, small]);
         // every rule is scoped to html[gplex-plus], so it wins over Gplex+'s own stylesheet whichever
         // loads first (the add-ons and userscript managers start at different moments)
         const scope = function(text) {
@@ -41457,7 +41513,9 @@ const UGF_GPX = {"logo12": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHcAAA
         };
         const st = document.createElement("style");
         st.id = "gpx-style";
-        st.textContent = scope(css.filter(Boolean).join("\n"));
+        st.textContent = scope(css.filter(Boolean).join("\n")) + narrow.map(function(q) {
+            return "\n@media (max-width:" + q[0] + "px){" + scope(q[1].join("\n")) + "}";
+        }).join("");
         (document.head || root).appendChild(st);
 
         const build = function() {
@@ -41666,6 +41724,12 @@ const UGF_GPX = {"logo12": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHcAAA
                     b.title = "Main menu";
                     b.addEventListener("click", function() {
                         root.classList.toggle("gpx-closed");
+                    });
+                    // (8.15) on a phone a tap beside the open drawer closes it
+                    document.addEventListener("click", function(ev) {
+                        if (phone() && !root.classList.contains("gpx-closed") && !nav.contains(ev.target) && !b.contains(ev.target)) {
+                            root.classList.add("gpx-closed");
+                        }
                     });
                     logo.parentNode.insertBefore(b, logo);
                 }
