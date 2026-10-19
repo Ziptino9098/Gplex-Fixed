@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      8.20
+// @version      8.21
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube: StarTube by lightbeam24, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -103856,7 +103856,7 @@ html[gplex-gmail] body {
             d.innerHTML = trusted_policy.createHTML('<a class="dd" href="#"><span class="lbl"></span><i class="caret"></i></a><div class="dm"><div class="h">Select image date</div></div>');
             const lbl = d.querySelector(".lbl");
             const menu = d.querySelector(".dm");
-            let chosen = false;     // a date picked by hand: the walk then goes where the embed goes
+            let chosen = null;      // the capture picked by hand, if any
             const label = function() {
                 lbl.textContent = current ? (modern ? "Image capture: " : "Image date: ") + when(current) : "Select image date";
                 menu.querySelectorAll("a").forEach(function(a) {
@@ -103877,7 +103877,7 @@ html[gplex-gmail] body {
                         ev.preventDefault();
                         d.classList.remove("open");
                         if (c !== current) {
-                            chosen = true;
+                            chosen = c;
                             current = c;
                             show(c, ugfMapsEmbedView(frame));
                             label();
@@ -103904,14 +103904,15 @@ html[gplex-gmail] body {
             }
             // (8.20) the label follows the imagery: walking moves the embed to other panoramas (its own
             // link names the one shown), and a new spot's captures come from Google's metadata for its
-            // panorama. One from after the year, reached without a date picked by hand, gives way to the
-            // year's capture at that spot, or to where the walk came from when there is none, so the walk
-            // never goes ahead of the year.
+            // panorama. One from after the year gives way to that spot's capture from the year or before
+            // (8.21: from the picked date or before, when one from the year or before was picked by hand),
+            // or to where the walk came from when there is none, so the walk never goes ahead of the year.
+            // A date from after the year, picked by hand, frees the walk: it then goes where the embed goes.
             const spots = {};       // panorama id -> its spot's captures, or true while they are asked for
             const settle = function(c, v, was) {
                 current = c;
-                if (want && !chosen && c && c.y > want) {
-                    const pick = ugfMapsPanoPick(caps, want);
+                if (want && c && c.y > want && !(chosen && chosen.y > want)) {
+                    const pick = (chosen && chosen.y < want ? ugfMapsPanoPick(caps, chosen.y) : null) || ugfMapsPanoPick(caps, want);
                     if (pick) {
                         current = pick;
                         show(pick, ugfMapsEmbedView(frame) || v);
@@ -103987,29 +103988,47 @@ html[gplex-gmail] body {
                 }
             } catch (e) {}
         };
-        // the copyright line carries the period's year, as the map's own small print does
+        // the copyright line carries the period's year, as the map's own small print does. (8.21) The
+        // line stays invisible until the year is in it, and the watch follows the embed's document
+        // (each reload is a new one), so Google's own year is never drawn.
         const year = ugfMapsYear();
         let yearWatch = null;
+        let yearDoc = null;
         const dateIt = function() {
             try {
                 const d = frame.contentDocument;
-                if (!d || !d.body) {
+                if (!d || !d.documentElement) {
                     return;
                 }
-                d.querySelectorAll(".gm-style-cc span, .gm-style-cc a, .gm-style-cc div").forEach(function(el) {
-                    [].forEach.call(el.childNodes, function(n) {
-                        if (n.nodeType === 3 && /\u00a9\s*(19|20)\d\d/.test(n.nodeValue)) {
-                            const v = n.nodeValue.replace(/(\u00a9\s*)(19|20)\d\d/g, "$1" + year);
-                            if (v !== n.nodeValue) {
-                                n.nodeValue = v;
-                            }
-                        }
-                    });
-                });
-                if (!yearWatch) {
+                if (d !== yearDoc) {
+                    if (yearWatch) {
+                        yearWatch.disconnect();
+                    }
+                    yearDoc = d;
                     yearWatch = new MutationObserver(dateIt);
-                    yearWatch.observe(d.body, { childList: true, subtree: true, characterData: true });
+                    yearWatch.observe(d.documentElement, { childList: true, subtree: true, characterData: true });
                 }
+                if (!d.getElementById("ugf-year-style")) {
+                    const st = d.createElement("style");
+                    st.id = "ugf-year-style";
+                    st.textContent = ".gm-style-cc:not([ugf-year]) { visibility: hidden !important; }";
+                    (d.head || d.documentElement).appendChild(st);
+                }
+                d.querySelectorAll(".gm-style-cc").forEach(function(cc) {
+                    cc.querySelectorAll("span, a, div").forEach(function(el) {
+                        [].forEach.call(el.childNodes, function(n) {
+                            if (n.nodeType === 3 && /\u00a9\s*(19|20)\d\d/.test(n.nodeValue)) {
+                                const v = n.nodeValue.replace(/(\u00a9\s*)(19|20)\d\d/g, "$1" + year);
+                                if (v !== n.nodeValue) {
+                                    n.nodeValue = v;
+                                }
+                            }
+                        });
+                    });
+                    if (!cc.hasAttribute("ugf-year")) {
+                        cc.setAttribute("ugf-year", year);
+                    }
+                });
             } catch (e) {}
         };
         const walk = setInterval(function() {
