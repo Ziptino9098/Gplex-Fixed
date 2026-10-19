@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      8.17
+// @version      8.18
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube: StarTube by lightbeam24, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -902,6 +902,18 @@ function ugfMobileMode() {
 }
 function ugfMobileLabel() {
     return { on: "On", off: "Off" }[ugfMobileMode()] || "Automatic (on phones)";
+}
+// (8.18) the "Load Street View images to selected year" setting, UGF_SV_YEAR = on | off: on, Street View in
+// Maps shows the newest capture from the layout's year or before and never one from after it
+function ugfStreetYearMode() {
+    try {
+        return GM_getValue("UGF_SV_YEAR", "on") === "off" ? "off" : "on";
+    } catch (e) {
+        return "on";
+    }
+}
+function ugfStreetYearLabel() {
+    return ugfStreetYearMode() === "off" ? "Off" : "On";
 }
 (function() {
     if (ugfOnYouTube || /(^|\.)youtube\.com$/i.test(location.hostname)) {
@@ -58609,6 +58621,8 @@ html:not([dark-dd-open]) #ugf-dark-dd,
 html:not([dark-dd-open]) #ugf-dark-fence,
 html:not([mobile-dd-open]) #ugf-mobile-dd,
 html:not([mobile-dd-open]) #ugf-mobile-fence,
+html:not([svyear-dd-open]) #ugf-svyear-dd,
+html:not([svyear-dd-open]) #ugf-svyear-fence,
 html:not([name-email-dd-open]) #ugf-name-email-dd,
 html:not([name-email-dd-open]) #ugf-name-email-fence,
 html:not([apps-dd-open]) #gp-apps-dd,
@@ -64006,6 +64020,8 @@ html[shopping-results] #ugf-center {
             </div>
             <div id="ugf-mobile-fence" class="ugf-fence">
             </div>
+            <div id="ugf-svyear-fence" class="ugf-fence">
+            </div>
             <div id="ugf-neuro-fence" class="ugf-fence">
             </div>
             <div id="ugf-gmailon-fence" class="ugf-fence">
@@ -64370,6 +64386,33 @@ html[shopping-results] #ugf-center {
                                                 <a id="" class="ugf-dropdown-item" value="auto">
                                                     <span>Automatic (on phones)</span>
                                                 </a>
+                                                <a id="" class="ugf-dropdown-item" value="on">
+                                                    <span>On</span>
+                                                </a>
+                                                <a id="" class="ugf-dropdown-item" value="off">
+                                                    <span>Off</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ugf-gplex-section">
+                            <div class="ugf-gplex-section-inner">
+                                <div class="ugf-gplex-section-title">
+                                    <span>Load Street View images to selected year</span>
+                                </div>
+                                <div class="ugf-gplex-section-content">
+                                    <div id="ugf-option-svyear" class="ugf-gplex-option flex" value="${ugfStreetYearMode()}">
+                                        <a class="ugf-dropdown-button" id="ugf-svyear-dd-btn">
+                                            <span>${ugfStreetYearLabel()}</span>
+                                        </a>
+                                        <div class="ugf-gplex-text">
+                                            <span>Street View in Maps opens on Google's newest imagery from the year of your layout or before, never from after it: with the 2014 layout and captures of May 2011 and Aug 2015, the May 2011 one; with Late 2015, the Aug 2015 one. Where Google has nothing from that year or before, the oldest it has. <b>Off</b> opens Google's newest imagery, as Google Maps does today. The "Select image date" menu in Street View lists every capture either way.</span>
+                                        </div>
+                                        <div class="ugf-dropdown" id="ugf-svyear-dd">
+                                            <div class="ugf-dropdown-inner">
                                                 <a id="" class="ugf-dropdown-item" value="on">
                                                     <span>On</span>
                                                 </a>
@@ -68010,7 +68053,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             }
             if (location == "gplex") {
                 document.title = "Gplex Settings";
-                ["layout", "noton", "infocards", "forceload", "settings-display", "name-email", "neuro", "gmailon", "mapson", "calon", "dark", "mobile", "newson", "tron", "docson", "sheetson", "slideson", "drawingson", "signinon", "accounton", "keepon", "formson", "driveon", "photoson", "playon", "finon", "startubeon", "ytclassicon"].forEach(function(k) {
+                ["layout", "noton", "infocards", "forceload", "settings-display", "name-email", "neuro", "gmailon", "mapson", "calon", "dark", "mobile", "newson", "svyear", "tron", "docson", "sheetson", "slideson", "drawingson", "signinon", "accounton", "keepon", "formson", "driveon", "photoson", "playon", "finon", "startubeon", "ytclassicon"].forEach(function(k) {
                     document.querySelector("#ugf-" + k + "-dd-btn").addEventListener("click",function() {
                         document.querySelector("html").setAttribute(k + "-dd-open","");
                         document.title = "Gplex Settings";
@@ -68220,6 +68263,20 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                         document.querySelector("#ugf-option-mobile").setAttribute("value", value);
                         document.querySelector("#ugf-option-mobile .ugf-dropdown-button span").textContent = itemRoot.textContent.trim();
                         document.querySelector("html").removeAttribute("mobile-dd-open");
+                    });
+                });
+                // (8.18) Street View images to the selected year
+                document.querySelectorAll("#ugf-option-svyear .ugf-dropdown-item").forEach(function(itemRoot) {
+                    itemRoot.addEventListener("click",function() {
+                        const value = itemRoot.getAttribute("value");
+                        try {
+                            if (typeof GM_setValue === "function") {
+                                GM_setValue("UGF_SV_YEAR", value);
+                            }
+                        } catch (e) {}
+                        document.querySelector("#ugf-option-svyear").setAttribute("value", value);
+                        document.querySelector("#ugf-option-svyear .ugf-dropdown-button span").textContent = itemRoot.textContent.trim();
+                        document.querySelector("html").removeAttribute("svyear-dd-open");
                     });
                 });
                 let neuroBtns = document.querySelectorAll("#ugf-option-neuro .ugf-dropdown-item");
@@ -102172,6 +102229,7 @@ html[gplex-gmail] body {
                 const k = Math.pow(2, m.z - back._z);
                 back.style.transform = "translate(" + (back._ox * k - left) + "px," + (back._oy * k - top) + "px) scale(" + k + ")";
             }
+            drawCov(left, top, s);
             place();
             const ll = unproject(cx, cy, m.z);
             m.lat = ll.lat;
@@ -102181,6 +102239,112 @@ html[gplex-gmail] body {
                     fn();
                 } catch (e) {}
             });
+        };
+        // (8.18) Street View coverage: Google's tiles of where there are panoramas, over the map while
+        // Pegman is picked up; a click on a line opens Street View there. The tiles are read through a
+        // canvas (the service allows it), so a click can be tested against the lines.
+        let cov = null;          // { url(x, y, z), onClick(ll) }
+        let covLayer = null;
+        const covLayerFor = function(z) {
+            if (covLayer && covLayer._z === z && Math.abs(cx - covLayer._ox) < 4e6 && Math.abs(cy - covLayer._oy) < 4e6) {
+                return covLayer;
+            }
+            if (covLayer) {
+                covLayer.remove();
+            }
+            covLayer = document.createElement("div");
+            covLayer.className = "ugf-maps-cov";
+            covLayer._tiles = {};
+            covLayer._z = z;
+            covLayer._ox = Math.round(cx);
+            covLayer._oy = Math.round(cy);
+            overlay.insertBefore(covLayer, overlay.firstChild);
+            return covLayer;
+        };
+        const drawCov = function(left, top, s) {
+            if (!cov) {
+                if (covLayer) {
+                    covLayer.remove();
+                    covLayer = null;
+                }
+                return;
+            }
+            const tz = Math.min(m.z, NATIVE);
+            const k = Math.pow(2, m.z - tz);
+            const D = T * k;
+            const n = Math.pow(2, tz);
+            const lay = covLayerFor(m.z);
+            const want = {};
+            const tx0 = Math.floor(left / D) - 1;
+            const tx1 = Math.floor((left + s.w) / D) + 1;
+            const ty0 = Math.max(0, Math.floor(top / D) - 1);
+            const ty1 = Math.min(n - 1, Math.floor((top + s.h) / D) + 1);
+            for (let ty = ty0; ty <= ty1; ty++) {
+                for (let tx = tx0; tx <= tx1; tx++) {
+                    const key = tx + "/" + ty;
+                    want[key] = true;
+                    if (lay._tiles[key]) {
+                        continue;
+                    }
+                    const c = document.createElement("canvas");
+                    c.width = T;
+                    c.height = T;
+                    c.style.left = (tx * D - lay._ox) + "px";
+                    c.style.top = (ty * D - lay._oy) + "px";
+                    c.style.width = D + "px";
+                    c.style.height = D + "px";
+                    c._px = null;
+                    const img = new Image();
+                    img.crossOrigin = "anonymous";
+                    img.onload = function() {
+                        try {
+                            const ctx = c.getContext("2d");
+                            ctx.drawImage(img, 0, 0, T, T);
+                            c._px = ctx.getImageData(0, 0, T, T).data;
+                            c.classList.add("in");
+                        } catch (e) {}
+                    };
+                    img.src = cov.url(((tx % n) + n) % n, ty, tz);
+                    lay.appendChild(c);
+                    lay._tiles[key] = c;
+                }
+            }
+            Object.keys(lay._tiles).forEach(function(key) {
+                if (!want[key]) {
+                    lay._tiles[key].remove();
+                    delete lay._tiles[key];
+                }
+            });
+            lay.style.transform = "translate(" + Math.round(lay._ox - left) + "px," + Math.round(lay._oy - top) + "px)";
+        };
+        // whether a line is under the point on screen: true, false, or null while the tile is still coming
+        const coverageAt = function(sx, sy) {
+            if (!cov || !covLayer) {
+                return null;
+            }
+            const s = size();
+            const tz = Math.min(m.z, NATIVE);
+            const k = Math.pow(2, m.z - tz);
+            const D = T * k;
+            const wx = cx - s.w / 2 + sx;
+            const wy = cy - s.h / 2 + sy;
+            const c = covLayer._tiles[Math.floor(wx / D) + "/" + Math.floor(wy / D)];
+            if (!c || !c._px) {
+                return null;
+            }
+            const px = Math.floor((wx - Math.floor(wx / D) * D) / k);
+            const py = Math.floor((wy - Math.floor(wy / D) * D) / k);
+            const R = 5;
+            for (let dy = -R; dy <= R; dy++) {
+                for (let dx = -R; dx <= R; dx++) {
+                    const x = px + dx;
+                    const y = py + dy;
+                    if (x >= 0 && y >= 0 && x < T && y < T && c._px[(y * T + x) * 4 + 3] > 40) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         };
         const api = {
             el: host,
@@ -102276,6 +102440,14 @@ html[gplex-gmail] body {
             overlay: function() {
                 return m.ov[0] || "";
             },
+            setCoverage: function(c) {
+                cov = c || null;
+                draw();
+            },
+            coverage: function() {
+                return cov;
+            },
+            coverageAt: coverageAt,
             fit: function(points, pad) {
                 if (!points.length) {
                     return;
@@ -102392,6 +102564,13 @@ html[gplex-gmail] body {
                 const sx = ev.clientX - r.left;
                 const sy = ev.clientY - r.top;
                 const ll = api.screenToLatLng(sx, sy);
+                // with the coverage up, a click on a line opens Street View; one beside it does nothing
+                if (cov) {
+                    if (coverageAt(sx, sy) !== false) {
+                        cov.onClick(ll);
+                    }
+                    return;
+                }
                 m.clickFns.forEach(function(fn) {
                     try {
                         fn(ll, sx, sy, ev);
@@ -103461,10 +103640,10 @@ html[gplex-gmail] body {
     // no key, no cookies), and the one of the given year or before
     function ugfMapsPanoOfYear(lat, lng, year, done) {
         let finished = false;
-        const fin = function(p) {
+        const fin = function(p, caps) {
             if (!finished) {
                 finished = true;
-                done(p);
+                done(p, caps || []);
             }
         };
         setTimeout(function() {
@@ -103507,10 +103686,10 @@ html[gplex-gmail] body {
                 caps.sort(function(a, b) {
                     return (b.y * 12 + b.m) - (a.y * 12 + a.m);
                 });
-                const pick = caps.filter(function(c) {
+                const pick = year ? caps.filter(function(c) {
                     return c.y <= year;
-                })[0] || caps[caps.length - 1];
-                fin(pick);
+                })[0] || caps[caps.length - 1] : caps[0];
+                fin(pick, caps);
             }).catch(function() {
                 fin(null);
             });
@@ -103537,28 +103716,73 @@ html[gplex-gmail] body {
         sv.querySelector(".c").textContent = where;
         const frame = sv.querySelector("iframe");
         // (7.2.16) the imagery of the layout's year: Google's own captures here, newest first, and the
-        // newest from that year or before (else the oldest there is). An address naming a panorama keeps it.
-        if (at && at.pano) {
-            frame.src = ugfMapsStreetEmbedUrl(lat, lng, at);
-        } else {
-            frame.src = "about:blank";
-            ugfMapsPanoOfYear(lat, lng, parseInt(ugfMapsYear(), 10), function(p) {
-                if (!sv.isConnected) {
-                    return;
-                }
-                const a2 = { heading: at && at.heading, pitch: at && at.pitch, pano: p ? p.id : "" };
-                frame.src = ugfMapsStreetEmbedUrl(p ? p.lat : lat, p ? p.lng : lng, a2);
-                if (p && p.y) {
-                    const d = document.createElement("span");
-                    d.className = "svdate";
-                    d.textContent = "Image date: " + ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][(p.m || 1) - 1] + " " + p.y;
-                    const holder = sv.querySelector(".svbar, .svcard .txt");
-                    if (holder) {
-                        holder.insertBefore(d, holder.querySelector(".back"));
+        // newest from that year or before (else the oldest there is); (8.18) the newest of all with the
+        // "Load Street View images to selected year" setting off. An address naming a panorama keeps it.
+        const named = !!(at && at.pano);
+        frame.src = named ? ugfMapsStreetEmbedUrl(lat, lng, at) : "about:blank";
+        ugfMapsPanoOfYear(lat, lng, ugfStreetYearMode() === "on" ? parseInt(ugfMapsYear(), 10) : 0, function(p, caps) {
+            if (!sv.isConnected) {
+                return;
+            }
+            const show = function(c) {
+                frame.src = ugfMapsStreetEmbedUrl(c ? c.lat : lat, c ? c.lng : lng, { heading: at && at.heading, pitch: at && at.pitch, pano: c ? c.id : "" });
+            };
+            let current = named ? caps.filter(function(c) {
+                return c.id === at.pano;
+            })[0] || null : p;
+            if (!named) {
+                show(p);
+            }
+            if (!caps.length) {
+                return;
+            }
+            // (8.18) the dates: the one shown, and a menu of every capture Google has here
+            const when = function(c) {
+                return ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][(c.m || 1) - 1] + " " + c.y;
+            };
+            const d = document.createElement("span");
+            d.className = "svdate" + (caps.length > 1 ? "" : " one");
+            d.innerHTML = trusted_policy.createHTML('<a class="dd" href="#"><span class="lbl"></span><i class="caret"></i></a><div class="dm"><div class="h">Select image date</div></div>');
+            const lbl = d.querySelector(".lbl");
+            const menu = d.querySelector(".dm");
+            const label = function() {
+                lbl.textContent = (modern ? "Image capture: " : "Image date: ") + (current ? when(current) : "");
+                menu.querySelectorAll("a").forEach(function(a) {
+                    a.classList.toggle("on", a._cap === current);
+                });
+            };
+            caps.forEach(function(c) {
+                const a = document.createElement("a");
+                a.href = "#";
+                a.textContent = when(c);
+                a._cap = c;
+                a.addEventListener("click", function(ev) {
+                    ev.preventDefault();
+                    d.classList.remove("open");
+                    if (c !== current) {
+                        current = c;
+                        show(c);
+                        label();
                     }
+                });
+                menu.appendChild(a);
+            });
+            d.querySelector(".dd").addEventListener("click", function(ev) {
+                ev.preventDefault();
+                ev.stopPropagation();
+                if (caps.length > 1) {
+                    d.classList.toggle("open");
                 }
             });
-        }
+            sv.addEventListener("click", function() {
+                d.classList.remove("open");
+            });
+            label();
+            const holder = sv.querySelector(".svbar, .svcard .txt");
+            if (holder) {
+                holder.insertBefore(d, holder.querySelector(".back"));
+            }
+        });
         // take Google's present-day overlays off the viewer once it has drawn them
         const hide = [".gm-iv-address", ".gm-iv-container", ".gm-fullscreen-control", ".gm-iv-profile-link",
             'button[title="Keyboard shortcuts"]', 'button[aria-label="Keyboard shortcuts"]'];
@@ -103567,7 +103791,7 @@ html[gplex-gmail] body {
             hide.push(".gm-bundled-control", ".gm-compass", ".gmnoprint.gm-bundled-control-on-bottom");
         }
         // where you are standing, as Google's viewer names it (it follows you as you walk)
-        const named = !!(name && name !== "Dropped pin");
+        const titled = !!(name && name !== "Dropped pin");
         const follow = function() {
             try {
                 const d = frame.contentDocument;
@@ -103575,10 +103799,10 @@ html[gplex-gmail] body {
                 const b = d && d.querySelector(".gm-iv-long-address-description");
                 const t1 = a ? a.textContent.trim() : "";
                 const t2 = b ? b.textContent.trim() : "";
-                if (t1 && !named) {
+                if (t1 && !titled) {
                     sv.querySelector(".t").textContent = t1;
                     sv.querySelector(".c").textContent = t2 || where;
-                } else if (t1 && named) {
+                } else if (t1 && titled) {
                     sv.querySelector(".c").textContent = t1 + (t2 ? ", " + t2 : "");
                 }
             } catch (e) {}
@@ -103688,11 +103912,38 @@ html[gplex-gmail] body {
         ugfMapsTranslate(sv);
         return sv;
     }
-    // Pegman: click him for Street View where the map is centred, or drag him onto the
-    // map and let go where you want to stand
-    function ugfMapsPegman(el, map, open) {
+    // Pegman: pick him up (a click) and the streets with Street View show on the map, a click on one
+    // opens it there (Escape, or Pegman again, puts him back); or drag him onto the map and let go where
+    // you want to stand. With a pin dropped on the map, a click opens Street View at the pin.
+    function ugfMapsPegman(el, map, open, cov, pin) {
         const A = ugfMapsArt();
         let drag = null;
+        const onKey = function(ev) {
+            if (ev.key === "Escape") {
+                down();
+            }
+        };
+        const up = function() {
+            if (!cov || map.coverage()) {
+                return;
+            }
+            map.setCoverage({ url: cov.url, onClick: function(ll) {
+                down();
+                open(ll.lat, ll.lng);
+            } });
+            el.classList.add("on");
+            map.el.classList.add("svmode");
+            document.addEventListener("keydown", onKey, true);
+        };
+        const down = function() {
+            if (!map.coverage()) {
+                return;
+            }
+            map.setCoverage(null);
+            el.classList.remove("on");
+            map.el.classList.remove("svmode");
+            document.removeEventListener("keydown", onKey, true);
+        };
         el.addEventListener("pointerdown", function(ev) {
             if (ev.button !== 0) {
                 return;
@@ -103716,6 +103967,7 @@ html[gplex-gmail] body {
                 g.id = "ugf-maps-pegfly";
                 document.documentElement.appendChild(g);
                 drag.ghost = g;
+                up();
             }
             if (drag.ghost) {
                 // held by the head, feet where the pointer is
@@ -103733,18 +103985,35 @@ html[gplex-gmail] body {
                 d.ghost.remove();
             }
             if (ev.type === "pointercancel") {
+                down();
                 return;
             }
             if (!d.moved) {
-                const v = map.view();
-                open(v.lat, v.lng);
+                const p = pin && pin();
+                if (p) {
+                    down();
+                    open(p.lat, p.lng);
+                } else if (!cov) {
+                    const v = map.view();
+                    open(v.lat, v.lng);
+                } else if (map.coverage()) {
+                    down();
+                } else {
+                    up();
+                }
                 return;
             }
             const r = map.el.getBoundingClientRect();
             const x = ev.clientX - r.left;
             const y = ev.clientY - r.top;
             if (x < 0 || y < 0 || x > r.width || y > r.height) {
+                down();
                 return;   // let go off the map: nothing happens, as on Maps
+            }
+            const hit = map.coverageAt(x, y);
+            down();
+            if (hit === false) {
+                return;   // let go beside the lines: Pegman goes back, as on Maps
             }
             const ll = map.screenToLatLng(x, y);
             open(ll.lat, ll.lng);
@@ -103756,6 +104025,17 @@ html[gplex-gmail] body {
             ev.stopPropagation();
         });
         el.style.touchAction = "none";
+    }
+    // (8.18) the period's coverage tiles: Google's blue lines of 2008 to 2017, which its Maps API still
+    // draws, and the lines with the photo-sphere rings of the Maps of 2018 on
+    function ugfMapsCoverage(era) {
+        const modern = era === "m2019" || era === "m2022";
+        return { url: function(x, y, z) {
+            return modern
+                ? "https://www.google.com/maps/vt?pb=!1m5!1m4!1i" + z + "!2i" + x + "!3i" + y + "!4i256!2m8!1e2!2ssvv!4m2!1scb_client!2sapiv3" +
+                    "!4m2!1scc!2s*211m3*211e3*212b1*213e2*211m3*211e2*212b1*213e2!3m3!3sUS!12m1!1e68!4e0"
+                : "https://mts" + ((x + y) % 2) + ".googleapis.com/vt?hl=" + encodeURIComponent(ugfMapsLang()) + "&lyrs=svv%7Ccb_client:apiv3&style=40,18&x=" + x + "&y=" + y + "&z=" + z;
+        } };
     }
     function ugfMapsScale(map) {
         const mpp = map.metersPerPixel();
@@ -103966,7 +104246,9 @@ html[gplex-gmail] body {
                 }
             }, 200);
         }
-        ugfMapsControls(shell, map, era);
+        ugfMapsControls(shell, map, era, function() {
+            return pointer ? { lat: pointer.lat, lng: pointer.lng } : null;
+        });
         // a Street View address opens straight into Street View, the map waiting behind it
         if (url.street) {
             ugfMapsStreetView(shell, era, url.street.lat, url.street.lng, "", url.street);
@@ -105059,9 +105341,10 @@ html[gplex-gmail] body {
         } catch (e) {}
     }
     // ---- controls, per period ---------------------------------------------------
-    function ugfMapsControls(shell, map, era) {
+    function ugfMapsControls(shell, map, era, pin) {
         const A = ugfMapsArt();
         const K = A.kit;
+        const cov = ugfMapsCoverage(era);
         const wrap = shell.querySelector("#ugf-maps-mapwrap");
         const add = function(cls, html) {
             const d = document.createElement("div");
@@ -105118,7 +105401,7 @@ html[gplex-gmail] body {
             c.querySelector(".rt").onclick = function() { map.panBy(200, 0); };
             c.querySelector(".zi").onclick = map.zoomIn;
             c.querySelector(".zo").onclick = map.zoomOut;
-            ugfMapsPegman(c.querySelector(".peg"), map, street);
+            ugfMapsPegman(c.querySelector(".peg"), map, street, cov, pin);
             slider(c, c.querySelector(".rail"), c.querySelector(".knob"), 118, 8, levels);
         } else if (era === "m2010" || era === "m2011") {
             const levels = 20;
@@ -105131,7 +105414,7 @@ html[gplex-gmail] body {
             c.querySelector(".rt").onclick = function() { map.panBy(200, 0); };
             c.querySelector(".zi").onclick = map.zoomIn;
             c.querySelector(".zo").onclick = map.zoomOut;
-            ugfMapsPegman(c.querySelector(".peg"), map, street);
+            ugfMapsPegman(c.querySelector(".peg"), map, street, cov, pin);
             slider(c, c.querySelector(".rail"), c.querySelector(".knob"), 116, 8, levels);
         }
         // map types
@@ -105217,14 +105500,14 @@ html[gplex-gmail] body {
             z.querySelector(".zo").onclick = map.zoomOut;
             if (era === "m2015") {
                 const im = add("imagery15", '<img src="' + K.imagery + '" alt=""><a class="peg" title="Street View"></a><a class="more" title="Show imagery"></a>');
-                ugfMapsPegman(im.querySelector(".peg"), map, street);
+                ugfMapsPegman(im.querySelector(".peg"), map, street, cov, pin);
                 im.querySelector(".more").onclick = function() {
                     map.setType(map.view().type === "m" ? "y" : "m");
                 };
             } else {
                 const pg = add("peg14", '<img src="' + K.peg + '" alt="">');
                 pg.title = "Street View";
-                ugfMapsPegman(pg, map, street);
+                ugfMapsPegman(pg, map, street, cov, pin);
             }
             if (era === "m2019" || era === "m2022") {
                 const t = add("layers19", '<span class="img"></span><span class="lbl">Layers</span>');
@@ -105432,6 +105715,13 @@ html[gplex-gmail] body {
             '.ugf-maps-tile.in { opacity: 1; }',
             '#ugf-maps[era="m2005"] .ugf-maps-tile, #ugf-maps[era="m2006"] .ugf-maps-tile, #ugf-maps[era="m2007"] .ugf-maps-tile { transition: none; }',
             '.ugf-maps-overlay { position: absolute; inset: 0; pointer-events: none; }',
+            // (8.18) the Street View coverage over the map, and Pegman's cursor while he is picked up
+            '.ugf-maps-cov { position: absolute; left: 0; top: 0; }',
+            '.ugf-maps-cov canvas { position: absolute; opacity: 0; transition: opacity .15s; }',
+            '.ugf-maps-cov canvas.in { opacity: 1; }',
+            '.ugf-maps-canvas.svmode { cursor: url("' + A.kit.pegfly + '") 13 34, pointer; }',
+            '.large2008 .peg.on, .large2010 .peg.on, .imagery15 .peg.on { opacity: .45; }',
+            '.peg14.on { background: #e8e8e8; box-shadow: inset 0 1px 3px rgba(0,0,0,.3); }',
             '.ugf-maps-marker { position: absolute; pointer-events: auto; cursor: pointer; }',
             '.ugf-maps-ctl { position: absolute; z-index: 5; }',
             '.ugf-maps-ctl i, .ugf-maps-ctl b { position: absolute; display: block; cursor: pointer; }',
@@ -105645,7 +105935,26 @@ html[gplex-gmail] body {
             '#ugf-maps-pegfly { position: fixed; z-index: 2147483647; pointer-events: none; width: 26px; height: 36px; }',
             '#ugf-maps-sv { position: absolute; inset: 0; z-index: 40; background: #000; display: flex; flex-direction: column; }',
             '#ugf-maps-sv .pano { flex: 1; width: 100%; border: 0; display: block; min-height: 0; }',
-            '#ugf-maps-sv .svdate { color: #666; font-size: 12px; margin-left: 12px; } #ugf-maps-sv .svcard .svdate { display: block; margin: 2px 0 0; }',
+            '#ugf-maps-sv .svdate { position: relative; color: #666; font-size: 12px; margin-left: 12px; } #ugf-maps-sv .svcard .svdate { display: block; margin: 2px 0 0; }',
+            // (8.18) the image date, a menu of every capture: classic Maps' white box with its border and
+            // shadow (heavier in 2008), then the new Maps' card in Roboto, rounded from 2018
+            '#ugf-maps-sv .svdate .dd { color: inherit !important; text-decoration: none; cursor: pointer; white-space: nowrap; }',
+            '#ugf-maps-sv .svdate .caret { display: inline-block; width: 0; height: 0; border: 4px solid transparent; border-top: 4px solid currentColor; border-bottom: 0; margin-left: 5px; vertical-align: middle; }',
+            '#ugf-maps-sv .svdate.one .caret { display: none; }',
+            '#ugf-maps-sv .svdate .dm { display: none; position: absolute; left: 0; top: 100%; margin-top: 4px; min-width: 150px; background: #fff; border: 1px solid #b2b2b2; box-shadow: 0 2px 4px rgba(0,0,0,.2); padding: 4px 0; z-index: 5; font: 13px arial, sans-serif; color: #000; text-align: left; }',
+            '#ugf-maps-sv .svdate.open .dm { display: block; }',
+            '#ugf-maps-sv .svdate .dm .h { padding: 4px 12px 6px; color: #666; font-size: 11px; white-space: nowrap; }',
+            '#ugf-maps-sv .svdate .dm a { display: block; padding: 5px 12px; color: #000 !important; text-decoration: none; white-space: nowrap; }',
+            '#ugf-maps-sv .svdate .dm a:hover { background: #eee; }',
+            '#ugf-maps-sv .svdate .dm a.on { font-weight: bold; }',
+            '#ugf-maps-sv[era="m2007"] .svdate .dm { border-color: #999; box-shadow: 2px 2px 3px rgba(0,0,0,.35); }',
+            '#ugf-maps-sv .svcard .svdate { color: #bbb; }',
+            '#ugf-maps-sv .svcard .svdate .dm { border: 0; border-radius: 2px; box-shadow: 0 2px 6px rgba(0,0,0,.4); font: 13px Roboto, arial, sans-serif; }',
+            '#ugf-maps-sv .svcard .svdate .dm a:hover { background: #f5f5f5; }',
+            '#ugf-maps-sv[era="m2019"] .svcard .svdate .dm, #ugf-maps-sv[era="m2022"] .svcard .svdate .dm { border-radius: 8px; padding: 8px 0; font: 14px Roboto, arial, sans-serif; }',
+            '#ugf-maps-sv[era="m2019"] .svcard .svdate .dm .h, #ugf-maps-sv[era="m2022"] .svcard .svdate .dm .h { font-size: 12px; color: #70757a; }',
+            '#ugf-maps-sv[era="m2019"] .svcard .svdate .dm a:hover, #ugf-maps-sv[era="m2022"] .svcard .svdate .dm a:hover { background: #f1f3f4; }',
+            '#ugf-maps-sv[era="m2019"] .svcard .svdate .dm a.on, #ugf-maps-sv[era="m2022"] .svcard .svdate .dm a.on { color: #1a73e8 !important; font-weight: 500; }',
             // classic Maps: a plain strip over the panorama saying where you stand
             '#ugf-maps-sv .svbar { display: flex; align-items: center; gap: 10px; padding: 4px 8px; background: #fff; border-bottom: 1px solid #979797; font: 13px arial, sans-serif; color: #000; }',
             '#ugf-maps-sv .svbar .c { color: #676767; font-size: 11px; }',
