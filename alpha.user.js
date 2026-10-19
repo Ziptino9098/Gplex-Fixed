@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended Alpha - Gplex Old Google with its YouTube part rewritten
 // @namespace    http://tampermonkey.net/
-// @version      9.0.0.21
+// @version      9.0.0.22
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube, rewritten: alpha, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -69453,6 +69453,284 @@ html[gplex-gmail] body {
             "&hl=" + encodeURIComponent(ugfMapsLang()) + retina +
             (style ? "&apistyle=" + encodeURIComponent(style) : "");
     }
+    // Gplex Maps: the "© 2026 Google" marks in Google's satellite tiles, rewritten to the layout's year.
+    // The mark is drawn into the tile pixels by the tile server, faint white (about 10%) at one spot per
+    // tile (a hash of the tile), clipped at the tile's edges, the same glyphs everywhere. A worker finds it
+    // with the glyph mask (the "Google" part is the search key, so a new year still matches), measures its
+    // strength against the rows around it, undoes the white blend, puts "©" and "Google" back from the
+    // mask, and the main thread writes the year's digits in between. Tiles come through a canvas (the tile
+    // server allows it); the engine shows the rewritten tile as a blob.
+    function ugfMapsMarks() {
+        if (ugfMapsMarks._api) {
+            return ugfMapsMarks._api;
+        }
+        ugfMapsMarks._api = (function() {
+        const MW = 101, MH = 11;
+        const HEX = "0033333333000001110012211123333200003553001000356612210023023543001100001111000011000000222793000010000456654560000012275676200676567300367886100158a97122100345568863100000000000000000000000009b30000110224677445700000022746a930189647b6025536a942467740022210136a854564301433410014334100132243009c300323324535763347210000120019a31387304b7003102a93049b952022200147a610133206866860068668600585597109b20363344691465213632000000000aa31497103c9002002ba203ac98be22200258a400021039a44a9339a44a93288339a30aa106705678b0364102543100000203cd303c9203fc103306fc206a8206d33200259a50023105a8008a55a8008a5385006942aa00870688ad035300144310000007db4037f70069510006dd6017b81039d303303da646aa837a7007a77a7007a7397008a52aa329a6dba89146521363200000005971000c7337952004674000587427bb303303b7423785249811894498118945a921782067006830003435863347100000018aa941008756764306cc72250256678b7102201786469a7307855870078558703883388327831685333003566434600000012baa986313466532206cc867a000257773002200365457863047447400474474003546aa525621453ba800233322330000001143223310014530000012211110002320000110000000110001200210012002100134687400000000000";
+        const K = new Float32Array(MW * MH);
+        for (let i = 0; i < K.length; i++) {
+            K[i] = parseInt(HEX.charAt(i), 16) / 15;
+        }
+        // the glyph groups: "©" | digits | "Google", from the columns the mask occupies
+        const groups = (function() {
+            const cols = [];
+            for (let x = 0; x < MW; x++) {
+                let m = 0;
+                for (let y = 0; y < MH; y++) {
+                    m = Math.max(m, K[y * MW + x]);
+                }
+                cols.push(m);
+            }
+            // a group ends at a gap of three columns or more (the one-column slits inside the digits stay)
+            const runs = [];
+            let cur = null;
+            cols.forEach(function(c, x) {
+                if (c > 0.25) {
+                    if (cur) {
+                        cur[1] = x;
+                    } else {
+                        cur = [x, x];
+                    }
+                } else if (cur && x - cur[1] >= 3) {
+                    runs.push(cur);
+                    cur = null;
+                }
+            });
+            if (cur) {
+                runs.push(cur);
+            }
+            return runs;
+        })();
+        const digits = groups[1] || [18, 50];
+        const word = groups[2] || [56, 100];
+        const WORKER = "(" + (function() {
+            let K, MW, MH, WX0, WX1;
+            const score = function(E, W, H, px, py, x0, x1, KZ, n0) {
+                let se = 0, see = 0, skk = 0, n = 0;
+                for (let j = 0; j < MH; j++) {
+                    const y = py + j;
+                    if (y < 0 || y >= H) { continue; }
+                    for (let i = x0; i <= x1; i++) {
+                        const x = px + i;
+                        if (x < 0 || x >= W) { continue; }
+                        const e = E[y * W + x], k = KZ[j * MW + i];
+                        se += e * k; see += e * e; skk += k * k; n++;
+                    }
+                }
+                return n < n0 ? -1 : se / Math.sqrt(see * skk + 1e-6);
+            };
+            const zeroMean = function(x0, x1) {
+                let m = 0, n = 0;
+                for (let j = 0; j < MH; j++) { for (let i = x0; i <= x1; i++) { m += K[j * MW + i]; n++; } }
+                m /= n;
+                const Z = new Float32Array(MW * MH);
+                for (let j = 0; j < MH; j++) { for (let i = x0; i <= x1; i++) { Z[j * MW + i] = K[j * MW + i] - m; } }
+                return Z;
+            };
+            let KZ = null, KZW = null;
+            self.onmessage = function(ev) {
+                const m = ev.data;
+                if (m.mask) {
+                    K = m.mask; MW = m.mw; MH = m.mh; WX0 = m.wx0; WX1 = m.wx1;
+                    KZ = zeroMean(0, MW - 1); KZW = zeroMean(WX0, WX1);
+                    return;
+                }
+                const W = m.w, H = m.h, d = new Uint8ClampedArray(m.buf);
+                const L = new Float32Array(W * H);
+                for (let i = 0; i < W * H; i++) { L[i] = 0.299 * d[i * 4] + 0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2]; }
+                // the excess over a 15x15 mean (an integral image)
+                const S = new Float64Array((W + 1) * (H + 1));
+                for (let y = 1; y <= H; y++) {
+                    let row = 0;
+                    for (let x = 1; x <= W; x++) { row += L[(y - 1) * W + x - 1]; S[y * (W + 1) + x] = S[(y - 1) * (W + 1) + x] + row; }
+                }
+                const E = new Float32Array(W * H);
+                for (let y = 0; y < H; y++) {
+                    for (let x = 0; x < W; x++) {
+                        const x0 = Math.max(0, x - 7), y0 = Math.max(0, y - 7), x1 = Math.min(W, x + 8), y1 = Math.min(H, y + 8);
+                        E[y * W + x] = L[y * W + x] - (S[y1 * (W + 1) + x1] - S[y0 * (W + 1) + x1] - S[y1 * (W + 1) + x0] + S[y0 * (W + 1) + x0]) / ((x1 - x0) * (y1 - y0));
+                    }
+                }
+                // the search: "Google" at stride 2, then the whole mark at the best few
+                const wn = (WX1 - WX0 + 1) * MH;
+                const cands = [];
+                for (let py = -MH + 4; py < H - 3; py += 2) {
+                    for (let px = -WX1 + 8; px < W - WX0 - 8; px += 2) {
+                        const s = score(E, W, H, px, py, WX0, WX1, KZW, wn * 0.4);
+                        if (s > 0.3) { cands.push([s, px, py]); }
+                    }
+                }
+                cands.sort(function(a, b) { return b[0] - a[0]; });
+                const marks = [];
+                for (let c = 0; c < cands.length && marks.length < 6; c++) {
+                    const px0 = cands[c][1], py0 = cands[c][2];
+                    if (marks.some(function(k) { return Math.abs(k.x - px0) < MW && Math.abs(k.y - py0) < MH; })) { continue; }
+                    let best = [-1, px0, py0];
+                    for (let dy = -2; dy <= 2; dy++) {
+                        for (let dx = -2; dx <= 2; dx++) {
+                            const s = score(E, W, H, px0 + dx, py0 + dy, 0, MW - 1, KZ, MW * MH * 0.3);
+                            if (s > best[0]) { best = [s, px0 + dx, py0 + dy]; }
+                        }
+                    }
+                    // how much of the mark is on the tile
+                const onTile = Math.max(0, Math.min(W, best[1] + MW) - Math.max(0, best[1])) / MW;
+                // the strength, against the rows just outside the mark (not the mean the mark itself lifts)
+                let num = 0, den = 0;
+                for (let i = 0; i < MW; i++) {
+                    const x = best[1] + i;
+                    if (x < 0 || x >= W) { continue; }
+                    let bg = 0, bn = 0;
+                    for (const dy of [-3, -2, MH + 1, MH + 2]) {
+                        const y = best[2] + dy;
+                        if (y >= 0 && y < H) { bg += L[y * W + x]; bn++; }
+                    }
+                    if (!bn) { continue; }
+                    bg /= bn;
+                    for (let j = 0; j < MH; j++) {
+                        const y = best[2] + j, k = K[j * MW + i];
+                        if (y < 0 || y >= H || k < 0.25) { continue; }
+                        const t = k * (255 - bg);
+                        num += (L[y * W + x] - bg) * t; den += t * t;
+                    }
+                }
+                const a = den ? num / den : 0;
+                // a mark: the whole mask scores 0.34, or 0.25 with the "Google" part at 0.42; at least 45% of
+                // it on the tile; a strength like a real mark's (0.07 to 0.16 measured; a bright structure
+                // matching the tail of the mask measured 0.3)
+                if (onTile < 0.45 || a < 0.04 || a > 0.2 || !(best[0] >= 0.34 || (best[0] >= 0.25 && cands[c][0] >= 0.42))) { continue; }
+                marks.push({ x: best[1], y: best[2], ncc: best[0], a: a });
+                }
+                // undo the blend, then put "©" and "Google" back; the digits are the main thread's
+                marks.forEach(function(k) {
+                    for (let j = 0; j < MH; j++) {
+                        for (let i = 0; i < MW; i++) {
+                            const g = K[j * MW + i];
+                            if (g < 0.02) { continue; }
+                            const x = k.x + i, y = k.y + j;
+                            if (x < 0 || y < 0 || x >= W || y >= H) { continue; }
+                            const ap = k.a * g, p = (y * W + x) * 4;
+                            const keep = i < m.dx0 || i > m.dx1;
+                            for (let ch = 0; ch < 3; ch++) {
+                                let v = (d[p + ch] - 255 * ap) / (1 - ap);
+                                if (keep) { v = v * (1 - ap) + 255 * ap; }
+                                d[p + ch] = v < 0 ? 0 : v > 255 ? 255 : v;
+                            }
+                        }
+                    }
+                });
+                self.postMessage({ id: m.id, marks: marks, buf: d.buffer }, [d.buffer]);
+            };
+        }).toString() + ")()";
+        let worker = null, seq = 0;
+        const waiting = {};
+        const cache = {};
+        let cached = 0;
+        const getWorker = function() {
+            if (worker) {
+                return worker;
+            }
+            try {
+                worker = new Worker(URL.createObjectURL(new Blob([WORKER], { type: "text/javascript" })));
+            } catch (e) {
+                // no Worker here (an add-on's content script): the same code on the page, one tile at a time
+                const self = { postMessage: function(r) {
+                    const w = waiting[r.id];
+                    delete waiting[r.id];
+                    if (w) {
+                        w(r);
+                    }
+                } };
+                new Function("self", WORKER)(self);
+                worker = { postMessage: function(m) {
+                    setTimeout(function() {
+                        self.onmessage({ data: m });
+                    }, 0);
+                } };
+            }
+            worker.postMessage({ mask: K, mw: MW, mh: MH, wx0: word[0], wx1: word[1] });
+            if (worker instanceof Worker) {
+                worker.onmessage = function(ev) {
+                    const w = waiting[ev.data.id];
+                    delete waiting[ev.data.id];
+                    if (w) {
+                        w(ev.data);
+                    }
+                };
+            }
+            return worker;
+        };
+        // the digits of the year, where the mark's own were, in the mark's own faintness
+        const writeYear = function(ctx, k, year) {
+            ctx.save();
+            ctx.globalAlpha = k.a;
+            ctx.fillStyle = "#fff";
+            ctx.font = "bold 15px Arial, Helvetica, sans-serif";    // the mark's digits stand 11px tall
+            ctx.textBaseline = "alphabetic";
+            const text = String(year);
+            const want = digits[1] - digits[0] + 1;
+            const have = ctx.measureText(text).width;
+            if (have > want + 1) {
+                ctx.translate(k.x + digits[0], 0);
+                ctx.scale(want / have, 1);
+                ctx.fillText(text, 0, k.y + MH);
+            } else {
+                ctx.fillText(text, k.x + digits[0] + (want - have) / 2, k.y + MH);
+            }
+            ctx.restore();
+        };
+        // the tile at url, rewritten: done(blobUrl) or done(null) when it can't be (then the plain tile)
+        const tile = function(url, year, done) {
+            const key = url + "#" + year;
+            if (cache[key]) {
+                done(URL.createObjectURL(cache[key]));
+                return;
+            }
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.onerror = function() {
+                done(null);
+            };
+            img.onload = function() {
+                try {
+                    const W = img.naturalWidth, H = img.naturalHeight;
+                    const c = document.createElement("canvas");
+                    c.width = W;
+                    c.height = H;
+                    const ctx = c.getContext("2d");
+                    ctx.drawImage(img, 0, 0);
+                    const id = ctx.getImageData(0, 0, W, H);
+                    const n = ++seq;
+                    waiting[n] = function(r) {
+                        const out = new ImageData(new Uint8ClampedArray(r.buf), W, H);
+                        ctx.putImageData(out, 0, 0);
+                        r.marks.forEach(function(k) {
+                            writeYear(ctx, k, year);
+                        });
+                        c.toBlob(function(b) {
+                            if (!b) {
+                                done(null);
+                                return;
+                            }
+                            if (cached > 300) {
+                                Object.keys(cache).forEach(function(k) { delete cache[k]; });
+                                cached = 0;
+                            }
+                            cache[key] = b;
+                            cached++;
+                            done(URL.createObjectURL(b));
+                        }, "image/jpeg", 0.92);
+                    };
+                    getWorker().postMessage({ id: n, w: W, h: H, buf: id.data.buffer, dx0: digits[0], dx1: digits[1] }, [id.data.buffer]);
+                } catch (e) {
+                    done(null);
+                }
+            };
+            img.src = url;
+        };
+        return { tile: tile };
+        })();
+        return ugfMapsMarks._api;
+    }
     // ---- the map ---------------------------------------------------------------
     function ugfMapsCreate(host, opts) {
         const T = 256;
@@ -69692,7 +69970,8 @@ html[gplex-gmail] body {
                         // one retry through another of the tile servers, then leave the gap
                         if (!img._retried) {
                             img._retried = true;
-                            const src = img.src;
+                            const src = img._src;
+                            img._blob = null;
                             setTimeout(function() {
                                 img.src = src.replace(/\/\/mt(\d)\./, function(a, d) {
                                     return "//mt" + ((parseInt(d, 10) + 1) % 4) + ".";
@@ -69708,6 +69987,10 @@ html[gplex-gmail] body {
                             return;
                         }
                         img._done = true;
+                        if (img._blob) {
+                            URL.revokeObjectURL(img._blob);
+                            img._blob = null;
+                        }
                         lay._pending--;
                         img.classList.add("in");
                         if (lay === front && lay._pending <= 0 && back) {
@@ -69715,7 +69998,17 @@ html[gplex-gmail] body {
                             back = null;
                         }
                     };
-                    img.src = ugfMapsTileUrl(kind, ((tx % n) + n) % n, ty, tz);
+                    img._src = ugfMapsTileUrl(kind, ((tx % n) + n) % n, ty, tz);
+                    if (/^[sy]\b/.test(kind)) {
+                        // (8.22) the imagery's "© 2026 Google" marks say the layout's year; the plain tile
+                        // when it can't be read
+                        ugfMapsMarks().tile(img._src, parseInt(ugfMapsYear(), 10), function(u) {
+                            img._blob = u;
+                            img.src = u || img._src;
+                        });
+                    } else {
+                        img.src = img._src;
+                    }
                     front.appendChild(img);
                     front._tiles[key] = img;
                 }
