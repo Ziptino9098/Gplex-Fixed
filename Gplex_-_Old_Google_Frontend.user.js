@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      8.19
+// @version      8.20
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube: StarTube by lightbeam24, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -103661,70 +103661,121 @@ html[gplex-gmail] body {
     }
     // (7.2.16) Google's captures at a place, with their dates (the service Google's own Maps script asks;
     // no key, no cookies), and the one of the given year or before
-    function ugfMapsPanoOfYear(lat, lng, year, done) {
+    // (8.20) the captures at a panorama's spot, from Google's answer for it (SingleImageSearch's [1],
+    // GetMetadata's [1][0]): its own capture, then the "time machine" list, newest first
+    function ugfMapsPanoCaps(r, lat, lng) {
+        const z = r && r[5] && r[5][0];
+        const list = z && z[3] && z[3][0];
+        if (!r || !r[1] || !list) {
+            return [];
+        }
+        const at = function(p) {
+            const c = p && p[2] && p[2][0];
+            return c ? { lat: c[2], lng: c[3] } : { lat: lat, lng: lng };
+        };
+        const caps = [];
+        const now = r[6] && r[6][7];
+        if (now) {
+            const w = at(list[0]);
+            caps.push({ id: r[1][1], y: now[0], m: now[1], lat: w.lat, lng: w.lng });
+        }
+        (z[8] || []).forEach(function(hst) {
+            const p = list[hst[0]];
+            if (p && p[0] && p[0][1] && hst[1]) {
+                const w = at(p);
+                caps.push({ id: p[0][1], y: hst[1][0], m: hst[1][1], lat: w.lat, lng: w.lng });
+            }
+        });
+        caps.sort(function(a, b) {
+            return (b.y * 12 + b.m) - (a.y * 12 + a.m);
+        });
+        return caps;
+    }
+    // the pick: with a year, the newest capture from it or before, or null when there is none (a spot
+    // with nothing that old is not loadable); with no year (the setting off), Google's newest
+    function ugfMapsPanoPick(caps, year) {
+        if (!caps.length) {
+            return null;
+        }
+        return year ? caps.filter(function(c) {
+            return c.y <= year;
+        })[0] || null : caps[0];
+    }
+    // (8.20) a word on the map, gone after a moment
+    function ugfMapsToast(shell, text) {
+        let t = shell.querySelector("#ugf-maps-toast");
+        if (!t) {
+            t = document.createElement("div");
+            t.id = "ugf-maps-toast";
+            shell.appendChild(t);
+        }
+        t.textContent = text;
+        t.classList.add("on");
+        clearTimeout(t._timer);
+        t._timer = setTimeout(function() {
+            t.classList.remove("on");
+        }, 3500);
+    }
+    // one of Google's Street View metadata calls, asked the way the Maps searches are (8.19: one plain
+    // fetch does not get through from every add-on); done(answer), or done(null) after a failure or 12 s
+    function ugfMapsPanoRpc(name, body, done) {
         let finished = false;
-        const fin = function(p, caps) {
+        const fin = function(d) {
             if (!finished) {
                 finished = true;
-                done(p, caps || []);
+                done(d);
             }
         };
         setTimeout(function() {
             fin(null);
         }, 12000);
         try {
-            const body = [["apiv3", null, null, null, "US", null, null, null, null, null, [[0]]], [[null, null, lat, lng], 50],
-                [null, ["en", "US"], null, null, null, null, null, null, [2], null, [[[2, true, 2]]]], [[1, 2, 3, 4, 8, 6]]];
-            // (8.19) asked the way the Maps searches are, since one plain fetch does not get through
-            // from every add-on
-            ugfMapsGet("https://maps.googleapis.com/$rpc/google.internal.maps.mapsjs.v1.MapsJsInternalService/SingleImageSearch", function(t, why) {
+            ugfMapsGet("https://maps.googleapis.com/$rpc/google.internal.maps.mapsjs.v1.MapsJsInternalService/" + name, function(t, why) {
                 if (t === null) {
-                    console.log("[Gplex] Maps: Street View dates request failed (" + why + ")");
+                    console.log("[Gplex] Maps: Street View " + name + " request failed (" + why + ")");
                     return fin(null);
                 }
-                let d;
                 try {
-                    d = JSON.parse(t);
+                    fin(JSON.parse(t));
                 } catch (e) {
-                    return fin(null);
+                    fin(null);
                 }
-                const r = d && d[1];
-                const z = r && r[5] && r[5][0];
-                const list = z && z[3] && z[3][0];
-                if (!r || !r[1] || !list) {
-                    return fin(null);
-                }
-                const at = function(p) {
-                    const c = p && p[2] && p[2][0];
-                    return c ? { lat: c[2], lng: c[3] } : { lat: lat, lng: lng };
-                };
-                const caps = [];
-                const now = r[6] && r[6][7];
-                if (now) {
-                    const w = at(list[0]);
-                    caps.push({ id: r[1][1], y: now[0], m: now[1], lat: w.lat, lng: w.lng });
-                }
-                (z[8] || []).forEach(function(hst) {
-                    const p = list[hst[0]];
-                    if (p && p[0] && p[0][1] && hst[1]) {
-                        const w = at(p);
-                        caps.push({ id: p[0][1], y: hst[1][0], m: hst[1][1], lat: w.lat, lng: w.lng });
-                    }
-                });
-                if (!caps.length) {
-                    return fin(null);
-                }
-                caps.sort(function(a, b) {
-                    return (b.y * 12 + b.m) - (a.y * 12 + a.m);
-                });
-                const pick = year ? caps.filter(function(c) {
-                    return c.y <= year;
-                })[0] || caps[caps.length - 1] : caps[0];
-                fin(pick, caps);
             }, { method: "POST", headers: { "Content-Type": "application/json+protobuf" }, body: JSON.stringify(body), anonymous: true });
         } catch (e) {
             fin(null);
         }
+    }
+    // the captures at a point, and the pick for the year: done(pick, caps)
+    function ugfMapsPanoOfYear(lat, lng, year, done) {
+        const body = [["apiv3", null, null, null, "US", null, null, null, null, null, [[0]]], [[null, null, lat, lng], 50],
+            [null, ["en", "US"], null, null, null, null, null, null, [2], null, [[[2, true, 2]]]], [[1, 2, 3, 4, 8, 6]]];
+        ugfMapsPanoRpc("SingleImageSearch", body, function(d) {
+            const caps = ugfMapsPanoCaps(d && d[1], lat, lng);
+            done(ugfMapsPanoPick(caps, year), caps);
+        });
+    }
+    // (8.20) the captures at a panorama's own spot, by its id: done(caps)
+    function ugfMapsPanoMeta(id, done) {
+        const body = [["apiv3", null, null, null, "US", null, null, null, null, null, [[0]]], ["en", "US"], [[[2, id]]], [[1, 2, 3, 4, 8, 6]]];
+        ugfMapsPanoRpc("GetMetadata", body, function(d) {
+            done(ugfMapsPanoCaps(d && d[1] && d[1][0], 0, 0));
+        });
+    }
+    // (8.20) where the embed is: its own "View on Google Maps" link names the panorama shown and the
+    // view, and follows you as you walk; null when there is none to read
+    function ugfMapsEmbedView(frame) {
+        try {
+            const d = frame.contentDocument;
+            const links = d ? d.querySelectorAll("a[href]") : [];
+            for (let i = 0; i < links.length; i++) {
+                // (the heading segment is left out at 0, the tilt one at 90)
+                const m = String(links[i].href).match(/\/maps\/@-?[\d.]+,-?[\d.]+,[\d.]+a,[\d.]+y(?:,(-?[\d.]+)h)?(?:,(-?[\d.]+)t)?\/[^?#]*!1s([\w-]{10,})!2e0/);
+                if (m) {
+                    return { pano: m[3], heading: m[1] ? parseFloat(m[1]) : 0, pitch: m[2] ? parseFloat(m[2]) - 90 : 0 };
+                }
+            }
+        } catch (e) {}
+        return null;
     }
     function ugfMapsStreetView(shell, era, lat, lng, name, at) {
         const modern = ["m2014", "m2015", "m2019", "m2022"].indexOf(era) > -1;
@@ -103745,24 +103796,54 @@ html[gplex-gmail] body {
         sv.querySelector(".c").textContent = where;
         const frame = sv.querySelector("iframe");
         // (7.2.16) the imagery of the layout's year: Google's own captures here, newest first, and the
-        // newest from that year or before (else the oldest there is); (8.18) the newest of all with the
-        // "Load Street View images to selected year" setting off. An address naming a panorama keeps it
-        // while the setting is off (8.19: on, the year decides there too; the link's heading and pitch stay).
+        // newest from that year or before; (8.18) the newest of all with the "Load Street View images to
+        // selected year" setting off. An address naming a panorama keeps it while the setting is off
+        // (8.19: on, the year decides there too; the link's heading and pitch stay). (8.20) A spot with
+        // nothing from the year or before is not loadable: a click gets a word on the map, a link the
+        // viewer with the word and the menu of what there is.
         const toYear = ugfStreetYearMode() === "on";
-        const named = !!(at && at.pano) && !toYear;
+        const want = toYear ? parseInt(ugfMapsYear(), 10) : 0;
+        const linked = !!(at && at.pano);
+        const named = linked && !toYear;
+        if (!named) {
+            sv.classList.add("wait");    // nothing to see until the lookup says what loads
+        }
         frame.src = named ? ugfMapsStreetEmbedUrl(lat, lng, at) : "about:blank";
-        ugfMapsPanoOfYear(lat, lng, toYear ? parseInt(ugfMapsYear(), 10) : 0, function(p, caps) {
+        ugfMapsPanoOfYear(lat, lng, want, function(p, found) {
             if (!sv.isConnected) {
                 return;
             }
-            const show = function(c) {
-                frame.src = ugfMapsStreetEmbedUrl(c ? c.lat : lat, c ? c.lng : lng, { heading: at && at.heading, pitch: at && at.pitch, pano: c ? c.id : "" });
+            sv.classList.remove("wait");
+            let caps = found;
+            let expect = null;      // the panorama just asked of the embed, until it shows it
+            const show = function(c, view) {
+                const v = view || at || {};
+                const nn = sv.querySelector(".svnone");
+                if (nn) {
+                    nn.remove();
+                    sv.classList.remove("none");
+                }
+                expect = { id: c ? c.id : "", until: Date.now() + 12000 };
+                frame.src = ugfMapsStreetEmbedUrl(c ? c.lat : lat, c ? c.lng : lng, { heading: v.heading, pitch: v.pitch, pano: c ? c.id : "" });
             };
             let current = named ? caps.filter(function(c) {
                 return c.id === at.pano;
             })[0] || null : p;
             if (!named) {
-                show(p || (at && at.pano ? { id: at.pano, lat: lat, lng: lng } : null));
+                if (p || !caps.length) {
+                    // (with the lookup failed, the choice is Google's, as before)
+                    show(p || (linked ? { id: at.pano, lat: lat, lng: lng } : null));
+                } else if (linked) {
+                    const nn = document.createElement("div");
+                    nn.className = "svnone";
+                    nn.textContent = "No Street View imagery here from " + want + " or before.";
+                    sv.classList.add("none");
+                    sv.appendChild(nn);
+                } else {
+                    sv.remove();
+                    ugfMapsToast(shell, "No Street View here from " + want + " or before.");
+                    return;
+                }
             }
             if (!caps.length) {
                 return;
@@ -103772,32 +103853,40 @@ html[gplex-gmail] body {
                 return ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][(c.m || 1) - 1] + " " + c.y;
             };
             const d = document.createElement("span");
-            d.className = "svdate" + (caps.length > 1 ? "" : " one");
             d.innerHTML = trusted_policy.createHTML('<a class="dd" href="#"><span class="lbl"></span><i class="caret"></i></a><div class="dm"><div class="h">Select image date</div></div>');
             const lbl = d.querySelector(".lbl");
             const menu = d.querySelector(".dm");
+            let chosen = false;     // a date picked by hand: the walk then goes where the embed goes
             const label = function() {
-                lbl.textContent = (modern ? "Image capture: " : "Image date: ") + (current ? when(current) : "");
+                lbl.textContent = current ? (modern ? "Image capture: " : "Image date: ") + when(current) : "Select image date";
                 menu.querySelectorAll("a").forEach(function(a) {
                     a.classList.toggle("on", a._cap === current);
                 });
             };
-            caps.forEach(function(c) {
-                const a = document.createElement("a");
-                a.href = "#";
-                a.textContent = when(c);
-                a._cap = c;
-                a.addEventListener("click", function(ev) {
-                    ev.preventDefault();
-                    d.classList.remove("open");
-                    if (c !== current) {
-                        current = c;
-                        show(c);
-                        label();
-                    }
+            const fill = function() {
+                d.className = "svdate" + (caps.length > 1 ? "" : " one");
+                menu.querySelectorAll("a").forEach(function(a) {
+                    a.remove();
                 });
-                menu.appendChild(a);
-            });
+                caps.forEach(function(c) {
+                    const a = document.createElement("a");
+                    a.href = "#";
+                    a.textContent = when(c);
+                    a._cap = c;
+                    a.addEventListener("click", function(ev) {
+                        ev.preventDefault();
+                        d.classList.remove("open");
+                        if (c !== current) {
+                            chosen = true;
+                            current = c;
+                            show(c, ugfMapsEmbedView(frame));
+                            label();
+                        }
+                    });
+                    menu.appendChild(a);
+                });
+            };
+            fill();
             d.querySelector(".dd").addEventListener("click", function(ev) {
                 ev.preventDefault();
                 ev.stopPropagation();
@@ -103813,6 +103902,66 @@ html[gplex-gmail] body {
             if (holder) {
                 holder.insertBefore(d, holder.querySelector(".back"));
             }
+            // (8.20) the label follows the imagery: walking moves the embed to other panoramas (its own
+            // link names the one shown), and a new spot's captures come from Google's metadata for its
+            // panorama. One from after the year, reached without a date picked by hand, gives way to the
+            // year's capture at that spot, or to where the walk came from when there is none, so the walk
+            // never goes ahead of the year.
+            const spots = {};       // panorama id -> its spot's captures, or true while they are asked for
+            const settle = function(c, v, was) {
+                current = c;
+                if (want && !chosen && c && c.y > want) {
+                    const pick = ugfMapsPanoPick(caps, want);
+                    if (pick) {
+                        current = pick;
+                        show(pick, ugfMapsEmbedView(frame) || v);
+                    } else if (was.current) {
+                        caps = was.caps;
+                        current = was.current;
+                        show(current, ugfMapsEmbedView(frame) || v);
+                    }
+                }
+                fill();
+                label();
+            };
+            const at2 = function(id) {
+                return caps.filter(function(c) {
+                    return c.id === id;
+                })[0] || null;
+            };
+            const panoWatch = setInterval(function() {
+                if (!sv.isConnected) {
+                    clearInterval(panoWatch);
+                    return;
+                }
+                const v = ugfMapsEmbedView(frame);
+                if (!v || (current && v.pano === current.id)) {
+                    return;
+                }
+                if (expect) {
+                    if (v.pano !== expect.id && Date.now() < expect.until) {
+                        return;
+                    }
+                    expect = null;
+                }
+                const was = { caps: caps, current: current };
+                const known = at2(v.pano);
+                if (known) {
+                    settle(known, v, was);
+                } else if (Array.isArray(spots[v.pano])) {
+                    caps = spots[v.pano];
+                    settle(at2(v.pano), v, was);
+                } else if (!spots[v.pano]) {
+                    spots[v.pano] = true;
+                    ugfMapsPanoMeta(v.pano, function(there) {
+                        spots[v.pano] = there;
+                        if (sv.isConnected && there.length) {
+                            caps = there;
+                            settle(at2(v.pano), v, was);
+                        }
+                    });
+                }
+            }, 800);
         });
         // take Google's present-day overlays off the viewer once it has drawn them
         const hide = [".gm-iv-address", ".gm-iv-container", ".gm-fullscreen-control", ".gm-iv-profile-link",
@@ -105961,6 +106110,16 @@ html[gplex-gmail] body {
             '#ugf-maps-pegfly { position: fixed; z-index: 2147483647; pointer-events: none; width: 26px; height: 36px; }',
             '#ugf-maps-sv { position: absolute; inset: 0; z-index: 40; background: #000; display: flex; flex-direction: column; }',
             '#ugf-maps-sv .pano { flex: 1; width: 100%; border: 0; display: block; min-height: 0; }',
+            // (8.20) nothing from the year here: the viewer waits for the lookup, says so for a link,
+            // and a click gets a word on the map
+            '#ugf-maps-sv.wait { visibility: hidden; }',
+            '#ugf-maps-sv.none .pano { display: none; }',
+            '#ugf-maps-sv .svnone { flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; padding: 20px; background: #e5e3df; color: #333; font: 14px arial, sans-serif; }',
+            '#ugf-maps-sv[era="m2014"] .svnone, #ugf-maps-sv[era="m2015"] .svnone, #ugf-maps-sv[era="m2019"] .svnone, #ugf-maps-sv[era="m2022"] .svnone { background: #202124; color: #e8eaed; font: 15px Roboto, arial, sans-serif; }',
+            '#ugf-maps-toast { position: absolute; left: 50%; bottom: 48px; transform: translateX(-50%); z-index: 45; display: none; background: #fff; border: 1px solid #b2b2b2; box-shadow: 0 2px 4px rgba(0,0,0,.2); padding: 8px 14px; font: 13px arial, sans-serif; color: #000; white-space: nowrap; }',
+            '#ugf-maps-toast.on { display: block; }',
+            '#ugf-maps[era="m2014"] #ugf-maps-toast, #ugf-maps[era="m2015"] #ugf-maps-toast, #ugf-maps[era="m2019"] #ugf-maps-toast, #ugf-maps[era="m2022"] #ugf-maps-toast { background: #202124; color: #fff; border: 0; border-radius: 4px; font: 14px Roboto, arial, sans-serif; box-shadow: 0 1px 3px rgba(0,0,0,.3); }',
+            '#ugf-maps[era="m2019"] #ugf-maps-toast, #ugf-maps[era="m2022"] #ugf-maps-toast { border-radius: 8px; }',
             '#ugf-maps-sv .svdate { position: relative; color: #666; font-size: 12px; margin-left: 12px; } #ugf-maps-sv .svcard .svdate { display: block; margin: 2px 0 0; }',
             // (8.18) the image date, a menu of every capture: classic Maps' white box with its border and
             // shadow (heavier in 2008), then the new Maps' card in Roboto, rounded from 2018
