@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended Alpha - Gplex Old Google with its YouTube part rewritten
 // @namespace    http://tampermonkey.net/
-// @version      9.0.0.18
+// @version      9.0.0.19
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube, rewritten: alpha, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -69798,15 +69798,24 @@ html[gplex-gmail] body {
                     c._px = null;
                     const img = new Image();
                     img.crossOrigin = "anonymous";
+                    const src = cov.url(((tx % n) + n) % n, ty, tz);
                     img.onload = function() {
                         try {
                             const ctx = c.getContext("2d");
                             ctx.drawImage(img, 0, 0, T, T);
-                            c._px = ctx.getImageData(0, 0, T, T).data;
                             c.classList.add("in");
+                            // (8.19) the pixels for the click test; a tile that can't be read still shows
+                            c._px = ctx.getImageData(0, 0, T, T).data;
                         } catch (e) {}
                     };
-                    img.src = cov.url(((tx % n) + n) % n, ty, tz);
+                    // (8.19) refused with the cross-origin ask: asked for plainly, to show unread
+                    img.onerror = function() {
+                        if (img.crossOrigin !== null) {
+                            img.crossOrigin = null;
+                            img.src = src;
+                        }
+                    };
+                    img.src = src;
                     lay.appendChild(c);
                     lay._tiles[key] = c;
                 }
@@ -70613,8 +70622,9 @@ html[gplex-gmail] body {
     // absolute: in a Firefox add-on (Manifest V2) a content script's request is the
     // extension's, so a relative one never reaches Google (8.13). The script's own fetch
     // asks with the cookies; the page's ways are the page's own and get nothing else
-    // handed over, as Firefox keeps the page from reading an add-on's objects.
-    function ugfMapsGet(url, cb) {
+    // handed over, as Firefox keeps the page from reading an add-on's objects. (8.19) req, when
+    // given, makes it a POST: { method, headers, body, anonymous } the same for every way.
+    function ugfMapsGet(url, cb, req) {
         const ways = [];
         let own = null;
         try {
@@ -70664,7 +70674,17 @@ html[gplex-gmail] body {
             const f = ways[i][1];
             if (f) {
                 try {
-                    f(url, ways[i][2] ? { credentials: "include" } : undefined).then(function(r) {
+                    let opts = ways[i][2] ? { credentials: "include" } : undefined;
+                    if (req) {
+                        opts = { method: req.method, headers: req.headers, body: req.body, credentials: req.anonymous ? "omit" : "include" };
+                        try {
+                            // the page's fetch can read only its own objects in Firefox
+                            if (ways[i][0] === "page fetch" && typeof cloneInto === "function") {
+                                opts = cloneInto(opts, unsafeWindow);
+                            }
+                        } catch (e) {}
+                    }
+                    f(url, opts).then(function(r) {
                         if (!r.ok) {
                             throw new Error("HTTP " + r.status);
                         }
@@ -70679,8 +70699,11 @@ html[gplex-gmail] body {
             }
             try {
                 const x = new XMLHttpRequest();
-                x.open("GET", url, true);
-                x.withCredentials = true;
+                x.open(req ? req.method : "GET", url, true);
+                x.withCredentials = !(req && req.anonymous);
+                Object.keys(req ? req.headers || {} : {}).forEach(function(k) {
+                    x.setRequestHeader(k, req.headers[k]);
+                });
                 x.onload = function() {
                     if (x.status >= 200 && x.status < 300) {
                         ok(x.responseText);
@@ -70691,7 +70714,7 @@ html[gplex-gmail] body {
                 x.onerror = function() {
                     bad("network error");
                 };
-                x.send();
+                x.send(req ? req.body : undefined);
             } catch (e) {
                 bad(e.message);
             }
@@ -71150,15 +71173,23 @@ html[gplex-gmail] body {
         };
         setTimeout(function() {
             fin(null);
-        }, 4000);
+        }, 12000);
         try {
             const body = [["apiv3", null, null, null, "US", null, null, null, null, null, [[0]]], [[null, null, lat, lng], 50],
                 [null, ["en", "US"], null, null, null, null, null, null, [2], null, [[[2, true, 2]]]], [[1, 2, 3, 4, 8, 6]]];
-            fetch("https://maps.googleapis.com/$rpc/google.internal.maps.mapsjs.v1.MapsJsInternalService/SingleImageSearch", {
-                method: "POST", credentials: "omit", headers: { "Content-Type": "application/json+protobuf" }, body: JSON.stringify(body)
-            }).then(function(r) {
-                return r.json();
-            }).then(function(d) {
+            // (8.19) asked the way the Maps searches are, since one plain fetch does not get through
+            // from every add-on
+            ugfMapsGet("https://maps.googleapis.com/$rpc/google.internal.maps.mapsjs.v1.MapsJsInternalService/SingleImageSearch", function(t, why) {
+                if (t === null) {
+                    console.log("[Gplex] Maps: Street View dates request failed (" + why + ")");
+                    return fin(null);
+                }
+                let d;
+                try {
+                    d = JSON.parse(t);
+                } catch (e) {
+                    return fin(null);
+                }
                 const r = d && d[1];
                 const z = r && r[5] && r[5][0];
                 const list = z && z[3] && z[3][0];
@@ -71192,9 +71223,7 @@ html[gplex-gmail] body {
                     return c.y <= year;
                 })[0] || caps[caps.length - 1] : caps[0];
                 fin(pick, caps);
-            }).catch(function() {
-                fin(null);
-            });
+            }, { method: "POST", headers: { "Content-Type": "application/json+protobuf" }, body: JSON.stringify(body), anonymous: true });
         } catch (e) {
             fin(null);
         }
@@ -71219,10 +71248,12 @@ html[gplex-gmail] body {
         const frame = sv.querySelector("iframe");
         // (7.2.16) the imagery of the layout's year: Google's own captures here, newest first, and the
         // newest from that year or before (else the oldest there is); (8.18) the newest of all with the
-        // "Load Street View images to selected year" setting off. An address naming a panorama keeps it.
-        const named = !!(at && at.pano);
+        // "Load Street View images to selected year" setting off. An address naming a panorama keeps it
+        // while the setting is off (8.19: on, the year decides there too; the link's heading and pitch stay).
+        const toYear = ugfStreetYearMode() === "on";
+        const named = !!(at && at.pano) && !toYear;
         frame.src = named ? ugfMapsStreetEmbedUrl(lat, lng, at) : "about:blank";
-        ugfMapsPanoOfYear(lat, lng, ugfStreetYearMode() === "on" ? parseInt(ugfMapsYear(), 10) : 0, function(p, caps) {
+        ugfMapsPanoOfYear(lat, lng, toYear ? parseInt(ugfMapsYear(), 10) : 0, function(p, caps) {
             if (!sv.isConnected) {
                 return;
             }
@@ -71233,7 +71264,7 @@ html[gplex-gmail] body {
                 return c.id === at.pano;
             })[0] || null : p;
             if (!named) {
-                show(p);
+                show(p || (at && at.pano ? { id: at.pano, lat: lat, lng: lng } : null));
             }
             if (!caps.length) {
                 return;
@@ -71416,8 +71447,9 @@ html[gplex-gmail] body {
     }
     // Pegman: pick him up (a click) and the streets with Street View show on the map, a click on one
     // opens it there (Escape, or Pegman again, puts him back); or drag him onto the map and let go where
-    // you want to stand. With a pin dropped on the map, a click opens Street View at the pin.
-    function ugfMapsPegman(el, map, open, cov, pin) {
+    // you want to stand. (8.19: a dropped pin no longer sends him straight to Street View; its card's
+    // thumbnail does that.)
+    function ugfMapsPegman(el, map, open, cov) {
         const A = ugfMapsArt();
         let drag = null;
         const onKey = function(ev) {
@@ -71491,11 +71523,7 @@ html[gplex-gmail] body {
                 return;
             }
             if (!d.moved) {
-                const p = pin && pin();
-                if (p) {
-                    down();
-                    open(p.lat, p.lng);
-                } else if (!cov) {
+                if (!cov) {
                     const v = map.view();
                     open(v.lat, v.lng);
                 } else if (map.coverage()) {
@@ -71748,9 +71776,7 @@ html[gplex-gmail] body {
                 }
             }, 200);
         }
-        ugfMapsControls(shell, map, era, function() {
-            return pointer ? { lat: pointer.lat, lng: pointer.lng } : null;
-        });
+        ugfMapsControls(shell, map, era);
         // a Street View address opens straight into Street View, the map waiting behind it
         if (url.street) {
             ugfMapsStreetView(shell, era, url.street.lat, url.street.lng, "", url.street);
@@ -72843,7 +72869,7 @@ html[gplex-gmail] body {
         } catch (e) {}
     }
     // ---- controls, per period ---------------------------------------------------
-    function ugfMapsControls(shell, map, era, pin) {
+    function ugfMapsControls(shell, map, era) {
         const A = ugfMapsArt();
         const K = A.kit;
         const cov = ugfMapsCoverage(era);
@@ -72903,7 +72929,7 @@ html[gplex-gmail] body {
             c.querySelector(".rt").onclick = function() { map.panBy(200, 0); };
             c.querySelector(".zi").onclick = map.zoomIn;
             c.querySelector(".zo").onclick = map.zoomOut;
-            ugfMapsPegman(c.querySelector(".peg"), map, street, cov, pin);
+            ugfMapsPegman(c.querySelector(".peg"), map, street, cov);
             slider(c, c.querySelector(".rail"), c.querySelector(".knob"), 118, 8, levels);
         } else if (era === "m2010" || era === "m2011") {
             const levels = 20;
@@ -72916,7 +72942,7 @@ html[gplex-gmail] body {
             c.querySelector(".rt").onclick = function() { map.panBy(200, 0); };
             c.querySelector(".zi").onclick = map.zoomIn;
             c.querySelector(".zo").onclick = map.zoomOut;
-            ugfMapsPegman(c.querySelector(".peg"), map, street, cov, pin);
+            ugfMapsPegman(c.querySelector(".peg"), map, street, cov);
             slider(c, c.querySelector(".rail"), c.querySelector(".knob"), 116, 8, levels);
         }
         // map types
@@ -73002,14 +73028,14 @@ html[gplex-gmail] body {
             z.querySelector(".zo").onclick = map.zoomOut;
             if (era === "m2015") {
                 const im = add("imagery15", '<img src="' + K.imagery + '" alt=""><a class="peg" title="Street View"></a><a class="more" title="Show imagery"></a>');
-                ugfMapsPegman(im.querySelector(".peg"), map, street, cov, pin);
+                ugfMapsPegman(im.querySelector(".peg"), map, street, cov);
                 im.querySelector(".more").onclick = function() {
                     map.setType(map.view().type === "m" ? "y" : "m");
                 };
             } else {
                 const pg = add("peg14", '<img src="' + K.peg + '" alt="">');
                 pg.title = "Street View";
-                ugfMapsPegman(pg, map, street, cov, pin);
+                ugfMapsPegman(pg, map, street, cov);
             }
             if (era === "m2019" || era === "m2022") {
                 const t = add("layers19", '<span class="img"></span><span class="lbl">Layers</span>');
