@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      8.23
+// @version      8.24
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube: StarTube by lightbeam24, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -101951,82 +101951,68 @@ html[gplex-gmail] body {
             "&hl=" + encodeURIComponent(ugfMapsLang()) + retina +
             (style ? "&apistyle=" + encodeURIComponent(style) : "");
     }
-    // Gplex Maps: the "© 2026 Google" marks in Google's satellite tiles, rewritten to the layout's year.
-    // The mark is drawn into the tile pixels by the tile server, faint white (about 10%) at one spot per
-    // tile (a hash of the tile), clipped at the tile's edges, the same glyphs everywhere. A worker finds it
-    // with the glyph mask (the "Google" part is the search key, so a new year still matches), measures its
-    // strength against the rows around it, undoes the white blend, puts "©" and "Google" back from the
-    // mask, and the main thread writes the year's digits in between. Tiles come through a canvas (the tile
-    // server allows it); the engine shows the rewritten tile as a blob.
+    // Gplex Maps: the "© 2026 Google" marks in Google's satellite tiles, and the "©2018 Google" marks in its
+    // Street View panorama tiles, rewritten to the layout's year. The mark is drawn into the tile pixels by the
+    // server, faint white, at a few spots per tile (a hash of the tile), clipped at the tile's edges, the same
+    // glyphs everywhere; the satellite one about 10% at 101x11 px, the panorama one about 20% at 93x14 px with
+    // the imagery's own year and no space after the ©. A worker finds a mark with its glyph mask (the "Google"
+    // part is the search key, so another year still matches), measures its strength against the rows around
+    // it, undoes the white blend, puts "©" and "Google" back from the mask, and the main thread writes the
+    // year's digits in between. Satellite tiles come through a canvas in the engine (the tile server allows
+    // it); the panorama tiles are caught on their way into Google's viewer, in the embed's frame, whose image
+    // source setter is hooked from here (the frame is the same origin).
     function ugfMapsMarks() {
         if (ugfMapsMarks._api) {
             return ugfMapsMarks._api;
         }
         ugfMapsMarks._api = (function() {
-        const MW = 101, MH = 11;
-        const HEX = "0033333333000001110012211123333200003553001000356612210023023543001100001111000011000000222793000010000456654560000012275676200676567300367886100158a97122100345568863100000000000000000000000009b30000110224677445700000022746a930189647b6025536a942467740022210136a854564301433410014334100132243009c300323324535763347210000120019a31387304b7003102a93049b952022200147a610133206866860068668600585597109b20363344691465213632000000000aa31497103c9002002ba203ac98be22200258a400021039a44a9339a44a93288339a30aa106705678b0364102543100000203cd303c9203fc103306fc206a8206d33200259a50023105a8008a55a8008a5385006942aa00870688ad035300144310000007db4037f70069510006dd6017b81039d303303da646aa837a7007a77a7007a7397008a52aa329a6dba89146521363200000005971000c7337952004674000587427bb303303b7423785249811894498118945a921782067006830003435863347100000018aa941008756764306cc72250256678b7102201786469a7307855870078558703883388327831685333003566434600000012baa986313466532206cc867a000257773002200365457863047447400474474003546aa525621453ba800233322330000001143223310014530000012211110002320000110000000110001200210012002100134687400000000000";
-        const K = new Float32Array(MW * MH);
-        for (let i = 0; i < K.length; i++) {
-            K[i] = parseInt(HEX.charAt(i), 16) / 15;
-        }
-        // the glyph groups: "©" | digits | "Google", from the columns the mask occupies
-        const groups = (function() {
-            const cols = [];
-            for (let x = 0; x < MW; x++) {
-                let m = 0;
-                for (let y = 0; y < MH; y++) {
-                    m = Math.max(m, K[y * MW + x]);
-                }
-                cols.push(m);
+        // the masks as hex nibbles (alpha over its max, 0-15), row-major; the columns of the digits and of
+        // "Google"; the row under the digits (the baseline of the written year) and their height
+        const SETS = {
+            sat: { weight: "bold", hex: "0033333333000001110012211123333200003553001000356612210023023543001100001111000011000000222793000010000456654560000012275676200676567300367886100158a97122100345568863100000000000000000000000009b30000110224677445700000022746a930189647b6025536a942467740022210136a854564301433410014334100132243009c300323324535763347210000120019a31387304b7003102a93049b952022200147a610133206866860068668600585597109b20363344691465213632000000000aa31497103c9002002ba203ac98be22200258a400021039a44a9339a44a93288339a30aa106705678b0364102543100000203cd303c9203fc103306fc206a8206d33200259a50023105a8008a55a8008a5385006942aa00870688ad035300144310000007db4037f70069510006dd6017b81039d303303da646aa837a7007a77a7007a7397008a52aa329a6dba89146521363200000005971000c7337952004674000587427bb303303b7423785249811894498118945a921782067006830003435863347100000018aa941008756764306cc72250256678b7102201786469a7307855870078558703883388327831685333003566434600000012baa986313466532206cc867a000257773002200365457863047447400474474003546aa525621453ba800233322330000001143223310014530000012211110002320000110000000110001200210012002100134687400000000000", mw: 101, mh: 11, digits: [18, 50], word: [56, 100], base: 11, textH: 11, min: 0.34, weak: 0.25, step: 2 },
+            sv: { weight: "normal", hex: "1235888721101343410003322000011301111333310001100159db7400110000101000111001110012137211111111372210043125886971027747401122902125a8787100102178433686212010110000000001100100103b10100001263126514721a4112a2174214a21157c0010a4113a100001471111158310011110010122101000211000b21111211541642542161b2000a31b2001a21034c0010b3002b200001960001012000156744102589510036874400c20158943b20a201411c130114a21d1011930010c1000492376011111d20012111111752359008623681197436a11d20563339c1192311018100136911e0110960111c11001aabb3001101d10116887312a1002922a3013923a3002b22c22b4002ba11a1016119112696201c0010741101d0001862259000001d21103449402b1321832b212183391010c22b22d4455972173237118137730011b0010921100c0011b11008300000b51211008501902108319000073280010c11c11c2452335217971165096100111a3011c20010b0011c00009300100672111019512b1001a31a111191191101e11c10b21002155110105400b211311044204710101b011195214a20010027621226b501963159109621491185214f21c11854148023554794112bccbb94117997300110711012acc74100001038cca7452003998630049aa741038994c11a01379974011111111100212111000110200001141101121221111112012233210000012221000122100011000a11300012210000000110000000010011000000011000111000011000101000000111011000011110000110254013810000100000000110000000000001011111111120100010000000100100000010000111000000000000100027785201110011100", mw: 93, mh: 14, digits: [12, 41], word: [48, 92], base: 11, textH: 10, min: 0.4, weak: 0.4, step: 1 }
+        };
+        Object.keys(SETS).forEach(function(n) {
+            const S = SETS[n];
+            S.K = new Float32Array(S.mw * S.mh);
+            for (let i = 0; i < S.K.length; i++) {
+                S.K[i] = parseInt(S.hex.charAt(i), 16) / 15;
             }
-            // a group ends at a gap of three columns or more (the one-column slits inside the digits stay)
-            const runs = [];
-            let cur = null;
-            cols.forEach(function(c, x) {
-                if (c > 0.25) {
-                    if (cur) {
-                        cur[1] = x;
-                    } else {
-                        cur = [x, x];
-                    }
-                } else if (cur && x - cur[1] >= 3) {
-                    runs.push(cur);
-                    cur = null;
-                }
-            });
-            if (cur) {
-                runs.push(cur);
-            }
-            return runs;
-        })();
-        const digits = groups[1] || [18, 50];
-        const word = groups[2] || [56, 100];
+        });
         const WORKER = "(" + (function() {
-            let K, MW, MH, WX0, WX1, KZ;
-            // the coarse search key: the "Google" part's ink pixels (mask over 0.55) against as many paper
-            // pixels (mask under 0.05) in the same box; a position's score is the ink mean minus the paper
-            // mean over the box's spread, a sparse correlation of the excess with the glyphs
-            let INK = null, PAPER = null;
-            const prepare = function() {
-                KZ = new Float32Array(MW * MH);
+            const sets = {};
+            // a set: its mask, the zero-mean mask for the whole-mark correlation, and the coarse search key:
+            // the "Google" part's ink pixels (mask over 0.55) against as many paper pixels (under 0.05)
+            const prepare = function(S) {
+                const MW = S.mw, MH = S.mh, K = S.mask;
+                S.KZ = new Float32Array(MW * MH);
                 let m = 0;
                 for (let i = 0; i < MW * MH; i++) { m += K[i]; }
                 m /= MW * MH;
-                for (let i = 0; i < MW * MH; i++) { KZ[i] = K[i] - m; }
+                for (let i = 0; i < MW * MH; i++) { S.KZ[i] = K[i] - m; }
+                // paper is sampled a pixel clear of the strokes, so a mark a pixel off the search grid still
+                // scores: its ink then lands next to the mask's, not on the paper
+                const near = function(j, i) {
+                    let m = 0;
+                    for (let y = Math.max(0, j - 1); y <= Math.min(MH - 1, j + 1); y++) {
+                        for (let x = Math.max(0, i - 1); x <= Math.min(MW - 1, i + 1); x++) { m = Math.max(m, K[y * MW + x]); }
+                    }
+                    return m;
+                };
                 const ink = [], paper = [];
                 for (let j = 0; j < MH; j++) {
-                    for (let i = WX0; i <= WX1; i++) {
+                    for (let i = S.wx0; i <= S.wx1; i++) {
                         const k = K[j * MW + i];
-                        if (k > 0.55) { ink.push(j * 4096 + i); } else if (k < 0.05) { paper.push(j * 4096 + i); }
+                        if (k > 0.55) { ink.push(j * 4096 + i); } else if (k < 0.05 && near(j, i) < 0.3) { paper.push(j * 4096 + i); }
                     }
                 }
-                // paper thinned to the ink's count, spread evenly
                 const step = paper.length / ink.length;
                 const pp = [];
                 for (let q = 0; q < ink.length && Math.floor(q * step) < paper.length; q++) { pp.push(paper[Math.floor(q * step)]); }
-                INK = new Int32Array(ink); PAPER = new Int32Array(pp);
+                S.INK = new Int32Array(ink); S.PAPER = new Int32Array(pp);
             };
-            const full = function(E, W, H, px, py) {
+            const full = function(S, E, W, H, px, py) {
+                const MW = S.mw, MH = S.mh, KZ = S.KZ;
                 let se = 0, see = 0, skk = 0, n = 0;
                 for (let j = 0; j < MH; j++) {
                     const y = py + j;
@@ -102043,10 +102029,11 @@ html[gplex-gmail] body {
             self.onmessage = function(ev) {
                 const m = ev.data;
                 if (m.mask) {
-                    K = m.mask; MW = m.mw; MH = m.mh; WX0 = m.wx0; WX1 = m.wx1;
-                    prepare();
+                    sets[m.set] = { mask: m.mask, mw: m.mw, mh: m.mh, wx0: m.wx0, wx1: m.wx1, min: m.min, weak: m.weak, step: m.step };
+                    prepare(sets[m.set]);
                     return;
                 }
+                const ST = sets[m.set], K = ST.mask, MW = ST.mw, MH = ST.mh, WX0 = ST.wx0, WX1 = ST.wx1, INK = ST.INK, PAPER = ST.PAPER;
                 const W = m.w, H = m.h, d = new Uint8ClampedArray(m.buf);
                 const L = new Float32Array(W * H);
                 for (let i = 0; i < W * H; i++) { L[i] = 0.299 * d[i * 4] + 0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2]; }
@@ -102082,45 +102069,50 @@ html[gplex-gmail] body {
                     for (let x = 1; x <= W; x++) { const e = E[(y - 1) * W + x - 1]; row += e * e; S2[y * (W + 1) + x] = S2[(y - 1) * (W + 1) + x] + row; }
                 }
                 const NI = INK.length, NP = PAPER.length;
-                const bw = WX1 - WX0 + 1;
+                // the key's score at a position: ink mean minus paper mean over the box's spread; a box hanging
+                // over the edge, with fewer pixels, is scaled down by the root of its share
+                const keyAt = function(px, py) {
+                    let si = 0, sp = 0, edge = 1;
+                    if (px + WX0 >= 0 && px + WX1 < W && py >= 0 && py + MH <= H) {
+                        for (let q = 0; q < NI; q++) { const c = INK[q]; si += E[(py + (c >> 12)) * W + px + (c & 4095)]; }
+                        for (let q = 0; q < NP; q++) { const c = PAPER[q]; sp += E[(py + (c >> 12)) * W + px + (c & 4095)]; }
+                    } else {
+                        let ni = 0, np = 0;
+                        for (let q = 0; q < NI; q++) { const c = INK[q], y = py + (c >> 12), x = px + (c & 4095); if (x >= 0 && y >= 0 && x < W && y < H) { si += E[y * W + x]; ni++; } }
+                        for (let q = 0; q < NP; q++) { const c = PAPER[q], y = py + (c >> 12), x = px + (c & 4095); if (x >= 0 && y >= 0 && x < W && y < H) { sp += E[y * W + x]; np++; } }
+                        if (ni < NI * 0.4 || !np) { return -1; }
+                        si *= NI / ni; sp *= NP / np;
+                        edge = Math.sqrt(ni / NI);
+                    }
+                    const bx0 = Math.max(0, px + WX0), by0 = Math.max(0, py), bx1 = Math.min(W, px + WX1 + 1), by1 = Math.min(H, py + MH);
+                    const n = (bx1 - bx0) * (by1 - by0);
+                    const q2 = S2[by1 * (W + 1) + bx1] - S2[by0 * (W + 1) + bx1] - S2[by1 * (W + 1) + bx0] + S2[by0 * (W + 1) + bx0];
+                    return (si / NI - sp / NP) / (Math.sqrt(q2 / n) + 0.5) * edge;
+                };
                 const cands = [];
                 for (let py = -MH + 4; py < H - 3; py += 2) {
-                    for (let px = -WX1 + 8; px < W - WX0 - 8; px += 2) {
-                        let si = 0, sp = 0, edge = 1;
-                        if (px + WX0 >= 0 && px + WX1 < W && py >= 0 && py + MH <= H) {
-                            for (let q = 0; q < NI; q++) { const c = INK[q]; si += E[(py + (c >> 12)) * W + px + (c & 4095)]; }
-                            for (let q = 0; q < NP; q++) { const c = PAPER[q]; sp += E[(py + (c >> 12)) * W + px + (c & 4095)]; }
-                        } else {
-                            let ni = 0, np = 0;
-                            for (let q = 0; q < NI; q++) { const c = INK[q], y = py + (c >> 12), x = px + (c & 4095); if (x >= 0 && y >= 0 && x < W && y < H) { si += E[y * W + x]; ni++; } }
-                            for (let q = 0; q < NP; q++) { const c = PAPER[q], y = py + (c >> 12), x = px + (c & 4095); if (x >= 0 && y >= 0 && x < W && y < H) { sp += E[y * W + x]; np++; } }
-                            if (ni < NI * 0.4 || !np) { continue; }
-                            si *= NI / ni; sp *= NP / np;
-                            edge = Math.sqrt(ni / NI);
-                        }
-                        // the box's spread
-                        const bx0 = Math.max(0, px + WX0), by0 = Math.max(0, py), bx1 = Math.min(W, px + WX1 + 1), by1 = Math.min(H, py + MH);
-                        const n = (bx1 - bx0) * (by1 - by0);
-                        const q2 = S2[by1 * (W + 1) + bx1] - S2[by0 * (W + 1) + bx1] - S2[by1 * (W + 1) + bx0] + S2[by0 * (W + 1) + bx0];
-                        const sd = Math.sqrt(q2 / n) + 0.5;
-                        // (a box hanging over the edge, with fewer pixels, is noisier: scaled down)
-                        const s = (si / NI - sp / NP) / sd * edge;
-                        if (s > 0.45) { cands.push([s, px, py]); }
+                    for (let px = -WX1 + 8; px < W - WX0 - 8; px += ST.step) {
+                        const s = keyAt(px, py);
+                        if (s > 0.3) { cands.push([s, px, py]); }
                     }
                 }
                 cands.sort(function(a, b) { return b[0] - a[0]; });
-                const marks = [];
-                for (let c = 0; c < cands.length && c < 20 && marks.length < 6; c++) {
+                // the best 300 spots are refined over 2 pixels each way; a candidate within another's reach is
+                // the same spot
+                const marks = [], tried = [];
+                for (let c = 0; c < cands.length && tried.length < 300 && marks.length < 6; c++) {
                     const px0 = cands[c][1], py0 = cands[c][2];
                     if (marks.some(function(k) { return Math.abs(k.x - px0) < MW && Math.abs(k.y - py0) < MH; })) { continue; }
+                    if (tried.some(function(t) { return Math.abs(t[0] - px0) <= 2 && Math.abs(t[1] - py0) <= 2; })) { continue; }
+                    tried.push([px0, py0]);
                     let best = [-1, px0, py0];
                     for (let dy = -2; dy <= 2; dy++) {
                         for (let dx = -2; dx <= 2; dx++) {
-                            const s = full(E, W, H, px0 + dx, py0 + dy);
+                            const s = full(ST, E, W, H, px0 + dx, py0 + dy);
                             if (s > best[0]) { best = [s, px0 + dx, py0 + dy]; }
                         }
                     }
-                    const onTile = Math.max(0, Math.min(W, best[1] + MW) - Math.max(0, best[1])) / MW;
+                    const onTile = Math.max(0, Math.min(W, best[1] + MW) - Math.max(0, best[1])) * Math.max(0, Math.min(H, best[2] + MH) - Math.max(0, best[2])) / (MW * MH);
                     let num = 0, den = 0;
                     for (let i = 0; i < MW; i++) {
                         const x = best[1] + i;
@@ -102140,9 +102132,10 @@ html[gplex-gmail] body {
                         }
                     }
                     const a = den ? num / den : 0;
-                    // a mark: the whole mask at 0.34, or 0.25 with a strong key score; at least 45% of it on
-                    // the tile; a strength like a real mark's (0.07 to 0.16 measured)
-                    if (onTile < 0.45 || a < 0.04 || a > 0.2 || !(best[0] >= 0.34 || (best[0] >= 0.25 && cands[c][0] >= 1.3))) { continue; }
+                    // a mark: the whole mask at the set's score, or its weaker one with a strong key when the whole
+                    // mask was there to score; at least 45% of it on the tile; a strength like a real mark's (0.07 to
+                    // 0.16 measured)
+                    if (onTile < 0.45 || a < 0.04 || a > 0.2 || !(best[0] >= ST.min || (best[0] >= ST.weak && onTile >= 0.9 && cands[c][0] >= 1.3))) { continue; }
                     marks.push({ x: best[1], y: best[2], ncc: best[0], a: a });
                 }
                 marks.forEach(function(k) {
@@ -102185,7 +102178,10 @@ html[gplex-gmail] body {
                     const url = URL.createObjectURL(new Blob([WORKER], { type: "text/javascript" }));
                     for (let i = 0; i < n; i++) {
                         const w = new Worker(url);
-                        w.postMessage({ mask: K, mw: MW, mh: MH, wx0: word[0], wx1: word[1] });
+                        Object.keys(SETS).forEach(function(k) {
+                            const S = SETS[k];
+                            w.postMessage({ set: k, mask: S.K, mw: S.mw, mh: S.mh, wx0: S.word[0], wx1: S.word[1], min: S.min, weak: S.weak, step: S.step });
+                        });
                         w.onmessage = function(ev) {
                             onDone(ev.data);
                         };
@@ -102195,7 +102191,10 @@ html[gplex-gmail] body {
                     // no Worker here (an add-on's content script): the same code on the page, one tile at a time
                     const self = { postMessage: onDone };
                     new Function("self", WORKER)(self);
-                    self.onmessage({ data: { mask: K, mw: MW, mh: MH, wx0: word[0], wx1: word[1] } });
+                    Object.keys(SETS).forEach(function(k) {
+                        const S = SETS[k];
+                        self.onmessage({ data: { set: k, mask: S.K, mw: S.mw, mh: S.mh, wx0: S.word[0], wx1: S.word[1], min: S.min, weak: S.weak, step: S.step } });
+                    });
                     workers.push({ postMessage: function(m) {
                         setTimeout(function() {
                             self.onmessage({ data: m });
@@ -102205,28 +102204,31 @@ html[gplex-gmail] body {
             }
             return workers[seq % workers.length];
         };
-        // the digits of the year, where the mark's own were, in the mark's own faintness
-        const writeYear = function(ctx, k, year) {
+        // the digits of the year, where the mark's own were, in the mark's own faintness (Arial in the set's
+        // weight at 1.36 times the digits' height stands as tall as they do)
+        const writeYear = function(S, ctx, k, year) {
             ctx.save();
             ctx.globalAlpha = k.a;
             ctx.fillStyle = "#fff";
-            ctx.font = "bold 15px Arial, Helvetica, sans-serif";    // the mark's digits stand 11px tall
+            ctx.font = S.weight + " " + Math.round(S.textH * 1.36) + "px Arial, Helvetica, sans-serif";
             ctx.textBaseline = "alphabetic";
             const text = String(year);
-            const want = digits[1] - digits[0] + 1;
+            const want = S.digits[1] - S.digits[0] + 1;
             const have = ctx.measureText(text).width;
             if (have > want + 1) {
-                ctx.translate(k.x + digits[0], 0);
+                ctx.translate(k.x + S.digits[0], 0);
                 ctx.scale(want / have, 1);
-                ctx.fillText(text, 0, k.y + MH);
+                ctx.fillText(text, 0, k.y + S.base);
             } else {
-                ctx.fillText(text, k.x + digits[0] + (want - have) / 2, k.y + MH);
+                ctx.fillText(text, k.x + S.digits[0] + (want - have) / 2, k.y + S.base);
             }
             ctx.restore();
         };
-        // the tile at url, rewritten: done(blobUrl) or done(null) when it can't be (then the plain tile)
-        const tile = function(url, year, done) {
-            const key = url + "#" + year;
+        // the tile at url, rewritten with the set's mask: done(blobUrl) or done(null) when it can't be (then
+        // the plain tile)
+        const rewrite = function(set, url, year, done) {
+            const S = SETS[set];
+            const key = set + "#" + url + "#" + year;
             if (cache[key]) {
                 done(URL.createObjectURL(cache[key]));
                 return;
@@ -102254,7 +102256,7 @@ html[gplex-gmail] body {
                         const out = new ImageData(new Uint8ClampedArray(r.buf), W, H);
                         ctx.putImageData(out, 0, 0);
                         r.marks.forEach(function(k) {
-                            writeYear(ctx, k, year);
+                            writeYear(S, ctx, k, year);
                         });
                         c.toBlob(function(b) {
                             if (!b) {
@@ -102270,14 +102272,81 @@ html[gplex-gmail] body {
                             done(URL.createObjectURL(b));
                         }, "image/jpeg", 0.92);
                     };
-                    getWorker().postMessage({ id: n, w: W, h: H, buf: id.data.buffer, dx0: digits[0], dx1: digits[1] }, [id.data.buffer]);
+                    getWorker().postMessage({ id: n, set: set, w: W, h: H, buf: id.data.buffer, dx0: S.digits[0], dx1: S.digits[1] }, [id.data.buffer]);
                 } catch (e) {
                     done(null);
                 }
             };
             img.src = url;
         };
-        return { tile: tile };
+        const tile = function(url, year, done) {
+            rewrite("sat", url, year, done);
+        };
+        const pano = function(url, year, done) {
+            rewrite("sv", url, year, done);
+        };
+        // Google's Street View viewer loads its panorama tiles as images (crossOrigin anonymous, for its WebGL):
+        // the image source setter of the embed's window is hooked, and a tile's address goes through the
+        // rewrite before the viewer gets it (the blob is the same origin, so its WebGL is content)
+        const TILE = /streetviewpixels[^"'\s]*output=tile|\/cbk\?[^"'\s]*output=tile/;
+        const hook = function(win, year) {
+            if (win.__ugfMarks) {
+                return;
+            }
+            const proto = win.HTMLImageElement.prototype;
+            const d = Object.getOwnPropertyDescriptor(proto, "src");
+            const decode = proto.decode;
+            const counts = { seen: 0, rewritten: 0 };
+            win.__ugfMarks = counts;
+            Object.defineProperty(proto, "src", { configurable: true, enumerable: d.enumerable, get: d.get, set: function(v) {
+                const img = this;
+                if (!TILE.test(String(v))) {
+                    d.set.call(img, v);
+                    return;
+                }
+                counts.seen++;
+                img._ugfPending = new Promise(function(res) {
+                    pano(String(v), year, function(u) {
+                        if (u) {
+                            counts.rewritten++;
+                            img.addEventListener("load", function() {
+                                URL.revokeObjectURL(u);
+                            }, { once: true });
+                        }
+                        d.set.call(img, u || v);
+                        img._ugfPending = null;
+                        res();
+                    });
+                });
+            } });
+            // the viewer asks decode() right after setting the source, and gives a tile up when that fails:
+            // held until the rewrite has set the source
+            proto.decode = function() {
+                const img = this;
+                return img._ugfPending ? img._ugfPending.then(function() {
+                    return decode.call(img);
+                }) : decode.call(img);
+            };
+        };
+        // the hook into a frame that has just been sent to an embed: its window is there well before the
+        // viewer's scripts run (they load after the page), so a poll every few ms catches it in time
+        const watch = function(frame, year) {
+            const t0 = Date.now();
+            const iv = setInterval(function() {
+                try {
+                    const w = frame.contentWindow;
+                    if (w && /\/maps\/embed/.test(w.location.pathname)) {
+                        hook(w, year);
+                        clearInterval(iv);
+                        return;
+                    }
+                } catch (e) {}
+                if (Date.now() - t0 > 20000 || !frame.isConnected) {
+                    clearInterval(iv);
+                }
+            }, 4);
+        };
+        return { tile: tile, pano: pano, watch: watch };
         })();
         return ugfMapsMarks._api;
     }
@@ -104154,7 +104223,17 @@ html[gplex-gmail] body {
         if (!named) {
             sv.classList.add("wait");    // nothing to see until the lookup says what loads
         }
-        frame.src = named ? ugfMapsStreetEmbedUrl(lat, lng, at) : "about:blank";
+        // (8.24) the viewer's tiles come through the mark rewrite: the frame is watched for its window
+        // each time it is sent to a panorama
+        const aim = function(url) {
+            frame.src = url;
+            ugfMapsMarks().watch(frame, parseInt(ugfMapsYear(), 10));
+        };
+        if (named) {
+            aim(ugfMapsStreetEmbedUrl(lat, lng, at));
+        } else {
+            frame.src = "about:blank";
+        }
         ugfMapsPanoOfYear(lat, lng, want, function(p, found) {
             if (!sv.isConnected) {
                 return;
@@ -104170,7 +104249,7 @@ html[gplex-gmail] body {
                     sv.classList.remove("none");
                 }
                 expect = { id: c ? c.id : "", until: Date.now() + 12000 };
-                frame.src = ugfMapsStreetEmbedUrl(c ? c.lat : lat, c ? c.lng : lng, { heading: v.heading, pitch: v.pitch, pano: c ? c.id : "" });
+                aim(ugfMapsStreetEmbedUrl(c ? c.lat : lat, c ? c.lng : lng, { heading: v.heading, pitch: v.pitch, pano: c ? c.id : "" }));
             };
             let current = named ? caps.filter(function(c) {
                 return c.id === at.pano;
