@@ -32,7 +32,8 @@ static/, cydia/, tools/, README.txt). Not gplex-data (the download count, the ce
 itself, Gplex+'s data), not certs/ or data/ inside the site folder, and no hidden files.
 A new userscript, add-on, changelog or picture shows at once, as before. A new server.py, plus.py
 or files/versions/index.json needs a restart; the restart first checks that every .py file compiles
-and refuses if one does not.
+and refuses if one does not. The server starts over in the same process (on Windows, as a new one),
+so a service manager keeps it; a new sitefiles.py itself is read at the next start.
 """
 import argparse
 import hashlib
@@ -322,12 +323,24 @@ class Files(object):
 
     def do_restart(self):
         time.sleep(1)                   # (the reply goes out first)
-        for s in self.servers:
+        servers = [s for s in self.servers if s is not None]
+        for s in servers:
             s.shutdown()
-        for s in self.servers:
+        for s in servers:
             s.server_close()
         cmd = [sys.executable] + sys.argv
         self.log("Site files: starting again: %s" % " ".join(cmd))
+        try:
+            sys.stdout.flush()
+        except (OSError, ValueError):
+            pass
+        if os.name != "nt":
+            # the same process, started over: it keeps its process id, its output and its place under a
+            # service manager (systemd, a container), which would stop a child along with the parent
+            try:
+                os.execv(sys.executable, cmd)
+            except OSError as e:
+                self.log("Site files: could not start over in place (%s); starting a new process" % e)
         subprocess.Popen(cmd, cwd=os.getcwd())
 
 
