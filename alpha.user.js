@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended Alpha - Gplex Old Google with its YouTube part rewritten
 // @namespace    http://tampermonkey.net/
-// @version      9.0.0.26
+// @version      9.0.0.27
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube, rewritten: alpha, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -908,6 +908,37 @@ function ugfPhoneLayout() {
     const m = ugfMobileMode();
     const ua = navigator.userAgent || "";
     return m === "on" || m !== "off" && (/iPhone|iPod|Windows Phone|IEMobile|BlackBerry|BB10|Opera Mini/.test(ua) || /Android/.test(ua) && /Mobile/.test(ua));
+}
+// (8.27) the name and address in Google's account button's label ("Google Account: Name  \n(address)", the shape
+// varying by page)
+function ugfAccountFromLabel(label) {
+    const s = String(label || "");
+    const m = s.match(/[\w.+-]+@[\w.-]+\.\w+/);
+    const i = s.indexOf(":");
+    return { name: i > -1 ? s.slice(i + 1).split("(")[0].replace(/\s+/g, " ").trim() : "", email: m ? m[0] : "" };
+}
+// (8.27) Google's own account list (what its bar reads), for pages with no account button to read: the first
+// account's name, address and photo, null when nobody is signed in, undefined when it could not be asked
+function ugfAccountLookup(done) {
+    try {
+        const x = new XMLHttpRequest();
+        x.open("POST", "https://accounts.google.com/ListAccounts?gpsia=1&source=ogb&mo=1&mn=1&hl=en");
+        x.withCredentials = true;
+        x.onload = function() {
+            try {
+                const a = JSON.parse(x.responseText)[1][0];
+                done(a ? { name: String(a[2] || ""), email: String(a[3] || ""), photo: String(a[4] || "") } : null);
+            } catch (e) {
+                done(undefined);
+            }
+        };
+        x.onerror = function() {
+            done(undefined);
+        };
+        x.send();
+    } catch (e) {
+        done(undefined);
+    }
 }
 // (8.18) the "Load Street View images to selected year" setting, UGF_SV_YEAR = on | off: on, Street View in
 // Maps shows the newest capture from the layout's year or before and never one from after it
@@ -14596,10 +14627,9 @@ function ugfIsErrorPage() {
             try {
                 const a = document.querySelector('header#gb a[aria-label*="@"], a[aria-label^="Google Account:"]');
                 const label = a ? (a.getAttribute("aria-label") || "") : "";
-                const m = label.match(/[\w.+-]+@[\w.-]+\.\w+/);
-                mail = m ? m[0] : "";
-                const i = label.indexOf(":");
-                name = i > -1 ? label.slice(i + 1).split("(")[0].replace(/\s+/g, " ").trim() : "";
+                const w = ugfAccountFromLabel(label);
+                mail = w.email;
+                name = w.name;
                 const im = a ? a.querySelector("img") : null;
                 photo = im ? (im.getAttribute("src") || "") : "";
                 if (!name) {
@@ -39301,49 +39331,71 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 window.location = "https://www.google.com/search?q=" + value + "&btnI=I%27m+Feeling+Lucky&iflsig=ANes7DEAAAAAZhR3OR8bkupN1D63NUfgJj5erQigfDUN";
             });
         }
-        // (6.5.5) Google's lightweight pages (old browsers) have no account button to read: use the account
-        // Gplex saw elsewhere (google.com, Gmail) and kept, until signing out
-        if (document.querySelector("html").hasAttribute("basic-html") || location == "home") {
+        // (8.27) the account in the bar, from Google's account button, from Google's own account list (the
+        // lightweight and mobile pages have no button to read) or from the account Gplex kept
+        const ugfAccountShow = function(name, mail, photo) {
+            loggedIn = true;
+            username = name;
+            email = mail;
+            pfp = photo.replace(/=s\d+(-[a-z-]*)?$/, "=s32-c").replace(/\/s\d+(-c)?\//, "/s32-c/");
+            pfp96 = photo.replace(/=s\d+(-[a-z-]*)?$/, "=s96-c").replace(/\/s\d+(-c)?\//, "/s96-c/");
+            document.querySelector("html").setAttribute("logged-in", "true");
+            try {
+                if (typeof GM_setValue === "function") {
+                    GM_setValue("UGF_USERNAME", name);
+                    GM_setValue("UGF_EMAIL", mail);
+                    GM_setValue("UGF_PFP", pfp96);
+                }
+            } catch (e) {}
+            const plus = "+" + ugfPlusFirst();
+            [["#gp-gbar-account span", name.split(" ")[0]], ["#gp-gbar-email span", mail], ["#ugf-account-username span", name], ["#ugf-account-email span", mail],
+                ["#ugf-username-button span", plus], ["#ugf-email-button span", plus], ["#gp-gbar-plusyou span", plus]].forEach(function(x) {
+                const el = document.querySelector(x[0]);
+                if (el) {
+                    el.textContent = x[1];
+                }
+            });
+            if (photo) {
+                [["#ugf-account-button img", pfp], ["#ugf-account-pfp img", pfp96], ["#ugf-account-normal-pfp img", pfp96]].forEach(function(x) {
+                    const el = document.querySelector(x[0]);
+                    if (el) {
+                        el.src = x[1];
+                    }
+                });
+            }
+            ugfBarTitles(name, mail);
+        };
+        // (6.5.5) a page with no account button (Google's lightweight pages for old browsers, a phone's pages):
+        // Google's own account list says who is signed in, or that nobody is any more; the account Gplex kept
+        // stands in when the list can't be asked
+        if (document.querySelector("html").hasAttribute("basic-html") || location == "home" || ugfPhoneLayout()) {
             setTimeout(function() {
                 const h = document.querySelector("html");
                 // (their own "Sign in" link shows even when signed in, so only a real account button counts)
-                if (canGo == false || h.getAttribute("logged-in") === "true" || document.querySelector("[href^='https://accounts.google.com/SignOutOptions']")) {
+                if (h.getAttribute("logged-in") === "true" || document.querySelector("[href^='https://accounts.google.com/SignOutOptions']")) {
                     return;
                 }
-                if (location == "home" && !h.hasAttribute("legacy-lite-home") && !document.querySelector("body > center")) {
+                if (location == "home" && !h.hasAttribute("legacy-lite-home") && !document.querySelector("body > center") && !ugfPhoneLayout()) {
                     return;   // today's home page has its own account button
                 }
-                let kName = "", kMail = "", kPfp = "";
-                try {
-                    kName = String(GM_getValue("UGF_USERNAME", "") || "");
-                    kMail = String(GM_getValue("UGF_EMAIL", "") || "");
-                    kPfp = String(GM_getValue("UGF_PFP", "") || "");
-                } catch (e) {}
-                if (!kName || !kMail) {
-                    return;
-                }
-                loggedIn = true;
-                h.setAttribute("logged-in", "true");
-                const first = kName.split(" ")[0];
-                const small = kPfp.replace(/=s\d+(-[a-z-]*)?$/, "=s32-c").replace(/\/s\d+(-c)?\//, "/s32-c/");
-                const big = kPfp.replace(/=s\d+(-[a-z-]*)?$/, "=s96-c").replace(/\/s\d+(-c)?\//, "/s96-c/");
-                [["#gp-gbar-account span", first], ["#gp-gbar-email span", kMail], ["#ugf-account-username span", kName],
-                    ["#ugf-account-email span", kMail], ["#ugf-username-button span", "+" + ugfPlusFirst()], ["#ugf-email-button span", "+" + ugfPlusFirst()],
-                    ["#gp-gbar-plusyou span", "+" + ugfPlusFirst()]].forEach(function(x) {
-                    const el = document.querySelector(x[0]);
-                    if (el) {
-                        el.textContent = x[1];
+                ugfAccountLookup(function(acc) {
+                    if (acc) {
+                        ugfAccountShow(acc.name, acc.email, acc.photo);
+                        return;
                     }
-                });
-                if (kPfp) {
-                    [["#ugf-account-button img", small], ["#ugf-account-pfp img", big], ["#ugf-account-normal-pfp img", big]].forEach(function(x) {
-                        const el = document.querySelector(x[0]);
-                        if (el) {
-                            el.src = x[1];
+                    try {
+                        if (acc === null) {
+                            ["UGF_USERNAME", "UGF_EMAIL", "UGF_PFP"].forEach(function(k) {
+                                GM_deleteValue(k);
+                            });
+                            return;
                         }
-                    });
-                }
-                ugfBarTitles(kName, kMail);
+                        const kName = String(GM_getValue("UGF_USERNAME", "") || ""), kMail = String(GM_getValue("UGF_EMAIL", "") || "");
+                        if (kName && kMail) {
+                            ugfAccountShow(kName, kMail, String(GM_getValue("UGF_PFP", "") || ""));
+                        }
+                    } catch (e) {}
+                });
             }, 2500);
         }
         // (6.5.7) the page numbers and tabs are filled in once the account is known; pages with no
@@ -39362,38 +39414,10 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                     document.querySelector("html").setAttribute("logged-in","false");
                 }
                 if (document.querySelector("[href^='https://accounts.google.com/SignOutOptions']")) {
-                    loggedIn = true;
-                    document.querySelector("html").setAttribute("logged-in","true");
-                    pfp = document.querySelector("[href^='https://accounts.google.com/SignOutOptions'] img").getAttribute("src");
-                    pfp96 = pfp.replace("s32","s96");
-                    let cutIt = document.querySelector("[href^='https://accounts.google.com/SignOutOptions']").getAttribute("aria-label").split(": ");
-                    cutIt = cutIt[1];
-                    cutIt = cutIt.split(" \n");
-                    username = cutIt[0];
-                    let firstName = username.split(" ")[0];
-                    email = cutIt[1];
-                    email = email.split("(");
-                    email = email[1];
-                    email = email.split(")");
-                    email = email[0];
-                    try {
-                        if (typeof GM_setValue === "function") {
-                            GM_setValue("UGF_USERNAME", username);
-                            GM_setValue("UGF_EMAIL", email);
-                            GM_setValue("UGF_PFP", pfp96 || pfp || "");
-                        }
-                    } catch (e) {}
-                    document.querySelector("#gp-gbar-account span").textContent = firstName;
-                    document.querySelector("#gp-gbar-email span").textContent = email;
-                    document.querySelector("#ugf-account-username span").textContent = username;
-                    document.querySelector("#ugf-account-email span").textContent = email;
-                    document.querySelector("#ugf-username-button span").textContent = "+" + ugfPlusFirst();
-                    document.querySelector("#ugf-email-button span").textContent = "+" + ugfPlusFirst();
-                    document.querySelector("#ugf-account-button img").src = pfp;
-                    document.querySelector("#ugf-account-pfp img").src = pfp96;
-                    document.querySelector("#ugf-account-normal-pfp img").src = pfp96;
-                    document.querySelector("#gp-gbar-plusyou span").textContent = "+" + ugfPlusFirst();
-                    ugfBarTitles(username, email);
+                    const a = document.querySelector("[href^='https://accounts.google.com/SignOutOptions']");
+                    const w = ugfAccountFromLabel(a.getAttribute("aria-label"));
+                    const im = a.querySelector("img");
+                    ugfAccountShow(w.name, w.email, im ? im.getAttribute("src") || "" : "");
                 }
                 fixPagination();
             }

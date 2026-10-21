@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Gplex Legacy - Gplex Extended for old browsers (Firefox 52, Windows XP era)
 // @namespace    http://tampermonkey.net/
-// @version      7.2.29.4
-// @description  Gplex Extended 7.2.29 (with the Gplex+ part of 8.15, the Phone layout setting of 8.16, the sign-in fix of 8.25 and the Phone layout's account of 8.26) built for old browsers such as Firefox 52 ESR on Windows XP and Safari 9 on iOS 9: 1997-2024 Old Google Frontend, plus YouTube (with the V3 extension)
+// @version      7.2.29.5
+// @description  Gplex Extended 7.2.29 (with the Gplex+ part of 8.15, the Phone layout setting of 8.16, the sign-in fix of 8.25 and the Phone layout's account of 8.26 and 8.27) built for old browsers such as Firefox 52 ESR on Windows XP and Safari 9 on iOS 9: 1997-2024 Old Google Frontend, plus YouTube (with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
 // @match        *://www.google.com/
@@ -2226,6 +2226,33 @@ var ugfWk = function () {
     var m = ugfMobileSetting();
     var ua = navigator.userAgent || "";
     return m === "on" || m !== "off" && (/iPhone|iPod|Windows Phone|IEMobile|BlackBerry|BB10|Opera Mini/.test(ua) || /Android/.test(ua) && /Mobile/.test(ua));
+  }
+  function ugfAccountFromLabel(label) {
+      var s = String(label || "");
+      var m = s.match(/[\w.+-]+@[\w.-]+\.\w+/);
+      var i = s.indexOf(":");
+      return { name: i > -1 ? s.slice(i + 1).split("(")[0].replace(/\s+/g, " ").trim() : "", email: m ? m[0] : "" };
+  }
+  function ugfAccountLookup(done) {
+      try {
+          var x = new XMLHttpRequest();
+          x.open("POST", "https://accounts.google.com/ListAccounts?gpsia=1&source=ogb&mo=1&mn=1&hl=en");
+          x.withCredentials = true;
+          x.onload = function() {
+              try {
+                  var a = JSON.parse(x.responseText)[1][0];
+                  done(a ? { name: String(a[2] || ""), email: String(a[3] || ""), photo: String(a[4] || "") } : null);
+              } catch (e) {
+                  done(undefined);
+              }
+          };
+          x.onerror = function() {
+              done(undefined);
+          };
+          x.send();
+      } catch (e) {
+          done(undefined);
+      }
   }
   (function () {
     if (ugfOnYouTube || /(^|\.)youtube\.com$/i.test(location.hostname)) {
@@ -55880,10 +55907,9 @@ html[ugf-ytm-played] #ugf-ytm .ytm-pl .ytm-pl-btn{display:none}
           try {
             var a = document.querySelector('header#gb a[aria-label*="@"], a[aria-label^="Google Account:"]');
             var label = a ? a.getAttribute("aria-label") || "" : "";
-            var m = label.match(/[\w.+-]+@[\w.-]+\.\w+/);
-            mail = m ? m[0] : "";
-            var i = label.indexOf(":");
-            name = i > -1 ? label.slice(i + 1).split("(")[0].replace(/\s+/g, " ").trim() : "";
+            var w = ugfAccountFromLabel(label);
+            mail = w.email;
+            name = w.name;
             var im = a ? a.querySelector("img") : null;
             photo = im ? im.getAttribute("src") || "" : "";
             if (!name) {
@@ -80272,46 +80298,65 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
               window.location = "https://www.google.com/search?q=" + value + "&btnI=I%27m+Feeling+Lucky&iflsig=ANes7DEAAAAAZhR3OR8bkupN1D63NUfgJj5erQigfDUN";
             });
           }
-          if (document.querySelector("html").hasAttribute("basic-html") || location2 == "home") {
-            setTimeout(function () {
-              var h = document.querySelector("html");
-              if (canGo == false || h.getAttribute("logged-in") === "true" || document.querySelector("[href^='https://accounts.google.com/SignOutOptions']")) {
-                return;
-              }
-              if (location2 == "home" && !h.hasAttribute("legacy-lite-home") && !document.querySelector("body > center")) {
-                return;
-              }
-              var kName = "",
-                kMail = "",
-                kPfp = "";
-              try {
-                kName = String(GM_getValue("UGF_USERNAME", "") || "");
-                kMail = String(GM_getValue("UGF_EMAIL", "") || "");
-                kPfp = String(GM_getValue("UGF_PFP", "") || "");
-              } catch (e) {}
-              if (!kName || !kMail) {
-                return;
-              }
+          var ugfAccountShow = function(name, mail, photo) {
               loggedIn = true;
-              h.setAttribute("logged-in", "true");
-              var first = kName.split(" ")[0];
-              var small = kPfp.replace(/=s\d+(-[a-z-]*)?$/, "=s32-c").replace(/\/s\d+(-c)?\//, "/s32-c/");
-              var big = kPfp.replace(/=s\d+(-[a-z-]*)?$/, "=s96-c").replace(/\/s\d+(-c)?\//, "/s96-c/");
-              [["#gp-gbar-account span", first], ["#gp-gbar-email span", kMail], ["#ugf-account-username span", kName], ["#ugf-account-email span", kMail], ["#ugf-username-button span", "+" + ugfPlusFirst()], ["#ugf-email-button span", "+" + ugfPlusFirst()], ["#gp-gbar-plusyou span", "+" + ugfPlusFirst()]].forEach(function (x) {
-                var el = document.querySelector(x[0]);
-                if (el) {
-                  el.textContent = x[1];
-                }
-              });
-              if (kPfp) {
-                [["#ugf-account-button img", small], ["#ugf-account-pfp img", big], ["#ugf-account-normal-pfp img", big]].forEach(function (x) {
+              username = name;
+              email = mail;
+              pfp = photo.replace(/=s\d+(-[a-z-]*)?$/, "=s32-c").replace(/\/s\d+(-c)?\//, "/s32-c/");
+              pfp96 = photo.replace(/=s\d+(-[a-z-]*)?$/, "=s96-c").replace(/\/s\d+(-c)?\//, "/s96-c/");
+              document.querySelector("html").setAttribute("logged-in", "true");
+              try {
+                  if (typeof GM_setValue === "function") {
+                      GM_setValue("UGF_USERNAME", name);
+                      GM_setValue("UGF_EMAIL", mail);
+                      GM_setValue("UGF_PFP", pfp96);
+                  }
+              } catch (e) {}
+              var plus = "+" + ugfPlusFirst();
+              [["#gp-gbar-account span", name.split(" ")[0]], ["#gp-gbar-email span", mail], ["#ugf-account-username span", name], ["#ugf-account-email span", mail],
+                  ["#ugf-username-button span", plus], ["#ugf-email-button span", plus], ["#gp-gbar-plusyou span", plus]].forEach(function(x) {
                   var el = document.querySelector(x[0]);
                   if (el) {
-                    el.src = x[1];
+                      el.textContent = x[1];
                   }
-                });
+              });
+              if (photo) {
+                  [["#ugf-account-button img", pfp], ["#ugf-account-pfp img", pfp96], ["#ugf-account-normal-pfp img", pfp96]].forEach(function(x) {
+                      var el = document.querySelector(x[0]);
+                      if (el) {
+                          el.src = x[1];
+                      }
+                  });
               }
-            }, 2500);
+          };
+          if (document.querySelector("html").hasAttribute("basic-html") || location2 == "home" || ugfPhoneLayout()) {
+              setTimeout(function() {
+                  var h = document.querySelector("html");
+                  if (h.getAttribute("logged-in") === "true" || document.querySelector("[href^='https://accounts.google.com/SignOutOptions']")) {
+                      return;
+                  }
+                  if (location2 == "home" && !h.hasAttribute("legacy-lite-home") && !document.querySelector("body > center") && !ugfPhoneLayout()) {
+                      return;   // today's home page has its own account button
+                  }
+                  ugfAccountLookup(function(acc) {
+                      if (acc) {
+                          ugfAccountShow(acc.name, acc.email, acc.photo);
+                          return;
+                      }
+                      try {
+                          if (acc === null) {
+                              ["UGF_USERNAME", "UGF_EMAIL", "UGF_PFP"].forEach(function(k) {
+                                  GM_deleteValue(k);
+                              });
+                              return;
+                          }
+                          var kName = String(GM_getValue("UGF_USERNAME", "") || ""), kMail = String(GM_getValue("UGF_EMAIL", "") || "");
+                          if (kName && kMail) {
+                              ugfAccountShow(kName, kMail, String(GM_getValue("UGF_PFP", "") || ""));
+                          }
+                      } catch (e) {}
+                  });
+              }, 2500);
           }
           setTimeout(function () {
             if (canGo != false && !fixPagination.done) {
@@ -80326,37 +80371,10 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                 document.querySelector("html").setAttribute("logged-in", "false");
               }
               if (document.querySelector("[href^='https://accounts.google.com/SignOutOptions']")) {
-                loggedIn = true;
-                document.querySelector("html").setAttribute("logged-in", "true");
-                pfp = document.querySelector("[href^='https://accounts.google.com/SignOutOptions'] img").getAttribute("src");
-                pfp96 = pfp.replace("s32", "s96");
-                var cutIt = document.querySelector("[href^='https://accounts.google.com/SignOutOptions']").getAttribute("aria-label").split(": ");
-                cutIt = cutIt[1];
-                cutIt = cutIt.split(" \n");
-                username = cutIt[0];
-                var firstName = username.split(" ")[0];
-                email = cutIt[1];
-                email = email.split("(");
-                email = email[1];
-                email = email.split(")");
-                email = email[0];
-                try {
-                  if (typeof GM_setValue === "function") {
-                    GM_setValue("UGF_USERNAME", username);
-                    GM_setValue("UGF_EMAIL", email);
-                    GM_setValue("UGF_PFP", pfp96 || pfp || "");
-                  }
-                } catch (e) {}
-                document.querySelector("#gp-gbar-account span").textContent = firstName;
-                document.querySelector("#gp-gbar-email span").textContent = email;
-                document.querySelector("#ugf-account-username span").textContent = username;
-                document.querySelector("#ugf-account-email span").textContent = email;
-                document.querySelector("#ugf-username-button span").textContent = "+" + ugfPlusFirst();
-                document.querySelector("#ugf-email-button span").textContent = "+" + ugfPlusFirst();
-                document.querySelector("#ugf-account-button img").src = pfp;
-                document.querySelector("#ugf-account-pfp img").src = pfp96;
-                document.querySelector("#ugf-account-normal-pfp img").src = pfp96;
-                document.querySelector("#gp-gbar-plusyou span").textContent = "+" + ugfPlusFirst();
+                  var a = document.querySelector("[href^='https://accounts.google.com/SignOutOptions']");
+                  var w = ugfAccountFromLabel(a.getAttribute("aria-label"));
+                  var im = a.querySelector("img");
+                  ugfAccountShow(w.name, w.email, im ? im.getAttribute("src") || "" : "");
               }
               fixPagination();
             }

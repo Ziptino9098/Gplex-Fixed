@@ -3,3 +3,4 @@ youtube/gplex-youtube.module.js
 releases/alpha/*-chrome-unpacked/
 youtube/tools/migrate/out/
 youtube/profile/
+build/__pycache__/
