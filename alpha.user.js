@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended Alpha - Gplex Old Google with its YouTube part rewritten
 // @namespace    http://tampermonkey.net/
-// @version      9.0.0.24
+// @version      9.0.0.25
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube, rewritten: alpha, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -12632,6 +12632,11 @@ function ugfIsErrorPage() {
         }
         const p = window.location.pathname || "";
         if (!/^\/(v3\/signin\/|signin\/|ServiceLogin|AccountChooser|InteractiveLogin|lifecycle\/steps\/signup\/|signup(\/|$)|SignUp)/.test(p)) {
+            return;
+        }
+        // (8.25) the 2-Step Verification pages (a code by text or app, the phone prompt, a security key, "Try
+        // another way", reCAPTCHA) are Google's own: themed, requesting a code ended in "Something went wrong"
+        if (/^\/(v3\/)?signin\/(v2\/)?challenge\/(?!pwd(\/|$))/.test(p)) {
             return;
         }
         const gv = function(k, d) {

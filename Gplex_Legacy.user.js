@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Gplex Legacy - Gplex Extended for old browsers (Firefox 52, Windows XP era)
 // @namespace    http://tampermonkey.net/
-// @version      7.2.29.2
-// @description  Gplex Extended 7.2.29 (with the Gplex+ part of 8.15 and the Phone layout setting of 8.16) built for old browsers such as Firefox 52 ESR on Windows XP and Safari 9 on iOS 9: 1997-2024 Old Google Frontend, plus YouTube (with the V3 extension)
+// @version      7.2.29.3
+// @description  Gplex Extended 7.2.29 (with the Gplex+ part of 8.15, the Phone layout setting of 8.16 and the sign-in fix of 8.25) built for old browsers such as Firefox 52 ESR on Windows XP and Safari 9 on iOS 9: 1997-2024 Old Google Frontend, plus YouTube (with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
 // @match        *://www.google.com/
@@ -54015,6 +54015,11 @@ html[ugf-ytm-played] #ugf-ytm .ytm-pl .ytm-pl-btn{display:none}
         }
         var p = window.location.pathname || "";
         if (!/^\/(v3\/signin\/|signin\/|ServiceLogin|AccountChooser|InteractiveLogin|lifecycle\/steps\/signup\/|signup(\/|$)|SignUp)/.test(p)) {
+          return;
+        }
+        // (8.25) the 2-Step Verification pages (a code by text or app, the phone prompt, a security key, "Try
+        // another way", reCAPTCHA) are Google's own: themed, requesting a code ended in "Something went wrong"
+        if (/^\/(v3\/)?signin\/(v2\/)?challenge\/(?!pwd(\/|$))/.test(p)) {
           return;
         }
         var gv = function gv(k, d) {
