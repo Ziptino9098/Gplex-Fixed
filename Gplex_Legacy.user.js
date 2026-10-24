@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Gplex Legacy - Gplex Extended for old browsers (Firefox 52, Windows XP era)
 // @namespace    http://tampermonkey.net/
-// @version      7.2.29.8
-// @description  Gplex Extended 7.2.29 (with the Gplex+ part of 8.15, the Phone layout setting of 8.16, the sign-in fix of 8.25, the Phone layout's account of 8.26 and 8.27, the phone's Maps zoom of 8.28 and the Gmail conversations of 8.29 and 8.30) built for old browsers such as Firefox 52 ESR on Windows XP and Safari 9 on iOS 9: 1997-2024 Old Google Frontend, plus YouTube (with the V3 extension)
+// @version      7.2.29.9
+// @description  Gplex Extended 7.2.29 (with the Gplex+ part of 8.15, the Phone layout setting of 8.16, the sign-in fix of 8.25, the Phone layout's account of 8.26 and 8.27, the phone's Maps zoom of 8.28 and the Gmail conversations of 8.29 to 8.31) built for old browsers such as Firefox 52 ESR on Windows XP and Safari 9 on iOS 9: 1997-2024 Old Google Frontend, plus YouTube (with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
 // @match        *://www.google.com/
@@ -84537,7 +84537,14 @@ html[gplex-gmail] body {
 
 /* ---------- the holding screen ---------- */
 html[gplex-gmail-loading] body > *:not(#ugf-gmail-loading):not(#ugf-gmail):not(#ugf-gmail-styles):not(script):not(style) {
-  display: none !important;
+  visibility: hidden !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100vh !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
 }
 html[gplex-gmail-loading],
 html[gplex-gmail-loading] body {
@@ -85307,6 +85314,10 @@ html[gplex-gmail] body {
           }
           return /^[A-Za-z0-9_-]{10,}$/.test(t) ? t : "";
         }
+        function ugfGmailClickRow(item) {
+          var liveRow = ugfGmailLiveRow(item);
+          return !!liveRow && ugfGmailRealClick(liveRow.querySelector(".bog span") || liveRow.querySelector(".bog") || liveRow.querySelector(".xT") || liveRow);
+        }
         function ugfGmailOpenRow(item) {
           ugfGmailOpenRow.last = {
             item,
@@ -85314,8 +85325,23 @@ html[gplex-gmail] body {
             clicked: false
           };
           if (item.tid) {
-            ugfGmailPrintFetch(item.tid, true);
-            window.location.hash = ugfGmailListOf(window.location.hash) + "/" + item.tid;
+            var to = ugfGmailListOf(window.location.hash) + "/" + item.tid;
+            console.log("[Gplex] Gmail: opening " + to);
+            window.location.hash = to;
+            try {
+              ugfGmailPrintFetch(item.tid, true);
+            } catch (e) {
+              console.log("[Gplex] Gmail: the print view could not be asked for: " + (e && e.message));
+            }
+            var mine = ugfGmailOpenRow.last;
+            setTimeout(function () {
+              if (ugfGmailOpenRow.last !== mine || mine.clicked || ugfGmailThreadOpen() || ugfGmailOpenRow.userAt > mine.at + 200) {
+                return;
+              }
+              mine.clicked = true;
+              console.log("[Gplex] Gmail: the address went back to " + (window.location.hash || "#inbox") + " instead of opening the conversation; clicking its row in Gmail's list");
+              ugfGmailClickRow(item);
+            }, 1500);
             return true;
           }
           var row = ugfGmailLiveRow(item);
@@ -86436,6 +86462,18 @@ html[gplex-gmail] body {
               return o !== m && o.contains(m);
             });
           });
+          var own = String(window.location.hash || "").split("/").pop();
+          if (/^[0-9a-f]{12,20}$/.test(own)) {
+            var kept = scope.filter(function (m) {
+              var box = m.closest("[data-legacy-thread-id]");
+              return !box || box.getAttribute("data-legacy-thread-id") === own;
+            });
+            if (kept.length !== scope.length && ugfGmailThreadLive.skipped !== own) {
+              ugfGmailThreadLive.skipped = own;
+              console.log("[Gplex] Gmail: " + (scope.length - kept.length) + " message(s) of another conversation parked on Gmail's page, skipped");
+            }
+            scope = kept;
+          }
           var live = scope.filter(function (m) {
             return m.getClientRects().length;
           });
@@ -86583,6 +86621,7 @@ html[gplex-gmail] body {
           main.querySelectorAll("[data-nav]").forEach(function (b) {
             b.addEventListener("click", function (ev) {
               ev.preventDefault();
+              ugfGmailOpenRow.last = null;
               var which = b.getAttribute("data-nav") === "prev" ? "Newer" : "Older";
               if (!ugfGmailClickReal(ugfGmailLabelSel([which]))) {
                 goBack();
@@ -87631,10 +87670,7 @@ html[gplex-gmail] body {
             ugfGmailLoadingStart();
             if (last && !last.clicked && waited > 3e3) {
               last.clicked = true;
-              var liveRow = ugfGmailLiveRow(last.item);
-              if (liveRow) {
-                ugfGmailRealClick(liveRow.querySelector(".bog span") || liveRow.querySelector(".bog") || liveRow.querySelector(".xT") || liveRow);
-              }
+              ugfGmailClickRow(last.item);
             }
             if (waited > 3e3 && !ugfGmailRender.waitTold) {
               ugfGmailRender.waitTold = true;
@@ -88295,6 +88331,11 @@ html[gplex-gmail] body {
           ugfGmailSetFavicon();
           ugfGmailLoadingStart();
           ugfGmailI18nStart();
+          document.addEventListener("click", function (ev) {
+            if (ev.target && ev.target.closest && ev.target.closest("#ugf-gmail")) {
+              ugfGmailOpenRow.userAt = Date.now();
+            }
+          }, true);
           setTimeout(function () {
             if (!document.querySelector("#ugf-gmail")) {
               ugfGmailLoadingDone();

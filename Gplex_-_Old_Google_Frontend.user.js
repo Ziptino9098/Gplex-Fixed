@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      8.30
+// @version      8.31
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube: StarTube by lightbeam24, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -76296,7 +76296,16 @@ html[layout="2014"] #ugf-gmail-account .plusname {
 
 /* ---------- the holding screen ---------- */
 html[gplex-gmail-loading] body > *:not(#ugf-gmail-loading):not(#ugf-gmail):not(#ugf-gmail-styles):not(script):not(style) {
-  display: none !important;
+  /* (8.31) out of sight under the holding screen, not display: none: Gmail goes on laying out and filling in
+     the conversation underneath (it holds back what has no size), and Gplex can tell what is on its screen */
+  visibility: hidden !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100vh !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
 }
 html[gplex-gmail-loading],
 html[gplex-gmail-loading] body {
@@ -76980,14 +76989,39 @@ html[gplex-gmail] body {
         }
         return /^[A-Za-z0-9_-]{10,}$/.test(t) ? t : "";
     }
+    // (8.31) Gmail's own row for a conversation clicked, for one its address does not open
+    function ugfGmailClickRow(item) {
+        const liveRow = ugfGmailLiveRow(item);
+        return !!liveRow && ugfGmailRealClick(liveRow.querySelector(".bog span") || liveRow.querySelector(".bog") ||
+            liveRow.querySelector(".xT") || liveRow);
+    }
     function ugfGmailOpenRow(item) {
         // (6.5.5) remembered, so a conversation that doesn't open that way can be clicked open instead
         ugfGmailOpenRow.last = { item: item, at: Date.now(), clicked: false };
         // the reliable route is Gmail's own URL for the conversation
         if (item.tid) {
+            const to = ugfGmailListOf(window.location.hash) + "/" + item.tid;
+            console.log("[Gplex] Gmail: opening " + to);
+            window.location.hash = to;
             // (8.30) and the print view asked for at once: it answers in about half a second
-            ugfGmailPrintFetch(item.tid, true);
-            window.location.hash = ugfGmailListOf(window.location.hash) + "/" + item.tid;
+            try {
+                ugfGmailPrintFetch(item.tid, true);
+            } catch (e) {
+                console.log("[Gplex] Gmail: the print view could not be asked for: " + (e && e.message));
+            }
+            // (8.31) Gmail sometimes puts the address straight back to the list instead of opening the
+            // conversation, which left the click doing nothing; then its own row is clicked
+            const mine = ugfGmailOpenRow.last;
+            setTimeout(function() {
+                if (ugfGmailOpenRow.last !== mine || mine.clicked || ugfGmailThreadOpen() ||
+                        ugfGmailOpenRow.userAt > mine.at + 200) {
+                    return;   // (or the owner went elsewhere themselves)
+                }
+                mine.clicked = true;
+                console.log("[Gplex] Gmail: the address went back to " + (window.location.hash || "#inbox") +
+                    " instead of opening the conversation; clicking its row in Gmail's list");
+                ugfGmailClickRow(item);
+            }, 1500);
             return true;
         }
         const row = ugfGmailLiveRow(item);
@@ -78110,6 +78144,19 @@ html[gplex-gmail] body {
                 return o !== m && o.contains(m);
             });
         });
+        // (8.31) a conversation opened earlier and parked in the page is not the one in the address
+        const own = String(window.location.hash || "").split("/").pop();
+        if (/^[0-9a-f]{12,20}$/.test(own)) {
+            const kept = scope.filter(function(m) {
+                const box = m.closest("[data-legacy-thread-id]");
+                return !box || box.getAttribute("data-legacy-thread-id") === own;
+            });
+            if (kept.length !== scope.length && ugfGmailThreadLive.skipped !== own) {
+                ugfGmailThreadLive.skipped = own;
+                console.log("[Gplex] Gmail: " + (scope.length - kept.length) + " message(s) of another conversation parked on Gmail's page, skipped");
+            }
+            scope = kept;
+        }
         const live = scope.filter(function(m) {
             return m.getClientRects().length;
         });
@@ -78325,6 +78372,8 @@ html[gplex-gmail] body {
         main.querySelectorAll("[data-nav]").forEach(function(b) {
             b.addEventListener("click", function(ev) {
                 ev.preventDefault();
+                // (8.31) the row clicked no longer says which conversation this is
+                ugfGmailOpenRow.last = null;
                 const which = b.getAttribute("data-nav") === "prev" ? "Newer" : "Older";
                 if (!ugfGmailClickReal(ugfGmailLabelSel([which]))) {
                     goBack();
@@ -79497,11 +79546,7 @@ html[gplex-gmail] body {
             ugfGmailLoadingStart();
             if (last && !last.clicked && waited > 3000) {
                 last.clicked = true;
-                const liveRow = ugfGmailLiveRow(last.item);
-                if (liveRow) {
-                    ugfGmailRealClick(liveRow.querySelector(".bog span") || liveRow.querySelector(".bog") ||
-                        liveRow.querySelector(".xT") || liveRow);
-                }
+                ugfGmailClickRow(last.item);
             }
             if (waited > 3000 && !ugfGmailRender.waitTold) {
                 ugfGmailRender.waitTold = true;
@@ -80430,6 +80475,12 @@ html[gplex-gmail] body {
         ugfGmailSetFavicon();
         ugfGmailLoadingStart();
         ugfGmailI18nStart();
+        // (8.31) when the owner last clicked in the skin: a conversation they left by a click is not reopened
+        document.addEventListener("click", function(ev) {
+            if (ev.target && ev.target.closest && ev.target.closest("#ugf-gmail")) {
+                ugfGmailOpenRow.userAt = Date.now();
+            }
+        }, true);
         // if the skin never comes up, give the real Gmail back rather than
         // leaving the user on a spinner
         setTimeout(function() {
