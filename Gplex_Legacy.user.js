@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Gplex Legacy - Gplex Extended for old browsers (Firefox 52, Windows XP era)
 // @namespace    http://tampermonkey.net/
-// @version      7.2.29.7
-// @description  Gplex Extended 7.2.29 (with the Gplex+ part of 8.15, the Phone layout setting of 8.16, the sign-in fix of 8.25, the Phone layout's account of 8.26 and 8.27, the phone's Maps zoom of 8.28 and the Gmail conversations of 8.29) built for old browsers such as Firefox 52 ESR on Windows XP and Safari 9 on iOS 9: 1997-2024 Old Google Frontend, plus YouTube (with the V3 extension)
+// @version      7.2.29.8
+// @description  Gplex Extended 7.2.29 (with the Gplex+ part of 8.15, the Phone layout setting of 8.16, the sign-in fix of 8.25, the Phone layout's account of 8.26 and 8.27, the phone's Maps zoom of 8.28 and the Gmail conversations of 8.29 and 8.30) built for old browsers such as Firefox 52 ESR on Windows XP and Safari 9 on iOS 9: 1997-2024 Old Google Frontend, plus YouTube (with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
 // @match        *://www.google.com/
@@ -85314,6 +85314,7 @@ html[gplex-gmail] body {
             clicked: false
           };
           if (item.tid) {
+            ugfGmailPrintFetch(item.tid, true);
             window.location.hash = ugfGmailListOf(window.location.hash) + "/" + item.tid;
             return true;
           }
@@ -86314,9 +86315,10 @@ html[gplex-gmail] body {
           });
           return found;
         }
-        function ugfGmailPrintFetch(tid) {
+        function ugfGmailPrintFetch(tid, again) {
           ugfGmailPrintFetch.cache = ugfGmailPrintFetch.cache || {};
-          if (!tid || ugfGmailPrintFetch.cache[tid]) {
+          var had = ugfGmailPrintFetch.cache[tid];
+          if (!tid || had && (had.loading || !again)) {
             return;
           }
           ugfGmailPrintFetch.cache[tid] = {
@@ -87623,6 +87625,7 @@ html[gplex-gmail] body {
             if (!ugfGmailRender.waitSince) {
               ugfGmailRender.waitSince = last && now - last.at < 2e3 ? last.at : now;
               ugfGmailRender.waitTold = false;
+              ugfGmailPrintFetch(ugfGmailPrintTid(), true);
             }
             var waited = now - ugfGmailRender.waitSince;
             ugfGmailLoadingStart();
@@ -87632,9 +87635,6 @@ html[gplex-gmail] body {
               if (liveRow) {
                 ugfGmailRealClick(liveRow.querySelector(".bog span") || liveRow.querySelector(".bog") || liveRow.querySelector(".xT") || liveRow);
               }
-            }
-            if (waited > 2e3) {
-              ugfGmailPrintFetch(ugfGmailPrintTid());
             }
             if (waited > 3e3 && !ugfGmailRender.waitTold) {
               ugfGmailRender.waitTold = true;

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      8.29
+// @version      8.30
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube: StarTube by lightbeam24, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -76985,6 +76985,8 @@ html[gplex-gmail] body {
         ugfGmailOpenRow.last = { item: item, at: Date.now(), clicked: false };
         // the reliable route is Gmail's own URL for the conversation
         if (item.tid) {
+            // (8.30) and the print view asked for at once: it answers in about half a second
+            ugfGmailPrintFetch(item.tid, true);
             window.location.hash = ugfGmailListOf(window.location.hash) + "/" + item.tid;
             return true;
         }
@@ -78000,9 +78002,11 @@ html[gplex-gmail] body {
         });
         return found;
     }
-    function ugfGmailPrintFetch(tid) {
+    // (8.30) `again`: a conversation opened a second time is read afresh, since it may have grown
+    function ugfGmailPrintFetch(tid, again) {
         ugfGmailPrintFetch.cache = ugfGmailPrintFetch.cache || {};
-        if (!tid || ugfGmailPrintFetch.cache[tid]) {
+        const had = ugfGmailPrintFetch.cache[tid];
+        if (!tid || (had && (had.loading || !again))) {
             return;
         }
         ugfGmailPrintFetch.cache[tid] = { loading: true, msgs: [] };
@@ -79473,10 +79477,11 @@ html[gplex-gmail] body {
         // (6.5.5) On a slow computer or an old browser Gmail can take a good while to open a message: wait
         // up to 30 seconds behind the loading screen (not Gmail's own page), and if Gmail hasn't opened
         // it from the address after 6 seconds, click the conversation in Gmail's list as well.
-        // (8.29) Gmail has most conversations on its page within a second of the address changing. One that is not
-        // there after 2 seconds is read from the print view (it was 8 seconds, which is what made the messages Gmail
-        // is slow with - short plain-text ones mostly - take ten seconds to open), and after 3 the row is clicked in
-        // Gmail's own list as well (it was 6). The console says what the page held, and where the messages came from.
+        // (8.29, 8.30) Gmail's print view of the conversation is asked for the moment one is opened - it answers in
+        // about half a second - and whichever of it and Gmail's page comes first is what shows. (8.29 asked for it
+        // after 2 seconds and 6.5.5 after 8, which is what made the messages Gmail is slow with - short plain-text
+        // ones mostly - take ten seconds to open.) After 3 seconds the row is clicked in Gmail's own list as well,
+        // for a conversation neither has. The console says what the page held, and where the messages came from.
         const thread = threadView ? ugfGmailThread() : null;
         if (threadView && !thread.msgs.length) {
             const now = Date.now();
@@ -79485,6 +79490,8 @@ html[gplex-gmail] body {
                 // counted from the click on the row when this is the conversation it opened
                 ugfGmailRender.waitSince = last && now - last.at < 2000 ? last.at : now;
                 ugfGmailRender.waitTold = false;
+                // (for a conversation opened from its address, with no row clicked)
+                ugfGmailPrintFetch(ugfGmailPrintTid(), true);
             }
             const waited = now - ugfGmailRender.waitSince;
             ugfGmailLoadingStart();
@@ -79495,9 +79502,6 @@ html[gplex-gmail] body {
                     ugfGmailRealClick(liveRow.querySelector(".bog span") || liveRow.querySelector(".bog") ||
                         liveRow.querySelector(".xT") || liveRow);
                 }
-            }
-            if (waited > 2000) {
-                ugfGmailPrintFetch(ugfGmailPrintTid());
             }
             if (waited > 3000 && !ugfGmailRender.waitTold) {
                 ugfGmailRender.waitTold = true;
