@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Gplex Legacy - Gplex Extended for old browsers (Firefox 52, Windows XP era)
 // @namespace    http://tampermonkey.net/
-// @version      7.2.29.6
-// @description  Gplex Extended 7.2.29 (with the Gplex+ part of 8.15, the Phone layout setting of 8.16, the sign-in fix of 8.25, the Phone layout's account of 8.26 and 8.27 and the phone's Maps zoom of 8.28) built for old browsers such as Firefox 52 ESR on Windows XP and Safari 9 on iOS 9: 1997-2024 Old Google Frontend, plus YouTube (with the V3 extension)
+// @version      7.2.29.7
+// @description  Gplex Extended 7.2.29 (with the Gplex+ part of 8.15, the Phone layout setting of 8.16, the sign-in fix of 8.25, the Phone layout's account of 8.26 and 8.27, the phone's Maps zoom of 8.28 and the Gmail conversations of 8.29) built for old browsers such as Firefox 52 ESR on Windows XP and Safari 9 on iOS 9: 1997-2024 Old Google Frontend, plus YouTube (with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
 // @match        *://www.google.com/
@@ -86397,11 +86397,30 @@ html[gplex-gmail] body {
                 msgs: got.msgs,
                 chips: t.chips,
                 counter: t.counter,
-                danger: t.danger
+                danger: t.danger,
+                from: "print"
               };
             }
           }
+          t.from = "page";
           return t;
+        }
+        function ugfGmailThreadState() {
+          var count = function (sel) {
+            var all = 0, shown = 0;
+            document.querySelectorAll(sel).forEach(function (el) {
+              if (el.closest("#ugf-gmail")) {
+                return;
+              }
+              all++;
+              if (el.getClientRects().length) {
+                shown++;
+              }
+            });
+            return all + " (" + shown + " on screen)";
+          };
+          var subject = document.querySelector("h2.hP, h2[data-thread-perm-id], .ha h2");
+          return "address " + (window.location.hash || "") + "; div.adn " + count("div.adn") + ", div.gs " + count("div.gs") + ", message ids " + count("[data-message-id], [data-legacy-message-id]") + ", senders .gD " + count(".gD") + ", bodies .a3s " + count(".a3s") + "; subject " + (subject ? JSON.stringify((subject.textContent || "").trim().slice(0, 60)) : "none");
         }
         function ugfGmailThreadLive() {
           var subject = document.querySelector("h2.hP, h2[data-thread-perm-id], .ha h2, [data-legacy-thread-id] h2");
@@ -87597,35 +87616,45 @@ html[gplex-gmail] body {
               return false;
             }
           }
-          if (threadView && !ugfGmailThread().msgs.length) {
+          var thread = threadView ? ugfGmailThread() : null;
+          if (threadView && !thread.msgs.length) {
             var now = Date.now();
-            if (!ugfGmailRender.waitSince) {
-              ugfGmailRender.waitSince = now;
-            }
-            ugfGmailLoadingStart();
             var last = ugfGmailOpenRow.last;
-            if (last && !last.clicked && now - last.at > 6e3) {
+            if (!ugfGmailRender.waitSince) {
+              ugfGmailRender.waitSince = last && now - last.at < 2e3 ? last.at : now;
+              ugfGmailRender.waitTold = false;
+            }
+            var waited = now - ugfGmailRender.waitSince;
+            ugfGmailLoadingStart();
+            if (last && !last.clicked && waited > 3e3) {
               last.clicked = true;
               var liveRow = ugfGmailLiveRow(last.item);
               if (liveRow) {
                 ugfGmailRealClick(liveRow.querySelector(".bog span") || liveRow.querySelector(".bog") || liveRow.querySelector(".xT") || liveRow);
               }
             }
-            if (now - ugfGmailRender.waitSince > 8e3) {
+            if (waited > 2e3) {
               ugfGmailPrintFetch(ugfGmailPrintTid());
+            }
+            if (waited > 3e3 && !ugfGmailRender.waitTold) {
+              ugfGmailRender.waitTold = true;
+              console.log("[Gplex] Gmail: the conversation is not on Gmail's page after 3 seconds: " + ugfGmailThreadState());
             }
             if (!ugfGmailRender.waitIv) {
               ugfGmailRender.waitIv = setInterval(function () {
                 ugfGmailRender();
               }, 1e3);
             }
-            if (now - ugfGmailRender.waitSince > 3e4) {
+            if (waited > 3e4) {
               clearInterval(ugfGmailRender.waitIv);
               ugfGmailRender.waitIv = null;
               ugfGmailRender.waitSince = 0;
               ugfGmailHide();
             }
             return false;
+          }
+          if (ugfGmailRender.waitSince && thread) {
+            console.log("[Gplex] Gmail: conversation read from " + (thread.from === "print" ? "the print view" : "Gmail's page") + " after " + ((Date.now() - ugfGmailRender.waitSince) / 1e3).toFixed(1) + " s");
           }
           ugfGmailRender.waitSince = 0;
           if (ugfGmailRender.waitIv) {

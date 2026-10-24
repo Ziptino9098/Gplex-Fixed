@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended Alpha - Gplex Old Google with its YouTube part rewritten
 // @namespace    http://tampermonkey.net/
-// @version      9.0.0.28
+// @version      9.0.0.29
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube, rewritten: alpha, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -45567,10 +45567,31 @@ html[gplex-gmail] body {
         if (!t.msgs.length && ugfGmailPrintFetch.cache) {
             const got = ugfGmailPrintFetch.cache[ugfGmailPrintTid()];
             if (got && got.msgs && got.msgs.length) {
-                return { subject: got.subject || t.subject, msgs: got.msgs, chips: t.chips, counter: t.counter, danger: t.danger };
+                return { subject: got.subject || t.subject, msgs: got.msgs, chips: t.chips, counter: t.counter, danger: t.danger, from: "print" };
             }
         }
+        t.from = "page";
         return t;
+    }
+    // (8.29) What the page holds of the conversation, for the console when one is slow to come up
+    function ugfGmailThreadState() {
+        const count = function(sel) {
+            let all = 0, shown = 0;
+            document.querySelectorAll(sel).forEach(function(el) {
+                if (el.closest("#ugf-gmail")) {
+                    return;
+                }
+                all++;
+                if (el.getClientRects().length) {
+                    shown++;
+                }
+            });
+            return all + " (" + shown + " on screen)";
+        };
+        const subject = document.querySelector("h2.hP, h2[data-thread-perm-id], .ha h2");
+        return "address " + (window.location.hash || "") + "; div.adn " + count("div.adn") + ", div.gs " + count("div.gs") +
+            ", message ids " + count("[data-message-id], [data-legacy-message-id]") + ", senders .gD " + count(".gD") +
+            ", bodies .a3s " + count(".a3s") + "; subject " + (subject ? JSON.stringify((subject.textContent || "").trim().slice(0, 60)) : "none");
     }
     function ugfGmailThreadLive() {
         const subject = document.querySelector("h2.hP, h2[data-thread-perm-id], .ha h2, [data-legacy-thread-id] h2");
@@ -46954,14 +46975,22 @@ html[gplex-gmail] body {
         // (6.5.5) On a slow computer or an old browser Gmail can take a good while to open a message: wait
         // up to 30 seconds behind the loading screen (not Gmail's own page), and if Gmail hasn't opened
         // it from the address after 6 seconds, click the conversation in Gmail's list as well.
-        if (threadView && !ugfGmailThread().msgs.length) {
+        // (8.29) Gmail has most conversations on its page within a second of the address changing. One that is not
+        // there after 2 seconds is read from the print view (it was 8 seconds, which is what made the messages Gmail
+        // is slow with - short plain-text ones mostly - take ten seconds to open), and after 3 the row is clicked in
+        // Gmail's own list as well (it was 6). The console says what the page held, and where the messages came from.
+        const thread = threadView ? ugfGmailThread() : null;
+        if (threadView && !thread.msgs.length) {
             const now = Date.now();
-            if (!ugfGmailRender.waitSince) {
-                ugfGmailRender.waitSince = now;
-            }
-            ugfGmailLoadingStart();
             const last = ugfGmailOpenRow.last;
-            if (last && !last.clicked && now - last.at > 6000) {
+            if (!ugfGmailRender.waitSince) {
+                // counted from the click on the row when this is the conversation it opened
+                ugfGmailRender.waitSince = last && now - last.at < 2000 ? last.at : now;
+                ugfGmailRender.waitTold = false;
+            }
+            const waited = now - ugfGmailRender.waitSince;
+            ugfGmailLoadingStart();
+            if (last && !last.clicked && waited > 3000) {
                 last.clicked = true;
                 const liveRow = ugfGmailLiveRow(last.item);
                 if (liveRow) {
@@ -46969,22 +46998,29 @@ html[gplex-gmail] body {
                         liveRow.querySelector(".xT") || liveRow);
                 }
             }
-            // still nothing after 8 seconds: read it from Gmail's print view instead
-            if (now - ugfGmailRender.waitSince > 8000) {
+            if (waited > 2000) {
                 ugfGmailPrintFetch(ugfGmailPrintTid());
+            }
+            if (waited > 3000 && !ugfGmailRender.waitTold) {
+                ugfGmailRender.waitTold = true;
+                console.log("[Gplex] Gmail: the conversation is not on Gmail's page after 3 seconds: " + ugfGmailThreadState());
             }
             if (!ugfGmailRender.waitIv) {
                 ugfGmailRender.waitIv = setInterval(function() {
                     ugfGmailRender();
                 }, 1000);
             }
-            if (now - ugfGmailRender.waitSince > 30000) {
+            if (waited > 30000) {
                 clearInterval(ugfGmailRender.waitIv);
                 ugfGmailRender.waitIv = null;
                 ugfGmailRender.waitSince = 0;
                 ugfGmailHide();
             }
             return false;
+        }
+        if (ugfGmailRender.waitSince && thread) {
+            console.log("[Gplex] Gmail: conversation read from " + (thread.from === "print" ? "the print view" : "Gmail's page") +
+                " after " + ((Date.now() - ugfGmailRender.waitSince) / 1000).toFixed(1) + " s");
         }
         ugfGmailRender.waitSince = 0;
         if (ugfGmailRender.waitIv) {
