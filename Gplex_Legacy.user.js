@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Gplex Legacy - Gplex Extended for old browsers (Firefox 52, Windows XP era)
 // @namespace    http://tampermonkey.net/
-// @version      7.2.29.10
-// @description  Gplex Extended 7.2.29 (with the Gplex+ part of 8.15, the Phone layout setting of 8.16, the sign-in fix of 8.25, the Phone layout's account of 8.26 and 8.27, the phone's Maps zoom of 8.28, the Gmail conversations of 8.29 to 8.31 and the layout remembered on every host of 8.32) built for old browsers such as Firefox 52 ESR on Windows XP and Safari 9 on iOS 9: 1997-2024 Old Google Frontend, plus YouTube (with the V3 extension)
+// @version      7.2.29.11
+// @description  Gplex Extended 7.2.29 (with the Gplex+ part of 8.15, the Phone layout setting of 8.16, the sign-in fix of 8.25, the Phone layout's account of 8.26 and 8.27, the phone's Maps zoom of 8.28, the Gmail conversations of 8.29 to 8.31 the layout remembered on every host of 8.32 and the phone by its touch screen of 8.33) built for old browsers such as Firefox 52 ESR on Windows XP and Safari 9 on iOS 9: 1997-2024 Old Google Frontend, plus YouTube (with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
 // @match        *://www.google.com/
@@ -2222,10 +2222,18 @@ var ugfWk = function () {
       off: "Off"
     }[ugfMobileSetting()] || "Automatic (on phones)";
   }
+  function ugfTouchPhone() {
+    try {
+      var sm = Math.min(window.screen.width || 9999, window.screen.height || 9999);
+      return (navigator.maxTouchPoints || 0) > 0 && sm < 700 && window.matchMedia("(pointer: coarse)").matches;
+    } catch (e) {
+      return false;
+    }
+  }
   function ugfPhoneLayout() {
     var m = ugfMobileSetting();
     var ua = navigator.userAgent || "";
-    return m === "on" || m !== "off" && (/iPhone|iPod|Windows Phone|IEMobile|BlackBerry|BB10|Opera Mini/.test(ua) || /Android/.test(ua) && /Mobile/.test(ua));
+    return m === "on" || m !== "off" && (/iPhone|iPod|Windows Phone|IEMobile|BlackBerry|BB10|Opera Mini/.test(ua) || /Android/.test(ua) && /Mobile/.test(ua) || ugfTouchPhone());
   }
   function ugfSharedLayout(get, d) {
     var v = "";
@@ -51698,7 +51706,7 @@ html[ugf-ytm-played] #ugf-ytm .ytm-pl .ytm-pl-btn{display:none}
   }
   function ugfYtmPhone() {
     var ua = navigator.userAgent || "";
-    return /iPhone|iPod/.test(ua) || /Android/.test(ua) && /Mobile/.test(ua) || /Windows Phone|IEMobile|BlackBerry|BB10|Opera Mini/.test(ua);
+    return /iPhone|iPod/.test(ua) || /Android/.test(ua) && /Mobile/.test(ua) || /Windows Phone|IEMobile|BlackBerry|BB10|Opera Mini/.test(ua) || ugfTouchPhone();
   }
   function ugfYtmWanted() {
     var m = "auto";
@@ -58776,6 +58784,19 @@ html[ugf-ytm-played] #ugf-ytm .ytm-pl .ytm-pl-btn{display:none}
           }
         }, 100);
       }
+      function ugfMobileViewport() {
+        try {
+          var vp = document.querySelector('meta[name="viewport"]');
+          if (!vp && document.head) {
+            vp = document.createElement("meta");
+            vp.name = "viewport";
+            document.head.appendChild(vp);
+          }
+          if (vp && !/width\s*=\s*device-width/.test(vp.getAttribute("content") || "")) {
+            vp.setAttribute("content", "width=device-width, initial-scale=1");
+          }
+        } catch (e) {}
+      }
       function ugfMobileBoot() {
         if (window.top !== window.self || window.location.host !== "www.google.com" && window.location.host !== "maps.google.com") {
           return;
@@ -58821,6 +58842,7 @@ html[ugf-ytm-played] #ugf-ytm .ytm-pl .ytm-pl-btn{display:none}
           if (!document.getElementById("ugf-mobile-css")) {
             (document.head || html).appendChild(st);
           }
+          ugfMobileViewport();
           var built = document.body && ugfMobileBuild(era, kind, year);
           if (built) {
             ugfMobileAccountSync(era);

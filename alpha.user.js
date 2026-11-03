@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended Alpha - Gplex Old Google with its YouTube part rewritten
 // @namespace    http://tampermonkey.net/
-// @version      9.0.0.32
+// @version      9.0.0.33
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube, rewritten: alpha, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -903,11 +903,22 @@ function ugfMobileMode() {
 function ugfMobileLabel() {
     return { on: "On", off: "Off" }[ugfMobileMode()] || "Automatic (on phones)";
 }
-// (8.26) the Phone layout in force: the setting on, or automatic on a phone (by its user agent)
+// (8.33) A phone known by its screen when the user agent does not say so (Firefox for Android in "Desktop site"
+// mode sends neither Android nor Mobile): a touch screen under 700px on its short side with a coarse pointer.
+// From the Google Turbo Gold fork.
+function ugfTouchPhone() {
+    try {
+        const sm = Math.min(window.screen.width || 9999, window.screen.height || 9999);
+        return (navigator.maxTouchPoints || 0) > 0 && sm < 700 && window.matchMedia("(pointer: coarse)").matches;
+    } catch (e) {
+        return false;
+    }
+}
+// (8.26) the Phone layout in force: the setting on, or automatic on a phone (by its user agent, or 8.33 its screen)
 function ugfPhoneLayout() {
     const m = ugfMobileMode();
     const ua = navigator.userAgent || "";
-    return m === "on" || m !== "off" && (/iPhone|iPod|Windows Phone|IEMobile|BlackBerry|BB10|Opera Mini/.test(ua) || /Android/.test(ua) && /Mobile/.test(ua));
+    return m === "on" || m !== "off" && (/iPhone|iPod|Windows Phone|IEMobile|BlackBerry|BB10|Opera Mini/.test(ua) || /Android/.test(ua) && /Mobile/.test(ua) || ugfTouchPhone());
 }
 // (8.32) The layout on a Google host other than www.google.com, where only the shared storage has it: what the shared
 // storage says, remembered in the host's own storage, which answers when the shared storage has nothing (the
@@ -10310,7 +10321,7 @@ function ugfYtmDesktopChosen() {
 // the "Phone layout" setting (Automatic: on phones; On; Off), as Gplex Mobile reads it
 function ugfYtmPhone() {
     const ua = navigator.userAgent || "";
-    return /iPhone|iPod/.test(ua) || (/Android/.test(ua) && /Mobile/.test(ua)) || /Windows Phone|IEMobile|BlackBerry|BB10|Opera Mini/.test(ua);
+    return /iPhone|iPod/.test(ua) || (/Android/.test(ua) && /Mobile/.test(ua)) || /Windows Phone|IEMobile|BlackBerry|BB10|Opera Mini/.test(ua) || ugfTouchPhone();
 }
 function ugfYtmWanted() {
     let m = "auto";
@@ -16472,6 +16483,75 @@ function ugfIsErrorPage() {
     }
 })();
 // ---- end Gplex My Account page ----
+// ---- (8.33) the Workspace sites in the chrome of the layout's years ----
+// Meet, Chat, Contacts, Classroom, Sites, Voice and workspace.google.com are Google's own pages, which Gplex does
+// not redraw; this gives them the period's chrome - the font, the header bar, the links, the main buttons, the
+// corners and shadows of inputs, menus and dialogs - in the values Google used (after the Google Turbo Gold fork,
+// checked against the pages of the time): 2006-2008 the pale blue bar (#c3d9ff) and #0000cc links of Google Apps;
+// 2009-2010 the lighter bar (#e8eefa); 2011-2012 the black bar (#2d2d2d), #15c links and the #4d90fe blue buttons;
+// 2013-2014 the grey bar (#f1f1f1 over #e5e5e5), still Arial; 2015-2017 Roboto, the white bar with its shadow,
+// #4285f4 and capital buttons; 2018-2019 Google Sans, #1a73e8 and #dadce0; 2020-2021 the Workspace look. Only from
+// the year a site existed (Sites 2008, Voice 2009, Classroom 2014, Contacts 2015, Meet 2017, Chat 2018,
+// workspace.google.com 2020) and up to 2021: from 2022 the pages are their own. Meet's call screen (its address is
+// like /abc-defg-hij) is left alone. The switch is "Gplex for the Workspace sites" on the settings page.
+const UGF_WS_FROM = { "sites.google.com": 2008, "voice.google.com": 2009, "classroom.google.com": 2014, "contacts.google.com": 2015,
+    "meet.google.com": 2017, "chat.google.com": 2018, "workspace.google.com": 2020 };
+const UGF_WS_CSS = `html[gplex-ws="w06"] { --ws-font: Arial, sans-serif; --ws-bar: #c3d9ff; --ws-bar-text: #000; --ws-bar-border: 1px solid #a2bae0; --ws-bar-shadow: none; --ws-link: #0000cc; --ws-primary: #e0e0e0; --ws-primary-text: #000; --ws-radius: 3px; --ws-btn-case: none; --ws-btn-grad: linear-gradient(#fafafa, #d8d8d8); --ws-btn-shadow: 0 0 0 1px #999 inset; --ws-pop-shadow: 1px 1px 4px rgba(0,0,0,.4); }
+html[gplex-ws="w09"] { --ws-font: Arial, sans-serif; --ws-bar: #e8eefa; --ws-bar-text: #000; --ws-bar-border: 1px solid #c9d7f1; --ws-bar-shadow: none; --ws-link: #0000cc; --ws-primary: #eee; --ws-primary-text: #222; --ws-radius: 2px; --ws-btn-case: none; --ws-btn-grad: linear-gradient(#f5f5f5, #e1e1e1); --ws-btn-shadow: 0 0 0 1px #c6c6c6 inset; --ws-pop-shadow: 0 2px 4px rgba(0,0,0,.2); }
+html[gplex-ws="w11"] { --ws-font: Arial, sans-serif; --ws-bar: #2d2d2d; --ws-bar-text: #ddd; --ws-bar-border: none; --ws-bar-shadow: 0 1px 0 #000; --ws-link: #15c; --ws-primary: #4d90fe; --ws-primary-text: #fff; --ws-radius: 2px; --ws-btn-case: none; --ws-btn-grad: linear-gradient(#4d90fe, #4787ed); --ws-btn-shadow: 0 0 0 1px #3079ed inset; --ws-pop-shadow: 0 2px 4px rgba(0,0,0,.2); }
+html[gplex-ws="w13"] { --ws-font: Arial, sans-serif; --ws-bar: #f1f1f1; --ws-bar-text: #444; --ws-bar-border: 1px solid #e5e5e5; --ws-bar-shadow: none; --ws-link: #15c; --ws-primary: #4d90fe; --ws-primary-text: #fff; --ws-radius: 2px; --ws-btn-case: none; --ws-btn-grad: none; --ws-btn-shadow: 0 1px 1px rgba(0,0,0,.1); --ws-pop-shadow: 0 2px 4px rgba(0,0,0,.2); }
+html[gplex-ws="w15"] { --ws-font: Roboto, Arial, sans-serif; --ws-bar: #fff; --ws-bar-text: #212121; --ws-bar-border: none; --ws-bar-shadow: 0 1px 3px rgba(0,0,0,.3); --ws-link: #4285f4; --ws-primary: #4285f4; --ws-primary-text: #fff; --ws-radius: 2px; --ws-btn-case: uppercase; --ws-btn-grad: none; --ws-btn-shadow: 0 1px 2px rgba(0,0,0,.3); --ws-pop-shadow: 0 2px 6px rgba(0,0,0,.3); }
+html[gplex-ws="w18"] { --ws-font: "Google Sans", "Product Sans", Roboto, Arial, sans-serif; --ws-bar: #fff; --ws-bar-text: #5f6368; --ws-bar-border: 1px solid #dadce0; --ws-bar-shadow: none; --ws-link: #1a73e8; --ws-primary: #1a73e8; --ws-primary-text: #fff; --ws-radius: 4px; --ws-btn-case: none; --ws-btn-grad: none; --ws-btn-shadow: 0 1px 2px rgba(60,64,67,.3); --ws-pop-shadow: 0 1px 3px rgba(60,64,67,.3); }
+html[gplex-ws="w20"] { --ws-font: "Google Sans", Roboto, Arial, sans-serif; --ws-bar: #fff; --ws-bar-text: #3c4043; --ws-bar-border: none; --ws-bar-shadow: 0 1px 0 #dadce0; --ws-link: #1a73e8; --ws-primary: #1a73e8; --ws-primary-text: #fff; --ws-radius: 4px; --ws-btn-case: none; --ws-btn-grad: none; --ws-btn-shadow: none; --ws-pop-shadow: 0 2px 6px 2px rgba(60,64,67,.15); }
+html[gplex-ws] :is(h1, h2, h3, h4, h5, p, span, div, a, label, input, textarea, li, td, th, button):not([class*="icon" i]):not([class*="material" i]):not([class*="symbol" i]) { font-family: var(--ws-font) !important; }
+html[gplex-ws] :is(p, li, td, dd, dt) a:not([role="button"]):not([class*="button" i]) { color: var(--ws-link) !important; }
+html[gplex-ws]:not([gplex-ws-call]) :is(header, [role="banner"]) { background: var(--ws-bar) !important; color: var(--ws-bar-text) !important; border-bottom: var(--ws-bar-border) !important; box-shadow: var(--ws-bar-shadow) !important; }
+html[gplex-ws]:not([gplex-ws-call]) :is(header, [role="banner"]) :is(a, span, div, button, h1, h2) { color: var(--ws-bar-text) !important; }
+html[gplex-ws] :is(button, [role="button"], a):is([class*="raised" i], [class*="filled" i], [class*="primary" i], [class*="cta" i]) { background-color: var(--ws-primary) !important; background-image: var(--ws-btn-grad) !important; color: var(--ws-primary-text) !important; border-radius: var(--ws-radius) !important; text-transform: var(--ws-btn-case) !important; box-shadow: var(--ws-btn-shadow) !important; }
+html[gplex-ws="w06"] :is(button, [role="button"], a):is([class*="raised" i], [class*="filled" i], [class*="primary" i]), html[gplex-ws="w09"] :is(button, [role="button"], a):is([class*="raised" i], [class*="filled" i], [class*="primary" i]) { border: 1px solid #999 !important; }
+html[gplex-ws] :is(input[type="text"], input[type="search"], input[type="email"], input[type="url"], textarea) { border-radius: var(--ws-radius) !important; }
+html[gplex-ws] :is([role="menu"], [role="listbox"], [role="dialog"], [role="alertdialog"]) { border-radius: var(--ws-radius) !important; box-shadow: var(--ws-pop-shadow) !important; }
+html[gplex-ws="w06"] :is([role="menu"], [role="listbox"], [role="dialog"]), html[gplex-ws="w09"] :is([role="menu"], [role="listbox"], [role="dialog"]) { border: 1px solid #aaa !important; }`;
+function ugfWorkspaceYears() {
+    const gv = function(k, d) {
+        try {
+            const v = typeof GM_getValue === "function" ? GM_getValue(k, null) : null;
+            return v === null || v === undefined ? d : String(v);
+        } catch (e) {
+            return d;
+        }
+    };
+    const from = UGF_WS_FROM[window.location.host];
+    if (!from || window.top !== window.self || gv("UGF_WORKSPACE_ON", "true") === "false") {
+        return;
+    }
+    const L = ugfSharedLayout(gv);
+    const m = L.match(/(19|20)\d\d/);
+    const y = m ? parseInt(m[0], 10) : 0;
+    if (y < from || y >= 2022) {
+        return;
+    }
+    const era = y <= 2008 ? "w06" : y <= 2010 ? "w09" : y <= 2012 ? "w11" : y <= 2014 ? "w13" : y <= 2017 ? "w15" : y <= 2019 ? "w18" : "w20";
+    const h = document.documentElement;
+    h.setAttribute("gplex-ws", era);
+    const st = document.createElement("style");
+    st.id = "ugf-ws-css";
+    st.textContent = UGF_WS_CSS;
+    (document.head || h).appendChild(st);
+    const call = function() {
+        if (/^\/[a-z]{3}-[a-z]{4}-[a-z]{3}/.test(window.location.pathname || "")) {
+            h.setAttribute("gplex-ws-call", "");
+        } else {
+            h.removeAttribute("gplex-ws-call");
+        }
+    };
+    call();
+    setInterval(call, 1500);
+    console.log("[Gplex] " + window.location.host + ": the chrome of " + L + " (" + era + ")");
+}
+if (UGF_WS_FROM[window.location.host]) {
+    ugfWorkspaceYears();
+}
 // (6.1.2) Gplex matches every google.com page so that Google's error page can be given the
 // period's look anywhere; the rest of Gplex still runs only on the pages it always has
 const UGF_OWN_PAGES = ["about.google/products*", "about.google/intl/*/products*", "www.google.com/search*", "www.google.com/", "www.google.com/?*", "www.google.com/#*", "www.google.com/webhp*", "www.google.com/imghp*", "www.google.com/videohp*", "www.google.com/shopping*", "www.google.com/advanced_search*", "www.google.com/preferences*", "mail.google.com/mail/*", "www.google.com/maps*", "maps.google.com/*", "calendar.google.com/calendar/*", "news.google.com/*", "translate.google.com/*", "docs.google.com/document/*", "docs.google.com/spreadsheets/*", "docs.google.com/presentation/*", "docs.google.com/forms/*", "docs.google.com/drawings/*", "drive.google.com/*", "photos.google.com/*", "accounts.google.com/v3/signin/*", "accounts.google.com/signin/*", "accounts.google.com/ServiceLogin*", "accounts.google.com/AccountChooser*", "accounts.google.com/InteractiveLogin*", "accounts.google.com/lifecycle/steps/signup/*", "accounts.google.com/signup*", "accounts.google.com/SignUp*", "myaccount.google.com/*", "keep.google.com/*", "play.google.com/store*", "www.google.com/finance*", "www.google.com/gplex", "www.google.com/Gplex"];
@@ -17313,6 +17393,21 @@ function ugfMobileMaps() {
         }
     }, 100);
 }
+// (8.33) The Phone layout at the phone's width: a page without a viewport meta is laid out at 980px by Firefox for
+// Android, which left the layout tiny (from the Google Turbo Gold fork). The Classic view and Maps set their own.
+function ugfMobileViewport() {
+    try {
+        let vp = document.querySelector('meta[name="viewport"]');
+        if (!vp && document.head) {
+            vp = document.createElement("meta");
+            vp.name = "viewport";
+            document.head.appendChild(vp);
+        }
+        if (vp && !/width\s*=\s*device-width/.test(vp.getAttribute("content") || "")) {
+            vp.setAttribute("content", "width=device-width, initial-scale=1");
+        }
+    } catch (e) {}
+}
 function ugfMobileBoot() {
     if (window.top !== window.self || window.location.host !== "www.google.com" && window.location.host !== "maps.google.com") {
         return;
@@ -17359,6 +17454,7 @@ function ugfMobileBoot() {
         if (!document.getElementById("ugf-mobile-css")) {
             (document.head || html).appendChild(st);
         }
+        ugfMobileViewport();
         const built = document.body && ugfMobileBuild(era, kind, year);
         if (built) {
             ugfMobileAccountSync(era);
@@ -26271,6 +26367,8 @@ html:not([photoson-dd-open]) #ugf-photoson-dd,
 html:not([photoson-dd-open]) #ugf-photoson-fence,
 html:not([playon-dd-open]) #ugf-playon-dd,
 html:not([playon-dd-open]) #ugf-playon-fence,
+html:not([workspaceon-dd-open]) #ugf-workspaceon-dd,
+html:not([workspaceon-dd-open]) #ugf-workspaceon-fence,
 html:not([finon-dd-open]) #ugf-finon-dd,
 html:not([finon-dd-open]) #ugf-finon-fence,
 html:not([ytclassicon-dd-open]) #ugf-ytclassicon-dd,
@@ -31136,6 +31234,7 @@ html[shopping-results] #ugf-center {
     let driveOn = "true";
     let photosOn = "true";
     let playOn = "true";
+    let workspaceOn = "true";
     let finOn = "true";
     let startubeOn = "true";
     let ytLayout = "auto";
@@ -31155,6 +31254,7 @@ html[shopping-results] #ugf-center {
         driveOn = String((typeof GM_getValue === "function" ? GM_getValue("UGF_DRIVE_ON", null) : null) || "true");
         photosOn = String((typeof GM_getValue === "function" ? GM_getValue("UGF_PHOTOS_ON", null) : null) || "true");
         playOn = String((typeof GM_getValue === "function" ? GM_getValue("UGF_PLAY_ON", null) : null) || "true");
+        workspaceOn = String((typeof GM_getValue === "function" ? GM_getValue("UGF_WORKSPACE_ON", null) : null) || "true");
         finOn = String((typeof GM_getValue === "function" ? GM_getValue("UGF_FINANCE_ON", null) : null) || "true");
         startubeOn = String((typeof GM_getValue === "function" ? GM_getValue("UGF_STARTUBE_ON", null) : null) || "true");
         ytLayout = String((typeof GM_getValue === "function" ? GM_getValue("UGF_ST_layoutPick", null) : null) || "auto");
@@ -31724,6 +31824,8 @@ html[shopping-results] #ugf-center {
             <div id="ugf-photoson-fence" class="ugf-fence">
             </div>
             <div id="ugf-playon-fence" class="ugf-fence">
+            </div>
+            <div id="ugf-workspaceon-fence" class="ugf-fence">
             </div>
             <div id="ugf-finon-fence" class="ugf-fence">
             </div>
@@ -32559,6 +32661,33 @@ html[shopping-results] #ugf-center {
                                             <span>Choose whether or not Google Photos (your photos, albums and the photo viewer) is shown in the layout you picked above. Before Google Photos (2015) it is Picasa Web Albums, then Google+ Photos.</span>
                                         </div>
                                         <div class="ugf-dropdown" id="ugf-photoson-dd">
+                                            <div class="ugf-dropdown-inner">
+                                                <a id="" class="ugf-dropdown-item" value="true">
+                                                    <span>${UImessages.CLtrue}</span>
+                                                </a>
+                                                <a id="" class="ugf-dropdown-item" value="false">
+                                                    <span>${UImessages.CLfalse}</span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ugf-gplex-section">
+                            <div class="ugf-gplex-section-inner">
+                                <div class="ugf-gplex-section-title">
+                                    <span>Gplex for the Workspace sites</span>
+                                </div>
+                                <div class="ugf-gplex-section-content">
+                                    <div id="ugf-option-workspaceon" class="ugf-gplex-option flex" value="${workspaceOn}">
+                                        <a class="ugf-dropdown-button" id="ugf-workspaceon-dd-btn">
+                                            <span>${UImessages.CLtrue}</span>
+                                        </a>
+                                        <div class="ugf-gplex-text">
+                                            <span>Choose whether or not Meet, Chat, Contacts, Classroom, Sites, Voice and workspace.google.com get the chrome of the layout you picked above: its font, header bar, links, buttons and menus, in the values Google used, from the year each site existed (Sites 2008, Voice 2009, Classroom 2014, Contacts 2015, Meet 2017, Chat 2018) and up to 2021. The pages themselves stay Google's.</span>
+                                        </div>
+                                        <div class="ugf-dropdown" id="ugf-workspaceon-dd">
                                             <div class="ugf-dropdown-inner">
                                                 <a id="" class="ugf-dropdown-item" value="true">
                                                     <span>${UImessages.CLtrue}</span>
@@ -36008,7 +36137,7 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                         document.querySelector("html").removeAttribute("neuro-dd-open");
                     });
                 });
-                [["newson", "UGF_NEWS_ON"], ["tron", "UGF_TRANSLATE_ON"], ["docson", "UGF_DOCS_ON"], ["sheetson", "UGF_SHEETS_ON"], ["slideson", "UGF_SLIDES_ON"], ["drawingson", "UGF_DRAWINGS_ON"], ["signinon", "UGF_SIGNIN_ON"], ["accounton", "UGF_ACCOUNT_ON"], ["keepon", "UGF_KEEP_ON"], ["formson", "UGF_FORMS_ON"], ["driveon", "UGF_DRIVE_ON"], ["photoson", "UGF_PHOTOS_ON"], ["playon", "UGF_PLAY_ON"], ["finon", "UGF_FINANCE_ON"], ["startubeon", "UGF_STARTUBE_ON"], ["ytlayout", "UGF_ST_layoutPick"], ["ytdark", "UGF_ST_dark"], ["ytclassicon", "UGF_YT_CLASSIC_ON"]].forEach(function(o) {
+                [["newson", "UGF_NEWS_ON"], ["tron", "UGF_TRANSLATE_ON"], ["docson", "UGF_DOCS_ON"], ["sheetson", "UGF_SHEETS_ON"], ["slideson", "UGF_SLIDES_ON"], ["drawingson", "UGF_DRAWINGS_ON"], ["signinon", "UGF_SIGNIN_ON"], ["accounton", "UGF_ACCOUNT_ON"], ["keepon", "UGF_KEEP_ON"], ["formson", "UGF_FORMS_ON"], ["driveon", "UGF_DRIVE_ON"], ["photoson", "UGF_PHOTOS_ON"], ["playon", "UGF_PLAY_ON"], ["workspaceon", "UGF_WORKSPACE_ON"], ["finon", "UGF_FINANCE_ON"], ["startubeon", "UGF_STARTUBE_ON"], ["ytlayout", "UGF_ST_layoutPick"], ["ytdark", "UGF_ST_dark"], ["ytclassicon", "UGF_YT_CLASSIC_ON"]].forEach(function(o) {
                     document.querySelectorAll("#ugf-option-" + o[0] + " .ugf-dropdown-item").forEach(itemRoot => {
                         itemRoot.addEventListener("click",function() {
                             let value = itemRoot.getAttribute("value");
@@ -36041,6 +36170,8 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
                                 photosOn = value;
                             } else if (o[0] === "playon") {
                                 playOn = value;
+                            } else if (o[0] === "workspaceon") {
+                                workspaceOn = value;
                             } else if (o[0] === "finon") {
                                 finOn = value;
                             } else if (o[0] === "startubeon") {
@@ -36397,6 +36528,12 @@ html:not([layout="2010"]):not([layout="2011"]):not([layout="2012"]):not([layout=
             let sfi = document.querySelector("#ugf-option-finon .ugf-dropdown-button span");
             if (sfi) {
                 sfi.textContent = finOn === "false" ? UImessages.CLfalse : UImessages.CLtrue;
+            }
+        }
+        if (setting == "workspaceon" || setting == "all") {
+            let sws = document.querySelector("#ugf-option-workspaceon .ugf-dropdown-button span");
+            if (sws) {
+                sws.textContent = workspaceOn === "false" ? UImessages.CLfalse : UImessages.CLtrue;
             }
         }
         if (setting == "playon" || setting == "all") {

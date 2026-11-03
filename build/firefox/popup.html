@@ -12,6 +12,13 @@ body { font: 13px arial, sans-serif; color: #222; margin: 0; width: 300px; backg
 .item { display: block; width: 100%; box-sizing: border-box; text-align: left; background: none; border: none; padding: 7px 12px; font: 13px arial, sans-serif; color: #222; cursor: pointer; }
 .item:hover { background: #eee; }
 .none { padding: 7px 12px; color: #777; }
+/* Google's buttons of 2013: the grey gradient on its #dcdcdc border, 2px corners; the blue one for the main action */
+.g-btn { display: inline-block; height: 29px; min-width: 54px; padding: 0 10px; margin: 0; border: 1px solid #dcdcdc; border-radius: 2px; background: #f5f5f5; background-image: linear-gradient(#f5f5f5, #f1f1f1); color: #444; font: bold 11px arial, sans-serif; line-height: 27px; text-align: center; cursor: pointer; }
+.g-btn:hover { border-color: #c6c6c6; box-shadow: 0 1px 1px rgba(0,0,0,.1); background-image: linear-gradient(#f8f8f8, #f1f1f1); color: #222; }
+.g-btn:focus { outline: none; border-color: #4d90fe; }
+.g-btn.blue { border-color: #3079ed; background-color: #4d90fe; background-image: linear-gradient(#4d90fe, #4787ed); color: #fff; }
+.g-btn.blue:hover { border-color: #2f5bb7; background-image: linear-gradient(#4d90fe, #357ae8); }
+.btns { display: flex; gap: 8px; padding: 4px 12px 6px; }
 .lbl { padding: 4px 12px 2px; color: #777; font-size: 11px; }
 textarea { display: none; box-sizing: border-box; width: 276px; height: 90px; margin: 4px 12px; font: 11px monospace; }
 #msg { padding: 4px 12px 8px; color: #070; font-size: 12px; min-height: 0; }
@@ -21,17 +28,15 @@ textarea { display: none; box-sizing: border-box; width: 276px; height: 90px; ma
 <div id="head"><b>Gplex</b> Extended<span id="ver"></span></div>
 <div class="sec" id="cmds"><div class="lbl">This page</div></div>
 <div class="sec">
-  <button class="item" id="open">Gplex settings</button>
+  <div class="btns"><button class="g-btn blue" id="open">Gplex settings</button></div>
 </div>
 <div class="sec">
   <div class="lbl">Gplex+, the Gplex Extended community</div>
-  <button class="item" id="plus">Open Gplex+</button>
-  <button class="item" id="join">Join Gplex+ (invite link)</button>
+  <div class="btns"><button class="g-btn" id="plus">Open Gplex+</button><button class="g-btn" id="join">Join (invite link)</button></div>
 </div>
 <div class="sec">
   <div class="lbl">Settings file</div>
-  <button class="item" id="export">Export settings</button>
-  <button class="item" id="import">Import settings (from here or Tampermonkey)</button>
+  <div class="btns"><button class="g-btn" id="export">Export settings</button><button class="g-btn" id="import">Import (from here or Tampermonkey)</button></div>
   <textarea id="box" spellcheck="false"></textarea>
   <div id="msg"></div>
 </div>
