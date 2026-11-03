@@ -4,3 +4,4 @@ releases/alpha/*-chrome-unpacked/
 youtube/tools/migrate/out/
 youtube/profile/
 build/__pycache__/
+HANDOFF.md
