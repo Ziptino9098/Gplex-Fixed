@@ -4,8 +4,8 @@
 (function() {
 var __gplexBoot = (function() {
     "use strict";
-    const ch = new MessageChannel();
-    const port = ch.port1;
+    // (the channel to relay.js: a stand-in that drops what is sent until relay.js has answered on one)
+    let port = { postMessage: function() {} };
     let values = {};
     let got = false, started = false, runFn = null;
     const clone = function(v) {
@@ -110,11 +110,12 @@ var __gplexBoot = (function() {
         runFn(api.GM_getValue, api.GM_setValue, api.GM_deleteValue, api.GM_listValues, api.GM_registerMenuCommand,
             api.GM_xmlhttpRequest, api.GM_info, api.unsafeWindow);
     };
-    port.onmessage = function(e) {
+    const onMessage = function(e) {
         const m = e.data || {};
         if (m.type === "values") {
             if (!got) {
                 got = true;
+                port = e.target;
                 values = m.values || {};
                 go();
             }
@@ -142,13 +143,28 @@ var __gplexBoot = (function() {
             }
         }
     };
-    // hand the channel to relay.js (before the page's own scripts run, so they never see it)
-    window.postMessage({ gplexHello: 1 }, "*", [ch.port2]);
+    // hand a channel to relay.js, and again every 100 ms until it answers: the two sides are started
+    // separately, and a first hello that went out before relay.js was listening left Gplex starting
+    // after 2.5 seconds with its defaults (the pages away from www.google.com then in 2015's look)
+    let hellos = 0;
+    const hello = function() {
+        if (got) {
+            return;
+        }
+        const ch = new MessageChannel();
+        ch.port1.onmessage = onMessage;
+        window.postMessage({ gplexHello: 1 }, "*", [ch.port2]);
+        if (++hellos < 25) {
+            setTimeout(hello, 100);
+        }
+    };
+    hello();
     // (if the extension's side never answers - the extension was just updated or turned off - Gplex
     // still starts, with its defaults)
     setTimeout(function() {
         if (!got) {
             got = true;
+            console.log("[Gplex] the settings did not come from the extension in 2.5 seconds; starting with the defaults");
             go();
         }
     }, 2500);

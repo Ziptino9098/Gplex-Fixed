@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Gplex Legacy - Gplex Extended for old browsers (Firefox 52, Windows XP era)
 // @namespace    http://tampermonkey.net/
-// @version      7.2.29.9
-// @description  Gplex Extended 7.2.29 (with the Gplex+ part of 8.15, the Phone layout setting of 8.16, the sign-in fix of 8.25, the Phone layout's account of 8.26 and 8.27, the phone's Maps zoom of 8.28 and the Gmail conversations of 8.29 to 8.31) built for old browsers such as Firefox 52 ESR on Windows XP and Safari 9 on iOS 9: 1997-2024 Old Google Frontend, plus YouTube (with the V3 extension)
+// @version      7.2.29.10
+// @description  Gplex Extended 7.2.29 (with the Gplex+ part of 8.15, the Phone layout setting of 8.16, the sign-in fix of 8.25, the Phone layout's account of 8.26 and 8.27, the phone's Maps zoom of 8.28, the Gmail conversations of 8.29 to 8.31 and the layout remembered on every host of 8.32) built for old browsers such as Firefox 52 ESR on Windows XP and Safari 9 on iOS 9: 1997-2024 Old Google Frontend, plus YouTube (with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
 // @match        *://www.google.com/
@@ -2226,6 +2226,20 @@ var ugfWk = function () {
     var m = ugfMobileSetting();
     var ua = navigator.userAgent || "";
     return m === "on" || m !== "off" && (/iPhone|iPod|Windows Phone|IEMobile|BlackBerry|BB10|Opera Mini/.test(ua) || /Android/.test(ua) && /Mobile/.test(ua));
+  }
+  function ugfSharedLayout(get, d) {
+    var v = "";
+    try {
+      v = get ? String(get("UGF_LAYOUT", "") || "") : "";
+    } catch (e) {}
+    try {
+      if (!v) {
+        v = String(window.localStorage.getItem("UGF_LAYOUT") || "");
+      } else if (window.location.host !== "www.google.com") {
+        window.localStorage.setItem("UGF_LAYOUT", v);
+      }
+    } catch (e) {}
+    return v || (d === undefined ? "2015" : d);
   }
   function ugfAccountFromLabel(label) {
       var s = String(label || "");
@@ -42239,7 +42253,7 @@ ${JSON.stringify(STS)}
       }
       var lay = "2015";
       try {
-        lay = String((typeof GM_getValue === "function" ? GM_getValue("UGF_LAYOUT", null) : null) || "2015");
+        lay = ugfSharedLayout(typeof GM_getValue === "function" ? GM_getValue : null);
       } catch (e) {}
       var nativeV3 = lay === "2013" || lay === "2013L";
       var wasNative = "0";
@@ -50197,7 +50211,7 @@ Terms
       }
       var L = "2015";
       try {
-        L = String(GM_getValue("UGF_LAYOUT", null) || "2015");
+        L = ugfSharedLayout(GM_getValue);
       } catch (e) {}
       var era = {
         "retro": "o2005",
@@ -50358,7 +50372,7 @@ Terms
       }
       var L = "2015";
       try {
-        L = String(GM_getValue("UGF_LAYOUT", null) || "2015");
+        L = ugfSharedLayout(GM_getValue);
       } catch (e) {}
       var era = ["2013L", "2014", "2015", "2015L"].indexOf(L) > -1 ? "g2013" : L === "2013" ? "g2012w" : L === "2012" ? "g2012" : /^(2015N|2016|2017|2018|2019|202)/.test(L) ? "g2015" : "g2011";
       var root = document.documentElement;
@@ -50750,7 +50764,7 @@ Terms
       }
       var L = "2015";
       try {
-        L = String(GM_getValue("UGF_LAYOUT", null) || "2015");
+        L = ugfSharedLayout(GM_getValue);
       } catch (e) {}
       var era = /^(retro|199\d|200[0-7])$/.test(L) ? "c08b" : L === "2009" ? "c08" : L === "2009L" || L === "2010N" ? "c10" : /^(2010|2011|2012)$/.test(L) ? "c11" : /^(2013|2013L)$/.test(L) ? "c12" : /^(2014|2015L)$/.test(L) ? "c14" : /^(2015|2015N|2016)/.test(L) ? "c15" : /^2018/.test(L) ? "c17" : L === "2019" ? "c19" : null;
       if (!era) {
@@ -51609,7 +51623,7 @@ html[ugf-ytm-played] #ugf-ytm .ytm-pl .ytm-pl-btn{display:none}
       }
     }
     try {
-      L = GM_getValue("UGF_LAYOUT", null);
+      L = ugfSharedLayout(GM_getValue, null);
     } catch (e) {}
     if (!L) {
       try {
@@ -53426,7 +53440,7 @@ html[ugf-ytm-played] #ugf-ytm .ytm-pl .ytm-pl-btn{display:none}
         };
         var L = null;
         try {
-          L = typeof GM_getValue === "function" ? GM_getValue("UGF_LAYOUT", null) : null;
+          L = ugfSharedLayout(typeof GM_getValue === "function" ? GM_getValue : null, null);
         } catch (e) {}
         if (L === null || L === void 0) {
           try {
@@ -53599,7 +53613,7 @@ html[ugf-ytm-played] #ugf-ytm .ytm-pl .ytm-pl-btn{display:none}
         if (gv("UGF_GMAIL_ON", "true") === "false") {
           return;
         }
-        var L = gv("UGF_LAYOUT", "2015");
+        var L = ugfSharedLayout(gv);
         var page = ["2014", "2015", "2015L"].indexOf(L) > -1 ? "a14" : L === "2015N" ? "a15" : ["2016", "2016C", "2016L", "2018", "2018M"].indexOf(L) > -1 ? "a16" : L === "2019" ? "a19" : L === "2022" ? "a22" : null;
         if (!page) {
           var last = 0;
@@ -54065,7 +54079,7 @@ html[ugf-ytm-played] #ugf-ytm .ytm-pl .ytm-pl-btn{display:none}
         if (gv("UGF_SIGNIN_ON", "true") === "false") {
           return;
         }
-        var L = gv("UGF_LAYOUT", "2015");
+        var L = ugfSharedLayout(gv);
         var era = ["2019", "2022"].indexOf(L) > -1 ? "sg19" : ["2014", "2015", "2015L", "2015N", "2016", "2016C", "2016L", "2017", "2018", "2018M"].indexOf(L) > -1 ? "sg13" : ["2012", "2013", "2013L"].indexOf(L) > -1 ? "sg11" : "sg07";
         var SIGNUP = /^\/(lifecycle\/steps\/signup\/|signup(\/|$)|SignUp)/.test(p);
         var GMAIL = !SIGNUP && (era === "sg07" || era === "sg11") && (/[?&]service=mail(&|$)/.test(window.location.search || "") || /[?&]continue=https?(%3A|:)(%2F|\/){2}mail\.google\.com/i.test(window.location.search || ""));
@@ -55756,7 +55770,7 @@ html[ugf-ytm-played] #ugf-ytm .ytm-pl .ytm-pl-btn{display:none}
         if (gv(SITE === "keep" ? "UGF_KEEP_ON" : "UGF_ACCOUNT_ON", "true") === "false") {
           return;
         }
-        var L = gv("UGF_LAYOUT", "2015");
+        var L = ugfSharedLayout(gv);
         var PHONE = ugfPhoneLayout();
         var A = {
           "check": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAAAtklEQVQ4y2P4//8/A7Ux1Q0cxoaCADIbCUgCMTvVXAoE5kA8CYidyXYpGrAH4iVAHIXiCwoMDQTimUBcBsRMlBrKCsTpUANzkC0j11BuIK6EGlgKsoAkQ4FgChD7AzELVI8YEDdDDawDYk6YQaQY6gg1oAqILYC4D8oHGcyLbBAphoJAKtQgGO4EYiHk2CLHUJAXm6AG9gCxNHoSIMdQEJCFGqiALaGSayjMxQwUGzq0S6nhZygA2ojsbh6J67kAAAAASUVORK5CYII=",
@@ -58016,7 +58030,7 @@ html[ugf-ytm-played] #ugf-ytm .ytm-pl .ytm-pl-btn{display:none}
         } catch (e) {}
         if (!L) {
           try {
-            L = GM_getValue("UGF_LAYOUT", null);
+            L = ugfSharedLayout(GM_getValue, null);
           } catch (e) {}
         }
         return String(L || "2015");
@@ -73887,7 +73901,7 @@ html[shopping-results] #ugf-center {
         var layout = localStorage.getItem("UGF_LAYOUT");
         try {
           if (window.location.host === "mail.google.com" || window.location.host === "calendar.google.com" || ugfOnNT) {
-            layout = (typeof GM_getValue === "function" ? GM_getValue("UGF_LAYOUT", null) : null) || layout || "2015";
+            layout = ugfSharedLayout(typeof GM_getValue === "function" ? GM_getValue : null);
           } else if (layout && typeof GM_setValue === "function") {
             GM_setValue("UGF_LAYOUT", layout);
           }

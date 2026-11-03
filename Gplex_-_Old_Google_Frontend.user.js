@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended - Fixed and extended version of the legendary Gplex Old Google script
 // @namespace    http://tampermonkey.net/
-// @version      8.31
+// @version      8.32
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube: StarTube by lightbeam24, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -908,6 +908,24 @@ function ugfPhoneLayout() {
     const m = ugfMobileMode();
     const ua = navigator.userAgent || "";
     return m === "on" || m !== "off" && (/iPhone|iPod|Windows Phone|IEMobile|BlackBerry|BB10|Opera Mini/.test(ua) || /Android/.test(ua) && /Mobile/.test(ua));
+}
+// (8.32) The layout on a Google host other than www.google.com, where only the shared storage has it: what the shared
+// storage says, remembered in the host's own storage, which answers when the shared storage has nothing (the
+// extensions' settings can reach a page after it has started), rather than 2015 and its old logo on the sign-in
+// page and in Gmail. get is GM_getValue or a wrapper of it (key, default), or null; d the answer when neither has one.
+function ugfSharedLayout(get, d) {
+    let v = "";
+    try {
+        v = get ? String(get("UGF_LAYOUT", "") || "") : "";
+    } catch (e) {}
+    try {
+        if (!v) {
+            v = String(window.localStorage.getItem("UGF_LAYOUT") || "");
+        } else if (window.location.host !== "www.google.com") {
+            window.localStorage.setItem("UGF_LAYOUT", v);
+        }
+    } catch (e) {}
+    return v || (d === undefined ? "2015" : d);
 }
 // (8.27) the name and address in Google's account button's label ("Google Account: Name  \n(address)", the shape
 // varying by page)
@@ -41073,7 +41091,7 @@ if (ugfOnYouTube && !ugfYtmTakesOver() && !ugfYtmPlayerFrame()) {
         // settings StarTube gave V3 are handed back to V3's defaults once (V3 fills them in itself).
         let lay = "2015";
         try {
-            lay = String((typeof GM_getValue === "function" ? GM_getValue("UGF_LAYOUT", null) : null) || "2015");
+            lay = ugfSharedLayout(typeof GM_getValue === "function" ? GM_getValue : null);
         } catch (e) {}
         const nativeV3 = lay === "2013" || lay === "2013L";
         let wasNative = "0";
@@ -41139,7 +41157,7 @@ const UGF_PRODUCTS = {"_a": {"a2c685c60e": "data:image/gif;base64,R0lGODlhIwAjAP
         }
         let L = "2015";
         try {
-            L = String(GM_getValue("UGF_LAYOUT", null) || "2015");
+            L = ugfSharedLayout(GM_getValue);
         } catch (e) {}
         const era = ({ "retro": "o2005", "1997": "o2005", "1998": "o2005", "1999": "o2005", "2000": "o2005", "2001": "o2005", "2002": "o2005",
             "2003": "o2005", "2005": "o2005", "2006": "o2007", "2007": "o2007", "2009": "o2007", "2009L": "o2010", "2010": "o2010", "2010N": "o2010",
@@ -41289,7 +41307,7 @@ const UGF_GPX = {"logo12": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHcAAA
         }
         let L = "2015";
         try {
-            L = String(GM_getValue("UGF_LAYOUT", null) || "2015");
+            L = ugfSharedLayout(GM_getValue);
         } catch (e) {}
         const era = ["2013L", "2014", "2015", "2015L"].indexOf(L) > -1 ? "g2013"
             : L === "2013" ? "g2012w"
@@ -41873,7 +41891,7 @@ const UGF_CHROME_ASSETS = {"logo08b": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAg
         }
         let L = "2015";
         try {
-            L = String(GM_getValue("UGF_LAYOUT", null) || "2015");
+            L = ugfSharedLayout(GM_getValue);
         } catch (e) {}
         const era = (/^(retro|199\d|200[0-7])$/.test(L) ? "c08b"
             : L === "2009" ? "c08"
@@ -42770,7 +42788,7 @@ function ugfYtmLayout() {
         }
     }
     try {
-        L = GM_getValue("UGF_LAYOUT", null);
+        L = ugfSharedLayout(GM_getValue, null);
     } catch (e) {}
     if (!L) {
         try {
@@ -44484,7 +44502,7 @@ if (!ugfOnYouTube && !ugfOnGplexPlus) (function() {
                 return d;
             }
         };
-        if (gv("UGF_PLAY_ON", "true") === "false" || gv("UGF_LAYOUT", "2015") === "2022") {
+        if (gv("UGF_PLAY_ON", "true") === "false" || ugfSharedLayout(gv) === "2022") {
             return;
         }
         // the pages Gplex draws (ugfPlayRoute): the front pages, a category, a developer, a search, an app
@@ -44540,7 +44558,7 @@ if (!ugfOnYouTube && !ugfOnGplexPlus) (function() {
         try {
             lay = window.localStorage.getItem("UGF_LAYOUT");
         } catch (e) {}
-        if (gv("UGF_FINANCE_ON", "true") === "false" || String(lay || gv("UGF_LAYOUT", "2015")) === "2022") {
+        if (gv("UGF_FINANCE_ON", "true") === "false" || String(lay || ugfSharedLayout(gv)) === "2022") {
             return;
         }
         const st = document.createElement("style");
@@ -44592,7 +44610,7 @@ function ugfIsErrorPage() {
         const A = {"logo10": UGF_D.i15, "logo13": "data:image/gif;base64,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", "fav1999": UGF_FAVICON_1999, "fav2009": UGF_FAVICON_2009_G, "fav2010": UGF_FAVICON_2010, "fav2012": UGF_FAVICON_2012, "fav2015": UGF_FAVICON_2015};
         let L = null;
         try {
-            L = typeof GM_getValue === "function" ? GM_getValue("UGF_LAYOUT", null) : null;
+            L = ugfSharedLayout(typeof GM_getValue === "function" ? GM_getValue : null, null);
         } catch (e) {}
         if (L === null || L === undefined) {
             try {
@@ -44770,7 +44788,7 @@ function ugfIsErrorPage() {
         if (gv("UGF_GMAIL_ON", "true") === "false") {
             return;
         }
-        const L = gv("UGF_LAYOUT", "2015");
+        const L = ugfSharedLayout(gv);
         const page = ["2014", "2015", "2015L"].indexOf(L) > -1 ? "a14" : L === "2015N" ? "a15"
             : ["2016", "2016C", "2016L", "2018", "2018M"].indexOf(L) > -1 ? "a16" : L === "2019" ? "a19" : L === "2022" ? "a22" : null;
         if (!page) {
@@ -45242,7 +45260,7 @@ function ugfIsErrorPage() {
         if (gv("UGF_SIGNIN_ON", "true") === "false") {
             return;
         }
-        const L = gv("UGF_LAYOUT", "2015");
+        const L = ugfSharedLayout(gv);
         // the sign-in page of each period
         //   sg07 to early 2011: the blue box, "Sign in with your Google Account"
         //   sg11 late 2011-2013: the grey box under the grey header, red SIGN UP
@@ -47072,7 +47090,7 @@ function ugfIsErrorPage() {
         if (gv(SITE === "keep" ? "UGF_KEEP_ON" : "UGF_ACCOUNT_ON", "true") === "false") {
             return;
         }
-        const L = gv("UGF_LAYOUT", "2015");
+        const L = ugfSharedLayout(gv);
         const PHONE = ugfPhoneLayout();
         const A = {"check":UGF_D.i62,"nav09":UGF_D.i61,"logo10":UGF_D.i54,"logo13":UGF_D.i55,"logo15":UGF_D.i56,"fav1999":UGF_FAVICON_1999,"fav2009":UGF_FAVICON_2009_G,"fav2010":UGF_FAVICON_2010,"fav2012":UGF_FAVICON_2012,"fav2015":UGF_FAVICON_2015,"mi":{"apps":"<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z\"/></svg>","lock_outline":"<svg xmlns=\"http://www.w3.org/2000/svg\" enable-background=\"new 0 0 24 24\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><g><rect fill=\"none\" height=\"24\" width=\"24\" x=\"0\"/></g><g><g><g><path d=\"M12,17c1.1,0,2-0.9,2-2s-0.9-2-2-2s-2,0.9-2,2S10.9,17,12,17z M18,8h-1V6c0-2.76-2.24-5-5-5S7,3.24,7,6v2H6 c-1.1,0-2,0.9-2,2v10c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V10C20,8.9,19.1,8,18,8z M8.9,6c0-1.71,1.39-3.1,3.1-3.1 s3.1,1.39,3.1,3.1v2H8.9V6z M18,20H6V10h12V20z\"/></g></g></g></svg>","people_outline":"<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M16.5 13c-1.2 0-3.07.34-4.5 1-1.43-.67-3.3-1-4.5-1C5.33 13 1 14.08 1 16.25V19h22v-2.75c0-2.17-4.33-3.25-6.5-3.25zm-4 4.5h-10v-1.25c0-.54 2.56-1.75 5-1.75s5 1.21 5 1.75v1.25zm9 0H14v-1.25c0-.46-.2-.86-.52-1.22.88-.3 1.96-.53 3.02-.53 2.44 0 5 1.21 5 1.75v1.25zM7.5 12c1.93 0 3.5-1.57 3.5-3.5S9.43 5 7.5 5 4 6.57 4 8.5 5.57 12 7.5 12zm0-5.5c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 5.5c1.93 0 3.5-1.57 3.5-3.5S18.43 5 16.5 5 13 6.57 13 8.5s1.57 3.5 3.5 3.5zm0-5.5c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z\"/></svg>","settings":"<svg xmlns=\"http://www.w3.org/2000/svg\" enable-background=\"new 0 0 24 24\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><rect fill=\"none\" height=\"24\" width=\"24\"/><path d=\"M19.5,12c0-0.23-0.01-0.45-0.03-0.68l2.57-1.94l-2.75-4.76l-2.96,1.25c-0.37-0.26-0.76-0.49-1.17-0.68L14.75,2h-5.5 l-0.4,3.19c-0.41,0.19-0.8,0.42-1.17,0.68L4.71,4.62L1.96,9.38l2.57,1.94C4.51,11.55,4.5,11.77,4.5,12s0.01,0.45,0.03,0.68 l-2.57,1.94l2.75,4.76l2.96-1.25c0.37,0.26,0.76,0.49,1.17,0.68L9.25,22h5.5l0.4-3.19c0.41-0.19,0.8-0.42,1.17-0.68l2.96,1.25 l2.75-4.76l-2.57-1.94C19.49,12.45,19.5,12.23,19.5,12z M12.04,15.5c-1.93,0-3.5-1.57-3.5-3.5s1.57-3.5,3.5-3.5s3.5,1.57,3.5,3.5 S13.97,15.5,12.04,15.5z\"/></svg>","check":"<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"24\" viewBox=\"0 0 24 24\" width=\"24\"><path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z\"/></svg>"},"maps14":"data:image/png;base64,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","maps15":"data:image/png;base64,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","chrome14":UGF_D.i64,"accCss":"#ugf-gmail-accfence { position: fixed; inset: 0; z-index: 1400; } #ugf-gmail-accmenu { position: absolute; width: 300px; z-index: 1401; background: #fff; font: 13px arial, sans-serif; color: #222; border: 1px solid #ccc; box-shadow: 0 2px 10px rgba(0,0,0,.2); } #ugf-gmail-accmenu[chrome=\"m2018\"] { border: 0; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,.2), 0 0 0 1px rgba(0,0,0,.05); font-family: \"Google Sans\", Roboto, arial, sans-serif; overflow: hidden; } #ugf-gmail-accmenu[chrome=\"m2013\"] { border-color: #ccc; border-radius: 2px; box-shadow: 0 2px 10px rgba(0,0,0,.2); } #ugf-gmail-accmenu .head { display: flex; gap: 12px; padding: 16px; border-bottom: 1px solid #eee; align-items: flex-start; } #ugf-gmail-accmenu .head img, #ugf-gmail-accmenu .head .letter { width: 64px; height: 64px; border-radius: 2px; flex: 0 0 64px; object-fit: cover; display: block; } #ugf-gmail-accmenu[chrome=\"m2018\"] .head img, #ugf-gmail-accmenu[chrome=\"m2018\"] .head .letter, #ugf-gmail-accmenu[chrome=\"m2013\"] .head img, #ugf-gmail-accmenu[chrome=\"m2013\"] .head .letter { border-radius: 50%; } #ugf-gmail-accmenu .head .letter { background: #c62828; color: #fff; font-size: 30px; display: flex; align-items: center; justify-content: center; text-transform: uppercase; } #ugf-gmail-accmenu .meta { min-width: 0; display: flex; flex-direction: column; gap: 2px; } #ugf-gmail-accmenu .meta b { font-size: 14px; } #ugf-gmail-accmenu .meta span { color: #777; font-size: 12px; overflow: hidden; text-overflow: ellipsis; } #ugf-gmail-accmenu .meta a { font-size: 12px; margin-top: 6px; color: #1a73e8; } #ugf-gmail-accmenu .acts { display: flex; gap: 8px; padding: 12px 16px; background: #fafafa; border-bottom: 1px solid #eee; } #ugf-gmail-accmenu .acts a { flex: 1 1 auto; text-align: center; border: 1px solid #dcdcdc; border-radius: 2px; background: linear-gradient(#f5f5f5, #f1f1f1); color: #444; font: bold 11px arial, sans-serif; line-height: 25px; text-decoration: none; } #ugf-gmail-accmenu .acts a:hover { border-color: #c6c6c6; text-decoration: none; } #ugf-gmail-accmenu[chrome=\"m2018\"] .acts a { border-radius: 18px; font: 500 13px \"Google Sans\", Roboto, arial, sans-serif; line-height: 32px; background: #fff; } #ugf-gmail-accmenu .foot { display: flex; gap: 14px; justify-content: center; padding: 10px 16px; font-size: 11px; } #ugf-gmail-accmenu .foot a { color: #777; } #ugf-gmail-accmenu[chrome=\"classic\"] { border-radius: 0; }"};
         const OLD = /^(1997|1998|1999|2000|2001|2002|2003|2005|2006|2007|retro)$/.test(L);
@@ -49082,7 +49100,7 @@ function ugfMobileLayout() {
     } catch (e) {}
     if (!L) {
         try {
-            L = GM_getValue("UGF_LAYOUT", null);
+            L = ugfSharedLayout(GM_getValue, null);
         } catch (e) {}
     }
     return String(L || "2015");
@@ -63608,7 +63626,7 @@ html[shopping-results] #ugf-center {
     // the layout lives in www.google.com's storage; mirror it so other Google hosts (Gmail) can read it
     try {
         if (window.location.host === "mail.google.com" || window.location.host === "calendar.google.com" || ugfOnNT) {
-            layout = (typeof GM_getValue === "function" ? GM_getValue("UGF_LAYOUT", null) : null) || layout || "2015";
+            layout = ugfSharedLayout(typeof GM_getValue === "function" ? GM_getValue : null);
         } else if (layout && typeof GM_setValue === "function") {
             GM_setValue("UGF_LAYOUT", layout);
         }
