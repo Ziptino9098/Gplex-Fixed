@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Gplex Extended Alpha - Gplex Old Google with its YouTube part rewritten
 // @namespace    http://tampermonkey.net/
-// @version      9.0.0.33
+// @version      9.0.0.34
 // @description  1997-2024 Old Google Frontend, now with Gmail, Google Maps, Google Calendar, Google News, Google Translate, Google Docs, Google Sheets, Google Slides, Google Forms, Google Drive, Google Photos, Google Keep, Google Play and Google Finance, plus YouTube (Gplex Extended for YouTube, rewritten: alpha, with the V3 extension)
 // @author       Ziptino9098, lightbeam24
 // @match        *://www.google.com/search*
@@ -16491,11 +16491,12 @@ function ugfIsErrorPage() {
 // 2009-2010 the lighter bar (#e8eefa); 2011-2012 the black bar (#2d2d2d), #15c links and the #4d90fe blue buttons;
 // 2013-2014 the grey bar (#f1f1f1 over #e5e5e5), still Arial; 2015-2017 Roboto, the white bar with its shadow,
 // #4285f4 and capital buttons; 2018-2019 Google Sans, #1a73e8 and #dadce0; 2020-2021 the Workspace look. Only from
-// the year a site existed (Sites 2008, Voice 2009, Classroom 2014, Contacts 2015, Meet 2017, Chat 2018,
-// workspace.google.com 2020) and up to 2021: from 2022 the pages are their own. Meet's call screen (its address is
+// the year a site existed (Sites 2008, Voice 2009, Classroom 2014, Contacts 2015, Meet 2017, Chat 2018;
+// workspace.google.com from 2006, as the home of Google Apps for Your Domain, Google Apps for Work and G Suite
+// before it was Workspace) and up to 2021: from 2022 the pages are their own. Meet's call screen (its address is
 // like /abc-defg-hij) is left alone. The switch is "Gplex for the Workspace sites" on the settings page.
 const UGF_WS_FROM = { "sites.google.com": 2008, "voice.google.com": 2009, "classroom.google.com": 2014, "contacts.google.com": 2015,
-    "meet.google.com": 2017, "chat.google.com": 2018, "workspace.google.com": 2020 };
+    "meet.google.com": 2017, "chat.google.com": 2018, "workspace.google.com": 2006 };
 const UGF_WS_CSS = `html[gplex-ws="w06"] { --ws-font: Arial, sans-serif; --ws-bar: #c3d9ff; --ws-bar-text: #000; --ws-bar-border: 1px solid #a2bae0; --ws-bar-shadow: none; --ws-link: #0000cc; --ws-primary: #e0e0e0; --ws-primary-text: #000; --ws-radius: 3px; --ws-btn-case: none; --ws-btn-grad: linear-gradient(#fafafa, #d8d8d8); --ws-btn-shadow: 0 0 0 1px #999 inset; --ws-pop-shadow: 1px 1px 4px rgba(0,0,0,.4); }
 html[gplex-ws="w09"] { --ws-font: Arial, sans-serif; --ws-bar: #e8eefa; --ws-bar-text: #000; --ws-bar-border: 1px solid #c9d7f1; --ws-bar-shadow: none; --ws-link: #0000cc; --ws-primary: #eee; --ws-primary-text: #222; --ws-radius: 2px; --ws-btn-case: none; --ws-btn-grad: linear-gradient(#f5f5f5, #e1e1e1); --ws-btn-shadow: 0 0 0 1px #c6c6c6 inset; --ws-pop-shadow: 0 2px 4px rgba(0,0,0,.2); }
 html[gplex-ws="w11"] { --ws-font: Arial, sans-serif; --ws-bar: #2d2d2d; --ws-bar-text: #ddd; --ws-bar-border: none; --ws-bar-shadow: 0 1px 0 #000; --ws-link: #15c; --ws-primary: #4d90fe; --ws-primary-text: #fff; --ws-radius: 2px; --ws-btn-case: none; --ws-btn-grad: linear-gradient(#4d90fe, #4787ed); --ws-btn-shadow: 0 0 0 1px #3079ed inset; --ws-pop-shadow: 0 2px 4px rgba(0,0,0,.2); }
@@ -32685,7 +32686,7 @@ html[shopping-results] #ugf-center {
                                             <span>${UImessages.CLtrue}</span>
                                         </a>
                                         <div class="ugf-gplex-text">
-                                            <span>Choose whether or not Meet, Chat, Contacts, Classroom, Sites, Voice and workspace.google.com get the chrome of the layout you picked above: its font, header bar, links, buttons and menus, in the values Google used, from the year each site existed (Sites 2008, Voice 2009, Classroom 2014, Contacts 2015, Meet 2017, Chat 2018) and up to 2021. The pages themselves stay Google's.</span>
+                                            <span>Choose whether or not Meet, Chat, Contacts, Classroom, Sites, Voice and workspace.google.com get the chrome of the layout you picked above: its font, header bar, links, buttons and menus, in the values Google used, from the year each site existed (Sites 2008, Voice 2009, Classroom 2014, Contacts 2015, Meet 2017, Chat 2018; workspace.google.com from 2006, as the home of Google Apps and G Suite before it) and up to 2021. The pages themselves stay Google's.</span>
                                         </div>
                                         <div class="ugf-dropdown" id="ugf-workspaceon-dd">
                                             <div class="ugf-dropdown-inner">
